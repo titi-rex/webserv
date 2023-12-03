@@ -21,6 +21,8 @@
 #ifndef _WEBSERV_H__
 # define _WEBSERV_H__
 # include <iostream>
+# include <sys/socket.h>
+# include <fcntl.h>
 
 typedef	int si_type;
 

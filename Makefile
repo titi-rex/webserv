@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/02 21:57:40 by tlegrand         ###   ########.fr        #
+#    Updated: 2023/12/03 13:01:49 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,8 @@ DIR_OBJS	=	.objs/
 
 ifeq ($(DEBUG), fsanitize)
 	LST_OBJS	=	${LST_SRCS:.cpp=.debug.o}
+else ifeq ($(DEBUG), valgrind)
+	LST_OBJS	=	${LST_SRCS:.cpp=.valg.o}
 else
 	LST_OBJS	=	${LST_SRCS:.cpp=.o}
 endif
@@ -48,9 +50,13 @@ OBJS		=	${addprefix ${DIR_OBJS}, ${LST_OBJS}}
 
 #	==============================	DEPS	==============================	#
 DIR_DEPS	=	.deps/
-DEPS		=	${addprefix ${DIR_OBJS}, ${LST_SRCS:.cpp=.d}}
-
-
+ifeq ($(DEBUG), fsanitize)
+	DEPS	=	${addprefix ${DIR_OBJS}, ${LST_SRCS:.cpp=.debug.d}}
+else ifeq ($(DEBUG), valgrind)
+	DEPS	=	${addprefix ${DIR_OBJS}, ${LST_SRCS:.cpp=.valg.d}}
+else
+	DEPS	=	${addprefix ${DIR_OBJS}, ${LST_SRCS:.cpp=.d}}
+endif
 
 #	==============================	HEADERS	==============================	#
 DIR_HEADER	=	inc/
@@ -62,16 +68,17 @@ HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 CXX			=	c++ -std=c++98
 MKDIR 		=	mkdir -p
 RM			=	rm -rf
-MAKE		=	make -s
+MAKE		=	make --silent
 DEBUG		=	no
 
 
 #	==============================	FLAGS	==============================	#
-CXXFLAGS	=	-Wall -Wextra  -MMD -MP #-Werror
+CXXFLAGS	=	-Wall -Wextra  #-Werror
+DEPFLAGS	=	-MMD -MP
 FSFLAGS		=	-g3 -fsanitize=leak,address,pointer-subtract,pointer-compare,undefined 
-VALFLAGS 	=	 --time-stamp=yes --error-markers=begin,end \
-				--leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes \
-				--track-fds=yes --trace-children=yes
+VALFLAGS 	=	--leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes \
+				--track-fds=yes --trace-children=yes 
+#				--time-stamp=yes --error-markers=begin,end
 HARDFLAGS	=	--read-var-info=yes --read-inline-info=yes
 
 
@@ -112,18 +119,23 @@ hard	:
 
 #	==============================	COMPILATION	==============================	#
 ${NAME}			:	${DIR_OBJS} ${OBJS}
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${OBJS} -o ${NAME} -lm
+				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${OBJS} -o ${NAME}
 				@printf "$(GREEN_LIGHT)$@ created !\n$(END)"
 
 
 ${DIR_OBJS}%.o	:	${DIR_SRCS}%.cpp 
 				@printf "$(YELLOW)Making $@...\n$(END)"
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} -c $< -o $@
+				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
 
 
 ${DIR_OBJS}%.debug.o	:	${DIR_SRCS}%.cpp 
 				@printf "$(YELLOW)Making $@...\n$(END)"
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${FSFLAGS} -c $< -o $@
+				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} ${FSFLAGS} -c $< -o $@
+
+
+${DIR_OBJS}%.valg.o	:	${DIR_SRCS}%.cpp 
+				@printf "$(YELLOW)Making $@...\n$(END)"
+				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
 
 -include $(DEPS)
 
