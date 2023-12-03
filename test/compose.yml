@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  nginx:
+    container_name: nginx
+    init: true
+    image: nginx:latest
+    ports:
+      - 8080:80
+    restart: unless-stopped
