@@ -86,3 +86,18 @@ xample:
               example if you want to make a proper HEAD request, using
               -X HEAD will not suffice. You need to use the -I, --head
               option.
+
+
+
+			  https://www.rfc-editor.org/rfc/rfc7231#section-4.3.4
+
+
+https://requests.readthedocs.io/en/latest/api/
+
+https://github.com/fredrikalindh/webserv_tester
+
+https://git.hexanyn.fr/42/webserv/-/blob/master/tests/tester.py
+
+
+
+https://httptoolkit.com/python/
