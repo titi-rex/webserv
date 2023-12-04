@@ -32,7 +32,6 @@ def	print_response(r):
 def print_request(r):
     print("Request url")
     print(r.request.url, "\n")
-    # print(r.request.path_url, "\n")
     print("Request method")
     print(r.request.method, "\n")
     print("Request headers")
@@ -41,33 +40,48 @@ def print_request(r):
     print(r.request.body, "\n")
 
 
+def	try_get(url, headers, expected):
+    res = requests.get(url, headers=headers)
+    if (expected != res.status_code):
+        print(f"Wrong status code, got {res.status_code}, expected {expected}")
+        return (1)
+    print_response(res)
+        
+	
+
 base_url = "http://" + config.SERVER_ADDR + ":" + config.SERVER_PORT
 
+try_get(base_url, None, 200)
+
 # GET request
-url = base_url
-res = requests.get(url)
-print_request(res)
-print_response(res)
+# url = base_url
+# res = requests.get(url)
+# print_request(res)
+# print_response(res)
 
-# GET index
+# # GET index
 url = base_url + '/index.html'
-res = requests.get(url)
-print_request(res)
-print_response(res)
+try_get(url, None, 200)
 
-# GET wit hcustom header
-req_headers = {'user-agent':'custom python script', 'Accept-Language': 'fr'}
-url = base_url + '/index.html'
-res = requests.get(url, headers=req_headers)
-print_request(res)
-print_response(res)
+url = base_url + '/wrong.html'
+try_get(url, None, 404)
+# res = requests.get(url)
+# print_request(res)
+# print_response(res)
 
-# GET wit hcustom header
-req_headers = {'host':'none', 'Accept-Language': 'fr'}
-url = base_url + '/index.html'
-res = requests.get(url, headers=req_headers)
-print_request(res)
-print_response(res)
+# # GET wit hcustom header
+# req_headers = {'user-agent':'custom python script', 'Accept-Language': 'fr'}
+# url = base_url + '/index.html'
+# res = requests.get(url, headers=req_headers)
+# print_request(res)
+# print_response(res)
+
+# # GET wit hcustom header
+# req_headers = {'host':'none', 'Accept-Language': 'fr'}
+# url = base_url + '/index.html'
+# res = requests.get(url, headers=req_headers)
+# print_request(res)
+# print_response(res)
 
 
 
