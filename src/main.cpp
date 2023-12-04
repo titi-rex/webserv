@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/02 22:06:21 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/04 09:48:04 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,20 @@
 
 #include "webserv.hpp"
 
-int	main(void)
+int	main(int ac, char **av)
 {
+	if (ac != 2)
+	{
+		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;
+		return (1);
+	}
+
+
 	aff(funca());
 	int *a  = new int[5];
 
 	(void)a;
+	(void)av;
 	return (0);
 }
 
