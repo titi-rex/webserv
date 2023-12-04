@@ -1,0 +1,51 @@
+HTTP requests 
+
+METHOD /path/to/request HTTP/1.1
+
+if typo before verssion -> error 400 
+if version not support -> error 505
+if no host fiel -> error 400 (rfc)
+unknow header file -> ignored
+unkonw header value -> ignored 
+if header field (total size or a simgle field(indicated it in body response)) too large -> 431
+if URI too long -> 414
+	-error conversion from post to get
+	-loop of redirection in URI
+	-server under attack
+
+class request :
+
+string 	method 
+string	URI
+string	http_version
+map<string, string> header
+string	body
+
+class response:
+
+int 	status_code
+string	status
+map<string, string> header
+string	body
+
+
+
+1) typo
+2) version 
+3) method
+4) uri ?
+
+User-Agent: python-requests/2.22.0\r\nAccept-Encoding: gzip\r\nAccept: */*\r\nConnection: keep-alive\r\nhost: none\r\nAccept-Language: fr\r\n\r\n 
+
+User-Agent: python-requests/2.22.0
+Accept-Encoding: gzip
+Accept: */*
+Connection: keep-alive
+host: none
+Accept-Language: fr
+
+
+
+
+The Host request-header field is used to specify the Internet host 
+and the port number of the resource being requested
