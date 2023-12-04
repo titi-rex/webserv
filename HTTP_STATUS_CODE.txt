@@ -1,0 +1,106 @@
+<==========> CLIENT-SIDE STATUS <==========>
+* 400 Bad Request
+something wrong
+401 Unauthorized
+client request lack of valid authentification 
+response header: www-Authenticate : to explain how to request (at lest one challenge)
+402 Payment Required
+non standart, made for futur use
+* 403 Forbidden
+request understood but won't do it
+* 404 Not Found
+ressource can't be found
+* 405 Method Not Allowed
+method is knew but target ressource dont support this ressource
+response header: allow : list of allowed method
+406 Not Acceptable
+server can't serve 'accept' field from request and refuse to srrve default page
+407 proxy authetification required
+same as 401 but for a proxy server
+response header: Proxy-Authenticate : explain how to authorize correctly
+* 408 request timeout
+server would like to shutdown unused connection, can be sebd without any previous request by client
+response header: connection: close
+* 409 conflict
+request conflict with current state of target, motly in PUT method (uploading a file older than existing version)
+* 410 gone
+acces to the target is no longer available
+* 411 lenght required
+refuse to accept request without 'content-lenght' header
+(! content-lengh is omitted with chunked data see transfert-encoding)
+412 precondition failed
+acces to target denied cause of condition defined in header (ex: if-unmodified-since)
+* 413 content too large
+request entity is larger than limits defined by server
+response header: retry-after, size limit ?
+! 414 URI Too Long
+rare, come from error conversion from post to get, infinite loop in uri, server attack
+! 415 unsupported media type
+server refuse request because  payload format is unsupported
+(ex : content-type or content-encoding)
+416 range not satisfiable
+cannot serve requested range
+response header: content-range: (unsatisfied range '*/current lenght')(ex bytes*/1224 )
+417 expectation failed
+expect header could be met
+418 i'm a teapot
+a joke (can be used to respond to query we dont want to respond)
++ 419 ND
++ 420 ND
+421 misdirected request
+request directed to a server unable to produce respond
+! 422 unprocessable content
+server understand the content type, syntax is correct but unable to procced instruction
+(client should not repeat this request )
+423 locked
+ressource is locked, it can be accessed
+body should include some info in webdav's wml format
+423 failed dependency
+method could be performed on the ressource because depend on another action that failed
+rarely sent
+425 Too Early
+server wont risk proccessing a request that might be replayed (it create potential for a replay attack)
+426 Upgrade Required
+server refuse to perform request using current protocol but might be ok if client upgrade to different protocole
+response header: Upgrade: required protocol   (http/1.1 hehe)
++ 427 ND
+428 Precondition Required
+server require request to be conditionnal, ie a condition header is missing (ex : If-Match)
+429 Too Many Request
+user has sent too many request in given amount of time ('rate limit')
+response header: retry-after:
++ 430 ND
+! 431 Request Header Fields Too Large
+server refuse to process because request header are too long
+indicate in body which header are too large and if total size of headeris > max or only one header size > max
+can happen if too many cookies in request or header 'referer:' too long 
+451 unavailable for legal reason
+ressource not available for legale reason ......
+
+<==========> SERVER-SIDE STATUS <==========>
+* 500 Internal Server Error
+unexpected error
+* 501 Not Implemented
+server does not support the method requested (ex PUT is not implemented)
+502 Bad Gateway
+server while acting as a gateway or a proxy received an invalid response from upstream server
+503 Service Unavailable
+server not ready to handle request (ex down for maintenance)
+response header: retry-after:
+504 Gateway Timeout
+server while acting as a gateway or a proxy didnt get a response in time from upstream server
+505 HTTP Version Not Supported
+obvious
+506 Variant Also Negotiates
+complicated stuff about different variant of a ressource which also have a variant 
+and server can't find the best vriant
+! 507 Insufficient Storage
+method couldnt be performed, server couldnt store the representation needed to succesfully complete the request
+508 Loop Detected
+server encounter an infinite loop
++ 509 ND
+510 Not Extended
+client send a request with an extension declaration but extensinis not supported by server for the request
+511 Network Authentication Required
+client need to Authenticate to gain network acces
+
