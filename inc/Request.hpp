@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/04 17:45:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/04 22:30:43 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,9 @@ using namespace std;
 
 class Request 
 {
-	
 	private	:
-		bool				_legit;
-		short int			_mid;
 		size_t				_rid;
+		short int			_mid;
 		string				_method;
 		string				_uri;
 		string				_body;
@@ -37,23 +35,21 @@ class Request
 
 		static size_t		_num_request;
 
-	public	:
 		Request(void);
 		Request(const Request& src);
 		Request&	operator=(const Request& src);
+
+		bool	_is_method_known(string& test);
+		
+	public	:
+		Request(string raw);
 		~Request(void);
 
-
-		string	getUri(void) const;
-		void	setUri(string uri);
-		map<string, string>	getHeaders(void) const;
-		void	setHeaders(map<string, string> headers);
-		string	getBody(void) const;
-		void	setBody(string body);
-		bool	getLegit(void) const;
-		void	setLegit(bool legit);
-
-		Request(string raw);
+		int							getRid(void) const;
+		const string&				getMethod(void) const;
+		const string&				getUri(void) const;
+		const string&				getBody(void) const;
+		const map<string, string>&	getHeaders(void) const;
 
 		class Error : public runtime_error
 		{
@@ -63,6 +59,8 @@ class Request
 		};
 };
 
+ostream& operator<<(ostream& os, const Request& req);
+
 template <typename T, typename S>
 void	print_map(map<T,S> dico)
 {
@@ -70,7 +68,6 @@ void	print_map(map<T,S> dico)
 	{
 		cout << it->first << it->second << endl;
 	}
-	cout << endl;
 } 
 
 #endif

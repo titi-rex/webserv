@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/04 17:46:25 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/04 22:29:42 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 
 #include "webserv.hpp"
+#include "define.hpp"
 
 int	main(int ac, char **av)
 {
@@ -29,7 +30,10 @@ int	main(int ac, char **av)
 	(void)av;
 	try 
 	{
-		Request	rq("GET / HTTP/1.1\r\nUser-Agent: python-requests/2.22.0\r\nAccept-Encoding: gzip\r\nAccept: */*\r\nConnection: keep-alive\r\nhost: none\r\nAccept-Language: fr\r\n\r\nbodyyyy boddy");
+		Request	rq(GET_EX_BASE);
+		cout << rq << endl;
+		Request	rq2(GET_EX_ONLY_R);
+		cout << rq2;
 		
 	}
 	catch (Request::Error & e)
@@ -40,3 +44,12 @@ int	main(int ac, char **av)
 	return (0);
 }
 
+
+// request line \r\n
+// header\r\n
+// header\r\n
+// \r\n
+// body\r\n
+
+// authorized (recommended) in uri
+// ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=

@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/04 15:48:57 by tlegrand         ###   ########.fr        #
+#    Updated: 2023/12/04 22:18:28 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@
 #	==============================	NAMES	==============================	#
 NAME		=	webserv
 DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_HTTP} ${DIR_SRCS_CLASS} 
-
+DEFAULT_CONFIG_PATH	=	none
 
 #	==============================	SOURCES	==============================	#
 DIR_SRCS_PARSE	=	parsing/
@@ -111,13 +111,13 @@ re		:	fclean
 		@${MAKE} all
 
 fsan	:
-	@${MAKE} DEBUG=fsanitize ${NAME}
+	@${MAKE} DEBUG=fsanitize ${NAME} 
 
 val		:
-	@${MAKE} DEBUG=valgrind && valgrind ${VALFLAGS} ./${NAME}
+	@${MAKE} DEBUG=valgrind && valgrind ${VALFLAGS} ./${NAME} ${DEFAULT_CONFIG_PATH}
 
 hard	:
-	@${MAKE} DEBUG=valgrind && valgrind ${VALFLAGS} ${HARDFLAGS} ./${NAME}
+	@${MAKE} DEBUG=valgrind && valgrind ${VALFLAGS} ${HARDFLAGS} ./${NAME} ${DEFAULT_CONFIG_PATH}
 
 
 
