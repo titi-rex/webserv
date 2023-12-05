@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/04 22:29:42 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:52:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include "webserv.hpp"
 #include "define.hpp"
 
+using namespace std;
+
 int	main(int ac, char **av)
 {
 	if (ac != 2)
@@ -30,9 +32,9 @@ int	main(int ac, char **av)
 	(void)av;
 	try 
 	{
-		Request	rq(GET_EX_BASE);
-		cout << rq << endl;
-		Request	rq2(GET_EX_ONLY_R);
+		// Request	rq(GET_EX_BASE);
+		// cout << rq << endl;
+		Request	rq2(GET_EX_CHUNK);
 		cout << rq2;
 		
 	}
@@ -53,3 +55,18 @@ int	main(int ac, char **av)
 
 // authorized (recommended) in uri
 // ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=
+
+/*	chunked body encoding example
+
+7\r\n
+Mozilla\r\n
+11\r\n
+Developer Network\r\n
+0\r\n
+\r\n
+
+*/
+
+
+
+

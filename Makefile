@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/05 15:24:48 by tlegrand         ###   ########.fr        #
+#    Updated: 2023/12/05 19:08:57 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -69,7 +69,7 @@ HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 
 
 #	==============================	COMMANDS	==============================	#
-CXX			=	c++ -std=c++98
+CXX			=	c++ #-std=c++98
 MKDIR 		=	mkdir -p
 RM			=	rm -rf
 MAKE		=	make --silent

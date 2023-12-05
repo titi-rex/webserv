@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/05 15:25:12 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/05 20:22:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 size_t	Request::_num_request = 0;
 
-ostream& operator<<(ostream& os, const Request& req)
+std::ostream& operator<<(std::ostream& os, const Request& req)
 {
 	os << "rid: " << req.getRid() << endl;
 	os << "RL: " << req.getMethod() << " " << req.getUri() << " HTTP/1.1" << endl;
@@ -43,15 +43,15 @@ Request::~Request(void){};
 
 
 int 			Request::getRid(void) const { return (this->_rId); };
-const string&	Request::getMethod(void) const { return (this->_method); };
-const string& 	Request::getUri(void) const { return (this->_uri); };
-const string&	Request::getBody(void) const { return (this->_body); };
-const map<string, string>&	Request::getHeaders(void) const { return (this->_headers); };
+const std::string&	Request::getMethod(void) const { return (this->_method); };
+const std::string& 	Request::getUri(void) const { return (this->_uri); };
+const std::string&	Request::getBody(void) const { return (this->_body); };
+const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
 
 
-bool	Request::_is_method_known(string & test)
+bool	Request::_is_method_known(std::string & test)
 {
-	string	ref[3] = {"GET", "HEAD", "POST"};
+	std::string	ref[3] = {"GET", "HEAD", "POST"};
 	
 	for (size_t i = 0; i < 3; ++i)
 	{
@@ -64,10 +64,32 @@ bool	Request::_is_method_known(string & test)
 	return (false);
 }
 
-Request::Request(string raw) : _rId(_num_request++), _mId(-1) 
+int	wrap_tolower(int c)
 {
-	istringstream	iss_raw(raw);
-	string			tmp;
+	return (std::tolower(c));
+}
+
+void	Request::unchunk(std::istringstream& iss_raw)
+{
+	std::string	tmp;
+	size_t		chunk_size = 1;
+	
+	while (std::getline(iss_raw, tmp, '\n'))
+	{
+		chunk_size = std::strtol(tmp.c_str(), NULL, 16);
+		if (chunk_size == 0)
+			return ;
+		std::getline(iss_raw, tmp, '\n');
+		if (tmp.size() != chunk_size)
+			throw Error("Bad Chunk", 400);
+		_body += tmp + '\n';
+	}
+}
+
+Request::Request(std::string raw) : _rId(_num_request++), _mId(-1) 
+{
+	std::istringstream	iss_raw(raw);
+	std::string			tmp;
 
 	iss_raw >> _method;
 	iss_raw >> _uri;
@@ -80,13 +102,30 @@ Request::Request(string raw) : _rId(_num_request++), _mId(-1)
 	if (_uri[0] != '/')
 		throw Error("Bad URI", 400);
 
-	iss_raw >> tmp;
-	while (getline(iss_raw, tmp, '\n') && tmp != "\r" && tmp != "")
+	getline(iss_raw, tmp, '\n');
+	while (getline(iss_raw, tmp, '\n') && tmp != "" && tmp != "\r")
 	{	
-		istringstream iss(tmp);
-		string key;
+		std::istringstream iss(tmp);
+		std::string key;
+		std::string value;
 		iss >> key;
-		iss >> _headers[key];
+		iss >> value;
+		std::transform(key.begin(), key.end(), key.begin(), wrap_tolower);
+		std::transform(value.begin(), value.end(), value.begin(), wrap_tolower);
+		_headers[key] = value;
 	}
-	getline(iss_raw, _body, '\0');
+
+	if (_headers.find("transfert-encoding:") == _headers.end())
+		throw Error("No Host Header", 400);
+	if (_headers.find("transfert-encoding:") == _headers.end())
+	{
+		getline(iss_raw, _body, '\0');
+		return ;
+	}
+	if (_headers["transfert-encoding:"] != "chunked")
+		throw Error("Unknow encoding", 400);
+	unchunk(iss_raw);
 }
+
+// attention si strtol overflow -> thow
+// attention si getline 
