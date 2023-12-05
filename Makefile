@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/04 22:18:28 by tlegrand         ###   ########.fr        #
+#    Updated: 2023/12/05 15:24:48 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ LST_SRCS_HTTP	=	testdep.cpp
 SRCS_HTTP		=	${addprefix ${DIR_SRCS_HTTP}, ${LST_SRCS_HTTP}}
 
 DIR_SRCS_CLASS	=	class/
-LST_SRCS_CLASS	=	Request.cpp
+LST_SRCS_CLASS	=	Request.cpp WebServer.cpp
 SRCS_CLASS		=	${addprefix ${DIR_SRCS_CLASS}, ${LST_SRCS_CLASS}}
 
 DIR_SRCS		=	src/
@@ -64,7 +64,7 @@ endif
 
 #	==============================	HEADERS	==============================	#
 DIR_HEADER	=	inc/
-LST_HDR		=	${NAME}.hpp Request.hpp
+LST_HDR		=	${NAME}.hpp Request.hpp WebServer.hpp
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 
 

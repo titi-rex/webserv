@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/04 22:30:43 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/05 15:21:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ using namespace std;
 class Request 
 {
 	private	:
-		size_t				_rid;
-		short int			_mid;
+		size_t				_rId;
+		short int			_mId;
 		string				_method;
 		string				_uri;
 		string				_body;

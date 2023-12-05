@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/04 22:30:22 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/05 15:25:12 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,24 +26,24 @@ ostream& operator<<(ostream& os, const Request& req)
 };
 
 
-Request::Request(void) : _rid(_num_request++), _mid(-1) {};
-Request::Request(const Request& src) : _rid(_num_request++) {*this = src;};
+Request::Request(void) : _rId(_num_request++), _mId(-1) {};
+Request::Request(const Request& src) : _rId(_num_request++) {*this = src;};
 Request&	Request::operator=(const Request& src) 
 {
 	if (this == &src)
 		return (*this);
-	_mid = src._mid;
+	_mId = src._mId;
 	_method = src._method;
 	_uri = src._uri;
-	_body = _body;
+	_body = src._body;
 	_headers = src._headers;
 	return (*this);
 };
 Request::~Request(void){};
 
 
-int 			Request::getRid(void) const { return (this->_rid); };
-const string& 	Request::getMethod(void) const { return (this->_method); };
+int 			Request::getRid(void) const { return (this->_rId); };
+const string&	Request::getMethod(void) const { return (this->_method); };
 const string& 	Request::getUri(void) const { return (this->_uri); };
 const string&	Request::getBody(void) const { return (this->_body); };
 const map<string, string>&	Request::getHeaders(void) const { return (this->_headers); };
@@ -57,14 +57,14 @@ bool	Request::_is_method_known(string & test)
 	{
 		if (ref[i].compare(test) == 0)
 		{
-			_mid = i;
+			_mId = i;
 			return (true);
 		}
 	}
 	return (false);
 }
 
-Request::Request(string raw) : _rid(_num_request++), _mid(-1) 
+Request::Request(string raw) : _rId(_num_request++), _mId(-1) 
 {
 	istringstream	iss_raw(raw);
 	string			tmp;
