@@ -8,12 +8,12 @@
 
 typedef struct	s_location
 {
-	int							lId;
 	bool						isPath;	//if false its an extension !
+	bool						autoIndex;  // directory listing
+	int							lId;
 	std::string					uri_or_ext;
 	std::string					root;
 	std::vector<std::string>	index;
-	bool						autoIndex;  // directory listing
 	std::vector<std::string>	allowMethod;	// GET par default si empty
 	std::string					redirection;
 }	t_location;
