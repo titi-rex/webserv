@@ -1,0 +1,18 @@
+
+		*----------- MES LOULOUNOTES -----------*
+
+- retirer les commentaires => commencent par #
+- retirer les whitespaces
+
+		*----------- LES EXCEPTIONS -----------*
+- conf file 
+
+		*----------- FONCTIONS COOLS -----------*
+
+string::find_first_of 		: Recherche dans la string le 1er char qui correspond à l'un des char spécifiés dans ses args.
+string::find_first_not_of 	: Recherche dans la string le premier char qui ne correspond à aucun des char spécifiés dans ses arguments
+
+		*----------- ERREUR A CHECKER -----------*
+
+- si cgi_path specifié avant cgi_available
+- SI DOUBLE INSTRUCTION attention loulou
