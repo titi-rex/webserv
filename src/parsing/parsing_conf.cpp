@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/06 15:02:22 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/06 15:42:35 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,15 +111,27 @@ int WebServer::parseConf(std::string &line)
 void parseServ(std::vector<std::string> fileVec, unsigned long int *i)
 {
 	unsigned long int		tmp = *i;
-	unsigned int 			bracket = 0;
+	int			 			bracket = 0;
+	std::string				line;
+	char					ch;
  
 	while (tmp < fileVec.size())
 	{
-		
+		line = fileVec[tmp];
+		for (unsigned long int j = 0; j < line.size(); j++) 
+		{
+            ch = line[j];
+            if (ch == '{') 
+                bracket++;
+            if (ch == '}') 
+                bracket--;
+		}
+		if (bracket == 0)
+			break ;
 		++tmp;
-	} 	
+	} 
 	std::cout << "serv " << std::endl;
-	*i = tmp;
+	*i = tmp + 1;
 }
 
 int main()
