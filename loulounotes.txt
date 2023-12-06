@@ -1,10 +1,15 @@
 
 		*----------- MES LOULOUNOTES -----------*
-
-- retirer les commentaires => commencent par #
-- retirer les whitespaces
+		
+- Initialiser les valeurs par default
+- parcourir ligne par ligne
+- retirer les commetaires et espaces
+- si bodySizeLimit ou dir_error_page ou error_page -> les stocker 
+- si serveur -> chercher { et avoir une boucle qui continue jusqu'a trouver }
+	dans la boucle serveur -> chercher les args de "struct s_virtual_host" 
 
 		*----------- LES EXCEPTIONS -----------*
+
 - conf file 
 
 		*----------- FONCTIONS COOLS -----------*
@@ -16,3 +21,5 @@ string::find_first_not_of 	: Recherche dans la string le premier char qui ne cor
 
 - si cgi_path specifié avant cgi_available
 - SI DOUBLE INSTRUCTION attention loulou
+
+

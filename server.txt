@@ -44,15 +44,16 @@ server{
 
 	root /srv
 
-	cgi_available php pl bin   //lister les cgi utilisable avec path default /data/cgi-bin/
+	cgi_available php pl bin   // lister les cgi utilisable avec path default /data/cgi-bin/
 
 }
 
+	dir_error_page /etc/err_page/;
+
 server{
  
-	dir_error_page /etc/err_page/
-	error_page 404 /sr/spe/404.thml
-	error_page 405 /sr/spe/404.thml
+	error_page 404 /path/404.fg;
+	error_page 405;
 
 
 	limit_body_size
