@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/04 17:41:21 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/06 13:43:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <sys/socket.h>
 # include <fcntl.h>
 # include "Request.hpp"
-
+# include <sys/time.h>
 
 typedef	int si_type;
 

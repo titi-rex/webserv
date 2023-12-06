@@ -1,0 +1,454 @@
+#==========# OLD #==========#
+//===\\ PROCESS //===\\
+fork: 
+create a child process
+
+waitpid:
+wait un process
+
+kill:
+send a signal to a process
+
+signal:
+signal handler for process
+
+execve :
+execute a program 
+
+
+
+//===\\ FD //===\\
+read:
+read on a fd
+
+write:
+write on a fd
+
+close:
+close a fd
+
+open:
+open a fd
+
+
+dup, dup2:
+copy a fd
+
+pipe:
+open a pipe
+
+
+
+//===\\ SYSTEM and DIR //===\\
+
+chdir:
+change current working directory
+
+
+access:
+test if a file exist
+
+
+stat:
+int stat(const char *pathname, struct stat *statbuf);
+get file  status
+
+
+opendir:
+DIR *opendir(const char *name);
+open a directory stream based on a name
+return a DIR* or NULL
+
+
+readdir:
+struct dirent *readdir(DIR *dirp);
+get pointer to next directoy entru pointed by dirp, NULL if reach end of dir
+
+
+closedir:
+int closedir(DIR *dirp);
+close a directory stream 
+
+
+//===\\ ERROR //===\\
+errno:
+global variable, number of last error
+
+
+strerror:
+give error message based on error value 
+
+
+#==========#  NEW  #==========#
+//===\\ PROTO //===\\
+getaddrinfo:
+int getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+node and service identify an internet host and service , return addrinfo struct :
+struct addrinfo {
+	int              ai_flags;
+	int              ai_family;
+	int              ai_socktype;
+	int              ai_protocol;
+	socklen_t        ai_addrlen;
+	struct sockaddr *ai_addr;
+	char            *ai_canonname;
+	struct addrinfo *ai_next;
+};
+contains internet address that can be call by bind or connect 
+
+
+freeaddrinfo:
+void freeaddrinfo(struct addrinfo *res);
+free the memory allocated by getaddrinfo
+
+
+gai_strerror:
+const char *gai_strerror(int errcode);
+give error message based on  error value for 
+
+
+getprotobyname:
+struct protoent *getprotobyname(const char *name);
+struct protoent {
+	char  *p_name;       /* official protocol name */
+	char **p_aliases;    /* alias list */
+	int    p_proto;      /* protocol number */
+}
+
+
+//===\\ SOCKET //===\\
+socket:
+int socket(int domain, int type, int protocol);
+create an endpoint for communication, return a fd to that endpoint
+type arg cane be | with SOCK_NONBLOCK and SOCK_CLOEXEC
+
+
+socketpair:
+int socketpair(int domain, int type, int protocol, int sv[2]);
+same as socket but create a pair of connected socket returned in sv[]
+the two socket ar indistinguishable
+
+
+getsockname:
+int getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+struct sockaddr {
+	sa_family_t     sa_family;      /* Address family */
+	char            sa_data[];      /* Socket address */
+};
+return current address to which socketfd is bound, in the buffer addr, 
+addrlen should indicate the amount of bytes in addr, after return, addrlen contains actual size of socket address
+return 0 on success, -1 error
+
+
+setsockopt:
+int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
+set option on socket 
+for option at socket level : SOL_SOCKET, for other level give protocol number of the protocol controlling the option
+optname is name of option
+optval and optlen used to set option 
+
+
+bind:
+int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+bind a name to a socket
+when socket is created (by socket()) it exist in a name space (address family) but has no address assigned.
+bind() assign an address to our socket
+
+
+listen:
+int listen(int sockfd, int backlog);
+mark socket as passive socket, ie it will be used to accept incoming connection request using accept
+backlog is the maximum of incoming connection request
+
+
+connect:
+int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+connects the socket referred to by the file descriptor sockfd to the address specified by addr
+addrlen argument specifies the size of addr
+
+accept:
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+accept connection on a socket 
+extract the first connection request pending on the queue for listening socket, create a new 
+socket and return a fd to that socket, the new socket is not in listening mode
+original socket is unaffected
+socket -> bind -> listen -> accept
+addr and addrlen used to get info of the new socket (?), can be NULL 
+
+
+//===\\ CONVERTER //===\\
+htonl:
+uint32_t htonl(uint32_t hostlong);
+convert the unsigned integer hostlong from byte order to network byte order
+
+htons:
+uint16_t htons(uint16_t hostshort);
+convert the unsigned short integer hostshort from byte order to network byte order
+
+
+ntohl:
+uint32_t ntohl(uint32_t netlong);
+converts the unsigned integer netlong from network byte order to host byte order
+
+
+ntohs:
+uint16_t ntohs(uint16_t netshort);
+converts the unsigned short integer netshort from network byte order to host byte order
+
+
+//===\\ FD SELECTOR //===\\
+select: (old poll)
+int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+allow a programme to monitor multiple fd.
+wait until on or more become "ready" for some I/O operation, a fd is "ready" if it possible to perform I/O op without blocking
+select() can monitor only fd less than FD_SETSIZE 
+three set of fd are watched :
+-readfds : watch if fd is available for reading (if read will not block)
+-writefds : watch if fd is available for writing (if ther is enought place to write)
+-exceptdfds : watch if fd is available for exceptionnal condition (see POLLPRI in poll(2))
+these set can be NULL (they are not watched)
+
+-> on exit set are modified in place to indicate which fd changed status
+so if using select in a loop, the set need to be reinitialized before each call
+
+* nfds should be set to highest fd value + 1 (limit to check fds)
+*timeout specifie the interval that select should block wait for a fd to become ready
+the call will block until : 
+-a fd become ready
+-call interupt by signalhandler
+-timeout expire
+
+sigmask is used to set a sigmask for only select() (not usefull here, we dont have the function to generate a sigmask)
+
+return if succes the number of fd contained in the 3 set, else -1 and set are unmodified
+
+FD_ZERO() clears a set
+FD_SET() and FD_CLR() add and remove a given file descriptor  from  a  set.
+FD_ISSET() tests to see if a file descriptor is part of the set
+An fd_set is a fixed size buffer.  Executing FD_CLR() or FD_SET() with a value of fd that is negative
+ or is equal to or larger  than  FD_SETSIZE will result in undefined behavior
+
+
+poll:
+int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+/ do as select() but better /
+the set of fds to monitore is specified in fds arg, which is an array of pollfd struct :
+struct pollfd {
+	int   fd;         /* file descriptor */
+	short events;     /* requested events */
+	short revents;    /* returned events */
+};
+
+- fd contain a fd for an open file, if negative, event and revent return 0 
+(allow to ignore easily a  fd for a single poll call but cant be used to ignore fd 0)
+- events :input parameter: bitmask indicating which event were intereted in , if 0 only POLLHUP, POLLERR, and POLLNVAL can be return in revent field
+- revents : output parameter: bitmask filled with event that occured, can be any of events and POLLHUP, POLLERR, and POLLNVAL
+if no event requested happen and no error occure, poll() will block 
+
+
+*nfds is the number of items in pollfds array
+*timeout specifies the number of millisecond that poll() should block for a fd to become ready, block until:
+-a fd become ready
+-call interupt by signalhandler
+-timeout expire
+
+DEFINE (set in events and read in revents):
+POLLIN :There is data to read
+
+POLLPRI: exceptional condition :
+	- out-of-band data on a TCP socket (see tcp(7))
+	-a tty master in packet mode has seen a state change on the slave (see ioctl_tty(2))
+	- A cgroup.events file has been modified (see cgroups(7))
+
+POLLOUT: Writing is now possible, though a write larger that the available space in a socket or pipe will still block (unless O_NONBLOCK is set)
+
+POLLRDHUP: Stream  socket peer closed connection, or shut down writing half of connection
+(?) _GNU_SOURCE feature test macro must be defined (before including any header files) in order to obtain this definition
+
+
+POLLERR: Error condition.
+This bit is also set for a file descriptor referring to the write end of a pipe when the read end has been closed
+
+POLLHUP: Hang  up
+Note that when reading from a channel such as a pipe or a stream socket, this event merely indicates that the 
+peer closed its end of the channel. Subsequent reads from the channel will return 0 (end of  file) only after all outstanding 
+data in the channel has been consumed.
+
+
+POLLNVAL: Invalid request: fd not open
+
+
+epoll: (poll for linux)
+(epoll_create, epoll_ctl, epoll_wait)
+/ epoll api do the same as poll but not the same /
+epoll use an epoll instance which is monitored by the kernel 
+for us there is 2 things :
+- interest list : the set of fd thaat will be monitored
+- ready list : set of fd ready for I/O (its a set of reference to the interest list), this list is 
+dynamically populated by the kernel 
+
+to manage epoll instance :
+-epoll_create(): create instance and return fd referring to it
+-epoll_ctl(): add fd to monitor
+-epoll_wait(): wait for I/O event, blocking if no event available (can be thought as fetching item from ready list)
+
+two behavior : level-triggered and edge-triggered (with EPOLLET flag in epoll_ctl)
+with EPOLLET, we should be non-blocking, ie :-
+	- have non-blocking fd
+	- waiting for event only after read/write return EAGAIN 
+
+EAGAIN : The file descriptor fd refers to a file other than a socket and has been marked nonblocking  
+(O_NONBLOCK),  and  the  read  would  block. See open(2) for further details on the O_NONBLOCK flag
+
+we are not allowed to check errno just after read/write ie 
+
+without EPOLLET, epoll() is simply a fatser poll()
+
+
+int epoll_create(int size);
+succes return fd to epoll instace, fail -> -1
+
+
+errno :
+EINVAL size is not positive.
+EMFILE The per-user limit on the number of epoll instances imposed by /proc/sys/fs/epoll/max_user_instances was encountered. 
+EMFILE The per-process limit on the number of open file descriptors has been reached.
+ENFILE The system-wide limit on the total number of open files has been reached.
+ENOMEM There was insufficient memory to create the kernel object.
+
+
+int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+This  system call is used to add, modify, or remove entries in the interest list of the epoll(7)
+- epfd : fd of epoll instance 
+- op: operation requested, can be : 
+	EPOLL_CTL_ADD: Add fd to the interest list and associate the settings specified in event with the internal file linked to fd.
+	EPOLL_CTL_MOD: Change the settings associated with fd in the interest list to the new settings specified in event.
+	EPOLL_CTL_DEL: Remove (deregister) the target file descriptor fd from the interest list.  The event argument is ignored and can be NULL
+- fd: target fd
+- event : describe the object linked to fd 
+
+struct epoll_event {
+	uint32_t     events;      /* Epoll events */
+	epoll_data_t data;        /* User data variable */
+};
+
+- epoll_event.event : bitmask composed by ORing (?) following event:
+EPOLLIN The associated file is available for read(2) operations.
+EPOLLOUT The associated file is available for write(2) operations.
+EPOLLRDHUP (since Linux 2.6.17) Stream socket peer closed connection, or shut down writing half of connection.  (This flag is especially useful for writing simple code to  de‐tect peer shutdown when using Edge Triggered monitoring.)
+EPOLLPRI There is an exceptional condition on the file descriptor.  See the discussion of POLLPRI in poll(2).
+
+EPOLLERR Error condition happened on the associated file descriptor.  This event is also reported for the write end of a pipe when the read end has beenclosed.  epoll_wait(2) will always report for this event; it is not necessary to set it in events.
+EPOLLHUP Hang up happened on the associated file descriptor. epoll_wait(2) will always wait for this event; it is not necessary to set it in events.
+
+EPOLLET Sets the Edge Triggered behavior for the associated file descriptor.  The default behavior for epoll is Level Triggered.  See epoll(7) for more
+detailed information about Edge and Level Triggered event distribution architectures.
+
+EPOLLONESHOT (since Linux 2.6.2) Sets the one-shot behavior for the associated file descriptor.  This means that after an event is pulled out with epoll_wait(2) the  associated
+file  descriptor  is  internally  disabled  and  no  other events will be reported by the epoll interface.  The user must call epoll_ctl() with EPOLL_CTL_MOD to rearm the file descriptor with a new event mask.
+
+typedef union epoll_data {
+	void        *ptr;
+	int          fd;
+	uint32_t     u32;
+	uint64_t     u64;
+} epoll_data_t;
+
+
+int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);
+wait for event on epoll instance referred by epfd
+memory area pointed by event will contain event available for caller
+maxevent is the number max of event returned by epoll_wait(), must be greater than 0
+timeout specifies the number of milliseconds that epoll_wait() will block
+-a fd deliver an event
+-call interupt by signalhandler
+-timeout expire
+
+in struct epoll_event:
+- data field is the same as specified with epoll_clt()
+- event is the bitmask of event that occur 
+
+
+send:
+ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+transmit message to another socket, can be use when socket is in connected state 
+only difference with write is send accept flag, if flag == 0, send == write
+
+list of flags : 
+MSG_CONFIRM (since Linux 2.3.15)
+Tell the link layer that forward progress happened: you got a successful reply from the other side.  If the link layer doesn't get this it will
+regularly  reprobe  the  neighbor  (e.g., via a unicast ARP).  Valid only on SOCK_DGRAM and SOCK_RAW sockets and currently implemented only for
+IPv4 and IPv6.  See arp(7) for details.
+
+MSG_DONTROUTE
+Don't use a gateway to send out the packet, send to hosts only on directly connected networks.  This is usually  used  only  by  diagnostic  or
+routing programs.  This is defined only for protocol families that route; packet sockets don't.
+
+MSG_DONTWAIT (since Linux 2.2)
+Enables  nonblocking operation; if the operation would block, EAGAIN or EWOULDBLOCK is returned.  This provides similar behavior to setting the
+O_NONBLOCK flag (via the fcntl(2) F_SETFL operation), but differs in that MSG_DONTWAIT is a per-call option, whereas O_NONBLOCK is a setting on
+the open file description (see open(2)), which will affect all threads in the calling process and as well as other processes that hold file de‐
+scriptors referring to the same open file description.
+
+MSG_EOR (since Linux 2.2)
+Terminates a record (when this notion is supported, as for sockets of type SOCK_SEQPACKET).
+
+MSG_MORE (since Linux 2.4.4)
+The caller has more data to send.  This flag is used with TCP sockets to obtain the same effect as the TCP_CORK  socket  option  (see  tcp(7)),
+with the difference that this flag can be set on a per-call basis.
+
+MSG_NOSIGNAL (since Linux 2.2)
+Don't  generate  a  SIGPIPE signal if the peer on a stream-oriented socket has closed the connection.  The EPIPE error is still returned.  This
+provides similar behavior to using sigaction(2) to ignore SIGPIPE, but, whereas MSG_NOSIGNAL is a per-call feature,  ignoring  SIGPIPE  sets  a
+process attribute that affects all threads in the process.
+
+MSG_OOB
+Sends  out-of-band  data on sockets that support this notion (e.g., of type SOCK_STREAM); the underlying protocol must also support out-of-band data.
+
+
+recv:
+ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+same as (send/write) but with read
+
+flags:
+MSG_CMSG_CLOEXEC (recvmsg() only; since Linux 2.6.23)
+Set  the  close-on-exec  flag  for  the file descriptor received via a UNIX domain file descriptor 
+
+MSG_DONTWAIT 
+Enables nonblocking operation; if the operation would block, the call fails with the error EAGAIN or EWOULDBLOCK.  This provides similar behav‐
+ior  to setting the O_NONBLOCK flag (via the fcntl(2) F_SETFL operation), but differs in that MSG_DONTWAIT is a per-call option, whereas O_NON‐
+BLOCK is a setting on the open file description (see open(2)), which will affect all threads in the calling process and as well as  other  pro‐
+cesses that hold file descriptors referring to the same open file description.
+
+
+MSG_ERRQUEUE 
+This flag specifies that queued errors should be received from the socket error queue.  The error is passed in an ancillary message with a type
+dependent on the protocol (for IPv4 IP_RECVERR).  The user should supply a buffer of sufficient size.  
+
+MSG_OOB
+This  flag  requests  receipt of out-of-band data that would not be received in the normal data stream.  Some protocols place expedited data at
+the head of the normal data queue, and thus this flag cannot be used with such protocols.
+
+MSG_PEEK
+This flag causes the receive operation to return data from the beginning of the receive queue without removing that data from the queue.  Thus,
+a subsequent receive call will return the same data.
+
+MSG_TRUNC 
+For  raw  (AF_PACKET), Internet datagram (since Linux 2.4.27/2.6.8), netlink (since Linux 2.6.22), and UNIX datagram (since Linux 3.4) sockets:
+return the real length of the packet or datagram, even when it was longer than the passed buffer. For use with Internet stream sockets, see tcp(7).
+
+MSG_WAITALL 
+This flag requests that the operation block until the full request is satisfied.  However, the call may still return less data  than  requested
+if a signal is caught, an error or disconnect occurs, or the next data to be received is of a different type than that returned.  This flag has
+no effect for datagram sockets.
+
+
+
+
+
+
+
+
+fcntl: (macos)
+perform cmd on fd, can set a O_NONBLOCK flag
+

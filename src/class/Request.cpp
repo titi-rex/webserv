@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/05 20:22:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/06 10:43:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ Request::Request(std::string raw) : _rId(_num_request++), _mId(-1)
 		_headers[key] = value;
 	}
 
-	if (_headers.find("transfert-encoding:") == _headers.end())
+	if (_headers.find("host:") == _headers.end())
 		throw Error("No Host Header", 400);
 	if (_headers.find("transfert-encoding:") == _headers.end())
 	{
