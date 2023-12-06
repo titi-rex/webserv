@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/05 19:52:59 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/06 14:47:13 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,36 @@
 
 
 #include "webserv.hpp"
+#include "WebServer.hpp"
 #include "define.hpp"
 
 using namespace std;
 
-int	main(int ac, char **av)
-{
-	if (ac != 2)
-	{
-		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;
-		return (1);
-	}
-	(void)av;
-	try 
-	{
-		// Request	rq(GET_EX_BASE);
-		// cout << rq << endl;
-		Request	rq2(GET_EX_CHUNK);
-		cout << rq2;
+// int	main(int ac, char **av)
+// {
+// 	if (ac != 2)
+// 	{
+// 		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;
+// 		return (1);
+// 	}
+// 	(void)av;
+// 	try 
+// 	{
+// 		// Request	rq(GET_EX_BASE);
+// 		// cout << rq << endl;
+// 		Request	rq2(GET_EX_CHUNK);
+// 		cout << rq2;
 		
-	}
-	catch (Request::Error & e)
-	{
-		std::cout << e.status << " " << e.what() << std::endl;
+// 	}
+// 	catch (Request::Error & e)
+// 	{
+// 		std::cout << e.status << " " << e.what() << std::endl;
 		
-	}
-	return (0);
-}
+// 	}
+// 	return (0);
+// }
+
+
 
 
 // request line \r\n

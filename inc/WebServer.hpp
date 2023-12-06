@@ -5,6 +5,9 @@
 # include <vector>
 # include <stdexcept>
 # include <iostream>
+# include <fstream>
+# include <sstream>
+
 
 typedef struct	s_location
 {
@@ -38,7 +41,7 @@ class WebServer
 	private	:
 		size_t								_bodySizeLimit;
 		std::string							_dirErrorPage;
-		std::map<std::string,std::string>	_errorPage;
+		std::map<std::string, std::string>	_errorPage;
 		std::vector<t_virtual_host>			_virtualHost;
 
 		WebServer(void);
@@ -51,12 +54,14 @@ class WebServer
 
 		std::vector<t_virtual_host>	getVirtualHost(void) const;
 		void	setVirtualHost(std::vector<t_virtual_host> virtualHost);
-		std::map<std::string,std::string>	getErrorPage(void) const;
-		void	setErrorPage(std::map<std::string,std::string> errorPage);
+		std::map<std::string,std::string>&	getErrorPage(void);
+		void	setErrorPage(std::string key, std::string value); 
 		std::string	getDirErrorPage(void) const;
 		void	setDirErrorPage(std::string dirErrorPage);
 		size_t	getBodySizeLimit(void) const;
 		void	setBodySizeLimit(size_t bodySizeLimit);
+
+		int parseConf(std::string &line);
 
 };
 
