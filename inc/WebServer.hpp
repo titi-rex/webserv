@@ -8,6 +8,7 @@
 # include <fstream>
 # include <sstream>
 
+typedef unsigned int long	uintptr_t;
 
 typedef struct	s_location
 {
@@ -61,7 +62,10 @@ class WebServer
 		size_t	getBodySizeLimit(void) const;
 		void	setBodySizeLimit(size_t bodySizeLimit);
 
-		int parseConf(std::string &line);
+		int		parseConf(std::string &line);
+		void	parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
+		void 	findServ(std::vector<std::string> fileVec, uintptr_t *i);
+		void	addVirtualHost(const t_virtual_host& virtualHost);
 
 };
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/06 15:42:35 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/07 21:52:04 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,37 +108,62 @@ int WebServer::parseConf(std::string &line)
 	return (0);
 }
 
-void parseServ(std::vector<std::string> fileVec, unsigned long int *i)
+void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end)
 {
-	unsigned long int		tmp = *i;
-	int			 			bracket = 0;
-	std::string				line;
-	char					ch;
- 
-	while (tmp < fileVec.size())
-	{
-		line = fileVec[tmp];
-		for (unsigned long int j = 0; j < line.size(); j++) 
+	t_virtual_host 				newServ;
+	std::vector<std::string>	sLine;
+
+	for (uintptr_t i = start; i <= end; ++i) {
+		formatLine(fileVec[i]);
+		sLine = splitLine(fileVec[i]);
+		if (sLine.empty())
+			return ;
+		// else if (sLine[0] == "listen"){}
+		// else if (sLine[0] == "server_name"){}
+		else if (sLine[0] == "root")
+			newServ.root = sLine[1];
+	}
+
+	addVirtualHost(newServ);
+}
+
+void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
+{
+	uintptr_t	start = 0;
+	uintptr_t	end = 0;
+    int 		bracket = 0;
+
+	//std::cout << "serv " << std::endl;
+    for (uintptr_t j = *i; j < fileVec.size(); ++j) 
+	{ 
+        for (char c : fileVec[j])
 		{
-            ch = line[j];
-            if (ch == '{') 
-                bracket++;
-            if (ch == '}') 
-                bracket--;
-		}
-		if (bracket == 0)
-			break ;
-		++tmp;
-	} 
-	std::cout << "serv " << std::endl;
-	*i = tmp + 1;
+            if (c == '{'){
+				if (start == 0)
+					start = j + 2;
+                ++bracket;
+			}
+            else if (c == '}') 
+			{
+                --bracket;
+                if (bracket == 0) 
+				{
+                    *i = j + 1;
+					end = j;
+					parseServ(fileVec, start, end);
+                    return;
+                }
+            }
+        }
+    }
+	// mauvaise synthax, throw exception !!
 }
 
 int main()
 {
 	WebServer					serv("exemple.conf");
 	std::vector<std::string> 	fileVec;
-	unsigned long int			i = 0;
+	uintptr_t					i = 0;
 	
 	std::ifstream file("exemple.conf");
     if (!file.is_open()) {
@@ -154,7 +179,7 @@ int main()
 	while (i < fileVec.size())
    	{
 		if (serv.parseConf(fileVec[i]) == 1)
-			parseServ(fileVec, &i);
+			serv.findServ(fileVec, &i);
 		std::cout << "Formatted line: " << fileVec[i] << std::endl;
 		std::cout << std::endl;
 		++i;

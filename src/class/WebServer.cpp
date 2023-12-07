@@ -50,3 +50,7 @@ WebServer::WebServer(std::string path)
 	
 };
 	
+void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 
+{
+	_virtualHost.push_back(virtualHost);
+}
