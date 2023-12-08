@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/05 19:55:33 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/08 15:31:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ using std::string;
 class Request 
 {
 	private	:
-		size_t				_rId;
-		short int			_mId;
+		size_t					_rId;
+		short int				_mId;
 		std::string				_method;
 		std::string				_uri;
 		std::string				_body;
@@ -48,7 +48,7 @@ class Request
 		Request(std::string raw);
 		~Request(void);
 
-		int							getRid(void) const;
+		int								getRid(void) const;
 		const std::string&				getMethod(void) const;
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
@@ -58,7 +58,7 @@ class Request
 		{
 			public:
 				int	status;
-				Error(std::string str, int status) : runtime_error(str), status(status) {};
+				Error(std::string str, int status);
 		};
 };
 

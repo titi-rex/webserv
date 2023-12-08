@@ -33,4 +33,4 @@
 *.app
 webserv
 
-*.nfs
+*.nfs*

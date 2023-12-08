@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/06 15:19:51 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/08 15:31:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ Request&	Request::operator=(const Request& src)
 Request::~Request(void){};
 
 
-int 			Request::getRid(void) const { return (this->_rId); };
+int 				Request::getRid(void) const { return (this->_rId); };
 const std::string&	Request::getMethod(void) const { return (this->_method); };
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
@@ -128,4 +128,6 @@ Request::Request(std::string raw) : _rId(_num_request++), _mId(-1)
 }
 
 // attention si strtol overflow -> thow
-// attention si getline 
+// attention si getline throw
+
+Request::Error::Error(std::string str, int status) : runtime_error(str), status(status) {};
