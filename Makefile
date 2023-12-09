@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/08 15:28:06 by tlegrand         ###   ########.fr        #
+#    Updated: 2023/12/09 01:03:34 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ LST_SRCS_PARSE	=	parsing_conf.cpp
 SRCS_PARSE		=	${addprefix ${DIR_SRCS_PARSE}, ${LST_SRCS_PARSE}}
 
 DIR_SRCS_HTTP	=	http/
-LST_SRCS_HTTP	=	testdep.cpp
+LST_SRCS_HTTP	=	
 SRCS_HTTP		=	${addprefix ${DIR_SRCS_HTTP}, ${LST_SRCS_HTTP}}
 
 DIR_SRCS_CLASS	=	class/
@@ -33,7 +33,7 @@ LST_SRCS_CLASS	=	Request.cpp WebServer.cpp
 SRCS_CLASS		=	${addprefix ${DIR_SRCS_CLASS}, ${LST_SRCS_CLASS}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	main.cpp \
+LST_SRCS		=	main.cpp signal.cpp socket.cpp connect.cpp \
 					${SRCS_PARSE} ${SRCS_HTTP} ${SRCS_CLASS} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
@@ -69,7 +69,7 @@ HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 
 
 #	==============================	COMMANDS	==============================	#
-CXX			=	c++ #-std=c++98
+CXX			=	c++ -std=c++98
 MKDIR 		=	mkdir -p
 RM			=	rm -rf
 MAKE		=	make --silent

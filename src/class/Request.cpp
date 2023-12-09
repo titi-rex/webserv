@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/08 15:31:06 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/08 22:04:30 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 	os << "rid: " << req.getRid() << endl;
 	os << "RL: " << req.getMethod() << " " << req.getUri() << " HTTP/1.1" << endl;
 	os << "Headers :" << endl;
-	print_map(req.getHeaders());
+	os << req.getHeaders();
 	os << "Body :" << endl;
 	os << "{" << req.getBody() << "}" << endl;
 	return (os);

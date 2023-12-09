@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/08 15:31:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/08 22:12:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,13 @@ class Request
 std::ostream& operator<<(std::ostream& os, const Request& req);
 
 template <typename T, typename S>
-void	print_map(std::map<T,S> dico)
+std::ostream& operator<<(std::ostream &os, const std::map<T, S> dico)
 {
-	for (typename std::map<T,S>::iterator it = dico.begin(); it != dico.end(); ++it)
+	for (typename std::map<T, S>::const_iterator it = dico.begin(); it != dico.end(); ++it)
 	{
-		std::cout << it->first << it->second << std::endl;
+		os << it->first << it->second << std::endl;
 	}
+	return (os);
 } 
 
 #endif
