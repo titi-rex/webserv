@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/07 22:02:42 by louisa           ###   ########.fr       */
+/*   Updated: 2023/12/09 13:28:07 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,7 @@ int main()
 	std::cout << "size body max = " << serv.getBodySizeLimit() << std::endl;
 	std::cout << "error page dir = " << serv.getDirErrorPage() << std::endl;
 	std::cout << "error page val = ";
-	print_map(serv.getErrorPage());
+	std::cout << serv.getErrorPage();
 
     return 0;
 }

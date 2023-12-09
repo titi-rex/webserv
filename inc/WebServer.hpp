@@ -7,6 +7,7 @@
 # include <iostream>
 # include <fstream>
 # include <sstream>
+# include <unistd.h>
 
 typedef unsigned int long	uintptr_t;
 
@@ -36,6 +37,8 @@ typedef struct	s_virtual_host
 	std::map<std::string, t_location>	locations;
 }	t_virtual_host;
 
+typedef t_virtual_host* v_host_ptr;
+
 
 class WebServer 
 {
@@ -45,11 +48,19 @@ class WebServer
 		std::map<std::string, std::string>	_errorPage;
 		std::vector<t_virtual_host>			_virtualHost;
 
+
+		int	_efd;
+
 		WebServer(void);
 		WebServer(const WebServer& src);
 		WebServer&	operator=(const WebServer& src);
 
+		void	_socketList_init(void);
+		void	_epoll_init(void);
+
+
 	public	:
+		std::map<int, v_host_ptr>			_socketsList;
 		WebServer(std::string path);
 		~WebServer(void);
 
@@ -67,6 +78,9 @@ class WebServer
 		void 	findServ(std::vector<std::string> fileVec, uintptr_t *i);
 		void	addVirtualHost(const t_virtual_host& virtualHost);
 
+		void	run(void);
+
+		void	send_response(int client_fd);	//	notre futur method GET
 };
 
 #endif

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   WebServer.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
+/*   Updated: 2023/12/09 01:01:18 by tlegrand         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "WebServer.hpp"
 
 WebServer::WebServer(void) : _bodySizeLimit(-1) {};
@@ -22,7 +34,14 @@ WebServer&	WebServer::operator=(const WebServer& src)
 	return (*this);
 };
 
-WebServer::~WebServer(void) {};
+WebServer::~WebServer(void) 
+{
+	for (std::map<int, v_host_ptr>::iterator it = _socketsList.begin(); it != _socketsList.end(); ++it)
+	{
+		close(it->first);
+	}
+	close(_efd);
+};
 
 std::vector<t_virtual_host>	WebServer::getVirtualHost(void) const { return (this->_virtualHost); };
 void	WebServer::setVirtualHost(std::vector<t_virtual_host> virtualHost) { this->_virtualHost = virtualHost;; };
@@ -47,10 +66,57 @@ void	WebServer::setBodySizeLimit(size_t bodySizeLimit)
 
 WebServer::WebServer(std::string path) 
 {
+	t_virtual_host	tmp;
+
+	tmp.sId = 0;
+	tmp.host = "127.0.0.1";
+	tmp.ports.push_back(8080);
+	tmp.ports.push_back(8081);
+	_virtualHost.push_back(tmp);
+	tmp.sId = 1;
+	tmp.ports.clear();
+	tmp.ports.push_back(8541);
+	_virtualHost.push_back(tmp);
 	
+	try
+	{
+		_socketList_init();
+		_epoll_init();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		throw e;
+	}	
 };
 	
 void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 
 {
 	_virtualHost.push_back(virtualHost);
+}
+
+template <typename T>
+std::ostream&	operator<<(std::ostream &os, const std::vector<T>& vec)
+{
+	for (size_t i = 0; i < vec.size(); ++i)
+	{
+		os << vec.at(i) << " ";
+	}
+	return (os);
+}
+
+std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host)
+{
+	os << "v_host id : " << v_host->sId << std::endl;
+	os << "v_host host : " << v_host->host << std::endl;
+	os << "v_host ports : " << v_host->ports << std::endl;
+	return (os);
+}
+
+std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host)
+{
+	os << "v_host id : " << v_host.sId << std::endl;
+	os << "v_host host : " << v_host.host << std::endl;
+	os << "v_host ports : " << v_host.ports << std::endl;
+	return (os);
 }

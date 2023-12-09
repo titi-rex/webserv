@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/06 14:47:13 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/09 01:03:50 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,32 +21,33 @@
 #include "WebServer.hpp"
 #include "define.hpp"
 
-using namespace std;
+sig_atomic_t	g_status = 1;
 
-// int	main(int ac, char **av)
-// {
-// 	if (ac != 2)
-// 	{
-// 		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;
-// 		return (1);
-// 	}
-// 	(void)av;
-// 	try 
-// 	{
-// 		// Request	rq(GET_EX_BASE);
-// 		// cout << rq << endl;
-// 		Request	rq2(GET_EX_CHUNK);
-// 		cout << rq2;
-		
-// 	}
-// 	catch (Request::Error & e)
-// 	{
-// 		std::cout << e.status << " " << e.what() << std::endl;
-		
-// 	}
-// 	return (0);
-// }
 
+/*
+int	main(int ac, char **av)
+{
+	if (ac != 2)
+	{
+		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;
+		return (1);
+	}
+	sig_init(sig_handler);
+	try 
+	{
+		WebServer	server(av[1]);
+		server.run();
+	}
+	catch (std::exception & e)
+	{
+		std::cerr << e.what() << std::endl;
+		std::cerr << "errno value: " << errno << std::endl;
+		std::cerr << strerror(errno) << std::endl;
+		
+	}
+	return (0);
+}
+*/
 
 
 
@@ -69,7 +70,4 @@ Developer Network\r\n
 \r\n
 
 */
-
-
-
 
