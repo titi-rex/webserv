@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 14:35:20 by louisa           ###   ########.fr       */
+/*   Updated: 2023/12/09 21:38:28 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,28 +80,28 @@ WebServer::WebServer(std::string path)
 {
 	(void)path;
 	
-	// t_virtual_host	tmp;
+	t_virtual_host	tmp;
 
-	// tmp.sId = 0;
-	// tmp.host = "127.0.0.1";
-	// tmp.ports.push_back(8080);
-	// tmp.ports.push_back(8081);
-	// _virtualHost.push_back(tmp);
-	// tmp.sId = 1;
-	// tmp.ports.clear();
-	// tmp.ports.push_back(8541);
-	// _virtualHost.push_back(tmp);
+	tmp.sId = 0;
+	tmp.host = "127.0.0.1";
+	tmp.ports.push_back(8080);
+	tmp.ports.push_back(8081);
+	_virtualHost.push_back(tmp);
+	tmp.sId = 1;
+	tmp.ports.clear();
+	tmp.ports.push_back(8541);
+	_virtualHost.push_back(tmp);
 	
-	// try
-	// {
-	// 	_socketList_init();
-	// 	_epoll_init();
-	// }
-	// catch(const std::exception& e)
-	// {
-	// 	std::cerr << e.what() << std::endl;
-	// 	throw e;
-	// }	
+	try
+	{
+		_socketList_init();
+		_epoll_init();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		throw std::runtime_error(e.what());
+	}	
 };
 	
 void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 

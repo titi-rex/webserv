@@ -34,7 +34,7 @@ typedef struct	s_virtual_host
 	std::vector<int>					ports;
 	std::vector<std::string>			hosts;
 	std::vector<std::string>			serverNames;
-	std::map<std::string, std::string>	cgi;	// s1 nom binaire, s2 path
+	std::map<std::string, std::string>	cgi;	// s1 nom executable, s2 path
 	std::map<std::string, t_location>	locations;
 }	t_virtual_host;
 
@@ -59,9 +59,9 @@ class WebServer
 		void	_socketList_init(void);
 		void	_epoll_init(void);
 
+		std::map<int, v_host_ptr>			_socketsList;
 
 	public	:
-		std::map<int, v_host_ptr>			_socketsList;
 		WebServer(std::string path);
 		~WebServer(void);
 
@@ -83,7 +83,9 @@ class WebServer
 
 		void	run(void);
 
-		void	send_response(int client_fd);	//	notre futur method GET
+	
+		std::string	GET(std::string path);
+		std::string	GET_error(int code);	// GET special pour error
 };
 
 void 						formatLine(std::string &line);

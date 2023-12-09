@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 00:55:31 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 22:53:57 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,16 @@ std::string	str_sock_family(const struct sockaddr_in& sock)
 
 std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock)
 {
-	os << "Socket family : " << str_sock_family(sock) << endl;
-	os << "Socket host : " << hintostr(ntohl(sock.sin_addr.s_addr)) << endl;
-	os << "Socket port : " << ntohs(sock.sin_port) << endl;
+	os << "Socket family : " << str_sock_family(sock) << std::endl;
+	os << "Socket host : " << hintostr(ntohl(sock.sin_addr.s_addr)) << std::endl;
+	os << "Socket port : " << ntohs(sock.sin_port) << std::endl;
 	return (os);
+}
+
+void	close_n_throw(int fd, std::string str)
+{
+	close(fd);
+	throw std::runtime_error(str);
 }
 
 int	sock_init(std::string host, in_port_t port, int backlog)
@@ -62,22 +68,20 @@ int	sock_init(std::string host, in_port_t port, int backlog)
 	const int			l = 1;
 	int					new_sock_fd;
 	
-	new_sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0); //
+	new_sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
 	if (new_sock_fd == -1)
 		throw std::runtime_error("fatal: cannot create socket");
-	if (setsockopt(new_sock_fd, SOL_SOCKET, SO_REUSEADDR, &l, sizeof(l)) == -1)
-		throw std::runtime_error("fatal: cannot change socket option");
+	if (setsockopt(new_sock_fd, SOL_SOCKET, SO_REUSEADDR, &l, sizeof(int)) == -1)
+		close_n_throw(new_sock_fd, "fatal: cannot change socket option");
 
 	bzero(&sin, sizeof(sin));
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
-	sin.sin_addr.s_addr = htonl(hstrtoint(host));
+	sin = (struct sockaddr_in){AF_INET, htons(port), htonl(hstrtoint(host)), 0};
 std::clog << sin << std::endl;
-	if (bind(new_sock_fd, (struct sockaddr*) &sin, sizeof(sin)) == -1)
-		throw std::runtime_error("fatal: cannot bind socket");
 
+	if (bind(new_sock_fd, (struct sockaddr*) &sin, sizeof(sin)) == -1)
+		close_n_throw(new_sock_fd, "fatal: cannot bind socket");
 	if (listen(new_sock_fd, backlog) == -1)
-		throw std::runtime_error("fatal: socket cannot enter listening state");
+		close_n_throw(new_sock_fd, "fatal: socket cannot listen");
 	return(new_sock_fd);
 }
 
@@ -93,7 +97,7 @@ void	WebServer::_socketList_init(void)
 	std::clog << _virtualHost[i] << std::endl;
 		for (size_t k = 0; k < _virtualHost[i].ports.size(); ++k)
 		{
-			int	new_sock_fd = sock_init(_virtualHost[i].host, _virtualHost[i].ports[k], 5);
+			int	new_sock_fd = sock_init(_virtualHost[i].host, _virtualHost[i].ports[k], BACKLOG);
 			_socketsList[new_sock_fd] = &_virtualHost[i];
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/08 22:12:54 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 22:17:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,6 @@
 # include <algorithm>
 
 # define RQ_SIZE_MAX 1024
-
-using std::endl;
-using std::cout;
-using std::string;
 
 class Request 
 {
@@ -53,13 +49,6 @@ class Request
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
-
-		class Error : public std::runtime_error
-		{
-			public:
-				int	status;
-				Error(std::string str, int status);
-		};
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);

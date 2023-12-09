@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 01:03:50 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 22:05:17 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@
 
 sig_atomic_t	g_status = 1;
 
-
-/*
 int	main(int ac, char **av)
 {
 	if (ac != 2)
@@ -47,7 +45,7 @@ int	main(int ac, char **av)
 	}
 	return (0);
 }
-*/
+
 
 
 

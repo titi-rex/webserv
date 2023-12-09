@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/08 23:56:34 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 23:04:51 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ uint32_t	hstrtoint(std::string host);
 
 int			sock_init(std::string host, in_port_t port, int backlog);
 std::string	recept_request(int sock_listen, int&client_fd);
-
+void		send_response(int client_fd, std::string response);
 
 
 
@@ -76,6 +76,7 @@ template <typename T> std::ostream&	operator<<(std::ostream &os, const std::vect
 # define FIRST_PORT 8080
 # define HOST_ANY "0.0.0.0"
 # define HOST_LB "127.0.0.1"
+# define BACKLOG 5
 
 
 #endif

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: louisa <louisa@student.42.fr>              +#+  +:+       +#+         #
+#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/09 14:10:01 by louisa           ###   ########.fr        #
+#    Updated: 2023/12/09 23:00:44 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,7 @@ LST_SRCS_CLASS	=	Request.cpp WebServer.cpp
 SRCS_CLASS		=	${addprefix ${DIR_SRCS_CLASS}, ${LST_SRCS_CLASS}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	main.cpp signal.cpp socket.cpp connect.cpp \
+LST_SRCS		=	main.cpp signal.cpp socket.cpp connect.cpp method.cpp \
 					${SRCS_PARSE} ${SRCS_HTTP} ${SRCS_CLASS} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 

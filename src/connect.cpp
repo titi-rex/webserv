@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   communication.cpp                                  :+:      :+:    :+:   */
+/*   connect.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 01:00:41 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 23:04:29 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,24 +53,28 @@ std::string	recept_request(int sock_listen, int& client_fd)
 
 
 /**
- * @brief temporary func to respond to client
+ * @brief send wrapper to respond to client , should close client_fd if successful
  * 	throw: should not close server
- * @param client_fd 
+ * @param client_fd, response
  */
-void	WebServer::send_response(int client_fd)
+void	send_response(int client_fd, std::string response)
 {
-	std::string		response;
-	std::ifstream	indexPage("data/default_page/index.html");
-
-	if (indexPage.fail())
-		throw std::runtime_error("error closing file");
-	std::getline(indexPage, response, '\0');
-	response= "HTTP/1.0 200 OK\r\n\r\n" + response + "\r\n\r\n";
-	int n = send(client_fd, response.c_str() , response.length(), MSG_DONTWAIT);
-	indexPage.close();
-	if (n < 0)
-		throw std::runtime_error("error send");
+	if (send(client_fd, response.c_str() , response.length(), MSG_DONTWAIT) == -1)
+		throw std::runtime_error("500 send fail");
+	close(client_fd);
 }
+
+
+void	epoll_error_handler(void)
+{
+	if (errno == EBADF || errno == EINVAL)
+		throw std::runtime_error("fatal: wrong epoll fd");
+	if (errno == EFAULT)
+		throw std::runtime_error("fatal: epoll cant write events");
+	throw std::runtime_error("fatal: unknow");
+};
+
+
 
 /**
  * @brief main function
@@ -86,34 +90,43 @@ void	WebServer::run(void)
 	{
 		std::clog << "Waiting for event.." << std::endl;
 		int n_event = epoll_wait(_efd, revents, MAX_EVENTS, TIMEOUT);
-		if (n_event == -1)
-			throw std::runtime_error("erro epoll wait");
+		if ((n_event == -1))
+			epoll_error_handler() ;
 		std::clog << n_event << " events ready" << std::endl;
 	// process event
 		for (int i = 0; i < n_event; ++i)
 		{
 			int	client_fd;
-		// read and parse request
+
 			try
 			{
+			// read and parse request
 				Request	rq(recept_request(revents[i].data.fd, client_fd));
 				std::clog << rq << std::endl;
+
 			// special instruction : execute shutdown
 				if (rq.getUri() == "/shutdown")
 					g_status = 0;
-			// respond to request, there should be GET/HEAD/POST
-				send_response(client_fd);
-				close(client_fd);
-				
+
+			// prepare response based on request, there should be GET/HEAD/POST
+				std::string	response = GET("data/default_page/index.html");
+
+			//	send response to client
+				send_response(client_fd, response);
 			}
 			catch (std::exception & e)
 			{
 				//	exception here should be interpreted :
 				//	and proper response should be send to client
 				//	aka GET to proper error file
-				//	plus error should be loginto log file
-				
-				close(client_fd);
+				//	plus maybe error should be log into log file
+				std::clog << e.what() << std::endl;
+				int	status = std::atoi(e.what());
+				if (status == 0)
+					status = 500;
+				std::string response = GET_error(status);
+
+				send_response(client_fd, response);
 			}
 		}
 	}

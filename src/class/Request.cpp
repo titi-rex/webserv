@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/08 22:04:30 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 22:18:05 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@ size_t	Request::_num_request = 0;
 
 std::ostream& operator<<(std::ostream& os, const Request& req)
 {
-	os << "rid: " << req.getRid() << endl;
-	os << "RL: " << req.getMethod() << " " << req.getUri() << " HTTP/1.1" << endl;
-	os << "Headers :" << endl;
+	os << "rid: " << req.getRid() << std::endl;
+	os << "RL: " << req.getMethod() << " " << req.getUri() << " HTTP/1.1" << std::endl;
+	os << "Headers :" << std::endl;
 	os << req.getHeaders();
-	os << "Body :" << endl;
-	os << "{" << req.getBody() << "}" << endl;
+	os << "Body :" << std::endl;
+	os << "{" << req.getBody() << "}" << std::endl;
 	return (os);
 };
 
@@ -81,7 +81,7 @@ void	Request::unchunk(std::istringstream& iss_raw)
 			return ;
 		std::getline(iss_raw, tmp, '\n');
 		if (tmp.size() != chunk_size)
-			throw Error("Bad Chunk", 400);
+			throw std::runtime_error("400 Bad Chunk");
 		_body += tmp + '\n';
 	}
 }
@@ -96,14 +96,14 @@ Request::Request(std::string raw) : _rId(_num_request++), _mId(-1)
 	iss_raw >> tmp;
 
 	if (tmp.compare("HTTP/1.1") != 0)
-		throw Error("Wrong HTTP version", 505);
+		throw std::runtime_error("505 Wrong HTTP version");
 	if (_is_method_known(_method) == false)
-		throw Error("Method not implemented", 501);
+		throw std::runtime_error("501 Method not implemented");
 	if (_uri[0] != '/')
-		throw Error("Bad URI", 400);
+		throw std::runtime_error("400 Bad URI");
 
-	getline(iss_raw, tmp, '\n');
-	while (getline(iss_raw, tmp, '\n') && tmp != "" && tmp != "\r")
+	std::getline(iss_raw, tmp, '\n');
+	while (std::getline(iss_raw, tmp, '\n') && tmp != "" && tmp != "\r")
 	{	
 		std::istringstream iss(tmp);
 		std::string key;
@@ -116,18 +116,17 @@ Request::Request(std::string raw) : _rId(_num_request++), _mId(-1)
 	}
 
 	if (_headers.find("host:") == _headers.end())
-		throw Error("No Host Header", 400);
+		throw std::runtime_error("400 No Host Header");
 	if (_headers.find("transfert-encoding:") == _headers.end())
 	{
-		getline(iss_raw, _body, '\0');
+		std::getline(iss_raw, _body, '\0');
 		return ;
 	}
 	if (_headers["transfert-encoding:"] != "chunked")
-		throw Error("Unknow encoding", 400);
+		throw std::runtime_error("400 Unknow encoding");
 	unchunk(iss_raw);
 }
 
 // attention si strtol overflow -> thow
 // attention si getline throw
 
-Request::Error::Error(std::string str, int status) : runtime_error(str), status(status) {};
