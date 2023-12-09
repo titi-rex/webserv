@@ -6,78 +6,12 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/09 13:28:07 by louisa           ###   ########.fr       */
+/*   Updated: 2023/12/09 14:38:17 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 #include "Request.hpp"
-
-std::vector<std::string> splitLine(const std::string& line)
-{
-    std::vector<std::string> 	splitedLine;
-    std::string 				tempLine = line;
-    size_t 						pos = 0;
-
-	while ((pos = tempLine.find(" ")) != std::string::npos)
-	{
-		splitedLine.push_back(tempLine.substr(0, pos));
-		tempLine.erase(0, pos + 1);
-	}
-	// AJOUTER -1  pour supprimer le ;
-	if (!tempLine.empty())
-		splitedLine.push_back(tempLine.substr(0, tempLine.size()));
-	// print :
-    // for (const auto& word : splitedLine)
-    //     std::cout << "word = " << word << ' ' << std::endl;
-    return (splitedLine);
-}
-
-void formatLine(std::string &line)
-{
-    size_t 			hashPos = line.find_first_of("#");
-    size_t 			start = line.find_first_not_of(" \t");
-	bool 			wasSpace = false;
-	std::string 	formattedLine;
-	size_t			end;
-
-	if (!line.empty())
-	{
-		if (hashPos == 0)
-		{
-			line = '\n';
-			return ;
-		}
-		else if (hashPos != std::string::npos)
-		{
-			line.erase(hashPos);
-			return ;
-		}
-		if (start != std::string::npos)
-			line = line.substr(start);
-		for (size_t i = 0; i < line.length(); ++i)
-		{
-			if (!std::isspace(line[i]))
-			{
-				formattedLine += line[i];
-				wasSpace = false;
-			}
-			else if (!wasSpace)
-			{
-				formattedLine += ' ';
-				wasSpace = true;
-			}
-		}
-
-		end = formattedLine.find_last_not_of(" \t");
-		if (end != std::string::npos)
-			formattedLine.erase(end + 1);
-		line = formattedLine;
-	}
-	// if (line.empty() || line[line.length() - 1] != ';')
-	// 	std::cout << "Error" << std::endl;
-		// throw FormatException();
-}
 
 int WebServer::parseConf(std::string &line)
 {
@@ -88,8 +22,7 @@ int WebServer::parseConf(std::string &line)
 	splitedLine = splitLine(line);
 	if (splitedLine.empty())
 		return (0);
-	else if (splitedLine[0] == "bodySizeLimit")
-	{
+	else if (splitedLine[0] == "bodySizeLimit"){
 		std::stringstream stream(splitedLine[1]);
 		stream >> tmp;
 		setBodySizeLimit(tmp);
@@ -97,9 +30,7 @@ int WebServer::parseConf(std::string &line)
 	else if (splitedLine[0] == "dirErrorPage")
 		setDirErrorPage(splitedLine[1]);
 	else if (splitedLine[0] == "error_page")
-	{
 		setErrorPage(splitedLine[1], splitedLine[2]);
-	}
 	else if (line.find("server") != std::string::npos)
 		return (1);
 	else
@@ -112,15 +43,28 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 {
 	t_virtual_host 				newServ;
 	std::vector<std::string>	sLine;
+	std::string					sPort;
 	size_t						tmp;
+	size_t						pos = 0;
+	int							port = 0;
 
 	for (uintptr_t i = start; i <= end; ++i) {
 		formatLine(fileVec[i]);
 		sLine = splitLine(fileVec[i]);
-		// std::cout << "Server line: " << formatLine(fileVec[i]) << std::endl;
-		if (sLine.empty())
-			return ;
-		// else if (sLine[0] == "listen"){}
+		std::cout << "Server line: " << fileVec[i] << std::endl;
+		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{")
+			continue ;
+		else if (sLine[0] == "listen"){
+			pos = sLine[1].find(':');
+			newServ.host = sLine[1].substr(0, pos);
+			sPort = sLine[1].substr(pos + 1, sLine[1].size() - pos - 2);
+
+			std::istringstream pStream(sPort);
+			while (pStream >> port){
+				newServ.ports.push_back(port);
+				pStream.ignore(1, ',');
+			}
+		}
 		// else if (sLine[0] == "server_name"){}
 		else if (sLine[0] == "root")
 			newServ.root = sLine[1];
@@ -144,31 +88,42 @@ void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
 	uintptr_t	start = 0;
 	uintptr_t	end = 0;
     int 		bracket = 0;
+	char		c;
 
-	std::cout << "serv " << std::endl;
-    for (uintptr_t j = *i; j < fileVec.size(); ++j) 
-	{ 
-        for (char c : fileVec[j])
-		{
+    for (uintptr_t j = *i; j < fileVec.size(); ++j){
+        const std::string &line = fileVec[j];
+        for (size_t k = 0; k < line.size(); ++k){
+            c = line[k];
             if (c == '{'){
-				if (start == 0)
-					start = j + 2;
+                if (start == 0)
+                    start = j + 1;
                 ++bracket;
-			}
-            else if (c == '}') 
-			{
+            }
+            else if (c == '}'){
                 --bracket;
-                if (bracket == 0) 
-				{
+                if (bracket == 0){
                     *i = j + 1;
-					end = j;
-					parseServ(fileVec, start, end);
+                    end = j;
+                    parseServ(fileVec, start, end);
                     return;
                 }
             }
         }
     }
 	// mauvaise synthax, throw exception !!
+}
+
+void	WebServer::debugServ()
+{
+	std::cout << "*------------- SERV --------------*" << std::endl;
+	for (size_t i = 0; i < _virtualHost.size(); ++i) {
+		std::cout << "server host = " << _virtualHost[i].host << std::endl;
+		for (size_t j = 0; j < _virtualHost[i].ports.size(); ++j) 
+			std::cout << "server port = " << _virtualHost[i].ports[j] << std::endl;
+		std::cout << "server root = " << _virtualHost[i].root << std::endl;
+		std::cout << "server index = " << _virtualHost[i].index << std::endl;
+		std::cout << "server bodySize = " << _virtualHost[i].bodySize << std::endl;
+	}
 }
 
 int main()
@@ -179,7 +134,7 @@ int main()
 	
 	std::ifstream file("exemple.conf");
     if (!file.is_open()) {
-        std::cerr << "Erreur lors de l'ouverture du fichier de configuration." << std::endl;
+        std::cerr << "Error could not open conf file :(" << std::endl;
         return 1;
     }
 
@@ -202,6 +157,8 @@ int main()
 	std::cout << "error page dir = " << serv.getDirErrorPage() << std::endl;
 	std::cout << "error page val = ";
 	std::cout << serv.getErrorPage();
+	std::cout <<std::endl;
+	serv.debugServ();
 
     return 0;
 }

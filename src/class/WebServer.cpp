@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 01:01:18 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 14:35:20 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,51 +43,65 @@ WebServer::~WebServer(void)
 	close(_efd);
 };
 
-std::vector<t_virtual_host>	WebServer::getVirtualHost(void) const { return (this->_virtualHost); };
-void	WebServer::setVirtualHost(std::vector<t_virtual_host> virtualHost) { this->_virtualHost = virtualHost;; };
 
-std::map<std::string,std::string>&	WebServer::getErrorPage(void) { return (this->_errorPage); };
-void	WebServer::setErrorPage(std::string key, std::string value) 
-{ 
+void	WebServer::setVirtualHost(std::vector<t_virtual_host> virtualHost) { 
+	this->_virtualHost = virtualHost; 
+};
+
+void	WebServer::setErrorPage(std::string key, std::string value) { 
 	this->_errorPage[key] = value;
+};
+
+void	WebServer::setDirErrorPage(std::string dirErrorPage) {
+	this->_dirErrorPage = dirErrorPage; 
+};
+
+void	WebServer::setBodySizeLimit(size_t bodySizeLimit) { 
+	this->_bodySizeLimit = bodySizeLimit;
+};
+
+std::vector<t_virtual_host>	WebServer::getVirtualHost(void) const { 
+	return (this->_virtualHost); 
+};
+
+std::map<std::string,std::string>&	WebServer::getErrorPage(void) { 
+	return (this->_errorPage); 
 };
 
 std::string	WebServer::getDirErrorPage(void) const { 
 	return (this->_dirErrorPage); 
 };
-void	WebServer::setDirErrorPage(std::string dirErrorPage) { this->_dirErrorPage = dirErrorPage; };
 
-size_t	WebServer::getBodySizeLimit(void) const { return (this->_bodySizeLimit); };
-void	WebServer::setBodySizeLimit(size_t bodySizeLimit) 
-{ 
-	this->_bodySizeLimit = bodySizeLimit;
+size_t	WebServer::getBodySizeLimit(void) const {
+	 return (this->_bodySizeLimit); 
 };
-
 
 WebServer::WebServer(std::string path) 
 {
-	t_virtual_host	tmp;
-
-	tmp.sId = 0;
-	tmp.host = "127.0.0.1";
-	tmp.ports.push_back(8080);
-	tmp.ports.push_back(8081);
-	_virtualHost.push_back(tmp);
-	tmp.sId = 1;
-	tmp.ports.clear();
-	tmp.ports.push_back(8541);
-	_virtualHost.push_back(tmp);
+	(void)path;
 	
-	try
-	{
-		_socketList_init();
-		_epoll_init();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		throw e;
-	}	
+	// t_virtual_host	tmp;
+
+	// tmp.sId = 0;
+	// tmp.host = "127.0.0.1";
+	// tmp.ports.push_back(8080);
+	// tmp.ports.push_back(8081);
+	// _virtualHost.push_back(tmp);
+	// tmp.sId = 1;
+	// tmp.ports.clear();
+	// tmp.ports.push_back(8541);
+	// _virtualHost.push_back(tmp);
+	
+	// try
+	// {
+	// 	_socketList_init();
+	// 	_epoll_init();
+	// }
+	// catch(const std::exception& e)
+	// {
+	// 	std::cerr << e.what() << std::endl;
+	// 	throw e;
+	// }	
 };
 	
 void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: louisa <louisa@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/09 01:06:54 by tlegrand         ###   ########.fr        #
+#    Updated: 2023/12/09 14:10:01 by louisa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ DEFAULT_CONFIG_PATH	=	none
 
 #	==============================	SOURCES	==============================	#
 DIR_SRCS_PARSE	=	parsing/
-LST_SRCS_PARSE	=	parsing_conf.cpp
+LST_SRCS_PARSE	=	parsing_conf.cpp init_conf.cpp utils.cpp
 SRCS_PARSE		=	${addprefix ${DIR_SRCS_PARSE}, ${LST_SRCS_PARSE}}
 
 DIR_SRCS_HTTP	=	http/

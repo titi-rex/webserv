@@ -64,23 +64,28 @@ class WebServer
 		WebServer(std::string path);
 		~WebServer(void);
 
-		std::vector<t_virtual_host>	getVirtualHost(void) const;
-		void	setVirtualHost(std::vector<t_virtual_host> virtualHost);
+		void								setVirtualHost(std::vector<t_virtual_host> virtualHost);
+		void								setErrorPage(std::string key, std::string value); 
+		void								setDirErrorPage(std::string dirErrorPage);
+		void								setBodySizeLimit(size_t bodySizeLimit);
+		
+		std::vector<t_virtual_host>			getVirtualHost(void) const;
 		std::map<std::string,std::string>&	getErrorPage(void);
-		void	setErrorPage(std::string key, std::string value); 
-		std::string	getDirErrorPage(void) const;
-		void	setDirErrorPage(std::string dirErrorPage);
-		size_t	getBodySizeLimit(void) const;
-		void	setBodySizeLimit(size_t bodySizeLimit);
+		std::string							getDirErrorPage(void) const;
+		size_t								getBodySizeLimit(void) const;
 
 		int		parseConf(std::string &line);
 		void	parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
 		void 	findServ(std::vector<std::string> fileVec, uintptr_t *i);
 		void	addVirtualHost(const t_virtual_host& virtualHost);
+		void	debugServ();
 
 		void	run(void);
 
 		void	send_response(int client_fd);	//	notre futur method GET
 };
+
+void 						formatLine(std::string &line);
+std::vector<std::string>	splitLine(const std::string& line);
 
 #endif
