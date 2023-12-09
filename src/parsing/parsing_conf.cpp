@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/07 21:52:04 by louisa           ###   ########.fr       */
+/*   Updated: 2023/12/07 22:02:42 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,16 +112,28 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 {
 	t_virtual_host 				newServ;
 	std::vector<std::string>	sLine;
+	size_t						tmp;
 
 	for (uintptr_t i = start; i <= end; ++i) {
 		formatLine(fileVec[i]);
 		sLine = splitLine(fileVec[i]);
+		// std::cout << "Server line: " << formatLine(fileVec[i]) << std::endl;
 		if (sLine.empty())
 			return ;
 		// else if (sLine[0] == "listen"){}
 		// else if (sLine[0] == "server_name"){}
 		else if (sLine[0] == "root")
 			newServ.root = sLine[1];
+		else if (sLine[0] == "index")
+			newServ.index = sLine[1];
+		else if (sLine[0] == "bodySizeLimit"){
+			std::stringstream stream(sLine[1]);
+			stream >> tmp;
+			newServ.bodySize = tmp;
+		}
+		else
+			std::cout << "error" << std::endl;
+			// ligne pas reconnu, throw exception
 	}
 
 	addVirtualHost(newServ);
@@ -133,7 +145,7 @@ void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
 	uintptr_t	end = 0;
     int 		bracket = 0;
 
-	//std::cout << "serv " << std::endl;
+	std::cout << "serv " << std::endl;
     for (uintptr_t j = *i; j < fileVec.size(); ++j) 
 	{ 
         for (char c : fileVec[j])
