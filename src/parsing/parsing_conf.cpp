@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/07 21:52:04 by louisa           ###   ########.fr       */
+/*   Updated: 2023/12/09 01:06:28 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ int main()
 	std::cout << "size body max = " << serv.getBodySizeLimit() << std::endl;
 	std::cout << "error page dir = " << serv.getDirErrorPage() << std::endl;
 	std::cout << "error page val = ";
-	print_map(serv.getErrorPage());
+	std::cout << serv.getErrorPage();
 
     return 0;
 }
