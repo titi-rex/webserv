@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 22:18:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 23:20:25 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ const std::map<std::string, std::string>&	Request::getHeaders(void) const { retu
 
 bool	Request::_is_method_known(std::string & test)
 {
-	std::string	ref[3] = {"GET", "HEAD", "POST"};
+	std::string	ref[4] = {"GET", "HEAD", "POST", "DELETE"};
 	
 	for (size_t i = 0; i < 3; ++i)
 	{

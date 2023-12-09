@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/09 21:14:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 23:35:05 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void	WebServer::debugServ()
 	}
 }
 
-/*
+
 int main()
 {
 	WebServer					serv("exemple.conf");
@@ -169,5 +169,5 @@ int main()
 
     return 0;
 }
-*/
+
 

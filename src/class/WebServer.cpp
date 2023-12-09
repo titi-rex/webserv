@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 21:38:28 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 23:34:53 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ WebServer::WebServer(std::string path)
 {
 	(void)path;
 	
+	/*
 	t_virtual_host	tmp;
 
 	tmp.sId = 0;
@@ -88,6 +89,7 @@ WebServer::WebServer(std::string path)
 	tmp.ports.push_back(8081);
 	_virtualHost.push_back(tmp);
 	tmp.sId = 1;
+	tmp.host = "100.85.0.1";
 	tmp.ports.clear();
 	tmp.ports.push_back(8541);
 	_virtualHost.push_back(tmp);
@@ -102,6 +104,7 @@ WebServer::WebServer(std::string path)
 		std::cerr << e.what() << std::endl;
 		throw std::runtime_error(e.what());
 	}	
+	*/
 };
 	
 void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 

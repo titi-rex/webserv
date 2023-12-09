@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:59:01 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 01:00:56 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/09 23:32:18 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ extern sig_atomic_t	g_status;
 void	sig_handler(int sig)
 {
 	(void)sig;
-	std::clog << "\rsig catched" << std::endl;
 	g_status = 0;
 }
 
