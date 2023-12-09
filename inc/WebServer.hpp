@@ -28,10 +28,11 @@ typedef struct	s_virtual_host
 	bool								defaultServer;	// si plusieur server avec meme host/ports le premier est celui par default;
 	int									sId;
 	size_t								bodySize;
-	std::string							host;
 	std::string							root;
+	std::string							host;
 	std::string							index;
 	std::vector<int>					ports;
+	std::vector<std::string>			hosts;
 	std::vector<std::string>			serverNames;
 	std::map<std::string, std::string>	cgi;	// s1 nom binaire, s2 path
 	std::map<std::string, t_location>	locations;

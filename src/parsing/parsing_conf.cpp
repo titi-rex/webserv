@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/09 14:38:17 by louisa           ###   ########.fr       */
+/*   Updated: 2023/12/09 20:18:15 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			continue ;
 		else if (sLine[0] == "listen"){
 			pos = sLine[1].find(':');
-			newServ.host = sLine[1].substr(0, pos);
+			newServ.hosts.push_back(sLine[1].substr(0, pos));
 			sPort = sLine[1].substr(pos + 1, sLine[1].size() - pos - 2);
 
 			std::istringstream pStream(sPort);
@@ -65,7 +65,10 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 				pStream.ignore(1, ',');
 			}
 		}
-		// else if (sLine[0] == "server_name"){}
+		else if (sLine[0] == "server_name"){
+			for (size_t j = 1; j < sLine.size(); ++j)
+				newServ.serverNames.push_back(sLine[j]);
+		}
 		else if (sLine[0] == "root")
 			newServ.root = sLine[1];
 		else if (sLine[0] == "index")
@@ -117,9 +120,12 @@ void	WebServer::debugServ()
 {
 	std::cout << "*------------- SERV --------------*" << std::endl;
 	for (size_t i = 0; i < _virtualHost.size(); ++i) {
-		std::cout << "server host = " << _virtualHost[i].host << std::endl;
 		for (size_t j = 0; j < _virtualHost[i].ports.size(); ++j) 
-			std::cout << "server port = " << _virtualHost[i].ports[j] << std::endl;
+			std::cout << "server host = " << _virtualHost[i].hosts[j] << std::endl;
+		for (size_t k = 0; k < _virtualHost[i].ports.size(); ++k)
+			std::cout << "server port = " << _virtualHost[i].ports[k] << std::endl;
+		for (size_t l = 0; l < _virtualHost[i].serverNames.size(); ++l)
+			std::cout << "server names = " << _virtualHost[i].serverNames[l] << std::endl;
 		std::cout << "server root = " << _virtualHost[i].root << std::endl;
 		std::cout << "server index = " << _virtualHost[i].index << std::endl;
 		std::cout << "server bodySize = " << _virtualHost[i].bodySize << std::endl;

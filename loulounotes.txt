@@ -21,5 +21,6 @@ string::find_first_not_of 	: Recherche dans la string le premier char qui ne cor
 
 - si cgi_path specifié avant cgi_available
 - SI DOUBLE INSTRUCTION attention loulou
+- commentaires en fin de lignes
 
 
