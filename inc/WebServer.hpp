@@ -29,8 +29,9 @@ typedef struct	s_virtual_host
 	int									sId;
 	size_t								bodySize;
 	std::string							root;
-	std::string							host;
 	std::string							index;
+	std::pair<std::string, int>			host_port;
+	std::string							host;
 	std::vector<int>					ports;
 	std::vector<std::string>			hosts;
 	std::vector<std::string>			serverNames;
@@ -79,6 +80,7 @@ class WebServer
 		void	parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
 		void 	findServ(std::vector<std::string> fileVec, uintptr_t *i);
 		void	addVirtualHost(const t_virtual_host& virtualHost);
+		void	displayLocations(const t_virtual_host& virtualHost);
 		void	debugServ();
 
 		void	run(void);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/09 23:35:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/11 13:42:36 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,29 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 		std::cout << "Server line: " << fileVec[i] << std::endl;
 		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{")
 			continue ;
+		else if (sLine[0] == "location"){
+			t_location newLoc;
+			while ((fileVec[i].find("}") == std::string::npos)){
+				formatLine(fileVec[i]);
+				sLine = splitLine(fileVec[i]);
+				if (sLine[0] == "root")
+					newLoc.root = sLine[1];
+				++i;
+			}
+			newServ.locations.insert(std::pair<std::string, t_location>(sLine[1], newLoc));
+		}
 		else if (sLine[0] == "listen"){
 			pos = sLine[1].find(':');
-			newServ.hosts.push_back(sLine[1].substr(0, pos));
+			newServ.host_port.first = sLine[1].substr(0, pos);
 			sPort = sLine[1].substr(pos + 1, sLine[1].size() - pos - 2);
-
-			std::istringstream pStream(sPort);
-			while (pStream >> port){
-				newServ.ports.push_back(port);
-				pStream.ignore(1, ',');
+			if (sPort == "*")
+				newServ.host_port.second = 80;
+			else {
+				std::istringstream pStream(sPort);
+				while (pStream >> port){
+					newServ.host_port.second = port;
+					pStream.ignore(1, ',');
+				}
 			}
 		}
 		else if (sLine[0] == "server_name"){
@@ -116,30 +130,48 @@ void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
 	// mauvaise synthax, throw exception !!
 }
 
+
+void WebServer::displayLocations(const t_virtual_host& virtualHost) {
+    typedef std::map<std::string, t_location>::const_iterator LocationIterator;
+
+    for (LocationIterator it = virtualHost.locations.begin(); it != virtualHost.locations.end(); ++it) {
+        const t_location& location = it->second;
+        std::cout << "Location ID: " << it->first << std::endl;
+        std::cout << "Is path: " << location.isPath << std::endl;
+        std::cout << "Auto index: " << location.autoIndex << std::endl;
+        std::cout << "Location URI or Extension: " << location.uri_or_ext << std::endl;
+        std::cout << "Location root: " << location.root << std::endl;
+    }
+}
+
 void	WebServer::debugServ()
 {
 	std::cout << "*------------- SERV --------------*" << std::endl;
 	for (size_t i = 0; i < _virtualHost.size(); ++i) {
-		for (size_t j = 0; j < _virtualHost[i].ports.size(); ++j) 
-			std::cout << "server host = " << _virtualHost[i].hosts[j] << std::endl;
-		for (size_t k = 0; k < _virtualHost[i].ports.size(); ++k)
-			std::cout << "server port = " << _virtualHost[i].ports[k] << std::endl;
+		std::cout << "Server host = " << _virtualHost[i].host_port.first << std::endl;
+		std::cout << "Server port = " << _virtualHost[i].host_port.second << std::endl;
 		for (size_t l = 0; l < _virtualHost[i].serverNames.size(); ++l)
-			std::cout << "server names = " << _virtualHost[i].serverNames[l] << std::endl;
-		std::cout << "server root = " << _virtualHost[i].root << std::endl;
-		std::cout << "server index = " << _virtualHost[i].index << std::endl;
-		std::cout << "server bodySize = " << _virtualHost[i].bodySize << std::endl;
+			std::cout << "Server names = " << _virtualHost[i].serverNames[l] << std::endl;
+		std::cout << "Server root = " << _virtualHost[i].root << std::endl;
+		std::cout << "Server index = " << _virtualHost[i].index << std::endl;
+		std::cout << "Server bodySize = " << _virtualHost[i].bodySize << std::endl;
+		std::cout << std::endl;
+		
+		std::cout << "*------------- LOCATIONS --------------*" << std::endl;
+		displayLocations(_virtualHost[i]);
+		// std::cout << "location = " << _virtualHost[i].locations.first << std::endl;
 	}
 }
 
 
+
 int main()
 {
-	WebServer					serv("exemple.conf");
+	WebServer					serv("z_notes/exemple.conf");
 	std::vector<std::string> 	fileVec;
 	uintptr_t					i = 0;
 	
-	std::ifstream file("exemple.conf");
+	std::ifstream file("z_notes/exemple.conf");
     if (!file.is_open()) {
         std::cerr << "Error could not open conf file :(" << std::endl;
         return 1;
