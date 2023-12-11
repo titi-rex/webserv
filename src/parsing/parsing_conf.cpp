@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/11 13:42:36 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/11 14:18:16 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,33 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			continue ;
 		else if (sLine[0] == "location"){
 			t_location newLoc;
+			std::string first = sLine[1];
 			while ((fileVec[i].find("}") == std::string::npos)){
 				formatLine(fileVec[i]);
 				sLine = splitLine(fileVec[i]);
 				if (sLine[0] == "root")
 					newLoc.root = sLine[1];
+				else if (sLine[0] ==  "return")
+					newLoc.redirection = sLine[1];
+				else if (sLine[0] ==  "index")
+					for (size_t j = 1; j < sLine.size(); ++j)
+						newLoc.index.push_back(sLine[j]);
+				else if (sLine[0] ==  "allow_methods")
+					for (size_t j = 1; j < sLine.size(); ++j)
+						newLoc.allowMethod.push_back(sLine[j]);
+				else if (sLine[0] ==  "autoindex"){
+					if (sLine[1] == "on")
+						newLoc.autoIndex = true;
+					else if (sLine[1] == "off")
+						newLoc.autoIndex = false;
+					else
+						std::cout << "???ERROR???" << std::endl;
+						// trow exception
+				}
 				++i;
 			}
-			newServ.locations.insert(std::pair<std::string, t_location>(sLine[1], newLoc));
+			newLoc.uri_or_ext = first;
+			newServ.locations.insert(std::pair<std::string, t_location>(first, newLoc));
 		}
 		else if (sLine[0] == "listen"){
 			pos = sLine[1].find(':');
@@ -136,11 +155,17 @@ void WebServer::displayLocations(const t_virtual_host& virtualHost) {
 
     for (LocationIterator it = virtualHost.locations.begin(); it != virtualHost.locations.end(); ++it) {
         const t_location& location = it->second;
+		std::cout << std::endl;
         std::cout << "Location ID: " << it->first << std::endl;
         std::cout << "Is path: " << location.isPath << std::endl;
         std::cout << "Auto index: " << location.autoIndex << std::endl;
         std::cout << "Location URI or Extension: " << location.uri_or_ext << std::endl;
         std::cout << "Location root: " << location.root << std::endl;
+        std::cout << "Location return: " << location.redirection << std::endl;
+		for (size_t i = 0; i < location.index.size(); ++i)
+			std::cout << "Location index: " << location.index[i] << std::endl;
+		for (size_t j = 0; j < location.allowMethod.size(); ++j)
+			std::cout << "Location methods: " << location.allowMethod[j] << std::endl;
     }
 }
 

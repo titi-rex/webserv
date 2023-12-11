@@ -13,8 +13,8 @@ typedef unsigned int long	uintptr_t;
 
 typedef struct	s_location
 {
-	bool						isPath;	//if false its an extension !
-	bool						autoIndex;  // directory listing
+	bool						isPath;	//if false its an extension ! vrai par default
+	bool						autoIndex;  // directory listing true par default
 	int							lId;
 	std::string					uri_or_ext;
 	std::string					root;

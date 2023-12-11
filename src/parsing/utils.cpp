@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 14:09:34 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/09 14:12:08 by louisa           ###   ########.fr       */
+/*   Updated: 2023/12/11 14:06:09 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ void formatLine(std::string &line)
 			formattedLine.erase(end + 1);
 		line = formattedLine;
 	}
+	if (!line.empty() && line[line.length() - 1] == ';')
+        line.erase(line.length() - 1);
 	// if (line.empty() || line[line.length() - 1] != ';')
 	// 	std::cout << "Error" << std::endl;
 		// throw FormatException();
