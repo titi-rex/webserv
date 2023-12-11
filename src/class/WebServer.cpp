@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 23:34:53 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/11 13:02:12 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void WebServer::addVirtualHost(const t_virtual_host& virtualHost)
 {
 	_virtualHost.push_back(virtualHost);
 }
+
 
 template <typename T>
 std::ostream&	operator<<(std::ostream &os, const std::vector<T>& vec)
