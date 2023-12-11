@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/09 23:35:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/11 13:28:28 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,14 +132,14 @@ void	WebServer::debugServ()
 	}
 }
 
-
+/*
 int main()
 {
 	WebServer					serv("exemple.conf");
 	std::vector<std::string> 	fileVec;
 	uintptr_t					i = 0;
 	
-	std::ifstream file("exemple.conf");
+	std::ifstream file("z_notes/exemple.conf");
     if (!file.is_open()) {
         std::cerr << "Error could not open conf file :(" << std::endl;
         return 1;
@@ -169,5 +169,6 @@ int main()
 
     return 0;
 }
+*/
 
 

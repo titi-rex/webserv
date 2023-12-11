@@ -8,6 +8,7 @@
 # include <fstream>
 # include <sstream>
 # include <unistd.h>
+# include "Request.hpp"
 
 typedef unsigned int long	uintptr_t;
 
@@ -83,7 +84,7 @@ class WebServer
 
 		void	run(void);
 
-	
+		std::string	Method(Request & req, t_virtual_host* v_host);	
 		std::string	GET(std::string path);
 		std::string	GET_error(int code);	// GET special pour error
 };

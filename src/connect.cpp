@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   connect.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 23:04:29 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/11 14:55:42 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	WebServer::run(void)
 	{
 		std::clog << "Waiting for event.." << std::endl;
 		int n_event = epoll_wait(_efd, revents, MAX_EVENTS, TIMEOUT);
-		if ((n_event == -1))
+		if (n_event == -1)
 			epoll_error_handler() ;
 		std::clog << n_event << " events ready" << std::endl;
 	// process event
@@ -107,9 +107,8 @@ void	WebServer::run(void)
 			// special instruction : execute shutdown
 				if (rq.getUri() == "/shutdown")
 					g_status = 0;
-
 			// prepare response based on request, there should be GET/HEAD/POST
-				std::string	response = GET("data/default_page/index.html");
+				std::string	response = Method(rq, _socketsList[revents[i].data.fd]);
 
 			//	send response to client
 				send_response(client_fd, response);
