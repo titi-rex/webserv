@@ -1,3 +1,45 @@
+
+
+
+
+
+v_host_ptr	WebServer::choose_vHost(int socket_fd)
+{
+	
+};
+
+// 
+// trier par h/p puis par host
+// 2 server peuvent avoir le mem host:port
+// faire 1 seul socket pour ca ?
+// default server si pas de server precise ou inconnu
+// server demande si preciser  (curl --resolve 'test:8080:127.0.0.1' http://127.0.0.1:8080) //-H 'Host: server_name'
+
+
+struct s_sockets
+{
+	int			fd;
+	struct sockaddr_in	sin;
+	uint32_t	host;
+	uint16_t	port;
+	std::vector<v_host_ptr>	v_hosts;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 HTTP requests 
 
 METHOD /path/to/request HTTP/1.1
