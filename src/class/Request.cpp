@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 23:20:25 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 14:19:50 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int 				Request::getRid(void) const { return (this->_rId); };
 const std::string&	Request::getMethod(void) const { return (this->_method); };
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
+const short int&	Request::getMid(void) const { return (this->_mId); };
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
 
 
@@ -53,7 +54,7 @@ bool	Request::_is_method_known(std::string & test)
 {
 	std::string	ref[4] = {"GET", "HEAD", "POST", "DELETE"};
 	
-	for (size_t i = 0; i < 3; ++i)
+	for (size_t i = 0; i < 4; ++i)
 	{
 		if (ref[i].compare(test) == 0)
 		{
