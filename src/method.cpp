@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/11 19:49:56 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/12 14:25:57 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,11 @@ std::string HEAD( std::string path )
 	ft_date(date);
 
 	std::stringstream ss;
-	ss << "HTTP/1.0 200 OK\n";
-	ss << "Server : webserv\n";
+	ss << "HTTP/1.1 200 OK\n";
+	ss << "Server : webserv\n"; // mettre le serveur demandé par le client
 	ss << "Date: " << date << " GMT\n";
 	ss << "Content-length: " << contentLength << "\n";
+	ss << "Connection: keep-alive\n";
 	ss << "\r\n\r\n";
 
 	return (ss.str());
@@ -72,35 +73,23 @@ std::string	WebServer::Method(Request & req, t_virtual_host* v_host)
 {
 	(void) v_host;
 
-	std::string	methods[4] = {"GET", "POST", "DELETE", "HEAD"};
-	std::string reqMethod = req.getMethod();
-	int			i;
-
-	for (i = 0; i < 5; ++i)
-	{
-		if (reqMethod == methods[i])
-			break;
-	}
-
-	switch (i)
+	switch (req.getMid())
 	{
 		case 0:
 			std::cout << "GET JUJU" << std::endl;
 			return (GET("data/default_page/index.html"));
 		case 1:
-			std::cout << "POST JUJU" << std::endl;
-			break;
-		case 2:
-			std::cout << "DELETE JUJU" << std::endl;
-			break;
-		case 3:
 			std::cout << "HEAD JUJU" << std::endl;
 			return (HEAD("data/default_page/index.html"));
-		default:
-			std::cout << "Not supported method!" << std::endl;
+		case 2:
+			std::cout << "POST JUJU" << std::endl;
+			break;
+		case 3:
+			std::cout << "DELETE JUJU" << std::endl;
+			break;
 	};
 
-	return ("Not supported method!");
+	return (NULL);
 }	
 
 
