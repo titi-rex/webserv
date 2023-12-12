@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 14:37:54 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/12 16:23:25 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ std::string	WebServer::GET_error(int code)
 	return ("500 Internal Server Error\r\n\r\n");
 }
 
-void ft_date( char * date )
+static void	ft_date( char *date )
 {
 	time_t rawtime;
 	struct tm *info;
