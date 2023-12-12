@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 14:38:16 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:12:02 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ WebServer::WebServer(std::string path)
 		if (this->parseConf(fileVec[i]) == 1)
 			this->findServ(fileVec, &i);
 		++i;
+		
    	}
 	this->debugServ();
 	

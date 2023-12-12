@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 14:49:04 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:14:00 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@ int WebServer::parseConf(std::string &line)
 	else if (line.find("server") != std::string::npos)
 		return (1);
 	else
-		std::cout << "error" << std::endl;
-		// ligne pas reconnu, throw exception
+		throw std::runtime_error("Unrecognised line in configuration file");
 	return (0);
 }
 
@@ -44,11 +43,14 @@ t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vecto
 	t_location newLoc;
 	std::string first = sLine[1];
 	
-	initLocation(&newLoc);	
+	initLocation(&newLoc);
+	++(*i);
 	while ((fileVec[*i].find("}") == std::string::npos)){
 		formatLine(fileVec[*i]);
 		sLine = splitLine(fileVec[*i]);
-		if (sLine[0] == "root")
+		if (sLine[0].empty())
+			continue;
+		else if (sLine[0] == "root")
 			newLoc.root = sLine[1];
 		else if (sLine[0] ==  "return")
 			newLoc.redirection = sLine[1];
@@ -66,9 +68,10 @@ t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vecto
 			else if (sLine[1] == "off")
 				newLoc.autoIndex = false;
 			else
-				std::cout << "??? ERROR ???" << std::endl;
-				// trow exception
+				throw std::runtime_error("Invalid Autoindex");
 		}
+		else
+			throw std::runtime_error("Unrecognised line in configuration file : Location");
 		++(*i);
 	}
 	newLoc.uri_or_ext = first;
@@ -132,8 +135,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			}
 		}
 		else
-			std::cout << "error serv" << std::endl;
-			// ligne pas reconnu, throw exception
+		throw std::runtime_error("Unrecognised line in configuration file : Server");
 	}
 
 	addVirtualHost(newServ);
@@ -166,7 +168,7 @@ void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
             }
         }
     }
-	// mauvaise synthax, throw exception !!
+	throw std::runtime_error("Error : wrong synthax in configuration file");
 }
 
 
