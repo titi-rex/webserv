@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 23:04:51 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:19:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@
 #include <netdb.h>
 #include <signal.h>
 
-# include <unistd.h>
+
 # include <errno.h>
 
 
@@ -68,7 +68,11 @@ void		send_response(int client_fd, std::string response);
 
 std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host);
 std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host);
-template <typename T> std::ostream&	operator<<(std::ostream &os, const std::vector<T>& vec);
+
+# include "map_operator.hpp"
+# include "deque_operator.hpp"
+# include "vector_operator.hpp"
+
 
 # define MAXLINE 24
 # define MAX_EVENTS 5
@@ -76,7 +80,7 @@ template <typename T> std::ostream&	operator<<(std::ostream &os, const std::vect
 # define FIRST_PORT 8080
 # define HOST_ANY "0.0.0.0"
 # define HOST_LB "127.0.0.1"
-# define BACKLOG 5
+
 
 
 #endif
