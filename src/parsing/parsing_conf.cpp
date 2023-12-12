@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 15:35:55 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:42:30 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,10 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			}
 		}
 		else
+		{
+			std::cout << "error line = " << fileVec[i]<< std::endl;
 			throw std::runtime_error("Unrecognised line in configuration file : Server");
+		}
 	}
 
 	addVirtualHost(newServ);
