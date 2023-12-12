@@ -6,10 +6,9 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 10:54:31 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 16:24:30 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "webserv.hpp"
 
@@ -33,8 +32,7 @@ std::string	recept_request(int sock_listen, int& client_fd)
 	if (client_fd == -1)
 		throw std::runtime_error("cannot accept client socket");
 
-	std::clog << client_sin << std::endl;
-
+//std::clog << client_sin << std::endl;
 	char		rec_buffer[MAXLINE + 1] = {0};
 	int			n_rec;
 	std::string	res;
@@ -74,7 +72,28 @@ void	epoll_error_handler(void)
 	throw std::runtime_error("fatal: unknow");
 };
 
+bool	WebServer::is_server_named(v_host_ptr v_host, const std::string& name)
+{
+	for (std::vector<std::string>::iterator it = v_host->serverNames.begin(); it != v_host->serverNames.end(); ++it)
+	{
+		if (*it == name)
+			return (true);
+	}
+	return (false);
+}
 
+v_host_ptr	WebServer::selectServer(Socket& sk, Request& rq)
+{
+	if (rq.getHeaders().count("host:"))
+	{		
+		for (std::deque<v_host_ptr>::iterator it = sk.v_hosts.begin(); it != sk.v_hosts.end(); ++it)
+		{
+			if (is_server_named(*it, rq.getHeaders().at("host:")))
+				return (*it);
+		}
+	}
+	return (sk.v_hosts[0]);
+};
 
 /**
  * @brief main function
@@ -102,12 +121,13 @@ void	WebServer::run(void)
 			{
 			// read and parse request
 				Request	rq(recept_request(revents[i].data.fd, client_fd));
-				std::clog << rq << std::endl;
+			std::clog << rq << std::endl;
 
 			// special instruction : execute shutdown
 				if (rq.getUri() == "/shutdown")
 					g_status = 0;
-
+				v_host_ptr	host = selectServer(_socketsList[revents[i].data.fd], rq);
+				std::cout << host << std::endl;
 			// prepare response based on request, there should be GET/HEAD/POST
 				std::string	response = GET("data/default_page/index.html");
 

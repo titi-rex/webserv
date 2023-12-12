@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:25:21 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:28:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ WebServer::WebServer(std::string path)
    	}
 	this->debugServ();
 	
-
 	try
 	{
 		_socketList_init();

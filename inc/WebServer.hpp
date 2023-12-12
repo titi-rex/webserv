@@ -21,6 +21,8 @@ typedef unsigned int long	uintptr_t;
 
 # define BACKLOG 5
 
+class Request;
+
 class WebServer 
 {
 	private	:
@@ -44,6 +46,8 @@ class WebServer
 	public	:
 		WebServer(std::string path);
 		~WebServer(void);
+
+
 
 		void								setVirtualHost(std::vector<t_virtual_host> virtualHost);
 		void								setErrorPage(std::string key, std::string value); 
@@ -69,6 +73,11 @@ class WebServer
 	
 		std::string	GET(std::string path);
 		std::string	GET_error(int code);	// GET special pour error
+
+
+		bool	is_server_named(v_host_ptr v_host, const std::string& name);
+		v_host_ptr	selectServer(Socket& sk, Request& rq);
+
 };
 
 void						initLocation(t_location* loc);
