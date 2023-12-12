@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 15:22:57 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 16:12:44 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int WebServer::parseConf(std::string &line)
 	
 	formatLine(line);
 	splitedLine = splitLine(line);
-	if (splitedLine.empty())
+	if (splitedLine.empty() || splitedLine[0] == "\n")
 		return (0);
 	else if (splitedLine[0] == "bodySizeLimit"){
 		std::stringstream stream(splitedLine[1]);
@@ -84,12 +84,11 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 	std::vector<std::string>	sLine;
 	std::string					sPort;
 	size_t						tmp = 0;
-	int							port = 0;
 
 	for (uintptr_t i = start; i <= end; ++i) {
 		formatLine(fileVec[i]);
 		sLine = splitLine(fileVec[i]);
-		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{")
+		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{" || sLine[0] == "\n")
 			continue ;
 		else if (sLine[0] == "location"){
 			t_location newLoc;
@@ -100,15 +99,13 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 		else if (sLine[0] == "listen"){
 			tmp = sLine[1].find(':');
 			newServ.host_port.first = sLine[1].substr(0, tmp);
-			sPort = sLine[1].substr(tmp + 1, sLine[1].size() - tmp - 2);
+			sPort = sLine[1].substr(tmp + 1, sLine[1].size() - tmp - 1);
 			if (sPort == "*")
 				newServ.host_port.second = 80;
 			else {
-				std::istringstream pStream(sPort);
-				while (pStream >> port){
-					newServ.host_port.second = port;
-					pStream.ignore(1, ',');
-				}
+				std::stringstream stream(sPort);
+				stream >> tmp;
+				newServ.host_port.second  = tmp;
 			}
 		}
 		else if (sLine[0] == "server_name"){
@@ -135,7 +132,10 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			}
 		}
 		else
-		throw std::runtime_error("Unrecognised line in configuration file : Server");
+		{
+			std::cout << "error line = " << fileVec[i]<< std::endl;
+			throw std::runtime_error("Unrecognised line in configuration file : Server");
+		}
 	}
 
 	addVirtualHost(newServ);
@@ -209,8 +209,8 @@ void	WebServer::debugServ()
 {
 	std::cout << "*------------- DEBUG --------------*" << std::endl;
 	std::cout << "size body max = " << getBodySizeLimit() << std::endl;
-	std::cout << "error page dir = " << getDirErrorPage() << std::endl;
-	std::cout << "error page val = ";
+	std::cout << "error page directory = " << getDirErrorPage() << std::endl;
+	std::cout << "error page value = ";
 	std::cout << getErrorPage();
 	std::cout <<std::endl;
 
