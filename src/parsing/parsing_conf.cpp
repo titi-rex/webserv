@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 15:30:19 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:35:55 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int WebServer::parseConf(std::string &line)
 	
 	formatLine(line);
 	splitedLine = splitLine(line);
-	if (splitedLine.empty())
+	if (splitedLine.empty() || splitedLine[0] == "\n")
 		return (0);
 	else if (splitedLine[0] == "bodySizeLimit"){
 		std::stringstream stream(splitedLine[1]);
@@ -88,7 +88,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 	for (uintptr_t i = start; i <= end; ++i) {
 		formatLine(fileVec[i]);
 		sLine = splitLine(fileVec[i]);
-		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{")
+		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{" || sLine[0] == "\n")
 			continue ;
 		else if (sLine[0] == "location"){
 			t_location newLoc;
