@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:06:17 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/12 15:36:44 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void	WebServer::run(void)
 				if (rq.getUri() == "/shutdown")
 					g_status = 0;
 			// prepare response based on request, there should be GET/HEAD/POST
-				std::string	response = Method(rq, _socketsList[revents[i].data.fd]);
+				std::string	response = Method(rq, _socketsList[revents[i].data.fd].v_hosts[0]);
 
 			//	send response to client
 				send_response(client_fd, response);
