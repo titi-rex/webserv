@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 15:42:30 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 16:12:44 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,8 +209,8 @@ void	WebServer::debugServ()
 {
 	std::cout << "*------------- DEBUG --------------*" << std::endl;
 	std::cout << "size body max = " << getBodySizeLimit() << std::endl;
-	std::cout << "error page dir = " << getDirErrorPage() << std::endl;
-	std::cout << "error page val = ";
+	std::cout << "error page directory = " << getDirErrorPage() << std::endl;
+	std::cout << "error page value = ";
 	std::cout << getErrorPage();
 	std::cout <<std::endl;
 
