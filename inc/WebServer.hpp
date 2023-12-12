@@ -13,8 +13,8 @@ typedef unsigned int long	uintptr_t;
 
 typedef struct	s_location
 {
-	bool						isPath;	//if false its an extension ! vrai par default
-	bool						autoIndex;  // directory listing true par default
+	bool						isPath;	//if false its an extension !  | vrai par default
+	bool						autoIndex;  // directory listing | true par default
 	int							lId;
 	std::string					uri_or_ext;
 	std::string					root;
@@ -90,6 +90,7 @@ class WebServer
 		std::string	GET_error(int code);	// GET special pour error
 };
 
+void						initLocation(t_location* loc);
 void 						formatLine(std::string &line);
 std::vector<std::string>	splitLine(const std::string& line);
 
