@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:12:02 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:15:39 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,8 @@ WebServer::WebServer(std::string path)
 	uintptr_t					i = 0;
 	
 	std::ifstream file(path.c_str());
-    if (!file.is_open()) {
-        std::cerr << "Error could not open conf file :(" << std::endl;
-        // error throw exception 
-    }
+    if (!file.is_open()) 
+		throw std::runtime_error("Error : could not open configuration file");
 	
 	std::string line;
     while (std::getline(file, line)) {
