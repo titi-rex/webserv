@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 14:09:34 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/11 14:06:09 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 11:08:07 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,3 +69,9 @@ void formatLine(std::string &line)
 		// throw FormatException();
 }
 
+void	initLocation(t_location* loc)
+{
+	loc->isPath = true;
+	loc->autoIndex = true;
+	loc->allowMethod.push_back("GET");
+}

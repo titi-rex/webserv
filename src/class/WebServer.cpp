@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 14:59:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:25:21 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,23 +78,28 @@ size_t	WebServer::getBodySizeLimit(void) const {
 
 WebServer::WebServer(std::string path) 
 {
-	(void)path;
+	std::vector<std::string> 	fileVec;
+	uintptr_t					i = 0;
 	
+	std::ifstream file(path.c_str());
+    if (!file.is_open()) 
+		throw std::runtime_error("Error : could not open configuration file");
 	
-	t_virtual_host	tmp;
+	std::string line;
+    while (std::getline(file, line)) {
+		fileVec.push_back(line);
+    }
+	
+	while (i < fileVec.size())
+   	{
+		if (this->parseConf(fileVec[i]) == 1)
+			this->findServ(fileVec, &i);
+		++i;
+		
+   	}
+	this->debugServ();
+	
 
-	tmp.sId = 0;
-	tmp.host_port.first = "127.0.0.1";
-	tmp.host_port.second = 8080;
-	tmp.serverNames.push_back("wofle");
-	_virtualHost.push_back(tmp);
-	tmp.sId = 1;
-	tmp.host_port.first = "127.0.0.1";
-	tmp.host_port.second = 8080;
-	tmp.serverNames.clear();
-	tmp.serverNames.push_back("sosage");
-	_virtualHost.push_back(tmp);
-	
 	try
 	{
 		_socketList_init();
@@ -105,7 +110,6 @@ WebServer::WebServer(std::string path)
 		std::cerr << e.what() << std::endl;
 		throw std::runtime_error(e.what());
 	}	
-	
 };
 	
 void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 

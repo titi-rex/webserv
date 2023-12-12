@@ -55,20 +55,23 @@ class WebServer
 		std::string							getDirErrorPage(void) const;
 		size_t								getBodySizeLimit(void) const;
 
-		int		parseConf(std::string &line);
-		void	parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
-		void 	findServ(std::vector<std::string> fileVec, uintptr_t *i);
-		void	addVirtualHost(const t_virtual_host& virtualHost);
-		void	displayLocations(const t_virtual_host& virtualHost);
-		void	debugServ();
+		t_location	parseLocation(std::vector<std::string> fileVec, std::vector<std::string> sLine, uintptr_t *i);
+		int			parseConf(std::string &line);
+		void		parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
+		void 		findServ(std::vector<std::string> fileVec, uintptr_t *i);
+		void		addVirtualHost(const t_virtual_host& virtualHost);
+		void		displayLocations(const t_virtual_host& virtualHost);
+		void		displayCGI(const t_virtual_host& virtualHost);
+		void		debugServ();
 
-		void	run(void);
+		void		run(void);
 
 	
 		std::string	GET(std::string path);
 		std::string	GET_error(int code);	// GET special pour error
 };
 
+void						initLocation(t_location* loc);
 void 						formatLine(std::string &line);
 std::vector<std::string>	splitLine(const std::string& line);
 

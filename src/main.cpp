@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 11:24:16 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:22:04 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 #include "define.hpp"
 
 sig_atomic_t	g_status = 1;
-
 
 int	main(int ac, char **av)
 {
@@ -46,8 +45,6 @@ int	main(int ac, char **av)
 	}
 	return (0);
 }
-
-
 
 
 // request line \r\n
