@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:15:27 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 14:54:40 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 20:27:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	Socket::sockInit(int backlog)
 	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &l, sizeof(int)) == -1)
 		throw("fatal: cannot change socket option");
 
-	bzero(&sin, sizeof(sin));
+	std::memset(&sin, 0, sizeof(sin));
 	sin = (struct sockaddr_in){AF_INET, htons(_port), {htonl(_host)}, {0}};
 std::clog << sin << std::endl;
 

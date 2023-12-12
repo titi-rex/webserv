@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   virtual_host.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:53:28 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 16:13:41 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 20:37:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 # include <vector>
 # include <map>
 # include <string>
-
 
 typedef struct	s_location
 {

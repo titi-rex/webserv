@@ -1,28 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vector_operator.hpp                                :+:      :+:    :+:   */
+/*   utils.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 15:01:39 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:36:29 by tlegrand         ###   ########.fr       */
+/*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
+/*   Updated: 2023/12/12 20:02:42 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _VECTOR_OPERATOR_H__
-# define _VECTOR_OPERATOR_H__
-# include <iostream>
-# include <vector>
 
-template <typename T>
-std::ostream&	operator<<(std::ostream &os, const std::vector<T>& vec)
-{
-	for (size_t i = 0; i < vec.size(); ++i)
-	{
-		os << vec.at(i) << " ";
-	}
-	return (os);
-}
+/*
+*	Webserv, a c++98 web server by 42 student
+*	Copyright (C) 2023  tititeam 
+*	https://www.gnu.org/licenses/gpl-3.0.html
+*/
+
+
+#ifndef _UTILS_H__
+# define _UTILS_H__
+
+# include <signal.h>
+# include <iostream>
+# include <stdexcept>
+
+# include "map_operator.hpp"
+# include "deque_operator.hpp"
+# include "vector_operator.hpp"
+
+# include "virtual_host.hpp"
+
+void	sig_init(void (*handler) (int sig));
+void	sig_handler(int sig);
 
 #endif

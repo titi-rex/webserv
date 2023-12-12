@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:00:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 20:22:18 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,9 +116,6 @@ Request::Request(std::string raw) : _rId(_num_request++), _mId(-1)
 	unchunk(iss_raw);
 }
 
-// attention si strtol overflow -> thow
-// attention si getline throw
-
 std::ostream& operator<<(std::ostream& os, const Request& req)
 {
 	os << "rid: " << req.getRid() << std::endl;
@@ -129,4 +126,3 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 	os << "{" << req.getBody() << "}" << std::endl;
 	return (os);
 };
-

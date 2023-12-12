@@ -6,13 +6,14 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 15:01:39 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:05:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 20:36:18 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _MAP_OPERATOR_H__
-# define _MAP_OPERATOR_H__
-#include <deque>
+#ifndef _DEQUE_OPERATOR_H__
+# define _DEQUE_OPERATOR_H__
+# include <iostream>
+# include <deque>
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::deque<T>& deck)
