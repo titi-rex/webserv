@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 15:14:00 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:28:47 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 	std::vector<std::string>	sLine;
 	std::string					sPort;
 	size_t						tmp = 0;
-	int							port = 0;
 
 	for (uintptr_t i = start; i <= end; ++i) {
 		formatLine(fileVec[i]);
@@ -100,15 +99,13 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 		else if (sLine[0] == "listen"){
 			tmp = sLine[1].find(':');
 			newServ.host_port.first = sLine[1].substr(0, tmp);
-			sPort = sLine[1].substr(tmp + 1, sLine[1].size() - tmp - 2);
+			sPort = sLine[1].substr(tmp + 1, sLine[1].size() - tmp - 1);
 			if (sPort == "*")
 				newServ.host_port.second = 80;
 			else {
-				std::istringstream pStream(sPort);
-				while (pStream >> port){
-					newServ.host_port.second = port;
-					pStream.ignore(1, ',');
-				}
+				std::stringstream stream(sPort);
+				stream >> tmp;
+				newServ.host_port.second  = tmp;
 			}
 		}
 		else if (sLine[0] == "server_name"){
@@ -135,7 +132,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			}
 		}
 		else
-		throw std::runtime_error("Unrecognised line in configuration file : Server");
+			throw std::runtime_error("Unrecognised line in configuration file : Server");
 	}
 
 	addVirtualHost(newServ);

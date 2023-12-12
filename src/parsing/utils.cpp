@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 14:09:34 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 11:08:07 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:23:22 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,10 @@ void formatLine(std::string &line)
 			formattedLine.erase(end + 1);
 		line = formattedLine;
 	}
+	// if (line.empty() || line[line.length() - 1] != ';')
+	// 	throw std::runtime_error("Error : Wrong synthax in configuration file");
 	if (!line.empty() && line[line.length() - 1] == ';')
         line.erase(line.length() - 1);
-	// if (line.empty() || line[line.length() - 1] != ';')
-	// 	std::cout << "Error" << std::endl;
-		// throw FormatException();
 }
 
 void	initLocation(t_location* loc)
