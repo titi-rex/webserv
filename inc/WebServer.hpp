@@ -1,46 +1,25 @@
 #ifndef _WEB_SERVER_H__
 # define _WEB_SERVER_H__
 # include <string>
-# include <map>
-# include <vector>
+
 # include <stdexcept>
 # include <iostream>
-# include <fstream>
-# include <sstream>
+# include <fstream>	//open file
+# include <sstream>	//stringstream
+
 # include <unistd.h>
+# include <sys/epoll.h>
 
 typedef unsigned int long	uintptr_t;
 
-typedef struct	s_location
-{
-	bool						isPath;	//if false its an extension ! vrai par default
-	bool						autoIndex;  // directory listing true par default
-	int							lId;
-	std::string					uri_or_ext;
-	std::string					root;
-	std::vector<std::string>	index;
-	std::vector<std::string>	allowMethod;	// GET par default si empty
-	std::string					redirection;
-}	t_location;
+# include "virtual_host.hpp"
+# include "Socket.hpp"
 
-typedef struct	s_virtual_host 
-{
-	bool								defaultServer;	// si plusieur server avec meme host/ports le premier est celui par default;
-	int									sId;
-	size_t								bodySize;
-	std::string							root;
-	std::string							index;
-	std::pair<std::string, int>			host_port;
-	std::string							host;
-	std::vector<int>					ports;
-	std::vector<std::string>			hosts;
-	std::vector<std::string>			serverNames;
-	std::map<std::string, std::string>	cgi;	// s1 nom executable, s2 path
-	std::map<std::string, t_location>	locations;
-}	t_virtual_host;
+# include "map_operator.hpp"
+# include "deque_operator.hpp"
+# include "vector_operator.hpp"
 
-typedef t_virtual_host* v_host_ptr;
-
+# define BACKLOG 5
 
 class WebServer 
 {
@@ -60,7 +39,7 @@ class WebServer
 		void	_socketList_init(void);
 		void	_epoll_init(void);
 
-		std::map<int, v_host_ptr>			_socketsList;
+		std::map<int, Socket>				_socketsList;
 
 	public	:
 		WebServer(std::string path);
@@ -92,5 +71,8 @@ class WebServer
 
 void 						formatLine(std::string &line);
 std::vector<std::string>	splitLine(const std::string& line);
+
+std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host);
+std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host);
 
 #endif

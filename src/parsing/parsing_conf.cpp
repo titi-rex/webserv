@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/11 14:18:16 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 11:24:10 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,41 +190,41 @@ void	WebServer::debugServ()
 
 
 
-int main()
-{
-	WebServer					serv("z_notes/exemple.conf");
-	std::vector<std::string> 	fileVec;
-	uintptr_t					i = 0;
+// int main()
+// {
+// 	WebServer					serv("z_notes/exemple.conf");
+// 	std::vector<std::string> 	fileVec;
+// 	uintptr_t					i = 0;
 	
-	std::ifstream file("z_notes/exemple.conf");
-    if (!file.is_open()) {
-        std::cerr << "Error could not open conf file :(" << std::endl;
-        return 1;
-    }
+// 	std::ifstream file("z_notes/exemple.conf");
+//     if (!file.is_open()) {
+//         std::cerr << "Error could not open conf file :(" << std::endl;
+//         return 1;
+//     }
 
-    std::string line;
-    while (std::getline(file, line)) {
-		fileVec.push_back(line);
-    }
+//     std::string line;
+//     while (std::getline(file, line)) {
+// 		fileVec.push_back(line);
+//     }
 	
-	while (i < fileVec.size())
-   	{
-		if (serv.parseConf(fileVec[i]) == 1)
-			serv.findServ(fileVec, &i);
-		std::cout << "Formatted line: " << fileVec[i] << std::endl;
-		std::cout << std::endl;
-		++i;
-   	}
+// 	while (i < fileVec.size())
+//    	{
+// 		if (serv.parseConf(fileVec[i]) == 1)
+// 			serv.findServ(fileVec, &i);
+// 		std::cout << "Formatted line: " << fileVec[i] << std::endl;
+// 		std::cout << std::endl;
+// 		++i;
+//    	}
 
-	std::cout << "*------------- DEBUG --------------*" << std::endl;
-	std::cout << "size body max = " << serv.getBodySizeLimit() << std::endl;
-	std::cout << "error page dir = " << serv.getDirErrorPage() << std::endl;
-	std::cout << "error page val = ";
-	std::cout << serv.getErrorPage();
-	std::cout <<std::endl;
-	serv.debugServ();
+// 	std::cout << "*------------- DEBUG --------------*" << std::endl;
+// 	std::cout << "size body max = " << serv.getBodySizeLimit() << std::endl;
+// 	std::cout << "error page dir = " << serv.getDirErrorPage() << std::endl;
+// 	std::cout << "error page val = ";
+// 	std::cout << serv.getErrorPage();
+// 	std::cout <<std::endl;
+// 	serv.debugServ();
 
-    return 0;
-}
+//     return 0;
+// }
 
 
