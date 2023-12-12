@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 23:04:29 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 10:54:31 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	WebServer::run(void)
 	{
 		std::clog << "Waiting for event.." << std::endl;
 		int n_event = epoll_wait(_efd, revents, MAX_EVENTS, TIMEOUT);
-		if ((n_event == -1))
+		if (n_event == -1)
 			epoll_error_handler() ;
 		std::clog << n_event << " events ready" << std::endl;
 	// process event
