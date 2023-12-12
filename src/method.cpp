@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 14:25:57 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/12 14:37:54 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,24 @@ std::string	WebServer::Method(Request & req, t_virtual_host* v_host)
 {
 	(void) v_host;
 
+std::string	pagePath = req.getUri();
+
+if (pagePath == "/")
+	pagePath = "data/default_page/index.html";
+else
+{
+	std::string	temp = pagePath;
+	pagePath = "data/default_page" + temp;
+}
+
 	switch (req.getMid())
 	{
 		case 0:
 			std::cout << "GET JUJU" << std::endl;
-			return (GET("data/default_page/index.html"));
+			return (GET(pagePath));
 		case 1:
 			std::cout << "HEAD JUJU" << std::endl;
-			return (HEAD("data/default_page/index.html"));
+			return (HEAD(pagePath));
 		case 2:
 			std::cout << "POST JUJU" << std::endl;
 			break;
