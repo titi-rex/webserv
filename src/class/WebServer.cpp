@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 11:02:22 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 14:38:16 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,33 +78,51 @@ size_t	WebServer::getBodySizeLimit(void) const {
 
 WebServer::WebServer(std::string path) 
 {
-	(void)path;
+	std::vector<std::string> 	fileVec;
+	uintptr_t					i = 0;
 	
-	/*
-	t_virtual_host	tmp;
+	std::ifstream file(path.c_str());
+    if (!file.is_open()) {
+        std::cerr << "Error could not open conf file :(" << std::endl;
+        // error throw exception 
+    }
+	
+	std::string line;
+    while (std::getline(file, line)) {
+		fileVec.push_back(line);
+    }
+	
+	while (i < fileVec.size())
+   	{
+		if (this->parseConf(fileVec[i]) == 1)
+			this->findServ(fileVec, &i);
+		++i;
+   	}
+	this->debugServ();
+	
+	// t_virtual_host	tmp;
 
-	tmp.sId = 0;
-	tmp.host = "127.0.0.1";
-	tmp.ports.push_back(8080);
-	tmp.ports.push_back(8081);
-	_virtualHost.push_back(tmp);
-	tmp.sId = 1;
-	tmp.host = "100.85.0.1";
-	tmp.ports.clear();
-	tmp.ports.push_back(8541);
-	_virtualHost.push_back(tmp);
+	// tmp.sId = 0;
+	// tmp.host = "127.0.0.1";
+	// tmp.ports.push_back(8080);
+	// tmp.ports.push_back(8081);
+	// _virtualHost.push_back(tmp);
+	// tmp.sId = 1;
+	// tmp.host = "100.85.0.1";
+	// tmp.ports.clear();
+	// tmp.ports.push_back(8541);
+	// _virtualHost.push_back(tmp);
 	
-	try
-	{
-		_socketList_init();
-		_epoll_init();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		throw std::runtime_error(e.what());
-	}	
-	*/
+	// try
+	// {
+	// 	_socketList_init();
+	// 	_epoll_init();
+	// }
+	// catch(const std::exception& e)
+	// {
+	// 	std::cerr << e.what() << std::endl;
+	// 	throw std::runtime_error(e.what());
+	// }	
 };
 	
 void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 

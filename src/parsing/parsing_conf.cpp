@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 14:26:17 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 14:49:04 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,35 +228,3 @@ void	WebServer::debugServ()
 		displayLocations(_virtualHost[i]);
 	}
 }
-
-
-
-int main()
-{
-	WebServer					serv("z_notes/exemple.conf");
-	std::vector<std::string> 	fileVec;
-	uintptr_t					i = 0;
-	
-	std::ifstream file("z_notes/exemple.conf");
-    if (!file.is_open()) {
-        std::cerr << "Error could not open conf file :(" << std::endl;
-        return 1;
-    }
-
-    std::string line;
-    while (std::getline(file, line)) {
-		fileVec.push_back(line);
-    }
-	
-	while (i < fileVec.size())
-   	{
-		if (serv.parseConf(fileVec[i]) == 1)
-			serv.findServ(fileVec, &i);
-		++i;
-   	}
-	serv.debugServ();
-
-    return 0;
-}
-
-

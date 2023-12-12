@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 14:26:35 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/12 14:27:04 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 
 sig_atomic_t	g_status = 1;
 
-/*
 int	main(int ac, char **av)
 {
 	if (ac != 2)
@@ -46,8 +45,6 @@ int	main(int ac, char **av)
 	}
 	return (0);
 }
-*/
-
 
 
 // request line \r\n
