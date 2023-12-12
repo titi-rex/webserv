@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/09 22:17:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:06:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,11 @@
 # include <stdexcept>
 # include <algorithm>
 
+# include "map_operator.hpp"
+
 # define RQ_SIZE_MAX 1024
+# define N_METHOD 4
+
 
 class Request 
 {
@@ -53,14 +57,6 @@ class Request
 
 std::ostream& operator<<(std::ostream& os, const Request& req);
 
-template <typename T, typename S>
-std::ostream& operator<<(std::ostream &os, const std::map<T, S> dico)
-{
-	for (typename std::map<T, S>::const_iterator it = dico.begin(); it != dico.end(); ++it)
-	{
-		os << it->first << it->second << std::endl;
-	}
-	return (os);
-} 
+
 
 #endif

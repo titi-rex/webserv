@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 22:14:04 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/05 20:21:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 14:17:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,5 +17,6 @@
 # define GET_EX_ONLY_R "GET / HTTP/1.1\nUser-Agent: python-requests/2.22.0\nAccept-Encoding: gzip\nAccept: */*\nConnection: keep-alive\nhost: none\nAccept-Language: fr\n\nbodyyyy boddy"
 # define GET_EX_CHUNK "GET / HTTP/1.1\r\nTransfert-encoding: chunked\nhost: none\r\n\r\nd\nbodyyyy boddy\n5\nbooty\n10\nboooo hum hum ..\n0\n"
 # define GET_WR_MET "fe / HTTP/1.1\r\n"
+
 
 #endif
