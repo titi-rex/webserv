@@ -6,7 +6,7 @@
 #    By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/13 16:27:39 by lboudjem         ###   ########.fr        #
+#    Updated: 2023/12/13 16:29:32 by lboudjem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ DEFAULT_CONFIG_PATH	=	z_conf/example.conf
 
 #	==============================	SOURCES	==============================	#
 DIR_SRCS_PARSE	=	parsing/
-LST_SRCS_PARSE	=	parsing_conf.cpp init_conf.cpp utils.cpp
+LST_SRCS_PARSE	=	parsing_conf.cpp parsing_utils.cpp
 SRCS_PARSE		=	${addprefix ${DIR_SRCS_PARSE}, ${LST_SRCS_PARSE}}
 
 DIR_SRCS_HTTP	=	http/
