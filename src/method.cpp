@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:25:48 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 13:42:14 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ std::string HEAD( std::string path )
 // heaers : dwdwd wdwD wLD 
 // body kjfhdkjwsdfhikwsujd
 
-std::string	WebServer::Method(Request & req, t_virtual_host* v_host)
+std::string	WebServer::Method(Request & req, v_host_ptr v_host)
 {
 	(void) v_host;
 
