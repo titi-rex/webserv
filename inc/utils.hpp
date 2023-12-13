@@ -34,4 +34,7 @@
 void	sig_init(void (*handler) (int sig));
 void	sig_handler(int sig);
 
+std::string	getFile(std::string& path);
+bool		check_access_error(std::string& path);
+
 #endif

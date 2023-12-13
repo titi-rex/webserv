@@ -29,6 +29,9 @@ typedef unsigned int long	uintptr_t;
 # define TIMEOUT 2000
 # define BACKLOG 5
 
+# define ERROR_500_MSG "<html>\n<head><title>500 Internal Server Error</title></head>\n<body>\n<center><h1>500 Internal Server Error</h1></center>\n<hr><center>nginx/1.25.3</center>\n</body>\n</html>\n"
+
+
 class Request;
 
 class WebServer 
@@ -83,7 +86,8 @@ class WebServer
 
 		std::string	Method(Request & req, v_host_ptr v_host);	
 		std::string	GET(std::string path);
-		std::string	GET_error(int code);	// GET special pour error
+		std::string	GET_error(int code);	//obsolete
+		std::string	GET_error2(std::string status);	// GET special pour error
 
 
 };
