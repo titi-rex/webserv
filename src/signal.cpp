@@ -6,12 +6,12 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:59:01 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 12:33:56 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/13 13:20:54 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
-#include "WebServer.hpp"
+#include <iostream>
 
 extern sig_atomic_t	g_status;
 
@@ -31,3 +31,5 @@ void	sig_init(void (*handler) (int sig))
 	act.sa_handler = handler;
 	sigaction(SIGINT, &act, NULL);
 }
+
+// SIGABRT

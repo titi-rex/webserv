@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:15:27 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 12:33:30 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/13 13:20:58 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,16 +80,16 @@ void	Socket::sockInit(int backlog)
 	if (_fd == -1)
 		throw std::runtime_error("fatal: cannot create socket");
 	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &l, sizeof(int)) == -1)
-		throw("fatal: cannot change socket option");
+		throw std::runtime_error("fatal: cannot change socket option");
 
 	std::memset(&sin, 0, sizeof(sin));
 	sin = (struct sockaddr_in){AF_INET, htons(_port), {htonl(_host)}, {0}};
 std::clog << sin << std::endl;
 
 	if (bind(_fd, (struct sockaddr*) &sin, sizeof(sin)) == -1)
-		throw("fatal: cannot bind socket");
+		throw std::runtime_error("fatal: cannot bind socket");
 	if (listen(_fd, backlog) == -1)
-		throw("fatal: socket cannot listen");
+		throw std::runtime_error("fatal: socket cannot listen");
 }
 
 uint32_t Socket::hstrtoint(std::string host)
