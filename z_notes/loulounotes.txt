@@ -24,6 +24,8 @@ string::find_first_not_of 	: Recherche dans la string le premier char qui ne cor
 	-> ecrire un warning si 2e instruction et l'ignorer
 - commentaires en fin de lignes
 - ya des ; a la fin
-- valeurs par defaulft
+- valeurs par default
+- ajouter un / a la fin des dir si yen a pas
+- allow methods n'accepte que get post ou delete
 
 

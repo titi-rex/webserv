@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/13 13:25:04 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 16:28:20 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,30 +51,20 @@ t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vecto
 		if (sLine[0].empty())
 			continue;
 		else if (sLine[0] == "root")
-			newLoc.root = sLine[1];
+			newLoc.setRoot(sLine[1]);
 		else if (sLine[0] ==  "return")
-			newLoc.redirection = sLine[1];
+			newLoc.setRedirection(sLine[1]);
 		else if (sLine[0] ==  "index")
-			for (size_t j = 1; j < sLine.size(); ++j)
-				newLoc.index.push_back(sLine[j]);
-		else if (sLine[0] ==  "allow_methods"){
-			for (size_t j = 1; j < sLine.size(); ++j)
-				if (std::find(newLoc.allowMethod.begin(), newLoc.allowMethod.end(), sLine[j]) == newLoc.allowMethod.end())
-					newLoc.allowMethod.push_back(sLine[j]);
-		}
-		else if (sLine[0] ==  "autoindex"){
-			if (sLine[1] == "on")
-				newLoc.autoIndex = true;
-			else if (sLine[1] == "off")
-				newLoc.autoIndex = false;
-			else
-				throw std::runtime_error("Invalid Autoindex");
-		}
+			newLoc.setIndex(sLine[1]);
+		else if (sLine[0] ==  "allow_methods")
+			newLoc.setAllowMethod(sLine);
+		else if (sLine[0] ==  "autoindex")
+			newLoc.setAutoIndex(sLine[1]);
 		else
 			throw std::runtime_error("Unrecognised line in configuration file : Location");
 		++(*i);
 	}
-	newLoc.uri_or_ext = first;
+	newLoc.setUriOrExt(first);
 	return newLoc;
 }
 
@@ -95,13 +85,11 @@ bool verifieSyntaxe(const std::string& s)
     return ss.eof();
 }
 
-
-
 uint16_t isIntValid(const std::string& s) 
 {
     for (size_t i = 0; i < s.size(); ++i)
         if (s[i] < '0' || s[i] > '9') 
-            throw std::runtime_error("Error : invalid port");
+            throw std::runtime_error("Error : invalid port value");
 
     std::istringstream ss(s);
     int num;
@@ -233,10 +221,7 @@ void WebServer::displayLocations(const t_virtual_host& virtualHost) {
         std::cout << "Location URI or Extension: " << location.uri_or_ext << std::endl;
         std::cout << "Location root: " << location.root << std::endl;
         std::cout << "Location return: " << location.redirection << std::endl;
-		std::cout << "Location index: ";
-		for (size_t i = 0; i < location.index.size(); ++i)
-			std::cout << location.index[i] << " ";
-		std::cout << std::endl;
+		std::cout << "Location index: " << location.index << std::endl;
 		std::cout << "Location methods: ";
 		for (size_t j = 0; j < location.allowMethod.size(); ++j)
 			std::cout << location.allowMethod[j] << " ";
