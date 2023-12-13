@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:15:27 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 12:58:12 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/13 13:20:58 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
 # include <string>
+
+
 Socket::Socket(void) : _fd(-1), _host(0), _port(0) {};
 
 Socket::Socket(const Socket& src) : _fd(src._fd), _host(src._host), _port(src._port), _name(src._name), v_hosts(src.v_hosts) {};

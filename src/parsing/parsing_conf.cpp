@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 16:12:44 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/13 13:25:04 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,41 @@ t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vecto
 	return newLoc;
 }
 
+bool verifieSyntaxe(const std::string& s) 
+{
+    std::istringstream ss(s);
+    int num;
+
+    for (int i = 0; i < 4; ++i) {
+        if (!(ss >> num)) 
+            return false;
+        if (i < 3 && ss.get() != '.')
+            return false;
+        if (num < 0 || num > 255) 
+            return false;
+    }
+
+    return ss.eof();
+}
+
+
+
+uint16_t isIntValid(const std::string& s) 
+{
+    for (size_t i = 0; i < s.size(); ++i)
+        if (s[i] < '0' || s[i] > '9') 
+            throw std::runtime_error("Error : invalid port");
+
+    std::istringstream ss(s);
+    int num;
+    ss >> num;
+
+    if (!ss.fail() && ss.eof() && num >= std::numeric_limits<uint16_t>::min() && num <= std::numeric_limits<uint16_t>::max())
+        return (num);
+	else
+        throw std::runtime_error("Error : invalid port");
+}
+
 void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end)
 {
 	t_virtual_host 				newServ;
@@ -98,14 +133,28 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 		}
 		else if (sLine[0] == "listen"){
 			tmp = sLine[1].find(':');
-			newServ.host_port.first = sLine[1].substr(0, tmp);
-			sPort = sLine[1].substr(tmp + 1, sLine[1].size() - tmp - 1);
-			if (sPort == "*")
-				newServ.host_port.second = 80;
-			else {
-				std::stringstream stream(sPort);
-				stream >> tmp;
-				newServ.host_port.second  = tmp;
+			if (tmp == std::string::npos)
+			{
+				if (verifieSyntaxe(sLine[1]) == true)
+				{
+					newServ.host_port.first = sLine[1];
+					newServ.host_port.second = 80;
+				}
+				else
+				{
+					newServ.host_port.first = "127.0.0.1";
+					newServ.host_port.second = isIntValid(sLine[1]);
+				}
+			}
+			else
+			{
+				newServ.host_port.first = sLine[1].substr(0, tmp);
+				sPort = sLine[1].substr(tmp + 1, sLine[1].size() - tmp - 1);
+				if (sPort == "*")
+					newServ.host_port.second = 80;
+				else {
+					newServ.host_port.second  = isIntValid(sPort);
+				}
 			}
 		}
 		else if (sLine[0] == "server_name"){

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Balloon</title>
+	<style>
+		body{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+		}
+
+		.balloon{
+			display : flex;
+			background-color: red;
+			width: 200px;
+			height: 200px;
+			border-radius: 100%;
+		}
+	</style>
+</head>
+<body>
+	<div class="balloon" onclick="grow(this)" onmouseout="deflate(this)"></div>
+	<script>
+		function colorup(item)
+		{
+			if (item.style.backgroundColor == "" || item.style.backgroundColor == "red")
+				item.style.backgroundColor = "green"
+			else if (item.style.backgroundColor == "green")
+				item.style.backgroundColor = "blue"
+			else if (item.style.backgroundColor == "blue")
+				item.style.backgroundColor = "red"
+		}
+
+		function colordown(item)
+		{
+			if (item.style.backgroundColor == "" || item.style.backgroundColor == "red")
+				item.style.backgroundColor = "blue"
+			else if (item.style.backgroundColor == "blue")
+				item.style.backgroundColor = "green"
+			else if (item.style.backgroundColor == "green")
+				item.style.backgroundColor = "red"
+		}
+
+		function grow(item)
+		{
+			if (item.offsetHeight <= 420)
+			{
+				item.style.width = item.offsetWidth + 10 + "px";
+				item.style.height = item.offsetHeight + 10 + "px";
+			}
+			else
+			{
+				item.style.width = 200 + "px";
+				item.style.height = 200 + "px";
+			}
+			colorup(item);
+		}
+
+		function deflate(item)
+		{
+			if (item.offsetHeight > 200)
+			{
+				item.style.width = item.offsetWidth - 5 + "px";
+				item.style.height = item.offsetHeight - 5 + "px";
+				colordown(item);
+			}
+		}
+	</script>
+</body>
+</html>

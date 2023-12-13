@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:06:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/13 13:20:42 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class Request
 		const std::string&				getMethod(void) const;
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
+		const short int&				getMid(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
 };
 
