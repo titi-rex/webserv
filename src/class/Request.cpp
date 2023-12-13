@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:22:18 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/13 13:22:10 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int 				Request::getRid(void) const { return (this->_rId); };
 const std::string&	Request::getMethod(void) const { return (this->_method); };
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
+const short int&	Request::getMid(void) const { return (this->_mId); };
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
 
 

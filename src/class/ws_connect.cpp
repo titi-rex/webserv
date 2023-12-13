@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:46:59 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/13 14:49:44 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,10 +104,15 @@ void	WebServer::run(void)
 			// special instruction : execute shutdown
 				if (rq.getUri() == "/shutdown")
 					g_status = 0;
+				if (rq.getUri() == "/throw")
+					throw std::runtime_error("404 Bof");
+				if (rq.getUri() == "/fatal")
+					throw std::runtime_error("415 Bof");
 				v_host_ptr	host = _selectServer(_socketsList[revents[i].data.fd], rq);
 				std::cout << host << std::endl;
 			// prepare response based on request, there should be GET/HEAD/POST
-				std::string	response = GET("data/default_page/index.html");
+				// std::string	response = GET("data/default_page/index.html");
+				std::string	response = Method(rq, host);
 
 			//	send response to client
 				_send_response(client_fd, response);
@@ -119,10 +124,10 @@ void	WebServer::run(void)
 			//	aka GET to proper error file
 			//	plus maybe error should be log into log file
 				std::clog << e.what() << std::endl;
-				int	status = std::atoi(e.what());
-				if (status == 0)
-					status = 500;
-				std::string response = GET_error(status);
+				std::string	status(e.what(), 3);
+				// if (status == 0)
+				// 	status = 500;
+				std::string response = GET_error2(status);
 
 				_send_response(client_fd, response);
 			}
