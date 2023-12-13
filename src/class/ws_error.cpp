@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 15:12:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/13 16:32:12 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,42 @@ std::string	WebServer::GET_error2(std::string status)
 	std::string	body;
 	std::string	res;
 	
-	RL = getRL(status);
-	body = getPageByDir("./data/default_page/", status);
+
+
+	if(_dirErrorPage.empty()) try 
+	{
+		RL = getRL(status);
+		body = getPageByDir(_dirErrorPage, status);
+		return (res);
+	}
+	catch (std::exception & e)
+	{
+		std::clog << e.what() << ", for custom page location" << std::endl;
+	}
+
+	if(_dirErrorPage.empty()) try 
+	{
+		RL = getRL(status);
+		body = getPageByDir(_dirErrorPage, status);
+		return (res);
+	}
+	catch (std::exception & e)
+	{
+		std::clog << e.what() << ", for custom dir" << std::endl;
+	}
+	
+	try
+	{
+		RL = getRL(status);
+		body = getPageByDir("./data/default_page/", status);
+		return (res);
+	}
+	catch (std::exception & e)
+	{
+		std::clog << e.what() << ", for default page" << std::endl;
+	}
+	RL = getRL("500");
+	res = RL + "server: webserver\r\ncontent-lenght: 171" + ERROR_500_MSG;
 	return (res);
 }
 
