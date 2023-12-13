@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/11 13:32:18 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 13:22:33 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ WebServer&	WebServer::operator=(const WebServer& src)
 
 WebServer::~WebServer(void) 
 {
-	for (std::map<int, v_host_ptr>::iterator it = _socketsList.begin(); it != _socketsList.end(); ++it)
+	for (std::map<int, Socket>::iterator it = _socketsList.begin(); it != _socketsList.end(); ++it)
 	{
 		close(it->first);
 	}
@@ -78,21 +78,26 @@ size_t	WebServer::getBodySizeLimit(void) const {
 
 WebServer::WebServer(std::string path) 
 {
-	(void)path;
+	std::vector<std::string> 	fileVec;
+	uintptr_t					i = 0;
 	
+	std::ifstream file(path.c_str());
+    if (!file.is_open()) 
+		throw std::runtime_error("Error : could not open configuration file");
 	
-	t_virtual_host	tmp;
-
-	tmp.sId = 0;
-	tmp.host = "127.0.0.1";
-	tmp.ports.push_back(8080);
-	tmp.ports.push_back(8081);
-	_virtualHost.push_back(tmp);
-	tmp.sId = 1;
-	tmp.host = "127.0.0.1";
-	tmp.ports.clear();
-	tmp.ports.push_back(8541);
-	_virtualHost.push_back(tmp);
+	std::string line;
+    while (std::getline(file, line)) {
+		fileVec.push_back(line);
+    }
+	
+	while (i < fileVec.size())
+   	{
+		if (this->parseConf(fileVec[i]) == 1)
+			this->findServ(fileVec, &i);
+		++i;
+		
+   	}
+	this->debugServ();
 	
 	try
 	{
@@ -104,7 +109,6 @@ WebServer::WebServer(std::string path)
 		std::cerr << e.what() << std::endl;
 		throw std::runtime_error(e.what());
 	}	
-	
 };
 	
 void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 
@@ -112,28 +116,17 @@ void WebServer::addVirtualHost(const t_virtual_host& virtualHost)
 	_virtualHost.push_back(virtualHost);
 }
 
-template <typename T>
-std::ostream&	operator<<(std::ostream &os, const std::vector<T>& vec)
-{
-	for (size_t i = 0; i < vec.size(); ++i)
-	{
-		os << vec.at(i) << " ";
-	}
-	return (os);
-}
 
 std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host)
 {
-	os << "v_host id : " << v_host->sId << std::endl;
-	os << "v_host host : " << v_host->host << std::endl;
-	os << "v_host ports : " << v_host->ports << std::endl;
+	os << "id : " << v_host->sId << ", default name: " << v_host->serverNames[0];
+	os << ", listen on : " << v_host->host_port.first << ":" << v_host->host_port.second << std::endl;
 	return (os);
 }
 
 std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host)
 {
-	os << "v_host id : " << v_host.sId << std::endl;
-	os << "v_host host : " << v_host.host << std::endl;
-	os << "v_host ports : " << v_host.ports << std::endl;
+	os << "id : " << v_host.sId << ", default name: " << v_host.serverNames[0];
+	os << ", listen on : " << v_host.host_port.first << ":" << v_host.host_port.second << std::endl;
 	return (os);
 }

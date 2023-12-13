@@ -6,24 +6,13 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 14:19:50 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 13:22:10 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Request.hpp"
 
 size_t	Request::_num_request = 0;
-
-std::ostream& operator<<(std::ostream& os, const Request& req)
-{
-	os << "rid: " << req.getRid() << std::endl;
-	os << "RL: " << req.getMethod() << " " << req.getUri() << " HTTP/1.1" << std::endl;
-	os << "Headers :" << std::endl;
-	os << req.getHeaders();
-	os << "Body :" << std::endl;
-	os << "{" << req.getBody() << "}" << std::endl;
-	return (os);
-};
 
 
 Request::Request(void) : _rId(_num_request++), _mId(-1) {};
@@ -52,9 +41,9 @@ const std::map<std::string, std::string>&	Request::getHeaders(void) const { retu
 
 bool	Request::_is_method_known(std::string & test)
 {
-	std::string	ref[4] = {"GET", "HEAD", "POST", "DELETE"};
+	std::string	ref[N_METHOD] = {"GET", "HEAD", "POST", "DELETE"};
 	
-	for (size_t i = 0; i < 4; ++i)
+	for (size_t i = 0; i < N_METHOD; ++i)
 	{
 		if (ref[i].compare(test) == 0)
 		{
@@ -128,6 +117,13 @@ Request::Request(std::string raw) : _rId(_num_request++), _mId(-1)
 	unchunk(iss_raw);
 }
 
-// attention si strtol overflow -> thow
-// attention si getline throw
-
+std::ostream& operator<<(std::ostream& os, const Request& req)
+{
+	os << "rid: " << req.getRid() << std::endl;
+	os << "RL: " << req.getMethod() << " " << req.getUri() << " HTTP/1.1" << std::endl;
+	os << "Headers :" << std::endl;
+	os << req.getHeaders();
+	os << "Body :" << std::endl;
+	os << "{" << req.getBody() << "}" << std::endl;
+	return (os);
+};

@@ -1,35 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.cpp                                         :+:      :+:    :+:   */
+/*   map_operator.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/08 18:59:01 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 12:57:15 by tlegrand         ###   ########.fr       */
+/*   Created: 2023/12/12 15:01:39 by tlegrand          #+#    #+#             */
+/*   Updated: 2023/12/12 20:36:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
-#include <iostream>
+#ifndef _MAP_OPERATOR_H__
+# define _MAP_OPERATOR_H__
+# include <iostream>
+# include <map>
 
-extern sig_atomic_t	g_status;
-
-void	sig_handler(int sig)
+template <typename T, typename U>
+std::ostream& operator<<(std::ostream &os, const std::map<T, U> m)
 {
-	(void)sig;
-	g_status = 0;
+	for (typename std::map<T, U>::const_iterator it = m.begin(); it != m.end(); ++it)
+	{
+		os << (it->first) << (it->second) << std::endl;
+	}
+	return (os);
 }
 
-void	sig_init(void (*handler) (int sig))
-{
-	struct sigaction	act;
 
-	act.sa_flags = SA_RESTART;
-	sigemptyset(&act.sa_mask);
-	sigaddset(&act.sa_mask, SIGINT);
-	act.sa_handler = handler;
-	sigaction(SIGINT, &act, NULL);
-}
-
-// SIGABRT
+#endif

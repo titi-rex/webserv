@@ -1,40 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   connect.cpp                                        :+:      :+:    :+:   */
+/*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/11 14:55:42 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 13:22:44 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#include "webserv.hpp"
+#include "WebServer.hpp"
 
 extern sig_atomic_t	g_status;
 
 /**
- * @brief receive one client request and return it
+ * @brief accept wrapper 
  * throw: should not close server
- * 
- * @param sock_listen 
- * @param client_fd 
- * @return std::string 
  */
-std::string	recept_request(int sock_listen, int& client_fd)
+int	WebServer::_recept_request(int sock_listen)
 {
-	struct sockaddr_in	client_sin;
-	socklen_t			client_len = sizeof(client_sin);
+	int		client_fd;
 
-	bzero(&client_sin, sizeof(sockaddr_in));
-	client_fd = accept(sock_listen, (struct sockaddr*) &client_sin, &client_len);
+	client_fd = accept(sock_listen, NULL, NULL);
 	if (client_fd == -1)
-		throw std::runtime_error("cannot accept client socket");
+		throw std::runtime_error("500 cannot accept client socket");
+	return (client_fd);
+}
 
-	std::clog << client_sin << std::endl;
-
+/**
+ * @brief read wrapper 
+ * 	throw: should not close server
+ */
+std::string	WebServer::_read_request(int client_fd)
+{
 	char		rec_buffer[MAXLINE + 1] = {0};
 	int			n_rec;
 	std::string	res;
@@ -47,85 +46,85 @@ std::string	recept_request(int sock_listen, int& client_fd)
 			break ;
 	}
 	if (n_rec == -1)
-		throw std::runtime_error("recv fail");
-	return(res);
+	{
+		close(client_fd);
+		throw std::runtime_error("500 recv fail");
+	}
+	return(res);	
 }
 
 
 /**
- * @brief send wrapper to respond to client , should close client_fd if successful
+ * @brief send wrapper 
  * 	throw: should not close server
- * @param client_fd, response
  */
-void	send_response(int client_fd, std::string response)
+void	WebServer::_send_response(int client_fd, std::string response)
 {
 	if (send(client_fd, response.c_str() , response.length(), MSG_DONTWAIT) == -1)
+	{
+		close(client_fd);
 		throw std::runtime_error("500 send fail");
+	}
 	close(client_fd);
 }
 
 
-void	epoll_error_handler(void)
-{
-	if (errno == EBADF || errno == EINVAL)
-		throw std::runtime_error("fatal: wrong epoll fd");
-	if (errno == EFAULT)
-		throw std::runtime_error("fatal: epoll cant write events");
-	throw std::runtime_error("fatal: unknow");
-};
-
-
-
 /**
  * @brief main function
- * 	wait for epoll event and act accordly to it
+ * 	wait for epoll event, get request and proceed it
  * 	throw: should not throw or only to quit properly programme
  */
 void	WebServer::run(void)
 {
 // wait for event
 	struct epoll_event	revents[MAX_EVENTS];
-	bzero(revents, sizeof(revents));
+	std::memset(revents, 0, sizeof(revents));
 	while (g_status)
 	{
 		std::clog << "Waiting for event.." << std::endl;
 		int n_event = epoll_wait(_efd, revents, MAX_EVENTS, TIMEOUT);
 		if (n_event == -1)
-			epoll_error_handler() ;
-		std::clog << n_event << " events ready" << std::endl;
+			throw std::runtime_error("fatal: epoll");
+		if (n_event)
+			std::clog << n_event << " events ready" << std::endl;
 	// process event
 		for (int i = 0; i < n_event; ++i)
 		{
-			int	client_fd;
+			int	client_fd = _recept_request(revents[i].data.fd);
 
 			try
 			{
 			// read and parse request
-				Request	rq(recept_request(revents[i].data.fd, client_fd));
-				std::clog << rq << std::endl;
+			
+				std::string	raw = _read_request(client_fd);
+				Request	rq(raw);
+				
+			std::clog << rq << std::endl;
 
 			// special instruction : execute shutdown
 				if (rq.getUri() == "/shutdown")
 					g_status = 0;
+				v_host_ptr	host = _selectServer(_socketsList[revents[i].data.fd], rq);
+				std::cout << host << std::endl;
 			// prepare response based on request, there should be GET/HEAD/POST
-				std::string	response = Method(rq, _socketsList[revents[i].data.fd]);
+				std::string	response = GET("data/default_page/index.html");
 
 			//	send response to client
-				send_response(client_fd, response);
+				_send_response(client_fd, response);
 			}
 			catch (std::exception & e)
 			{
-				//	exception here should be interpreted :
-				//	and proper response should be send to client
-				//	aka GET to proper error file
-				//	plus maybe error should be log into log file
+			//	exception here should be interpreted :
+			//	and proper response should be send to client
+			//	aka GET to proper error file
+			//	plus maybe error should be log into log file
 				std::clog << e.what() << std::endl;
 				int	status = std::atoi(e.what());
 				if (status == 0)
 					status = 500;
 				std::string response = GET_error(status);
 
-				send_response(client_fd, response);
+				_send_response(client_fd, response);
 			}
 		}
 	}

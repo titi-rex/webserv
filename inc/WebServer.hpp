@@ -1,57 +1,44 @@
 #ifndef _WEB_SERVER_H__
 # define _WEB_SERVER_H__
 # include <string>
-# include <map>
-# include <vector>
 # include <stdexcept>
 # include <iostream>
 # include <fstream>
 # include <sstream>
+# include <cstring>
+
 # include <unistd.h>
+# include <sys/epoll.h>
+# include <errno.h>
+# include <signal.h>
 # include "Request.hpp"
 
 typedef unsigned int long	uintptr_t;
 
-typedef struct	s_location
-{
-	bool						isPath;	//if false its an extension !
-	bool						autoIndex;  // directory listing
-	int							lId;
-	std::string					uri_or_ext;
-	std::string					root;
-	std::vector<std::string>	index;
-	std::vector<std::string>	allowMethod;	// GET par default si empty
-	std::string					redirection;
-}	t_location;
+# include "Socket.hpp"
+# include "Request.hpp"
+# include "virtual_host.hpp"
 
-typedef struct	s_virtual_host 
-{
-	bool								defaultServer;	// si plusieur server avec meme host/ports le premier est celui par default;
-	int									sId;
-	size_t								bodySize;
-	std::string							root;
-	std::string							host;
-	std::string							index;
-	std::vector<int>					ports;
-	std::vector<std::string>			hosts;
-	std::vector<std::string>			serverNames;
-	std::map<std::string, std::string>	cgi;	// s1 nom executable, s2 path
-	std::map<std::string, t_location>	locations;
-}	t_virtual_host;
+# include "map_operator.hpp"
+# include "deque_operator.hpp"
+# include "vector_operator.hpp"
 
-typedef t_virtual_host* v_host_ptr;
+# define MAXLINE 24
+# define MAX_EVENTS 5
+# define TIMEOUT 2000
+# define BACKLOG 5
 
+class Request;
 
 class WebServer 
 {
 	private	:
+		int	_efd;
 		size_t								_bodySizeLimit;
 		std::string							_dirErrorPage;
 		std::map<std::string, std::string>	_errorPage;
 		std::vector<t_virtual_host>			_virtualHost;
-
-
-		int	_efd;
+		std::map<int, Socket>				_socketsList;
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -60,11 +47,17 @@ class WebServer
 		void	_socketList_init(void);
 		void	_epoll_init(void);
 
-		std::map<int, v_host_ptr>			_socketsList;
+		bool		_is_server_named(v_host_ptr v_host, const std::string& name);
+		v_host_ptr	_selectServer(Socket& sk, Request& rq);
+
+		int			_recept_request(int sock_listen);
+		std::string	_read_request(int client_fd);
+		void		_send_response(int client_fd, std::string response);
 
 	public	:
 		WebServer(std::string path);
 		~WebServer(void);
+
 
 		void								setVirtualHost(std::vector<t_virtual_host> virtualHost);
 		void								setErrorPage(std::string key, std::string value); 
@@ -76,20 +69,29 @@ class WebServer
 		std::string							getDirErrorPage(void) const;
 		size_t								getBodySizeLimit(void) const;
 
-		int		parseConf(std::string &line);
-		void	parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
-		void 	findServ(std::vector<std::string> fileVec, uintptr_t *i);
-		void	addVirtualHost(const t_virtual_host& virtualHost);
-		void	debugServ();
+		t_location	parseLocation(std::vector<std::string> fileVec, std::vector<std::string> sLine, uintptr_t *i);
+		int			parseConf(std::string &line);
+		void		parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
+		void 		findServ(std::vector<std::string> fileVec, uintptr_t *i);
+		void		addVirtualHost(const t_virtual_host& virtualHost);
+		void		displayLocations(const t_virtual_host& virtualHost);
+		void		displayCGI(const t_virtual_host& virtualHost);
+		void		debugServ();
 
-		void	run(void);
+		void		run(void);
 
 		std::string	Method(Request & req, t_virtual_host* v_host);	
 		std::string	GET(std::string path);
 		std::string	GET_error(int code);	// GET special pour error
+
+
 };
 
+void						initLocation(t_location* loc);
 void 						formatLine(std::string &line);
 std::vector<std::string>	splitLine(const std::string& line);
+
+std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host);
+std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host);
 
 #endif

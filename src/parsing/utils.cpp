@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 14:09:34 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/09 14:12:08 by louisa           ###   ########.fr       */
+/*   Updated: 2023/12/12 16:13:25 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,8 @@ void formatLine(std::string &line)
 			line = '\n';
 			return ;
 		}
-		else if (hashPos != std::string::npos){
+		else if (hashPos != std::string::npos)
 			line.erase(hashPos);
-			return ;
-		}
 		if (start != std::string::npos)
 			line = line.substr(start);
 		for (size_t i = 0; i < line.length(); ++i){
@@ -63,7 +61,14 @@ void formatLine(std::string &line)
 		line = formattedLine;
 	}
 	// if (line.empty() || line[line.length() - 1] != ';')
-	// 	std::cout << "Error" << std::endl;
-		// throw FormatException();
+	// 	throw std::runtime_error("Error : Wrong synthax in configuration file");
+	if (!line.empty() && line[line.length() - 1] == ';')
+        line.erase(line.length() - 1);
 }
 
+void	initLocation(t_location* loc)
+{
+	loc->isPath = true;
+	loc->autoIndex = true;
+	loc->allowMethod.push_back("GET");
+}
