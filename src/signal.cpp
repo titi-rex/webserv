@@ -6,11 +6,12 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:59:01 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:41:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/13 12:57:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
+#include <iostream>
 
 extern sig_atomic_t	g_status;
 
@@ -30,3 +31,5 @@ void	sig_init(void (*handler) (int sig))
 	act.sa_handler = handler;
 	sigaction(SIGINT, &act, NULL);
 }
+
+// SIGABRT
