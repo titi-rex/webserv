@@ -6,6 +6,7 @@
 # include <fstream>
 # include <sstream>
 # include <cstring>
+# include <limits>
 
 # include <unistd.h>
 # include <sys/epoll.h>
