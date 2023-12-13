@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:42:14 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 15:14:26 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,17 +70,28 @@ std::string HEAD( std::string path )
 
 std::string	WebServer::Method(Request & req, v_host_ptr v_host)
 {
-	(void) v_host;
+	std::map<std::string, t_location>::iterator	i;
+	std::string									pagePath = req.getUri();
 
-std::string	pagePath = req.getUri();
+	for ( i = v_host->locations.begin(); i != v_host->locations.end(); ++i)
+	{
+		std::cout << "\nLocation :" << i->first;
+		std::cout << "\nRoot :" << i->second.root;
+		std::cout << "\nRedirection :" << i->second.redirection << std::endl;
 
-if (pagePath == "/")
-	pagePath = "data/default_page/index.html";
-else
-{
-	std::string	temp = pagePath;
-	pagePath = "data/default_page" + temp;
-}
+		if (i->first == pagePath)
+		{
+			pagePath = "data/default_page/index.html";
+			break;
+		}
+		else
+		{
+			pagePath = "." + i->second.root + pagePath;	
+			break;
+		}
+	}
+
+	std::cout << "Pagepath = " << pagePath << std::endl;
 
 	switch (req.getMid())
 	{
