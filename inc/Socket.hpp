@@ -6,26 +6,24 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:14:39 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 14:53:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 20:37:22 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _SOCKET_H__
 # define _SOCKET_H__
-# include <stdint.h>
 # include <deque>
 # include <map>
 # include <iostream>
 # include <sstream>
 
 # include <sys/socket.h>
-# include <arpa/inet.h> //# include <netinet/in.h>
-// # include <unistd.h>
-#include <strings.h>
+# include <arpa/inet.h> 
+# include <cstring>
 
 # include "virtual_host.hpp"
 
-# include <unistd.h>
+
 
 class Socket 
 {
@@ -66,7 +64,5 @@ class Socket
 
 std::ostream& operator<<(std::ostream& os, const Socket& socket);
 std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock);
-
-
 
 #endif

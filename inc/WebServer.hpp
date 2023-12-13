@@ -1,37 +1,43 @@
 #ifndef _WEB_SERVER_H__
 # define _WEB_SERVER_H__
 # include <string>
-
 # include <stdexcept>
 # include <iostream>
-# include <fstream>	//open file
-# include <sstream>	//stringstream
+# include <fstream>
+# include <sstream>
+# include <cstring>
 
 # include <unistd.h>
 # include <sys/epoll.h>
+# include <errno.h>
+# include <signal.h>
 
 typedef unsigned int long	uintptr_t;
 
-# include "virtual_host.hpp"
 # include "Socket.hpp"
 # include "Request.hpp"
+# include "virtual_host.hpp"
 
 # include "map_operator.hpp"
 # include "deque_operator.hpp"
 # include "vector_operator.hpp"
 
+# define MAXLINE 24
+# define MAX_EVENTS 5
+# define TIMEOUT 2000
 # define BACKLOG 5
+
+class Request;
 
 class WebServer 
 {
 	private	:
+		int	_efd;
 		size_t								_bodySizeLimit;
 		std::string							_dirErrorPage;
 		std::map<std::string, std::string>	_errorPage;
 		std::vector<t_virtual_host>			_virtualHost;
-
-
-		int	_efd;
+		std::map<int, Socket>				_socketsList;
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -40,11 +46,17 @@ class WebServer
 		void	_socketList_init(void);
 		void	_epoll_init(void);
 
-		std::map<int, Socket>				_socketsList;
+		bool		_is_server_named(v_host_ptr v_host, const std::string& name);
+		v_host_ptr	_selectServer(Socket& sk, Request& rq);
+
+		int			_recept_request(int sock_listen);
+		std::string	_read_request(int client_fd);
+		void		_send_response(int client_fd, std::string response);
 
 	public	:
 		WebServer(std::string path);
 		~WebServer(void);
+
 
 		void								setVirtualHost(std::vector<t_virtual_host> virtualHost);
 		void								setErrorPage(std::string key, std::string value); 
@@ -70,6 +82,8 @@ class WebServer
 		std::string	Method(Request & req, t_virtual_host* v_host);	
 		std::string	GET(std::string path);
 		std::string	GET_error(int code);	// GET special pour error
+
+
 };
 
 void						initLocation(t_location* loc);

@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:30:31 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 13:13:28 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,21 @@
 */
 
 
-#include "webserv.hpp"
 #include "WebServer.hpp"
-#include "define.hpp"
+#include "utils.hpp"
 
 sig_atomic_t	g_status = 1;
+
+
+// void	_epoll_error_handler(void)
+// {
+// 	if (errno == EBADF || errno == EINVAL)
+// 		throw std::runtime_error("fatal: wrong epoll fd");
+// 	if (errno == EFAULT)
+// 		throw std::runtime_error("fatal: epoll cant write events");
+// 	throw std::runtime_error("fatal: unknow");
+// };
+
 
 int	main(int ac, char **av)
 {

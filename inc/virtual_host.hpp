@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:53:28 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 13:44:10 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 20:37:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 # include <vector>
 # include <map>
 # include <string>
-
 
 typedef struct	s_location
 {
@@ -36,7 +35,7 @@ typedef struct	s_virtual_host
 	size_t								bodySize;
 	std::string							root;
 	std::string							index;
-	std::pair<std::string, int>			host_port;
+	std::pair<std::string, int>			host_port; // host par default localhost
 	std::vector<std::string>			serverNames;
 	std::map<std::string, std::string>	cgi;	// s1 nom executable, s2 path
 	std::map<std::string, t_location>	locations;

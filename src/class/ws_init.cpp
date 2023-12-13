@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:18:37 by tlegrand         ###   ########.fr       */
+/*   Updated: 2023/12/12 20:46:17 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 /**
  * @brief create all needed socket per couple (host/port)
- * 	then store socket fd as keymap with coresponding server as value 
+ * 	then store socket fd as keymap with coresponding Socket as value 
  * 	throw: fatal
  */
 void	WebServer::_socketList_init(void)
@@ -22,14 +22,10 @@ void	WebServer::_socketList_init(void)
 	for (size_t i = 0; i < _virtualHost.size(); ++i)
 	{
 	std::clog << _virtualHost[i] << std::endl;
-		
 		Socket	new_socket(Socket::hstrtoint(_virtualHost[i].host_port.first), _virtualHost[i].host_port.second);
 		
 		if (new_socket.is_already_used(_socketsList, &_virtualHost[i]))
-		{
-			std::clog << "already used " << new_socket.getName() << std::endl;
 			continue ;
-		}
 		new_socket.sockInit(BACKLOG);
 		new_socket.v_hosts.push_front(&_virtualHost[i]);
 		_socketsList[new_socket.getFd()] = new_socket;
@@ -51,7 +47,7 @@ void	WebServer::_epoll_init(void)
 
 // add interest to epoll
 	struct epoll_event event;
-	bzero(&event, sizeof(event));
+	std::memset(&event, 0, sizeof(event));
 	event.events = EPOLLIN;
 	for (std::map<int, Socket>::iterator it = _socketsList.begin(); it != _socketsList.end(); ++it)
 	{

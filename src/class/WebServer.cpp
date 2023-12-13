@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 15:28:35 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 13:14:25 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ WebServer::WebServer(std::string path)
    	}
 	this->debugServ();
 	
-
 	try
 	{
 		_socketList_init();
