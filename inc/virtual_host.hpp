@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   virtual_host.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:53:28 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 16:27:08 by lboudjem         ###   ########.fr       */
+/*   Updated: 2023/12/14 14:31:49 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ class	t_location
 		t_location();
 		~t_location();
 
-		bool								isPath;	//if false its an extension ! vrai par default
-		bool								autoIndex;  // directory listing true par default
-		int									lId;
-		std::string							uri_or_ext;
-		std::string							root;
-		std::string							index;
-		std::vector<std::string>			allowMethod;	// GET par default si empty
-		std::string							redirection;
+		bool								isPath;			//if false its an extension ! vrai par default
+		bool								autoIndex;		//directory listing, indique si le vhost doit repondre avec un index si la requet est un repertoire, si non renvoyer une erreur true par default
+		int									lId;			//id de l'instance
+		std::string							uri_or_ext;		//valeur depuis laquelle la location est utilise
+		std::string							root;			//repertoire ou chercher la cible de la requete, si empty utiliser celle du virtual host
+		std::string							index;			//fichier par default a chercher si la requet est un repertoire, si empty utiliser celle du virtual host
+		std::vector<std::string>			allowMethod;	//METHOD autorise pour cette location, GET par default si empty
+		std::string							redirection;	//substitue  la cible de la requete  ( ou la valeur de la location seulement, je crois pas mais plus de recherche sont necessaire), la method doit a nouveau etre utilise avec cette nouvelle cible
 		
 		bool								getIsPath() const;	
 		bool								getAutoIndex() const;
@@ -61,7 +61,7 @@ class	t_location
 		void								setRedirection(std::string redirection);
 };
 
-class	t_virtual_host 
+class	t_virtual_host
 {
 	private:
 	
@@ -71,15 +71,15 @@ class	t_virtual_host
 		t_virtual_host();
 		~t_virtual_host();
 	
-		bool								defaultServer;	// si plusieur server avec meme host/ports le premier est celui par default;
-		int									sId;
-		size_t								bodySize;
-		std::string							root;
-		std::string							index;
-		std::pair<std::string, uint16_t>	host_port; // host par default localhost
-		std::vector<std::string>			serverNames;
-		std::map<std::string, std::string>	cgi;	// s1 nom executable, s2 path
-		std::map<std::string, t_location>	locations;
+		bool								defaultServer;	// si plusieur server avec meme host/ports (obsolete) le premier est celui par default;
+		int									sId;			//id du virtual host
+		size_t								bodySize;		//limite de taille pour les client body
+		std::string							root;			//repertoire par defaut ou chercher les cibles des request
+		std::string							index;			//fichier par default a chercher si la requete est un repertoire
+		std::pair<std::string, uint16_t>	host_port; 		// host:port ou le virtualhost doit ecouter, par default 0.0.0.0:80
+		std::vector<std::string>			serverNames;	//list des nom auquels le virtual host doit repondre
+		std::map<std::string, std::string>	cgi;			// s1 nom executable, s2 path exacte de l'executable
+		std::map<std::string, t_location>	locations;		//list des locations enregistrer dans le virtual host
 
 		bool								getDefaultServer() const;
 		int									getSId() const;
@@ -102,6 +102,6 @@ class	t_virtual_host
 		void								setLocations(std::map<std::string, t_location> locations);
 };
 
-typedef t_virtual_host* v_host_ptr;
+typedef t_virtual_host* v_host_ptr;	//typedef pour un pointer vers un virtual host
 
 #endif

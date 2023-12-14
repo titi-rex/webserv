@@ -46,7 +46,7 @@ expect header could be met
 418 i'm a teapot
 a joke (can be used to respond to query we dont want to respond)
 + 419 ND
-+ 420 ND
++ 420 ND (SuDiDuSi)
 421 misdirected request
 request directed to a server unable to produce respond
 ! 422 unprocessable content

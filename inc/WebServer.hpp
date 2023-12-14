@@ -37,12 +37,12 @@ class Request;
 class WebServer 
 {
 	private	:
-		int	_efd;
-		size_t								_bodySizeLimit;
-		std::string							_dirErrorPage;
-		std::map<std::string, std::string>	_errorPage;
-		std::vector<t_virtual_host>			_virtualHost;
-		std::map<int, Socket>				_socketsList;
+		int									_efd;				//fd permettqnt d'acceder a l'instance epoll
+		size_t								_bodySizeLimit;		//limite generale de la taille maximum du body des clients pour tout le server, active si le virtual host ne precise pas (si == size_t max => pas de limite )
+		std::string							_dirErrorPage;		//indique un repertoire specifique ou chercher les pqges d'erreur
+		std::map<std::string, std::string>	_errorPage;			//indique ou chercher une page d'erreur specifique (est regarde en premier )
+		std::vector<t_virtual_host>			_virtualHost;		//vector contenant tout les virtual hosts du server
+		std::map<int, Socket>				_socketsList;		// map des sockets utilise par le server (key: fd, value: Socket)
 
 		WebServer(void);
 		WebServer(const WebServer& src);
