@@ -12,7 +12,7 @@
 			justify-content: center;
 			height: 100vh;
 		}
-
+		
 		.balloon{
 			display : flex;
 			background-color: red;
@@ -30,14 +30,14 @@
 			if (item.style.backgroundColor == "" || item.style.backgroundColor == "red")
 				item.style.backgroundColor = "green"
 			else if (item.style.backgroundColor == "green")
-				item.style.backgroundColor = "blue"
-			else if (item.style.backgroundColor == "blue")
-				item.style.backgroundColor = "red"
-		}
+			item.style.backgroundColor = "blue"
+		else if (item.style.backgroundColor == "blue")
+		item.style.backgroundColor = "red"
+}
 
-		function colordown(item)
-		{
-			if (item.style.backgroundColor == "" || item.style.backgroundColor == "red")
+function colordown(item)
+{
+	if (item.style.backgroundColor == "" || item.style.backgroundColor == "red")
 				item.style.backgroundColor = "blue"
 			else if (item.style.backgroundColor == "blue")
 				item.style.backgroundColor = "green"
@@ -59,7 +59,7 @@
 			}
 			colorup(item);
 		}
-
+		
 		function deflate(item)
 		{
 			if (item.offsetHeight > 200)
@@ -69,6 +69,7 @@
 				colordown(item);
 			}
 		}
-	</script>
+		</script>
 </body>
+<div><a href="http://localhost:8080">Back to the index!</a> </div>
 </html>
