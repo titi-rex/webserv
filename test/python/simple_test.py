@@ -48,10 +48,16 @@ def	try_get(url, headers, expected):
     print_response(res)
         
 	
+def	try_post(url, headers, body, expected):
+    res = requests.post(url, headers=headers, data=body)
+    if (expected != res.status_code):
+        print(f"Wrong status code, got {res.status_code}, expected {expected}")
+        return (1)
+    print_response(res)
 
 base_url = "http://" + config.SERVER_ADDR + ":" + config.SERVER_PORT
 
-try_get(base_url, None, 200)
+# try_get(base_url, None, 200)
 
 # GET request
 # url = base_url
@@ -60,11 +66,11 @@ try_get(base_url, None, 200)
 # print_response(res)
 
 # # GET index
-url = base_url + '/index.html'
-try_get(url, None, 200)
+# url = base_url + '/index.html'
+# try_get(url, None, 200)
 
-url = base_url + '/wrong.html'
-try_get(url, None, 404)
+# url = base_url + '/wrong.html'
+# try_get(url, None, 404)
 # res = requests.get(url)
 # print_request(res)
 # print_response(res)
@@ -90,6 +96,8 @@ try_get(url, None, 404)
 
 
 post_data = {'key1':'value1', 'key2':'vallu2'}
+url = base_url + '/wrong.html'
+try_post(url, None, post_data, 404)
 # # POST request
 # post ok 
 # post pas ok -> mauvais arg / mauvais endroit
