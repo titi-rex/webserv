@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Balloon</title>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Balloon</title>
 	<style>
 		body{
 			display: flex;
@@ -20,10 +20,19 @@
 			height: 200px;
 			border-radius: 100%;
 		}
+
+		.index{
+			position: absolute;
+			top: 80%;
+			align-items: end;
+		}
 	</style>
 </head>
 <body>
+	
 	<div class="balloon" onclick="grow(this)" onmouseout="deflate(this)"></div>
+	<div class="index"><a href="http://localhost:8080">Back to the index!</a> </div>
+	
 	<script>
 		function colorup(item)
 		{
@@ -38,9 +47,9 @@
 function colordown(item)
 {
 	if (item.style.backgroundColor == "" || item.style.backgroundColor == "red")
-				item.style.backgroundColor = "blue"
-			else if (item.style.backgroundColor == "blue")
-				item.style.backgroundColor = "green"
+	item.style.backgroundColor = "blue"
+else if (item.style.backgroundColor == "blue")
+item.style.backgroundColor = "green"
 			else if (item.style.backgroundColor == "green")
 				item.style.backgroundColor = "red"
 		}
@@ -71,5 +80,4 @@ function colordown(item)
 		}
 		</script>
 </body>
-<div><a href="http://localhost:8080">Back to the index!</a> </div>
 </html>
