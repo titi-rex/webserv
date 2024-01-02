@@ -24,7 +24,7 @@ typedef unsigned int long	uintptr_t;
 # include "deque_operator.hpp"
 # include "vector_operator.hpp"
 
-# define MAXLINE 24
+# define MAXLINE 4096
 # define MAX_EVENTS 5
 # define TIMEOUT 2000
 # define BACKLOG 5
