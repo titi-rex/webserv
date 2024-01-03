@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 15:14:26 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/03 17:11:19 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ std::string	WebServer::GET_error(int code)
 	return ("500 Internal Server Error\r\n\r\n");
 }
 
-void ft_date( char * date )
+static void ft_date( char * date )
 {
 	time_t rawtime;
 	struct tm *info;
@@ -33,7 +33,7 @@ void ft_date( char * date )
 	strftime(date, 80,"%a, %d %b %Y %H:%M:%S", info);
 }
 
-std::string HEAD( std::string path )
+std::string HEAD( std::string path, v_host_ptr v_host )
 {
 	std::ifstream	requestedPage(path.c_str());
 
@@ -53,7 +53,7 @@ std::string HEAD( std::string path )
 
 	std::stringstream ss;
 	ss << "HTTP/1.1 200 OK\n";
-	ss << "Server : webserv\n"; // mettre le serveur demandé par le client
+	ss << "Server: " << v_host->serverNames << "\n"; // mettre le serveur demandé par le client
 	ss << "Date: " << date << " GMT\n";
 	ss << "Content-length: " << contentLength << "\n";
 	ss << "Connection: keep-alive\n";
@@ -68,30 +68,48 @@ std::string HEAD( std::string path )
 // heaers : dwdwd wdwD wLD 
 // body kjfhdkjwsdfhikwsujd
 
-std::string	WebServer::Method(Request & req, v_host_ptr v_host)
+// find dans location, celui le plus resamblant a l'uri
+static std::string	findLocation(Request & req, v_host_ptr v_host)
 {
 	std::map<std::string, t_location>::iterator	i;
 	std::string									pagePath = req.getUri();
 
 	for ( i = v_host->locations.begin(); i != v_host->locations.end(); ++i)
 	{
-		std::cout << "\nLocation :" << i->first;
-		std::cout << "\nRoot :" << i->second.root;
-		std::cout << "\nRedirection :" << i->second.redirection << std::endl;
+		// std::cout << "\nLocation : " << i->first;
+		// std::cout << "\nRoot : " << i->second.root;
+		// std::cout << "\nRedirection : " << i->second.redirection << "\n" << std::endl;
+
+		// Remove html extension in order to compare to the v_host's locations
+		if(pagePath.substr(pagePath.find_last_of(".") + 1) == "html")
+			pagePath = pagePath.substr(0, pagePath.size() - 5);
 
 		if (i->first == pagePath)
 		{
-			pagePath = "data/default_page/index.html";
-			break;
-		}
-		else
-		{
-			pagePath = "." + i->second.root + pagePath;	
+			pagePath = "." + v_host->getRoot() + i->second.root + pagePath;
+
+			// Return index page if no page are requested
+			if (i->first == "/")
+			{
+				pagePath += v_host->locations[i->first].getIndex();
+				break;
+			}
+
+			// Add html extension for the correct page's path
+			if(pagePath.substr(pagePath.find_last_of(".") + 1) != "html")
+				pagePath += ".html";
 			break;
 		}
 	}
 
-	std::cout << "Pagepath = " << pagePath << std::endl;
+	// std::cout << "Pagepath = " << pagePath << std::endl;
+
+	return (pagePath);
+}
+
+std::string	WebServer::Method(Request & req, v_host_ptr v_host)
+{
+	std::string	pagePath = findLocation(req, v_host);
 
 	switch (req.getMid())
 	{
@@ -100,7 +118,7 @@ std::string	WebServer::Method(Request & req, v_host_ptr v_host)
 			return (GET(pagePath));
 		case 1:
 			std::cout << "HEAD JUJU" << std::endl;
-			return (HEAD(pagePath));
+			return (HEAD(pagePath, v_host));
 		case 2:
 			std::cout << "POST JUJU" << std::endl;
 			break;
