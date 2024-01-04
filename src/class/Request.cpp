@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 13:56:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/04 14:24:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,44 +14,60 @@
 
 size_t	Request::_num_request = 0;
 
-Method				Request::getAct(void) const
-{
-	return (this->_act);
-}
 
-Request::Request(void) : _rId(_num_request++), _act(eGET), _mId(-1) {};
+
+
+
+Request::Request(void) : _rId(_num_request++), _mId(eUNKNOW) {};
 Request::Request(const Request& src) : _rId(_num_request++) {*this = src;};
 Request&	Request::operator=(const Request& src) 
 {
 	if (this == &src)
 		return (*this);
 	_mId = src._mId;
-	_method = src._method;
 	_uri = src._uri;
 	_body = src._body;
 	_headers = src._headers;
 	return (*this);
 };
+
 Request::~Request(void){};
 
 
 int 				Request::getRid(void) const { return (this->_rId); };
-const std::string&	Request::getMethod(void) const { return (this->_method); };
+e_method 			Request::getMid(void) const {return (this->_mId);}
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
-const short int&	Request::getMid(void) const { return (this->_mId); };
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
 
+std::string	Request::getMethodName(void) const
+{
+	switch (this->_mId)
+	{
+	case eGET:
+		return ("GET");
+	case eHEAD:
+		return ("HEAD");
+	case ePOST:
+		return ("POST");
+
+	case eDELETE:
+		return ("DELETE");
+	case eUNKNOW:
+	default:
+		return ("UNKNOW");
+	}	
+}
 
 bool	Request::_is_method_known(std::string & test)
 {
 	std::string	ref[N_METHOD] = {"GET", "HEAD", "POST", "DELETE"};
 	
-	for (size_t i = 0; i < N_METHOD; ++i)
+	for (int i = 0; i < N_METHOD; ++i)
 	{
 		if (ref[i].compare(test) == 0)
 		{
-			_mId = i;
+			_mId = (e_method) i;
 			return (true);
 		}
 	}
@@ -80,18 +96,19 @@ void	Request::unchunk(std::istringstream& iss_raw)
 	}
 }
 
-Request::Request(std::string raw) : _rId(_num_request++), _act(eGET), _mId(-1) 
+Request::Request(std::string raw) : _rId(_num_request++), _mId(eUNKNOW) 
 {
 	std::istringstream	iss_raw(raw);
+	std::string			method;
 	std::string			tmp;
 
-	iss_raw >> _method;
+	iss_raw >> method;
 	iss_raw >> _uri;
 	iss_raw >> tmp;
 
 	if (tmp.compare("HTTP/1.1") != 0)
 		throw std::runtime_error("505 Wrong HTTP version");
-	if (_is_method_known(_method) == false)
+	if (_is_method_known(method) == false)
 		throw std::runtime_error("501 Method not implemented");
 	if (_uri[0] != '/')
 		throw std::runtime_error("400 Bad URI");
@@ -124,7 +141,7 @@ Request::Request(std::string raw) : _rId(_num_request++), _act(eGET), _mId(-1)
 std::ostream& operator<<(std::ostream& os, const Request& req)
 {
 	os << "rid: " << req.getRid() << std::endl;
-	os << "RL: " << req.getMethod() << " " << req.getUri() << " HTTP/1.1" << std::endl;
+	os << "RL: " << req.getMethodName() << " " << req.getUri() << " HTTP/1.1" << std::endl;
 	os << "Headers :" << std::endl;
 	os << req.getHeaders();
 	os << "Body :" << std::endl;
