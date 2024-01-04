@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 14:24:54 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/04 16:00:11 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,11 @@ const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
 
-std::string	Request::getMethodName(void) const
+const std::string	Request::getMethodName(void) const
 {
 	switch (this->_mId)
 	{
-	case eGET:
-		return ("GET");
-	case eHEAD:
-		return ("HEAD");
-	case ePOST:
-		return ("POST");
-
-	case eDELETE:
-		return ("DELETE");
-	case eUNKNOW:
+		METHOD_ENUM(METHOD_ENUM_CASE)
 	default:
 		return ("UNKNOW");
 	}	
@@ -61,9 +52,9 @@ std::string	Request::getMethodName(void) const
 
 bool	Request::_is_method_known(std::string & test)
 {
-	std::string	ref[N_METHOD] = {"GET", "HEAD", "POST", "DELETE"};
+	std::string	ref[METHOD_COUNT] = {"GET", "HEAD", "POST", "DELETE"};
 	
-	for (int i = 0; i < N_METHOD; ++i)
+	for (int i = 0; i < METHOD_COUNT; ++i)
 	{
 		if (ref[i].compare(test) == 0)
 		{
