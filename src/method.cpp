@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 15:14:24 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/04 16:04:46 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,8 @@ static std::string	findLocation(Request & req, v_host_ptr & v_host)
 			break;
 		}
 	}
+	if (i == v_host->locations.end())
+		throw std::runtime_error("404 Page not found");
 
 	checkAllowedMethod(v_host->locations[i->first].getAllowMethod(), req.getMethodName());
 
