@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+         #
+#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2023/12/13 16:29:32 by lboudjem         ###   ########.fr        #
+#    Updated: 2024/01/04 13:30:21 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,7 +67,7 @@ endif
 DIR_HEADER	=	inc/
 LST_HDR		=	${NAME}.hpp Request.hpp WebServer.hpp Socket.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
-IFLAGS		= -I${DIR_HEADER} 
+IFLAGS		=	-I${DIR_HEADER} 
 
 #	==============================	COMMANDS	==============================	#
 CXX			=	c++ -std=c++98
@@ -78,7 +78,7 @@ DEBUG		=	no
 
 
 #	==============================	FLAGS	==============================	#
-CXXFLAGS	=	-Wall -Wextra  #-Werror
+CXXFLAGS	=	-Wswitch-enum -Wall -Wextra  #-Werror
 DEPFLAGS	=	-MMD -MP
 FSFLAGS		=	-g3 -fsanitize=leak,address,pointer-subtract,pointer-compare,undefined 
 VALFLAGS 	=	--leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes \

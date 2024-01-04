@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:20:42 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/04 14:24:25 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@
 # define RQ_SIZE_MAX 1024
 # define N_METHOD 4
 
+typedef enum {eGET = 0, ePOST = 1, eDELETE = 2, eHEAD = 3, eUNKNOW = 4} e_method;
 
 class Request 
 {
 	private	:
 		size_t					_rId;
-		short int				_mId;
-		std::string				_method;
+		e_method 				_mId;
 		std::string				_uri;
 		std::string				_body;
 		std::map<std::string, std::string>	_headers;
@@ -49,15 +49,14 @@ class Request
 		~Request(void);
 
 		int								getRid(void) const;
-		const std::string&				getMethod(void) const;
+		e_method 						getMid(void) const;
+		std::string						getMethodName(void) const;
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
-		const short int&				getMid(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);
-
 
 
 #endif

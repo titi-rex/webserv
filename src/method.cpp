@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 14:57:28 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/04 15:07:30 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,10 @@ static std::string	findLocation(Request & req, v_host_ptr & v_host)
 
 	return (pagePath);
 }
+
+// WARNING ! mID est un enum mtn, qui peut prendre la valeur eUNKNOW, 
+// pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
+// pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
 std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 {
