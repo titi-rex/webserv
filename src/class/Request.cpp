@@ -3,19 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:22:10 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/04 13:56:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/Request.hpp"
+#include "Request.hpp"
 
 size_t	Request::_num_request = 0;
 
+Method				Request::getAct(void) const
+{
+	return (this->_act);
+}
 
-Request::Request(void) : _rId(_num_request++), _mId(-1) {};
+Request::Request(void) : _rId(_num_request++), _act(eGET), _mId(-1) {};
 Request::Request(const Request& src) : _rId(_num_request++) {*this = src;};
 Request&	Request::operator=(const Request& src) 
 {
@@ -76,7 +80,7 @@ void	Request::unchunk(std::istringstream& iss_raw)
 	}
 }
 
-Request::Request(std::string raw) : _rId(_num_request++), _mId(-1) 
+Request::Request(std::string raw) : _rId(_num_request++), _act(eGET), _mId(-1) 
 {
 	std::istringstream	iss_raw(raw);
 	std::string			tmp;
@@ -127,3 +131,4 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 	os << "{" << req.getBody() << "}" << std::endl;
 	return (os);
 };
+

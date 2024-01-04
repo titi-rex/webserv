@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:20:42 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/04 13:46:08 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,13 @@
 # define RQ_SIZE_MAX 1024
 # define N_METHOD 4
 
+typedef enum {eGET, eHEAD, ePOST, eDELETE, eUNKNOW} Method;
 
 class Request 
 {
 	private	:
 		size_t					_rId;
+		Method 					_act;
 		short int				_mId;
 		std::string				_method;
 		std::string				_uri;
@@ -53,11 +55,11 @@ class Request
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
 		const short int&				getMid(void) const;
+		Method							getAct(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);
-
 
 
 #endif
