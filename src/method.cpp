@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 15:07:30 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/04 15:14:24 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ static std::string	findLocation(Request & req, v_host_ptr & v_host)
 		}
 	}
 
-	checkAllowedMethod(v_host->locations[i->first].getAllowMethod(), req.getMethod());
+	checkAllowedMethod(v_host->locations[i->first].getAllowMethod(), req.getMethodName());
 
 	// std::cout << "Pagepath = " << pagePath << std::endl;
 
@@ -137,18 +137,20 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 
 	switch (req.getMid())
 	{
-		case 0:
+		case eGET:
 			std::cout << "GET JUJU" << std::endl;
 			return (GET(pagePath));
-		case 1:
-			std::cout << "HEAD JUJU" << std::endl;
-			return (HEAD(pagePath, v_host));
-		case 2:
+		case ePOST:
 			std::cout << "POST JUJU" << std::endl;
 			break;
-		case 3:
+		case eDELETE:
 			std::cout << "DELETE JUJU" << std::endl;
 			break;
+		case eHEAD:
+			std::cout << "HEAD JUJU" << std::endl;
+			return (HEAD(pagePath, v_host));
+		case eUNKNOW:
+			throw std::runtime_error("501 Method not Implemented");
 	};
 
 	return (NULL);

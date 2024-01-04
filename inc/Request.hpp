@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 14:24:25 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/04 15:19:15 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include "map_operator.hpp"
 
 # define RQ_SIZE_MAX 1024
-# define N_METHOD 4
+# define N_METHOD 5
 
 typedef enum {eGET = 0, ePOST = 1, eDELETE = 2, eHEAD = 3, eUNKNOW = 4} e_method;
 

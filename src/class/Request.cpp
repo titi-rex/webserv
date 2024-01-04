@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 14:24:54 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/04 15:19:13 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ std::string	Request::getMethodName(void) const
 
 bool	Request::_is_method_known(std::string & test)
 {
-	std::string	ref[N_METHOD] = {"GET", "HEAD", "POST", "DELETE"};
+	std::string	ref[N_METHOD] = {"GET", "POST", "DELETE", "HEAD", "UNKNOW"};
 	
 	for (int i = 0; i < N_METHOD; ++i)
 	{
