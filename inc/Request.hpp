@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 16:00:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/04 16:02:17 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include "map_operator.hpp"
 
 # define RQ_SIZE_MAX 1024
-# define N_METHOD 4
+# define N_METHOD 5
 
 # define METHOD_ENUM(TYPE) \
 	TYPE(eGET, 0) \

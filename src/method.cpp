@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 14:21:58 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/04 15:14:24 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void ft_date( char * date )
 	strftime(date, 80,"%a, %d %b %Y %H:%M:%S", info);
 }
 
-std::string HEAD( std::string path, v_host_ptr v_host )
+std::string HEAD( std::string & path, v_host_ptr & v_host )
 {
 	std::ifstream	requestedPage(path.c_str());
 
@@ -62,6 +62,27 @@ std::string HEAD( std::string path, v_host_ptr v_host )
 	return (ss.str());
 }
 
+static void	checkAllowedMethod(std::vector<std::string> methodAllowed, std::string methodAsked)
+{
+	// Always allow HEADs
+	if (methodAsked == "HEAD")
+		return;
+
+	std::vector<std::string>::iterator	i;
+
+	// std::cout << "\nmethodAsked: " << methodAsked;
+
+	for (i = methodAllowed.begin(); i != methodAllowed.end(); ++i)
+	{
+		// std::cout << "\n*i (methodAllowed): " << *i << std::endl;
+
+		if (*i == methodAsked)
+			return;
+	}
+	throw std::runtime_error("405 Method Not Allowed");
+}
+
+
 // determine the requested methode
 // std::string METHOD(Request& req, t_virtual_host* v_host);
 // RL 200 ok
@@ -69,7 +90,7 @@ std::string HEAD( std::string path, v_host_ptr v_host )
 // body kjfhdkjwsdfhikwsujd
 
 // find dans location, celui le plus resamblant a l'uri
-static std::string	findLocation(Request & req, v_host_ptr v_host)
+static std::string	findLocation(Request & req, v_host_ptr & v_host)
 {
 	std::map<std::string, t_location>::iterator	i;
 	std::string									pagePath = req.getUri();
@@ -90,17 +111,16 @@ static std::string	findLocation(Request & req, v_host_ptr v_host)
 
 			// Return index page if no page are requested
 			if (i->first == "/")
-			{
 				pagePath += v_host->locations[i->first].getIndex();
-				break;
-			}
 
 			// Add html extension for the correct page's path
-			if(pagePath.substr(pagePath.find_last_of(".") + 1) != "html")
+			else if (pagePath.substr(pagePath.find_last_of(".") + 1) != "html")
 				pagePath += ".html";
 			break;
 		}
 	}
+
+	checkAllowedMethod(v_host->locations[i->first].getAllowMethod(), req.getMethodName());
 
 	// std::cout << "Pagepath = " << pagePath << std::endl;
 
@@ -111,24 +131,26 @@ static std::string	findLocation(Request & req, v_host_ptr v_host)
 // pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
 // pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
-std::string	WebServer::Method(Request & req, v_host_ptr v_host)
+std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 {
 	std::string	pagePath = findLocation(req, v_host);
 
 	switch (req.getMid())
 	{
-		case 0:
+		case eGET:
 			std::cout << "GET JUJU" << std::endl;
 			return (GET(pagePath));
-		case 1:
-			std::cout << "HEAD JUJU" << std::endl;
-			return (HEAD(pagePath, v_host));
-		case 2:
+		case ePOST:
 			std::cout << "POST JUJU" << std::endl;
 			break;
-		case 3:
+		case eDELETE:
 			std::cout << "DELETE JUJU" << std::endl;
 			break;
+		case eHEAD:
+			std::cout << "HEAD JUJU" << std::endl;
+			return (HEAD(pagePath, v_host));
+		case eUNKNOW:
+			throw std::runtime_error("501 Method not Implemented");
 	};
 
 	return (NULL);
@@ -142,7 +164,7 @@ std::string	WebServer::GET(std::string path)
 	std::ifstream	indexPage(path.c_str());
 
 	if (indexPage.fail())
-		throw std::runtime_error("error closing file");
+		throw std::runtime_error("500 Error closing file");
 	std::getline(indexPage, response, '\0');
 	indexPage.close();
 	response = "HTTP/1.0 200 OK\r\n\r\n" + response + "\r\n\r\n";
