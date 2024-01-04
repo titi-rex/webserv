@@ -84,7 +84,7 @@ class WebServer
 
 		void		run(void);
 
-		std::string	Method(Request & req, v_host_ptr v_host);	
+		std::string	Method(Request & req, v_host_ptr & v_host);	
 		std::string	GET(std::string path);
 		std::string	GET_error(int code);	//obsolete
 		std::string	GET_error2(std::string status);	// GET special pour error
