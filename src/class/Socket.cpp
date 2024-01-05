@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:15:27 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:20:58 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/05 16:39:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,13 @@ void	Socket::setName(void)
 	_name = strs.str();
 };
 
+
 bool	Socket::operator==(Socket& ref) 
 {
 	if (_host == ref._host && _port == ref._port)
 		return (true);
 	return (false);
 };
-	
 
 bool	Socket::is_already_used(std::map<int, Socket>& socketsList, v_host_ptr v_host)
 {
@@ -92,42 +92,6 @@ std::clog << sin << std::endl;
 		throw std::runtime_error("fatal: socket cannot listen");
 }
 
-uint32_t Socket::hstrtoint(std::string host)
-{
-	std::istringstream	iss(host);
-	uint32_t	byte[4] = {0, 0, 0, 0};
-	char		trash;
-
-	iss >> byte[0] >> trash;
-	iss >> byte[1] >> trash;
-	iss >> byte[2] >> trash;
-	iss >> byte[3];
-	return ((byte[0] << 24) | (byte[1] << 16) | (byte[2] << 8) | byte[3]);
-}
-
-std::string	Socket::hintostr(uint32_t raw)
-{
-	std::stringstream	strs;
-
-	strs << (raw >> 24) << "." << ((raw << 8) >> 24) << "." << ((raw << 16) >> 24) << "." << ((raw << 24) >> 24);
-	return (strs.str());
-}
-
-std::string	Socket::str_sock_family(const struct sockaddr_in& sock)
-{
-	switch (sock.sin_family)
-	{
-		case AF_UNIX:
-			return ("AF_UNIX");
-		case AF_INET:
-			return ("AF_INET");
-		case AF_INET6:
-			return ("AF_INET6");
-		default:
-			return ("UNKNOW");
-	}
-}
-
 
 std::ostream& operator<<(std::ostream& os, const Socket& socket)
 {
@@ -140,8 +104,8 @@ std::ostream& operator<<(std::ostream& os, const Socket& socket)
 
 std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock)
 {
-	os << "Socket family : " << Socket::str_sock_family(sock) << std::endl;
-	os << "Socket host : " << Socket::hintostr(ntohl(sock.sin_addr.s_addr)) << std::endl;
+	os << "Socket family : " << SocketBase::str_sock_family(sock) << std::endl;
+	os << "Socket host : " << SocketBase::hintostr(ntohl(sock.sin_addr.s_addr)) << std::endl;
 	os << "Socket port : " << ntohs(sock.sin_port) << std::endl;
 	return (os);
 }

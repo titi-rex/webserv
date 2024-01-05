@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 15:30:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/05 16:51:28 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	WebServer::_socketList_init(void)
 	for (size_t i = 0; i < _virtualHost.size(); ++i)
 	{
 	std::clog << _virtualHost[i] << std::endl;
-		Socket	new_socket(Socket::hstrtoint(_virtualHost[i].host_port.first), _virtualHost[i].host_port.second);
+		Socket	new_socket(SocketBase::hstrtoint(_virtualHost[i].host_port.first), _virtualHost[i].host_port.second);
 		
 		if (new_socket.is_already_used(_socketsList, &_virtualHost[i]))
 			continue ;

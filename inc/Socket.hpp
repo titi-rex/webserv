@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:14:39 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:37:22 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/05 17:00:43 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,17 @@
 # include <cstring>
 
 # include "virtual_host.hpp"
-
+# include "SocketBase.hpp"
 
 
 class Socket 
 {
 	
 	private	:
+		SocketBase	_socket;
 		int			_fd;
 		uint32_t	_host;
-		uint16_t	_port;
+		uint16_t	_port;	//should use sockaddr_in insteed
 		std::string	_name;
 
 	public	:
@@ -51,14 +52,11 @@ class Socket
 		std::string	getName(void) const;
 		void		setName(void);
 
-		bool	operator==(Socket& ref);
+bool	operator==(Socket& ref);
 
 		bool	is_already_used(std::map<int, Socket>& tmp, v_host_ptr v_host);
 		void	sockInit(int backlog);
 
-		static uint32_t 	hstrtoint(std::string host);
-		static std::string	hintostr(uint32_t raw);
-		static std::string	str_sock_family(const struct sockaddr_in& sock);
 		
 };
 
