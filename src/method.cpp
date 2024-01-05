@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 11:07:13 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/05 11:31:47 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ std::string HEAD( std::string & path, v_host_ptr & v_host )
 static void	checkAllowedMethod(std::vector<std::string> methodAllowed, std::string methodAsked)
 {
 	// Always allow HEADs
-	if (methodAsked == "HEAD")
+	if (methodAsked == "eHEAD")
 		return;
 
 	std::vector<std::string>::iterator	i;
@@ -76,7 +76,7 @@ static void	checkAllowedMethod(std::vector<std::string> methodAllowed, std::stri
 	{
 		// std::cout << "\n*i (methodAllowed): " << *i << std::endl;
 
-		if (*i == methodAsked)
+		if ("e" + *i == methodAsked)
 			return;
 	}
 	throw std::runtime_error("405 Method Not Allowed");
