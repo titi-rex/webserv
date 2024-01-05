@@ -1,5 +1,68 @@
 
 
+Client :
+	socket pour comminiquer avec 
+	Request 
+	fd server 
+	fd pipe cgi
+	request status (not started, in progress, gathered, procced, waiting for cgi, send)
+
+
+
+client -> fd   
+			fd = "fksjfksjfksjfd"
+			read fd = "dsdfsfsfs"
+			when close(fd) read fd = "\0"
+
+
+
+
+epoll : 
+	init : register server socket fd in EPOLLIN (read)
+
+	each loop: 
+		- each revents :
+			- check if EPOLLERR ou EPOLLHUP
+			- check if fd is (server_fd <0)	
+				-server:	create client (accept client_socket) and ADD client to epoll with EPOLLIN
+				-client:
+					- IF EPOLLIN -> read request , IF end request -> set to EPOLLOUT
+					- IF EPOLLOUT -> send request , IF "connection:close" -> EPOLL_DEL client ?
+				-cgi: 	add to request 
+		
+		- procced request, IF CGI -> add pipe to epoll with EPOLLIN
+
+
+
+epoll multi: 
+	init : 
+		-server socket instance : register server socket fd in EPOLLIN (read)
+		-client socket instance : empty
+		-cgi instance : empty
+		-master instance : register all epoll instace in EPOLLIN
+		
+
+	each loop: 
+		- each revents :
+			- check if EPOLLERR ou EPOLLHUP
+			- check if fd is (server_fd <0)	
+				-server:	create client (accept client_socket) and ADD client to epoll with EPOLLIN
+				-client:
+					- IF EPOLLIN -> read request , IF end request -> set to EPOLLOUT
+					- IF EPOLLOUT -> send request , IF "connection:close" -> EPOLL_DEL client ?
+				-cgi: 	add to request 
+		
+		- procced request, IF CGI -> add pipe to epoll with EPOLLIN
+
+
+OPT :
+	use multiple epoll instance : 
+	use dup to filter event : ? 
+		read and write a t same time ? 
+
+
+
+
 
 !!! attention overflow socket port (uint16_t) !!
 

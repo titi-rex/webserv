@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 14:49:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/05 14:48:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,15 @@ std::string	WebServer::_read_request(int client_fd)
 	int			n_rec;
 	std::string	res;
 
-	while ((n_rec = recv(client_fd, &rec_buffer, MAXLINE, 0)) > 0) //MSG_DONTWAIT | MSG_CMSG_CLOEXEC
+	while ((n_rec = recv(client_fd, &rec_buffer, MAXLINE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC)) > 0) //
 	{
+		std::cerr << "nrec : " << n_rec << ", max : " << MAXLINE << std::endl;
 		rec_buffer[n_rec] = 0;
 		res += rec_buffer;
-		if (res.find("\r\n\r\n", 4) != std::string::npos)
+		if (n_rec < MAXLINE)
 			break ;
 	}
+	// std::cerr << std::endl << "raw : " << std::endl << res << std::endl << std::endl;
 	if (n_rec == -1)
 	{
 		close(client_fd);
@@ -99,7 +101,7 @@ void	WebServer::run(void)
 				std::string	raw = _read_request(client_fd);
 				Request	rq(raw);
 				
-			std::clog << rq << std::endl;
+			// std::clog << rq << std::endl;
 
 			// special instruction : execute shutdown
 				if (rq.getUri() == "/shutdown")
@@ -109,10 +111,10 @@ void	WebServer::run(void)
 				if (rq.getUri() == "/fatal")
 					throw std::runtime_error("415 Bof");
 				v_host_ptr	host = _selectServer(_socketsList[revents[i].data.fd], rq);
-				std::cout << host << std::endl;
+			// std::cout << host << std::endl;
 			// prepare response based on request, there should be GET/HEAD/POST
 				// std::string	response = GET("data/default_page/index.html");
-				std::string	response = Method(rq, host);
+				std::string	response = "response\r\n\r\n"; //Method(rq, host);
 
 			//	send response to client
 				_send_response(client_fd, response);
@@ -124,6 +126,10 @@ void	WebServer::run(void)
 			//	aka GET to proper error file
 			//	plus maybe error should be log into log file
 				std::clog << e.what() << std::endl;
+
+				std::cerr << "errno value: " << errno << std::endl;
+				std::cerr << strerror(errno) << std::endl;
+				
 				std::string	status(e.what(), 3);
 				// if (status == 0)
 				// 	status = 500;
