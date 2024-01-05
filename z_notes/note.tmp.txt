@@ -1,7 +1,7 @@
 
 
 Client :
-	socket pour comminiquer avec 
+	SocketServer pour comminiquer avec 
 	Request 
 	fd server 
 	fd pipe cgi
@@ -18,13 +18,13 @@ client -> fd
 
 
 epoll : 
-	init : register server socket fd in EPOLLIN (read)
+	init : register server SocketServer fd in EPOLLIN (read)
 
 	each loop: 
 		- each revents :
 			- check if EPOLLERR ou EPOLLHUP
 			- check if fd is (server_fd <0)	
-				-server:	create client (accept client_socket) and ADD client to epoll with EPOLLIN
+				-server:	create client (accept client_SocketServer) and ADD client to epoll with EPOLLIN
 				-client:
 					- IF EPOLLIN -> read request , IF end request -> set to EPOLLOUT
 					- IF EPOLLOUT -> send request , IF "connection:close" -> EPOLL_DEL client ?
@@ -36,8 +36,8 @@ epoll :
 
 epoll multi: 
 	init : 
-		-server socket instance : register server socket fd in EPOLLIN (read)
-		-client socket instance : empty
+		-server SocketServer instance : register server SocketServer fd in EPOLLIN (read)
+		-client SocketServer instance : empty
 		-cgi instance : empty
 		-master instance : register all epoll instace in EPOLLIN
 		
@@ -46,7 +46,7 @@ epoll multi:
 		- each revents :
 			- check if EPOLLERR ou EPOLLHUP
 			- check if fd is (server_fd <0)	
-				-server:	create client (accept client_socket) and ADD client to epoll with EPOLLIN
+				-server:	create client (accept client_SocketServer) and ADD client to epoll with EPOLLIN
 				-client:
 					- IF EPOLLIN -> read request , IF end request -> set to EPOLLOUT
 					- IF EPOLLOUT -> send request , IF "connection:close" -> EPOLL_DEL client ?
@@ -64,7 +64,7 @@ OPT :
 
 
 
-!!! attention overflow socket port (uint16_t) !!
+!!! attention overflow SocketServer port (uint16_t) !!
 
 // attention si strtol overflow -> thow
 // attention si getline throw

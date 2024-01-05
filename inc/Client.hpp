@@ -6,13 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 16:28:06 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _CLIENT_H__
 # define _CLIENT_H__
-# include "Socket.hpp"
+# include "SocketServer.hpp"
 # include "Request.hpp"
 
 class Client 
@@ -32,8 +32,8 @@ class Client
 		Client&	operator=(const Client& src);
 		~Client(void);
 
-		Socket	get_socket(void) const;
-		void	set_socket(Socket socket);
+		SocketServer	get_SocketServer(void) const;
+		void	set_SocketServer(SocketServer SocketServer);
 
 		Request	get_rq(void) const;
 		void	set_rq(Request rq);

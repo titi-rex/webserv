@@ -6,36 +6,56 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 16:51:28 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 
+
+bool	sk_used(std::map<int, SocketServer>& SocketServersList, v_host_ptr v_host, uint32_t addr, uint16_t port)
+{
+	for (std::map<int, SocketServer>::iterator it = SocketServersList.begin(); it != SocketServersList.end(); ++it)
+	{
+		if (it->second.getSin().sin_addr.s_addr == addr && it->second.getSin().sin_port == port)
+		{
+			it->second.v_hosts.push_back(v_host);
+			return (true);
+		}
+	}
+	return (false);
+};
+
+
 /**
- * @brief create all needed socket per couple (host/port)
- * 	then store socket fd as keymap with coresponding Socket as value 
+ * @brief create all needed SocketServer per couple (host/port)
+ * 	then store SocketServer fd as keymap with coresponding SocketServer as value 
  * 	throw: fatal
  */
-void	WebServer::_socketList_init(void)
+void	WebServer::_SocketServerList_init(void)
 {
 	for (size_t i = 0; i < _virtualHost.size(); ++i)
 	{
 	std::clog << _virtualHost[i] << std::endl;
-		Socket	new_socket(SocketBase::hstrtoint(_virtualHost[i].host_port.first), _virtualHost[i].host_port.second);
+		uint32_t	haddr = Socket::hstrtoint(_virtualHost[i].host_port.first);
+		uint16_t	hport = _virtualHost[i].host_port.second;
 		
-		if (new_socket.is_already_used(_socketsList, &_virtualHost[i]))
+		if (sk_used(_SocketServersList, &_virtualHost[i], htonl(haddr), htons(hport)))
 			continue ;
-		new_socket.sockInit(BACKLOG);
-		new_socket.v_hosts.push_front(&_virtualHost[i]);
-		_socketsList[new_socket.getFd()] = new_socket;
+
+		SocketServer	new_SocketServer(haddr, hport);
+		new_SocketServer.bind();
+		new_SocketServer.listen(BACKLOG);
+		new_SocketServer.v_hosts.push_front(&_virtualHost[i]);
+		_SocketServersList[new_SocketServer.getFd()] = new_SocketServer;
+		std::clog << "SocketServer added :" << new_SocketServer << std::endl;
 			
 	}
-	std::clog << "sokList: " << _socketsList << std::endl;
+	std::clog << "sokList: " << _SocketServersList << std::endl;
 }
 
 /**
- * @brief initiate epoll instance and populate it with socket fd
+ * @brief initiate epoll instance and populate it with SocketServer fd
  * 	throw: fatal
  */
 void	WebServer::_epoll_init(void)
@@ -49,11 +69,11 @@ void	WebServer::_epoll_init(void)
 	struct epoll_event event;
 	std::memset(&event, 0, sizeof(event));
 	event.events = EPOLLIN;
-	for (std::map<int, Socket>::iterator it = _socketsList.begin(); it != _socketsList.end(); ++it)
+	for (std::map<int, SocketServer>::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
 	{
 		event.data.fd = it->first;
 		if (epoll_ctl(_efd, EPOLL_CTL_ADD, event.data.fd, &event) == -1)
 			throw std::runtime_error("fatal: cannot add interest to epoll instance");
-		std::clog << "fd : " << it->first << " for " << _socketsList[it->first].getName() << " add to epoll list" << std::endl;
+		std::clog << "fd : " << it->first << " for " << _SocketServersList[it->first].getName() << " add to epoll list" << std::endl;
 	}
 }

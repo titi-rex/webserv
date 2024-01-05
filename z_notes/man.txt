@@ -116,24 +116,24 @@ struct protoent {
 }
 
 
-//===\\ SOCKET //===\\
-socket:
-int socket(int domain, int type, int protocol);
+//===\\ SocketServer //===\\
+SocketServer:
+int SocketServer(int domain, int type, int protocol);
 create an endpoint for communication, return a fd to that endpoint
 type arg cane be | with SOCK_NONBLOCK and SOCK_CLOEXEC
 
 
-socketpair:
-int socketpair(int domain, int type, int protocol, int sv[2]);
-same as socket but create a pair of connected socket returned in sv[]
-the two socket ar indistinguishable
+SocketServerpair:
+int SocketServerpair(int domain, int type, int protocol, int sv[2]);
+same as SocketServer but create a pair of connected SocketServer returned in sv[]
+the two SocketServer ar indistinguishable
 
 
 getsockname:
 int getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 struct sockaddr {
 	sa_family_t     sa_family;      /* Address family */
-	char            sa_data[];      /* Socket address */
+	char            sa_data[];      /* SocketServer address */
 };
 
 struct sockaddr_in {
@@ -142,67 +142,67 @@ struct sockaddr_in {
 	struct in_addr sin_addr;   /* internet address */
 };
 
-return current address to which socketfd is bound, in the buffer addr, 
-addrlen should indicate the amount of bytes in addr, after return, addrlen contains actual size of socket address
+return current address to which SocketServerfd is bound, in the buffer addr, 
+addrlen should indicate the amount of bytes in addr, after return, addrlen contains actual size of SocketServer address
 return 0 on success, -1 error
 
 
 setsockopt:
 int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
-set option on socket 
-for option at socket level : SOL_SOCKET, for other level give protocol number of the protocol controlling the option
+set option on SocketServer 
+for option at SocketServer level : SOL_SocketServer, for other level give protocol number of the protocol controlling the option
 optname is name of option
 optval and optlen used to set option 
 
 return 0 on suces, -1 if failed and a value askef depending on optname
 
-SO_ERROR: Get and clear the pending socket error.  This socket option is read‐only.  Expects an integer.
-SO_PEERCRED: Return  the  credentials of the peer process connected to this socket.  For further details, see unix(7).
+SO_ERROR: Get and clear the pending SocketServer error.  This SocketServer option is read‐only.  Expects an integer.
+SO_PEERCRED: Return  the  credentials of the peer process connected to this SocketServer.  For further details, see unix(7).
 
 SO_REUSEADDR: Indicates  that  the  rules used in validating addresses supplied in a bind(2) call should allow
-reuse of local addresses.  For AF_INET sockets this means that a socket may  bind,  except  when
-there is an active listening socket bound to the address.  When the listening socket is bound to
+reuse of local addresses.  For AF_INET SocketServers this means that a SocketServer may  bind,  except  when
+there is an active listening SocketServer bound to the address.  When the listening SocketServer is bound to
 INADDR_ANY  with  a specific port then it is not possible to bind to this port for any local ad‐
 dress.  Argument is an integer boolean flag.
 
-SO_REUSEPORT: Permits multiple AF_INET or AF_INET6 sockets to be bound to an identical socket  address.   This
-option  must  be set on each socket (including the first socket) prior to calling bind(2) on the
-socket.  To prevent port hijacking, all of the processes binding to the same address  must  have
-the same effective UID.  This option can be employed with both TCP and UDP sockets.
-For TCP sockets, this option allows accept(2) load distribution in a multi‐threaded server to be
-improved  by using a distinct listener socket for each thread.  This provides improved load dis‐
+SO_REUSEPORT: Permits multiple AF_INET or AF_INET6 SocketServers to be bound to an identical SocketServer  address.   This
+option  must  be set on each SocketServer (including the first SocketServer) prior to calling bind(2) on the
+SocketServer.  To prevent port hijacking, all of the processes binding to the same address  must  have
+the same effective UID.  This option can be employed with both TCP and UDP SocketServers.
+For TCP SocketServers, this option allows accept(2) load distribution in a multi‐threaded server to be
+improved  by using a distinct listener SocketServer for each thread.  This provides improved load dis‐
 tribution as compared to traditional techniques such using a  single  accept(2)ing  thread  that
 distributes  connections,  or  having  multiple  threads that compete to accept(2) from the same
-socket.
+SocketServer.
 
 
 
 bind:
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
-bind a name to a socket
-when socket is created (by socket()) it exist in a name space (address family) but has no address assigned.
-bind() assign an address to our socket
+bind a name to a SocketServer
+when SocketServer is created (by SocketServer()) it exist in a name space (address family) but has no address assigned.
+bind() assign an address to our SocketServer
 
 
 listen:
 int listen(int sockfd, int backlog);
-mark socket as passive socket, ie it will be used to accept incoming connection request using accept
+mark SocketServer as passive SocketServer, ie it will be used to accept incoming connection request using accept
 backlog is the maximum of incoming connection request
 
 
 connect:
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
-connects the socket referred to by the file descriptor sockfd to the address specified by addr
+connects the SocketServer referred to by the file descriptor sockfd to the address specified by addr
 addrlen argument specifies the size of addr
 
 accept:
 int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-accept connection on a socket 
-extract the first connection request pending on the queue for listening socket, create a new 
-socket and return a fd to that socket, the new socket is not in listening mode
-original socket is unaffected
-socket -> bind -> listen -> accept
-addr and addrlen used to get info of the new socket (?), can be NULL 
+accept connection on a SocketServer 
+extract the first connection request pending on the queue for listening SocketServer, create a new 
+SocketServer and return a fd to that SocketServer, the new SocketServer is not in listening mode
+original SocketServer is unaffected
+SocketServer -> bind -> listen -> accept
+addr and addrlen used to get info of the new SocketServer (?), can be NULL 
 
 
 //===\\ CONVERTER //===\\
@@ -285,13 +285,13 @@ DEFINE (set in events and read in revents):
 POLLIN :There is data to read
 
 POLLPRI: exceptional condition :
-	- out-of-band data on a TCP socket (see tcp(7))
+	- out-of-band data on a TCP SocketServer (see tcp(7))
 	-a tty master in packet mode has seen a state change on the slave (see ioctl_tty(2))
 	- A cgroup.events file has been modified (see cgroups(7))
 
-POLLOUT: Writing is now possible, though a write larger that the available space in a socket or pipe will still block (unless O_NONBLOCK is set)
+POLLOUT: Writing is now possible, though a write larger that the available space in a SocketServer or pipe will still block (unless O_NONBLOCK is set)
 
-POLLRDHUP: Stream  socket peer closed connection, or shut down writing half of connection
+POLLRDHUP: Stream  SocketServer peer closed connection, or shut down writing half of connection
 (?) _GNU_SOURCE feature test macro must be defined (before including any header files) in order to obtain this definition
 
 
@@ -299,7 +299,7 @@ POLLERR: Error condition.
 This bit is also set for a file descriptor referring to the write end of a pipe when the read end has been closed
 
 POLLHUP: Hang  up
-Note that when reading from a channel such as a pipe or a stream socket, this event merely indicates that the 
+Note that when reading from a channel such as a pipe or a stream SocketServer, this event merely indicates that the 
 peer closed its end of the channel. Subsequent reads from the channel will return 0 (end of  file) only after all outstanding 
 data in the channel has been consumed.
 
@@ -326,7 +326,7 @@ with EPOLLET, we should be non-blocking, ie :-
 	- have non-blocking fd
 	- waiting for event only after read/write return EAGAIN 
 
-EAGAIN : The file descriptor fd refers to a file other than a socket and has been marked nonblocking  
+EAGAIN : The file descriptor fd refers to a file other than a SocketServer and has been marked nonblocking  
 (O_NONBLOCK),  and  the  read  would  block. See open(2) for further details on the O_NONBLOCK flag
 
 we are not allowed to check errno just after read/write ie 
@@ -364,7 +364,7 @@ struct epoll_event {
 - epoll_event.event : bitmask composed by ORing (?) following event:
 EPOLLIN The associated file is available for read(2) operations.
 EPOLLOUT The associated file is available for write(2) operations.
-EPOLLRDHUP (since Linux 2.6.17) Stream socket peer closed connection, or shut down writing half of connection.  (This flag is especially useful for writing simple code to  de‐tect peer shutdown when using Edge Triggered monitoring.)
+EPOLLRDHUP (since Linux 2.6.17) Stream SocketServer peer closed connection, or shut down writing half of connection.  (This flag is especially useful for writing simple code to  de‐tect peer shutdown when using Edge Triggered monitoring.)
 EPOLLPRI There is an exceptional condition on the file descriptor.  See the discussion of POLLPRI in poll(2).
 
 EPOLLERR Error condition happened on the associated file descriptor.  This event is also reported for the write end of a pipe when the read end has beenclosed.  epoll_wait(2) will always report for this event; it is not necessary to set it in events.
@@ -400,18 +400,18 @@ in struct epoll_event:
 
 send:
 ssize_t send(int sockfd, const void *buf, size_t len, int flags);
-transmit message to another socket, can be use when socket is in connected state 
+transmit message to another SocketServer, can be use when SocketServer is in connected state 
 only difference with write is send accept flag, if flag == 0, send == write
 
 list of flags : 
 MSG_CONFIRM (since Linux 2.3.15)
 Tell the link layer that forward progress happened: you got a successful reply from the other side.  If the link layer doesn't get this it will
-regularly  reprobe  the  neighbor  (e.g., via a unicast ARP).  Valid only on SOCK_DGRAM and SOCK_RAW sockets and currently implemented only for
+regularly  reprobe  the  neighbor  (e.g., via a unicast ARP).  Valid only on SOCK_DGRAM and SOCK_RAW SocketServers and currently implemented only for
 IPv4 and IPv6.  See arp(7) for details.
 
 MSG_DONTROUTE
 Don't use a gateway to send out the packet, send to hosts only on directly connected networks.  This is usually  used  only  by  diagnostic  or
-routing programs.  This is defined only for protocol families that route; packet sockets don't.
+routing programs.  This is defined only for protocol families that route; packet SocketServers don't.
 
 MSG_DONTWAIT (since Linux 2.2)
 Enables  nonblocking operation; if the operation would block, EAGAIN or EWOULDBLOCK is returned.  This provides similar behavior to setting the
@@ -420,19 +420,19 @@ the open file description (see open(2)), which will affect all threads in the ca
 scriptors referring to the same open file description.
 
 MSG_EOR (since Linux 2.2)
-Terminates a record (when this notion is supported, as for sockets of type SOCK_SEQPACKET).
+Terminates a record (when this notion is supported, as for SocketServers of type SOCK_SEQPACKET).
 
 MSG_MORE (since Linux 2.4.4)
-The caller has more data to send.  This flag is used with TCP sockets to obtain the same effect as the TCP_CORK  socket  option  (see  tcp(7)),
+The caller has more data to send.  This flag is used with TCP SocketServers to obtain the same effect as the TCP_CORK  SocketServer  option  (see  tcp(7)),
 with the difference that this flag can be set on a per-call basis.
 
 MSG_NOSIGNAL (since Linux 2.2)
-Don't  generate  a  SIGPIPE signal if the peer on a stream-oriented socket has closed the connection.  The EPIPE error is still returned.  This
+Don't  generate  a  SIGPIPE signal if the peer on a stream-oriented SocketServer has closed the connection.  The EPIPE error is still returned.  This
 provides similar behavior to using sigaction(2) to ignore SIGPIPE, but, whereas MSG_NOSIGNAL is a per-call feature,  ignoring  SIGPIPE  sets  a
 process attribute that affects all threads in the process.
 
 MSG_OOB
-Sends  out-of-band  data on sockets that support this notion (e.g., of type SOCK_STREAM); the underlying protocol must also support out-of-band data.
+Sends  out-of-band  data on SocketServers that support this notion (e.g., of type SOCK_STREAM); the underlying protocol must also support out-of-band data.
 
 
 recv:
@@ -451,7 +451,7 @@ cesses that hold file descriptors referring to the same open file description.
 
 
 MSG_ERRQUEUE 
-This flag specifies that queued errors should be received from the socket error queue.  The error is passed in an ancillary message with a type
+This flag specifies that queued errors should be received from the SocketServer error queue.  The error is passed in an ancillary message with a type
 dependent on the protocol (for IPv4 IP_RECVERR).  The user should supply a buffer of sufficient size.  
 
 MSG_OOB
@@ -463,13 +463,13 @@ This flag causes the receive operation to return data from the beginning of the 
 a subsequent receive call will return the same data.
 
 MSG_TRUNC 
-For  raw  (AF_PACKET), Internet datagram (since Linux 2.4.27/2.6.8), netlink (since Linux 2.6.22), and UNIX datagram (since Linux 3.4) sockets:
-return the real length of the packet or datagram, even when it was longer than the passed buffer. For use with Internet stream sockets, see tcp(7).
+For  raw  (AF_PACKET), Internet datagram (since Linux 2.4.27/2.6.8), netlink (since Linux 2.6.22), and UNIX datagram (since Linux 3.4) SocketServers:
+return the real length of the packet or datagram, even when it was longer than the passed buffer. For use with Internet stream SocketServers, see tcp(7).
 
 MSG_WAITALL 
 This flag requests that the operation block until the full request is satisfied.  However, the call may still return less data  than  requested
 if a signal is caught, an error or disconnect occurs, or the next data to be received is of a different type than that returned.  This flag has
-no effect for datagram sockets.
+no effect for datagram SocketServers.
 
 
 
@@ -486,4 +486,4 @@ perform cmd on fd, can set a O_NONBLOCK flag
 
 /// HS
 
-stocer fd from my socket 
+stocer fd from my SocketServer 

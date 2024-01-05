@@ -17,7 +17,7 @@
 typedef unsigned int long	uintptr_t;
 
 # include "virtual_host.hpp"
-# include "Socket.hpp"
+# include "SocketServer.hpp"
 # include "Request.hpp"
 
 # include "map_operator.hpp"
@@ -42,17 +42,17 @@ class WebServer
 		std::string							_dirErrorPage;		//indique un repertoire specifique ou chercher les pqges d'erreur
 		std::map<std::string, std::string>	_errorPage;			//indique ou chercher une page d'erreur specifique (est regarde en premier )
 		std::vector<t_virtual_host>			_virtualHost;		//vector contenant tout les virtual hosts du server
-		std::map<int, Socket>				_socketsList;		// map des sockets utilise par le server (key: fd, value: Socket)
+		std::map<int, SocketServer>				_SocketServersList;		// map des SocketServers utilise par le server (key: fd, value: SocketServer)
 
 		WebServer(void);
 		WebServer(const WebServer& src);
 		WebServer&	operator=(const WebServer& src);
 
-		void	_socketList_init(void);
+		void	_SocketServerList_init(void);
 		void	_epoll_init(void);
 
 		bool		_is_server_named(v_host_ptr v_host, const std::string& name);
-		v_host_ptr	_selectServer(Socket& sk, Request& rq);
+		v_host_ptr	_selectServer(SocketServer& sk, Request& rq);
 
 		int			_recept_request(int sock_listen);
 		std::string	_read_request(int client_fd);

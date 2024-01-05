@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 16:52:45 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ Client::Client(void) : _fd_server(0), _fd_cgi(0), _status(0) {};
 
 Client::Client(const Client& src) 
 {
-	this->set_socket(src.get_socket());
+	this->set_SocketServer(src.get_SocketServer());
 	this->set_rq(src.get_rq());
 	this->setFd_server(src.getFd_server());
 	this->setFd_cgi(src.getFd_cgi());
@@ -28,7 +28,7 @@ Client&	Client::operator=(const Client& src)
 {
 	if (this == &src)
 		return (*this);
-	this->set_socket(src.get_socket());
+	this->set_SocketServer(src.get_SocketServer());
 	this->set_rq(src.get_rq());
 	this->setFd_server(src.getFd_server());
 	this->setFd_cgi(src.getFd_cgi());

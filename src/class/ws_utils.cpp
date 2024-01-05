@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 20:11:34 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:19:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ bool	WebServer::_is_server_named(v_host_ptr v_host, const std::string& name)
 	return (false);
 }
 
-v_host_ptr	WebServer::_selectServer(Socket& sk, Request& rq)
+v_host_ptr	WebServer::_selectServer(SocketServer& sk, Request& rq)
 {
 	if (rq.getHeaders().count("host:"))
 	{		

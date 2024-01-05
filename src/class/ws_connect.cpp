@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 14:48:06 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	WebServer::_recept_request(int sock_listen)
 
 	client_fd = accept(sock_listen, NULL, NULL);
 	if (client_fd == -1)
-		throw std::runtime_error("500 cannot accept client socket");
+		throw std::runtime_error("500 cannot accept client SocketServer");
 	return (client_fd);
 }
 
@@ -110,7 +110,7 @@ void	WebServer::run(void)
 					throw std::runtime_error("404 Bof");
 				if (rq.getUri() == "/fatal")
 					throw std::runtime_error("415 Bof");
-				v_host_ptr	host = _selectServer(_socketsList[revents[i].data.fd], rq);
+				v_host_ptr	host = _selectServer(_SocketServersList[revents[i].data.fd], rq);
 			// std::cout << host << std::endl;
 			// prepare response based on request, there should be GET/HEAD/POST
 				// std::string	response = GET("data/default_page/index.html");

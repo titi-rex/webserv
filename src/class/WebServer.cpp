@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:22:33 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ WebServer&	WebServer::operator=(const WebServer& src)
 
 WebServer::~WebServer(void) 
 {
-	for (std::map<int, Socket>::iterator it = _socketsList.begin(); it != _socketsList.end(); ++it)
+	for (std::map<int, SocketServer>::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
 	{
 		close(it->first);
 	}
@@ -101,12 +101,12 @@ WebServer::WebServer(std::string path)
 	
 	try
 	{
-		_socketList_init();
+		_SocketServerList_init();
 		_epoll_init();
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		// std::cerr << e.what() << std::endl;
 		throw std::runtime_error(e.what());
 	}	
 };
