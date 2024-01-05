@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 15:19:15 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/04 16:02:17 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,27 @@
 # define RQ_SIZE_MAX 1024
 # define N_METHOD 5
 
-typedef enum {eGET = 0, ePOST = 1, eDELETE = 2, eHEAD = 3, eUNKNOW = 4} e_method;
+# define METHOD_ENUM(TYPE) \
+	TYPE(eGET, 0) \
+	TYPE(ePOST, 1) \
+	TYPE(eDELETE, 2) \
+	TYPE(eHEAD, 3) \
+	TYPE(eUNKNOW, 4) 
+
+# define METHOD_ENUM_TYPE(NAME, VALUE) NAME = (VALUE),
+
+typedef enum
+{
+	METHOD_ENUM(METHOD_ENUM_TYPE)
+} e_method;
+
+# define METHOD_ENUM_CASE(NAME, ...) case NAME: return #NAME;
+
+#define PLUS_ONE(...) + 1
+enum {	
+	METHOD_COUNT = (0 METHOD_ENUM(PLUS_ONE) - 1)
+};
+
 
 class Request 
 {
@@ -50,7 +70,7 @@ class Request
 
 		int								getRid(void) const;
 		e_method 						getMid(void) const;
-		std::string						getMethodName(void) const;
+		const std::string				getMethodName(void) const;
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
