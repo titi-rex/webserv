@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 16:04:46 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/05 11:07:13 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,15 +107,7 @@ static std::string	findLocation(Request & req, v_host_ptr & v_host)
 
 		if (i->first == pagePath)
 		{
-			pagePath = "." + v_host->getRoot() + i->second.root + pagePath;
-
-			// Return index page if no page are requested
-			if (i->first == "/")
-				pagePath += v_host->locations[i->first].getIndex();
-
-			// Add html extension for the correct page's path
-			else if (pagePath.substr(pagePath.find_last_of(".") + 1) != "html")
-				pagePath += ".html";
+			pagePath = "." + v_host->getRoot() + i->second.root + "/" + v_host->locations[i->first].getIndex();
 			break;
 		}
 	}
