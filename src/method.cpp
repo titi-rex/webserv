@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 12:35:32 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/05 15:10:27 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,9 +107,18 @@ static std::string	findLocation(Request & req, v_host_ptr & v_host)
 
 		if (i->first == pagePath)
 		{
-			// std::cout << "Location: " << i->first << std::endl;
-			// std::cout << "Root: " << v_host->locations[i->first].getRoot() << std::endl;
-			// std::cout << "Index: " << v_host->locations[i->first].getIndex() << std::endl;
+			std::cout << "Location: " << i->first << std::endl;
+			std::cout << "Root: " << v_host->locations[i->first].getRoot() << std::endl;
+			std::cout << "Index: " << v_host->locations[i->first].getIndex() << std::endl;
+			std::cout << "Redirection: " << v_host->locations[i->first].getRedirection() << std::endl;
+
+			std::string	redirection = v_host->locations[i->first].getRedirection();
+
+			if (redirection != "")
+			{
+				locationRedirection	lr(redirection);
+				throw lr;
+			}
 
 			// If the index of the location is not set, return the index page of the server
 			if (v_host->locations[i->first].getRoot() == v_host->locations[i->first].getIndex())
