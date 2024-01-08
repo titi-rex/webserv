@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 16:19:07 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/08 12:37:01 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,16 @@ static void	checkAllowedMethod(std::vector<std::string> methodAllowed, std::stri
 	throw std::runtime_error("405 Method Not Allowed");
 }
 
+static void checkPageFile(std::string pagePath)
+{
+	const char *file = pagePath.c_str();
+
+	if (access(file, F_OK) != 0)
+		throw std::runtime_error("404 Page not found (JUJU)");
+
+	if (access(file, R_OK) != 0)
+		throw std::runtime_error("423 locked ressource is locked, it can be accessed");
+}
 
 // determine the requested methode
 // std::string METHOD(Request& req, t_virtual_host* v_host);
@@ -132,6 +142,7 @@ static std::string	findLocation(Request & req, v_host_ptr & v_host)
 		throw std::runtime_error("404 Page not found");
 
 	checkAllowedMethod(v_host->locations[i->first].getAllowMethod(), req.getMethodName());
+	checkPageFile(pagePath);
 
 	// std::cout << "Pagepath = " << pagePath << std::endl;
 
