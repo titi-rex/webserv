@@ -18,6 +18,7 @@ typedef unsigned int long	uintptr_t;
 
 # include "virtual_host.hpp"
 # include "SocketServer.hpp"
+# include "Client.hpp"
 # include "Request.hpp"
 
 # include "map_operator.hpp"
@@ -42,7 +43,9 @@ class WebServer
 		std::string							_dirErrorPage;		//indique un repertoire specifique ou chercher les pqges d'erreur
 		std::map<std::string, std::string>	_errorPage;			//indique ou chercher une page d'erreur specifique (est regarde en premier )
 		std::vector<t_virtual_host>			_virtualHost;		//vector contenant tout les virtual hosts du server
-		std::map<int, SocketServer>				_SocketServersList;		// map des SocketServers utilise par le server (key: fd, value: SocketServer)
+		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
+		std::deque<Client>					_ClientList;		//deque contenant les client du server
+
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -54,9 +57,10 @@ class WebServer
 		bool		_is_server_named(v_host_ptr v_host, const std::string& name);
 		v_host_ptr	_selectServer(SocketServer& sk, Request& rq);
 
-		int			_recept_request(int sock_listen);
+
 		std::string	_read_request(int client_fd);
 		void		_send_response(int client_fd, std::string response);
+
 
 	public	:
 		WebServer(std::string path);
@@ -83,6 +87,8 @@ class WebServer
 		void		debugServ();
 
 		void		run(void);
+		void		addClient(int socketServerFd);
+
 
 		std::string	Method(Request & req, v_host_ptr & v_host);	
 		std::string	GET(std::string path);

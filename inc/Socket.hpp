@@ -36,8 +36,8 @@ class Socket
 		Socket(int family, uint32_t haddr, uint16_t hport, int flags = SOCK_STREAM, int protocol = 0);
 
 		void	setFd(int fd);
-		void	setName(void);
 		void	setSin(int family, uint32_t addr, uint16_t port);
+		virtual void	setName(void);
 		
 		int							getFd(void) const;
 		const std::string&			getName(void) const;
@@ -49,12 +49,15 @@ class Socket
 		void	bind(void);
 		void	connect(void);
 		void	listen(int backlog);
-
+		void	accept(int fd);
 
 		static uint32_t 	hstrtoint(std::string host);
 		static std::string	hintostr(uint32_t raw);
 		static std::string	str_sock_family(const struct sockaddr_in& sock);
 
 };
+
+std::ostream&	operator<<(std::ostream& os, const Socket& Socket);
+std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/04 16:01:34 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/08 13:13:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ const std::string	Request::getMethodName(void) const
 	switch (this->_mId)
 	{
 		METHOD_ENUM(METHOD_ENUM_CASE)
-	default:
-		return ("UNKNOW");
+		default:
+			return ("UNKNOW");
 	}	
 }
 
@@ -87,7 +87,7 @@ void	Request::unchunk(std::istringstream& iss_raw)
 	}
 }
 
-Request::Request(std::string raw) : _rId(_num_request++), _mId(eUNKNOW) 
+void	Request::build(std::string raw)
 {
 	std::istringstream	iss_raw(raw);
 	std::string			method;

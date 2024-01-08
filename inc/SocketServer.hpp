@@ -35,10 +35,9 @@ class SocketServer : public Socket
 		SocketServer&	operator=(const SocketServer& src);
 		~SocketServer(void);
 
-		SocketServer(uint32_t haddr, uint16_t hport);		
+		SocketServer(uint32_t haddr, uint16_t hport);	
 };
 
-std::ostream& operator<<(std::ostream& os, const SocketServer& SocketServer);
-std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock);
+std::ostream&	operator<<(std::ostream& os, const SocketServer& SocketServer);
 
 #endif

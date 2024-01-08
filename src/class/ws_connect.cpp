@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/08 14:18:18 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,26 @@
 
 extern sig_atomic_t	g_status;
 
-/**
- * @brief accept wrapper 
- * throw: should not close server
- */
-int	WebServer::_recept_request(int sock_listen)
-{
-	int		client_fd;
 
-	client_fd = accept(sock_listen, NULL, NULL);
-	if (client_fd == -1)
-		throw std::runtime_error("500 cannot accept client SocketServer");
-	return (client_fd);
+void	WebServer::addClient(int socketServerFd)
+{
+	Client	cl;
+
+	try
+	{
+		cl.accept(socketServerFd);
+		_ClientList.push_back(cl);
+		// add to epoll
+		
+	}
+	catch(const std::exception& e)
+	{
+		cl.cstatus = FATAL;
+		std::cerr << e.what() << '\n';
+		std::cerr << strerror(errno) << std::endl;
+	}
 }
+
 
 /**
  * @brief read wrapper 
@@ -38,7 +45,7 @@ std::string	WebServer::_read_request(int client_fd)
 	int			n_rec;
 	std::string	res;
 
-	while ((n_rec = recv(client_fd, &rec_buffer, MAXLINE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC)) > 0) //
+	while ((n_rec = recv(client_fd, &rec_buffer, MAXLINE, 0)) > 0) //MSG_DONTWAIT | MSG_CMSG_CLOEXEC
 	{
 		std::cerr << "nrec : " << n_rec << ", max : " << MAXLINE << std::endl;
 		rec_buffer[n_rec] = 0;
@@ -92,32 +99,33 @@ void	WebServer::run(void)
 	// process event
 		for (int i = 0; i < n_event; ++i)
 		{
-			int	client_fd = _recept_request(revents[i].data.fd);
+			Client cl;
+			
+			cl.accept(revents[i].data.fd);
 
 			try
 			{
 			// read and parse request
 			
-				std::string	raw = _read_request(client_fd);
-				Request	rq(raw);
-				
-			// std::clog << rq << std::endl;
+				std::string	raw = _read_request(cl.getFd());
+				cl.request.build(raw);
+			std::clog << cl.request << std::endl;
 
 			// special instruction : execute shutdown
-				if (rq.getUri() == "/shutdown")
+				if (cl.request.getUri() == "/shutdown")
 					g_status = 0;
-				if (rq.getUri() == "/throw")
+				if (cl.request.getUri() == "/throw")
 					throw std::runtime_error("404 Bof");
-				if (rq.getUri() == "/fatal")
+				if (cl.request.getUri() == "/fatal")
 					throw std::runtime_error("415 Bof");
-				v_host_ptr	host = _selectServer(_SocketServersList[revents[i].data.fd], rq);
+				v_host_ptr	host = _selectServer(_SocketServersList[revents[i].data.fd], cl.request);
 			// std::cout << host << std::endl;
 			// prepare response based on request, there should be GET/HEAD/POST
 				// std::string	response = GET("data/default_page/index.html");
 				std::string	response = "response\r\n\r\n"; //Method(rq, host);
 
 			//	send response to client
-				_send_response(client_fd, response);
+				_send_response(cl.getFd(), response);
 			}
 			catch (std::exception & e)
 			{
@@ -135,7 +143,7 @@ void	WebServer::run(void)
 				// 	status = 500;
 				std::string response = GET_error2(status);
 
-				_send_response(client_fd, response);
+				_send_response(cl.getFd(), response);
 			}
 		}
 	}

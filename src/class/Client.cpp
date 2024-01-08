@@ -6,21 +6,23 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/08 14:14:43 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) : _fd_server(0), _fd_cgi(0), _status(0) {};
-
-Client::Client(const Client& src) 
+Client::Client(void) : _serverEndPoint(-1), _fd_cgi(-1), cstatus(CREATED) 
 {
-	this->set_SocketServer(src.get_SocketServer());
-	this->set_rq(src.get_rq());
-	this->setFd_server(src.getFd_server());
+	_name = "cnameless";
+};
+
+Client::Client(const Client& src) : Socket(src)
+{
 	this->setFd_cgi(src.getFd_cgi());
-	this->setStatus(src.getStatus());
+	_serverEndPoint = src._serverEndPoint;
+	request = src.request;
+	cstatus = src.cstatus;
 	
 };
 
@@ -28,27 +30,34 @@ Client&	Client::operator=(const Client& src)
 {
 	if (this == &src)
 		return (*this);
-	this->set_SocketServer(src.get_SocketServer());
-	this->set_rq(src.get_rq());
-	this->setFd_server(src.getFd_server());
+	this->Socket::operator=(src);
 	this->setFd_cgi(src.getFd_cgi());
-	this->setStatus(src.getStatus());
+	_serverEndPoint = src._serverEndPoint;
+	request = src.request;
+	cstatus = src.cstatus;
 	return (*this);
 };
 
 Client::~Client(void) {};
 
 
-Request	Client::get_rq(void) const { return (this->_rq); };
-void	Client::set_rq(Request _rq) { this->_rq = _rq; };
 
-int	Client::getFd_server(void) const { return (this->_fd_server); };
-void	Client::setFd_server(int fd_server) { this->_fd_server = fd_server; };
+int		Client::getServerEndPoint(void) const { return (this->_serverEndPoint); };
+int		Client::getFd_cgi(void) const { return (this->_fd_cgi); };
 
-int	Client::getFd_cgi(void) const { return (this->_fd_cgi); };
 void	Client::setFd_cgi(int fd_cgi) { this->_fd_cgi = fd_cgi; };
 
-int	Client::getStatus(void) const { return (this->_status); };
-void	Client::setStatus(int status) { this->_status = status; };
 
+void	Client::accept(int socketServerFd)
+{
+	_serverEndPoint = socketServerFd;
+	this->Socket::accept(socketServerFd);
+	this->setName();
+	cstatus = ACCEPTED;
+}
 
+std::ostream&	operator<<(std::ostream& os, const Client& Client)
+{
+	os << "Client socket, fd : " << (Socket) Client << std::endl;
+	return (os);
+};

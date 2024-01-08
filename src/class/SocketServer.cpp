@@ -35,17 +35,11 @@ SocketServer::SocketServer(uint32_t haddr, uint16_t hport) : Socket(AF_INET, had
 
 std::ostream& operator<<(std::ostream& os, const SocketServer& SocketServer)
 {
-	os << "fd : " << SocketServer.getFd() << ", host : " << SocketServer.getName() << ", for server : ";
+	os << "Server Socket, fd : " << (Socket) SocketServer << ", for server : ";
 	for (size_t i = 0; i < SocketServer.v_hosts.size(); ++i)
 		os << SocketServer.v_hosts[i]->serverNames[0] << " ";
 	os << std::endl;
 	return (os);
 }
 
-std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock)
-{
-	os << "SocketServer family : " << Socket::str_sock_family(sock) << std::endl;
-	os << "SocketServer host : " << Socket::hintostr(ntohl(sock.sin_addr.s_addr)) << std::endl;
-	os << "SocketServer port : " << ntohs(sock.sin_port) << std::endl;
-	return (os);
-}
+

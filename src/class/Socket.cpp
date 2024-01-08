@@ -90,24 +90,33 @@ bool	Socket::operator==(Socket& ref)
 		return (false);
 	return (true);
 };
-	
+
 // custom func
 void	Socket::bind(void)
 {
 	if (::bind(_fd, (struct sockaddr*) &_sin, sizeof(_sin)) == -1)
-		throw std::runtime_error("599: cannot bind SocketServer");
+		throw std::runtime_error("599: socket error bind");
 }
 
 void	Socket::connect(void)
 {
 	if (::connect(_fd, (struct sockaddr*) &_sin, sizeof(_sin)) == -1)
-		throw std::runtime_error("599: cannot connect SocketServer");
+		throw std::runtime_error("599: socket error connect");
 }
 
 void	Socket::listen(int backlog)
 {
 	if (::listen(_fd, backlog) == -1)
-		throw std::runtime_error("599: SocketServer cannot listen");
+		throw std::runtime_error("599: socket error listen");
+}
+
+void	Socket::accept(int sock_fd)
+{
+	socklen_t len = sizeof(_sin);
+
+	_fd = ::accept(sock_fd, (struct sockaddr*) &_sin, &len);
+	if (_fd == -1)
+		throw std::runtime_error("599: socket error accept");
 }
 
 // static function
@@ -147,3 +156,17 @@ std::string	Socket::str_sock_family(const struct sockaddr_in& sock)
 	}
 }
 
+std::ostream& operator<<(std::ostream& os, const Socket& socket)
+{
+	os << "fd : " << socket.getFd() << ", host : " << socket.getName() << std::endl;
+	return (os);
+}
+
+
+std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock)
+{
+	os << "Socket family : " << Socket::str_sock_family(sock) << std::endl;
+	os << "Socket host : " << Socket::hintostr(ntohl(sock.sin_addr.s_addr)) << std::endl;
+	os << "Socket port : " << ntohs(sock.sin_port) << std::endl;
+	return (os);
+}

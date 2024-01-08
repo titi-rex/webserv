@@ -6,47 +6,52 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/08 14:27:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _CLIENT_H__
 # define _CLIENT_H__
-# include "SocketServer.hpp"
+# include "Socket.hpp"
 # include "Request.hpp"
 
-class Client 
+typedef enum 
+{
+	CREATED,
+	ACCEPTED,
+	READING,
+	GATHERED,
+	PROCEEDED,
+	CGIWAIT,
+	ERROR,
+	FATAL,
+	SENT,
+} e_client_status;
+
+class Client : public Socket
 {
 	private	:
-		int					_sockfd;
-		struct sockaddr_in	_sin;
-		Request	_rq;
-		int		_fd_server;
+		int		_serverEndPoint;
 		int		_fd_cgi;
-		int		_status;
 
 	public	:
+		Request			request;
+		e_client_status	cstatus;
 
 		Client(void);
 		Client(const Client& src);
 		Client&	operator=(const Client& src);
 		~Client(void);
 
-		SocketServer	get_SocketServer(void) const;
-		void	set_SocketServer(SocketServer SocketServer);
 
-		Request	get_rq(void) const;
-		void	set_rq(Request rq);
+		void	accept(int sock_fd);
 		
-
-
-		int		getFd_server(void) const;
-		void	setFd_server(int fd_server);
+		int		getServerEndPoint(void) const;
 		int		getFd_cgi(void) const;
-		void	setFd_cgi(int fd_cgi);
-		int		getStatus(void) const;
-		void	setStatus(int status);
 
+		void	setFd_cgi(int fd_cgi);
 };
+
+std::ostream&	operator<<(std::ostream& os, const Client& Client);
 
 #endif
