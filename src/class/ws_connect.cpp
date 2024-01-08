@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 14:49:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/08 14:58:58 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,15 @@ void	WebServer::run(void)
 
 			//	send response to client
 				_send_response(client_fd, response);
+			}
+			catch (locationRedirection & lr)
+			{
+				std::stringstream ss;
+				ss << "HTTP/1.1 301 Moved Permanently\n";
+				ss << "Location: ";
+				ss << lr.what() << "\n" << "\r\n\r\n";
+
+				_send_response(client_fd, ss.str());
 			}
 			catch (std::exception & e)
 			{
