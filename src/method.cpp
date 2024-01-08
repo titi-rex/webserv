@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 16:19:07 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/08 14:43:54 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,7 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 			// std::cout << "GET JUJU" << std::endl;
 			return (GET(pagePath));
 		case ePOST:
+			return (POST(req.getBody()));
 			// std::cout << "POST JUJU" << std::endl;
 			break;
 		case eDELETE:
@@ -163,10 +164,8 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 		case eUNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
 	};
-
 	return (NULL);
-}	
-
+}
 
 // std::string	get(Request rq, t_virtual_host v_host)
 std::string	WebServer::GET(std::string path)
@@ -180,4 +179,25 @@ std::string	WebServer::GET(std::string path)
 	indexPage.close();
 	response = "HTTP/1.0 200 OK\r\n\r\n" + response + "\r\n\r\n";
 	return (response);
+}
+
+std::string WebServer::POST(std::string post_data)
+{
+    std::map<std::string, std::string> post_params;
+    std::istringstream iss(post_data);
+
+    std::string key_value;
+    while (std::getline(iss, key_value, '&')) 
+	{
+        size_t equals_pos = key_value.find('=');
+        if (equals_pos != std::string::npos) 
+		{
+            std::string key = key_value.substr(0, equals_pos);
+            std::string value = key_value.substr(equals_pos + 1);
+            post_params[key] = value;
+        }
+    }
+	std::string response = "HTTP/1.1 200 OK\r\n\r\n";
+	
+    return (response);
 }
