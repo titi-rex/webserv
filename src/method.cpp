@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/08 12:37:01 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/08 14:21:48 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,13 +138,13 @@ static std::string	findLocation(Request & req, v_host_ptr & v_host)
 			break;
 		}
 	}
+	// std::cout << "Pagepath = " << pagePath << std::endl;
+
 	if (i == v_host->locations.end())
 		throw std::runtime_error("404 Page not found");
 
 	checkAllowedMethod(v_host->locations[i->first].getAllowMethod(), req.getMethodName());
 	checkPageFile(pagePath);
-
-	// std::cout << "Pagepath = " << pagePath << std::endl;
 
 	return (pagePath);
 }
@@ -155,6 +155,9 @@ static std::string	findLocation(Request & req, v_host_ptr & v_host)
 
 std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 {
+	if (isDirListReq(req))
+		return (dirList(req, v_host));
+	
 	std::string	pagePath = findLocation(req, v_host);
 
 	switch (req.getMid())
@@ -189,6 +192,6 @@ std::string	WebServer::GET(std::string path)
 		throw std::runtime_error("500 Error closing file");
 	std::getline(indexPage, response, '\0');
 	indexPage.close();
-	response = "HTTP/1.0 200 OK\r\n\r\n" + response + "\r\n\r\n";
+	response = "HTTP/1.1 200 OK\r\n\r\n" + response + "\r\n\r\n";
 	return (response);
 }
