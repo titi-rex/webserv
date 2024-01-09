@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/09 16:08:46 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/09 18:32:21 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,26 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-static std::string	makeDirList(std::string directory)
+static std::string	uriPage(std::string fileName, v_host_ptr & v_host)
+{
+	std::string									uriPage;
+	std::map<std::string, t_location>::iterator	i;
+
+	for ( i = v_host->locations.begin(); i != v_host->locations.end(); ++i)
+	{
+		if (v_host->locations[i->first].getIndex() == fileName)
+		{
+			// uriPage = v_host->getRoot() + v_host->locations[i->first].getRoot() + "/" + fileName;
+			uriPage = i->first;
+			std::cout << "uriPage :" << uriPage << std::endl;
+			
+			return (uriPage);
+		}
+	}
+
+	return ("");
+}
+static std::string	makeDirList(std::string directory, v_host_ptr & v_host)
 {
 	// std::cout << "makeDirList" << std::endl;
 
@@ -30,8 +49,19 @@ static std::string	makeDirList(std::string directory)
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << directory << "</title>\n</head>\n";
 	ss << "<body>\n<h1>Index of " << directory << "</h1>\n<dl>\n";
 
+	// Add the name of every file in the html page
 	while ((ptr_dir = readdir(dir)) != NULL)
-		ss << "<dt>" << ptr_dir->d_name << "</dt>\n";
+	{
+		// Folder . and .. don't have an uri
+		std::string	str = ptr_dir->d_name;
+		if (str == "." || str == "..")
+			ss << "<dt>" << ptr_dir->d_name << "</dt>\n";
+		else
+		{
+			ss << "<dt>" << "<a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, v_host) << "\">";
+			ss << ptr_dir->d_name << "</a></dt>\n";
+		}
+	}
 	
 	ss << "</dl>\n</body>\n</html>\r\n\r\n";
 
@@ -74,7 +104,7 @@ std::string	dirList(Request & req, v_host_ptr & v_host)
 			if (access(dirIndex.c_str(), R_OK) == 0)
 				return (dirIndex);
 			else if (v_host->locations[i->first].getAutoIndex() == true)
-				return (makeDirList(directory));
+				return (makeDirList(directory, v_host));
 		}
 	}
 	throw std::runtime_error("403 Directory Index Listing not available for this directory");
