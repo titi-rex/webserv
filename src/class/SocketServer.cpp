@@ -16,7 +16,10 @@
 
 SocketServer::SocketServer(void) {};
 
-SocketServer::SocketServer(const SocketServer& src) {*this = src;};
+SocketServer::SocketServer(const SocketServer& src) : Socket(src)
+{
+	*this = src;
+};
 
 SocketServer&	SocketServer::operator=(const SocketServer& src) 
 {

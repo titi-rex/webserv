@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/08 14:27:38 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/09 12:22:10 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include "Socket.hpp"
 # include "Request.hpp"
 
+# define BUFFER_SIZE 1024
 typedef enum 
 {
 	CREATED,
@@ -37,6 +38,7 @@ class Client : public Socket
 	public	:
 		Request			request;
 		e_client_status	cstatus;
+		bool		keepConnection;
 
 		Client(void);
 		Client(const Client& src);
@@ -45,6 +47,9 @@ class Client : public Socket
 
 
 		void	accept(int sock_fd);
+		bool	readRequest(void);
+		void	sendRequest(void);
+		void	reset(void);
 		
 		int		getServerEndPoint(void) const;
 		int		getFd_cgi(void) const;

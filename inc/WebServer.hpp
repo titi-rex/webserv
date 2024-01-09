@@ -44,7 +44,8 @@ class WebServer
 		std::map<std::string, std::string>	_errorPage;			//indique ou chercher une page d'erreur specifique (est regarde en premier )
 		std::vector<t_virtual_host>			_virtualHost;		//vector contenant tout les virtual hosts du server
 		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
-		std::deque<Client>					_ClientList;		//deque contenant les client du server
+		int		_highSocket;
+		std::map<int, Client>					_ClientList;		//deque contenant les client du server
 
 
 		WebServer(void);
@@ -58,7 +59,6 @@ class WebServer
 		v_host_ptr	_selectServer(SocketServer& sk, Request& rq);
 
 
-		std::string	_read_request(int client_fd);
 		void		_send_response(int client_fd, std::string response);
 
 
@@ -86,9 +86,13 @@ class WebServer
 		void		displayCGI(const t_virtual_host& virtualHost);
 		void		debugServ();
 
-		void		run(void);
-		void		addClient(int socketServerFd);
-
+		void	run(void);
+		void	addClient(int socketServerFd);
+		void	modClientEpoll(Client* cl, uint32_t events);
+		void	handle_epollerr(int event_id);
+		void	handle_epollhup(int event_id);
+		void	handle_epollin(int event_id);
+		void	handle_epollout(int event_id);
 
 		std::string	Method(Request & req, v_host_ptr & v_host);	
 		std::string	GET(std::string path);

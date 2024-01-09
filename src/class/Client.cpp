@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/08 14:14:43 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/09 12:38:49 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,35 @@ void	Client::accept(int socketServerFd)
 	this->Socket::accept(socketServerFd);
 	this->setName();
 	cstatus = ACCEPTED;
+}
+
+bool	Client::readRequest(void)
+{
+	char	buf[BUFFER_SIZE + 1] = {0};
+	int		n_rec = 0;
+	
+	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTROUTE | MSG_CMSG_CLOEXEC);
+	if (n_rec == -1)
+		throw std::runtime_error("recv");
+	buf[n_rec] = 0;
+	request.build(buf);
+	if (true)
+	{
+		cstatus = GATHERED;
+		return (true);
+	}
+	return (false);
+}
+
+
+void	Client::sendRequest(void)
+{
+
+}
+
+void	Client::reset(void)
+{
+	
 }
 
 std::ostream&	operator<<(std::ostream& os, const Client& Client)
