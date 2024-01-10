@@ -14,6 +14,7 @@
 # define _SocketServer_BASE_H__
 # include <sys/socket.h>
 # include <arpa/inet.h>
+# include <unistd.h>
 # include <cstring>
 # include <iostream>
 # include <sstream>

@@ -46,7 +46,7 @@ class WebServer
 		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
 		int		_highSocket;
 		std::map<int, Client>					_ClientList;		//deque contenant les client du server
-
+		std::deque<Client*>						_readyToProceedList;			//list les client dont les request sont prete a etre proceder (fini de read)
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -93,6 +93,14 @@ class WebServer
 		void	handle_epollhup(int event_id);
 		void	handle_epollin(int event_id);
 		void	handle_epollout(int event_id);
+
+
+		void	process_rq(Client &cl);
+		void	process_rq_error(Client &cl);
+
+
+
+
 
 		std::string	Method(Request & req, v_host_ptr & v_host);	
 		std::string	GET(std::string path);

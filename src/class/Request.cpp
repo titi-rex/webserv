@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/08 13:13:45 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:48:46 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ Request&	Request::operator=(const Request& src)
 	return (*this);
 };
 
-Request::~Request(void){};
+Request::~Request(void) {};
 
 
 int 				Request::getRid(void) const { return (this->_rId); };
@@ -87,9 +87,18 @@ void	Request::unchunk(std::istringstream& iss_raw)
 	}
 }
 
-void	Request::build(std::string raw)
+bool	Request::build(std::string raw)
 {
-	std::istringstream	iss_raw(raw);
+	static std::string	buff;
+	
+
+	buff += raw;
+	if (buff.find("\r\n\r\n") == std::string::npos)
+		return (false);
+	if (buff.find("GET") == std::string::npos)
+		throw std::runtime_error("400: only accept get");
+	
+	std::istringstream	iss_raw(buff);
 	std::string			method;
 	std::string			tmp;
 
@@ -122,11 +131,23 @@ void	Request::build(std::string raw)
 	if (_headers.find("transfert-encoding:") == _headers.end())
 	{
 		std::getline(iss_raw, _body, '\0');
-		return ;
+		return (true);
 	}
 	if (_headers["transfert-encoding:"] != "chunked")
 		throw std::runtime_error("400 Unknow encoding");
 	unchunk(iss_raw);
+	return (true);
+}
+
+
+void	Request::clear(void)
+{
+	_rId = _num_request++;
+	_mId = eUNKNOW;
+	_uri.clear();
+	_body.clear();
+	_headers.clear();
+	status = 0;
 }
 
 std::ostream& operator<<(std::ostream& os, const Request& req)

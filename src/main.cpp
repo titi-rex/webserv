@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 13:59:49 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:59:30 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,25 @@ sig_atomic_t	g_status = 1;
 
 int	main(int ac, char **av)
 {
+	try
+	{
+		SocketServer s1(Socket::hstrtoint("0.0.0.0"), 8080);
+		SocketServer s2(Socket::hstrtoint("0.0.0.0"), 8080);
+		s1.bind();
+		s2.bind();
+		s1.listen(2);
+		s2.listen(2);
+		
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	
+	
+	
+	
+	exit(0);
 	if (ac != 2)
 	{
 		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;

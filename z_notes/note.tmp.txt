@@ -43,6 +43,9 @@ timeout = -1 (no timeout)
 1) wait on epoll 
 
 2) for i in max event :
+try 
+{
+
 	- check for EPOLERR ou MARGARINE
 	- if EVENT IS EPOLLIN :
 		- if fd is SockServ -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
@@ -52,6 +55,21 @@ timeout = -1 (no timeout)
 	- if EVENT is EPOLLOUT
 		- if CSTATUS is PROCEEDED -> sent response
 		- if CSTATUS is CGIWAIT -> ??
+}
+error : 
+
+epollMod	-> FATAL 611
+addClient	-> accept -> FATAL  (client isnt added to client list) 605
+			-> epollAdd -> FATAL 610
+cl->readRequest -> recv -> FATAL 620
+				-> request.build	-> ERROR (400, 501, 505)
+									-> FATAL (memory, getline, transform, ) 699
+cl->sendRequest -> send -> FATAL 621
+
+catch 
+{
+	
+}
 
 3) for i in nclient
 	- if CSTATUS is GATHERED -> proceed request

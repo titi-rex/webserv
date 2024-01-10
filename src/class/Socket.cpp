@@ -33,11 +33,15 @@ Socket&	Socket::operator=(const Socket& src)
 	return (*this);
 };
 
-Socket::~Socket(void) {};
+Socket::~Socket(void) 
+{
+	if (_fd != -1)
+		::close(_fd);
+};
 
 
 // custom const
-Socket::Socket(int family, uint32_t haddr, uint16_t hport, int flags, int protocol)
+Socket::Socket(int family, uint32_t haddr, uint16_t hport, int flags, int protocol) : _fd(-1)
 {
 	const int	l = 1; //not short ?
 	
@@ -47,9 +51,10 @@ Socket::Socket(int family, uint32_t haddr, uint16_t hport, int flags, int protoc
 	setName();
 	_fd = socket(_sin.sin_family, flags, protocol);
 	if (_fd == -1)
-		throw std::runtime_error("599: cannot create SocketServer");
+		throw std::runtime_error("600: cannot create Socket");
 	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &l, sizeof(l)) == -1)
-		throw std::runtime_error("599: cannot change SocketServer option");
+		throw std::runtime_error("601: cannot change Socket option");
+	std::cout << "new socket at fd : " << _fd << std::endl;
 };
 
 
@@ -95,19 +100,19 @@ bool	Socket::operator==(Socket& ref)
 void	Socket::bind(void)
 {
 	if (::bind(_fd, (struct sockaddr*) &_sin, sizeof(_sin)) == -1)
-		throw std::runtime_error("599: socket error bind");
+		throw std::runtime_error("602: socket error bind");
 }
 
 void	Socket::connect(void)
 {
 	if (::connect(_fd, (struct sockaddr*) &_sin, sizeof(_sin)) == -1)
-		throw std::runtime_error("599: socket error connect");
+		throw std::runtime_error("603: socket error connect");
 }
 
 void	Socket::listen(int backlog)
 {
 	if (::listen(_fd, backlog) == -1)
-		throw std::runtime_error("599: socket error listen");
+		throw std::runtime_error("604: socket error listen");
 }
 
 void	Socket::accept(int sock_fd)
@@ -116,7 +121,7 @@ void	Socket::accept(int sock_fd)
 
 	_fd = ::accept(sock_fd, (struct sockaddr*) &_sin, &len);
 	if (_fd == -1)
-		throw std::runtime_error("599: socket error accept");
+		throw std::runtime_error("605: socket error accept");
 }
 
 // static function
@@ -158,7 +163,7 @@ std::string	Socket::str_sock_family(const struct sockaddr_in& sock)
 
 std::ostream& operator<<(std::ostream& os, const Socket& socket)
 {
-	os << "fd : " << socket.getFd() << ", host : " << socket.getName() << std::endl;
+	os << "fd : " << socket.getFd() << ", host : " << socket.getName();
 	return (os);
 }
 

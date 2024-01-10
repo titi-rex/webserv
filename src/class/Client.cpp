@@ -6,13 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/09 12:38:49 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:43:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) : _serverEndPoint(-1), _fd_cgi(-1), cstatus(CREATED) 
+Client::Client(void) : _serverEndPoint(-1), _fd_cgi(-1), cstatus(CREATED), keepConnection(false)
 {
 	_name = "cnameless";
 };
@@ -63,10 +63,9 @@ bool	Client::readRequest(void)
 	
 	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTROUTE | MSG_CMSG_CLOEXEC);
 	if (n_rec == -1)
-		throw std::runtime_error("recv");
+		throw std::runtime_error("620: recv");
 	buf[n_rec] = 0;
-	request.build(buf);
-	if (true)
+	if (request.build(buf))//throw ERROR or FATAL
 	{
 		cstatus = GATHERED;
 		return (true);
@@ -75,15 +74,28 @@ bool	Client::readRequest(void)
 }
 
 
+void	Client::proceedRequest(void)
+{
+	std::cout << "method happen here" << std::endl;
+}
+
+
+
+
+
 void	Client::sendRequest(void)
 {
-
+	if (send(_fd, request.response.c_str() , request.response.length(), MSG_DONTWAIT) == -1)
+		throw std::runtime_error("621: send");
 }
 
 void	Client::reset(void)
 {
-	
+	this->request.clear();
+	cstatus = ACCEPTED;
 }
+
+
 
 std::ostream&	operator<<(std::ostream& os, const Client& Client)
 {

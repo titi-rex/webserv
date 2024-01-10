@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/09 12:22:10 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 10:44:00 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class Client : public Socket
 
 		void	accept(int sock_fd);
 		bool	readRequest(void);
+		void	proceedRequest(void);
 		void	sendRequest(void);
 		void	reset(void);
 		

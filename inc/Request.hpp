@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/08 12:50:34 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:42:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,19 @@ class Request
 
 		static size_t		_num_request;
 
-
 		bool	_is_method_known(std::string& test);
 		void	unchunk(std::istringstream& iss_raw);
 		
 	public	:
+		std::string				response;
 		short int				status;
 		Request(void);
 		Request(const Request& src);
 		Request&	operator=(const Request& src);
 		~Request(void);
 		
-		void	build(std::string raw);
+		bool	build(std::string raw);
+		void	clear(void);
 
 		int								getRid(void) const;
 		e_method 						getMid(void) const;

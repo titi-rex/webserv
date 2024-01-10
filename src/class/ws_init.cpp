@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/09 10:53:25 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:54:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	WebServer::_SocketServerList_init(void)
 		new_SocketServer.listen(BACKLOG);
 		new_SocketServer.v_hosts.push_front(&_virtualHost[i]);
 		_SocketServersList[new_SocketServer.getFd()] = new_SocketServer;
+		
 		std::clog << "SocketServer added :" << new_SocketServer << std::endl;
 		_highSocket = new_SocketServer.getFd();
 		std::cout << "actual socket : " << new_SocketServer.getFd() << std::endl;
