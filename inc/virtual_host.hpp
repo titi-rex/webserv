@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:53:28 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 12:40:38 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/10 12:50:30 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,24 +103,5 @@ class	t_virtual_host
 };
 
 typedef t_virtual_host* v_host_ptr;	//typedef pour un pointer vers un virtual host
-
-class locationRedirection : public std::exception {
-	private:
-		std::string	_redirection;
-		locationRedirection();
-
-	public:
-		locationRedirection(const std::string & redir);
-		const char*	what( void ) const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW;
-		~locationRedirection() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW;
-};
-
-class faviconDetected : public std::exception {
-	public:
-		faviconDetected();
-		const char*	what( void ) const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW;
-		~faviconDetected() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW;
-};
-
 
 #endif

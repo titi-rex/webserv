@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/10 12:45:22 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/10 12:51:24 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,20 +111,4 @@ void	t_location::setAllowMethod(std::vector<std::string>	allowMethod){
 
 void	t_location::setRedirection(std::string redirection){
 	this->redirection = redirection;
-};
-
-locationRedirection::locationRedirection() {};
-locationRedirection::locationRedirection(const std::string & redir) : _redirection(redir) {};
-locationRedirection::~locationRedirection() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW {};
-
-const char*	locationRedirection::what( void ) const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW
-{
-	return (this->_redirection.c_str());
-};
-
-faviconDetected::faviconDetected() {};
-faviconDetected::~faviconDetected() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW {};
-const char*	faviconDetected::what( void ) const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW
-{
-	return ("Favicon detected");
 };
