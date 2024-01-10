@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 12:43:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 14:59:04 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ void	Client::accept(int socketServerFd)
 
 bool	Client::readRequest(void)
 {
+	std::cout << "client reading request" << std::endl;
+	
 	char	buf[BUFFER_SIZE + 1] = {0};
 	int		n_rec = 0;
 	

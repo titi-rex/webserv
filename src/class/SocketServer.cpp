@@ -19,6 +19,7 @@ SocketServer::SocketServer(void) {};
 SocketServer::SocketServer(const SocketServer& src) : Socket(src)
 {
 	*this = src;
+
 };
 
 SocketServer&	SocketServer::operator=(const SocketServer& src) 
@@ -32,13 +33,14 @@ SocketServer&	SocketServer::operator=(const SocketServer& src)
 
 SocketServer::~SocketServer(void) {};
 
+
 SocketServer::SocketServer(uint32_t haddr, uint16_t hport) : Socket(AF_INET, haddr, hport, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC) {};
 
 
 
 std::ostream& operator<<(std::ostream& os, const SocketServer& SocketServer)
 {
-	os << "Server Socket, fd : " << (Socket) SocketServer << ", for server : ";
+	os << "Server Socket, fd : " << SocketServer.getFd() << ", for server : ";
 	for (size_t i = 0; i < SocketServer.v_hosts.size(); ++i)
 		os << SocketServer.v_hosts[i]->serverNames[0] << " ";
 	os << std::endl;

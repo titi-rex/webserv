@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 12:50:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 16:10:41 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,11 @@ void	WebServer::modClientEpoll(Client* cl, uint32_t events)
 }
 
 
+
 void	WebServer::handle_epollin(int event_id)
 {
+	std::cout << "epollin " << std::endl;
+
 	if (event_id <= _highSocket)
 		addClient(event_id);	//throw FATAL 
 	else if (event_id > 0)
@@ -64,16 +67,34 @@ void	WebServer::handle_epollin(int event_id)
 		
 		if(cl->readRequest())	//throw ERROR or FATAL
 		{
+			std::cout << "end read rq" << std::endl;
+		std::cout << cl->request << std::endl;
+
 			modClientEpoll(cl, EPOLLOUT);	//thow FATAL
-			_readyToProceedList.push_back(cl);
+			// _readyToProceedList.push_back(cl);
 		}
+		else
+			std::cout << "read rq continue" << std::endl;
 	}
 	else
 		std::cout << "cgiwait.." << std::endl;
 }
 
+
+void	WebServer::delClient(Client* cl, uint32_t events)
+{
+	struct epoll_event	e;
+
+	e.events = events;
+	e.data.fd = cl->getFd();
+	if (epoll_ctl(_efd, EPOLL_CTL_MOD, cl->getFd(), &e) == -1)
+		throw std::runtime_error("611: add to epollout fail");
+}
+
 void	WebServer::handle_epollout(int event_id)
 {
+	std::cout << "epollout" << std::endl;
+
 	Client*	cl = &_ClientList[event_id];
 
 	if (cl->cstatus == PROCEEDED)
@@ -86,13 +107,21 @@ void	WebServer::handle_epollout(int event_id)
 				modClientEpoll(cl, EPOLLIN);	//Throw FATAL
 			}
 		else	//delete client
-			_ClientList.erase(event_id);
+		{
+			epoll_ctl(_efd, EPOLL_CTL_DEL, event_id, NULL);	//del from epoll
+			close(_ClientList[event_id].getFd());	// close socket fd
+			_ClientList.erase(event_id);	// del from clientlist
+			
+		}
 	}
 }
 
 
 void	WebServer::process_rq(Client &cl)
 {
+	std::cout << "request proceed" << std::endl;
+
+	
 // special instruction : execute shutdown
 	if (cl.request.getUri() == "/shutdown")
 		g_status = 0;
@@ -104,11 +133,15 @@ void	WebServer::process_rq(Client &cl)
 std::cout << host << std::endl;
 // prepare response based on request, there should be GET/HEAD/POST
 	cl.request.response = GET("data/default_page/index.html");
+	cl.cstatus = PROCEEDED;
 }
 
 void	WebServer::process_rq_error(Client &cl)
 {
+	std::cout << "error proceed" << std::endl;
+	
 	cl.request.response = ERROR_500_MSG;
+	cl.cstatus = PROCEEDED;
 }
 
 
@@ -155,18 +188,44 @@ void	WebServer::run(void)
 				if (err == 0)
 					err = 699;
 				std::cerr << "cerror code : " << err << std::endl;
-				if (revents[i].data.fd > _highSocket)
+				if (revents[i].data.fd > _highSocket) //temp delete client
+				{
+					epoll_ctl(_efd, EPOLL_CTL_DEL, revents[i].data.fd, NULL);	//del from epoll
+					close(_ClientList[revents[i].data.fd].getFd());	// close socket fd
 					_ClientList.erase(revents[i].data.fd);
+				}
 			}
-			
 		}
-		// change and use a deaueu to client* for client to procced
+
+		// change and use a list to client* for client to procced
 		for (std::map<int, Client>::iterator it = _ClientList.begin() ; it != _ClientList.end(); ++it)
 		{
-			if (it->second.cstatus == GATHERED)
-				process_rq(it->second);
-			else if (it->second.cstatus == ERROR)
-				process_rq_error(it->second);
+			try
+			{
+				if (it->second.cstatus == GATHERED)
+					process_rq(it->second);
+				else if (it->second.cstatus == ERROR)
+					process_rq_error(it->second);				
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr << e.what() << std::endl;
+				std::cerr << strerror(errno) << std::endl;
+				
+				int	err = std::atoi(e.what());
+				if (err == 0)
+					err = 699;
+				std::cerr << "cerror code : " << err << std::endl;
+				if (it->second.cstatus == ERROR) //error fatal , delete client
+				{
+					std::cerr << "ERROR FATAL, ABANDON CLIENT" << std::endl;
+					epoll_ctl(_efd, EPOLL_CTL_DEL, it->second.getFd(), NULL);	//del from epoll
+					close(_ClientList[it->second.getFd()].getFd());	// close socket fd
+					_ClientList.erase(it->second.getFd());
+				}
+				else
+					it->second.cstatus = ERROR;
+			}
 		}
 	}
 }

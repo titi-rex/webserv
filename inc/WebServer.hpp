@@ -27,10 +27,10 @@ typedef unsigned int long	uintptr_t;
 
 # define MAXLINE 4096
 # define MAX_EVENTS 5
-# define TIMEOUT 2000
+# define TIMEOUT 3000
 # define BACKLOG 5
 
-# define ERROR_500_MSG "<html>\n<head><title>500 Internal Server Error</title></head>\n<body>\n<center><h1>500 Internal Server Error</h1></center>\n<hr><center>nginx/1.25.3</center>\n</body>\n</html>\n"
+# define ERROR_500_MSG "500 HTTPS/1.1 Server goes wrong\r\n\r\n<html>\n<head><title>500 Internal Server Error</title></head>\n<body>\n<center><h1>500 Internal Server Error</h1></center>\n<hr><center>nginx/1.25.3</center>\n</body>\n</html>\n"
 
 
 class Request;

@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/08 11:37:44 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/10 14:21:55 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@
 #	==============================	NAMES	==============================	#
 NAME		=	webserv
 DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_HTTP} ${DIR_SRCS_CLASS} 
-DEFAULT_CONFIG_PATH	=	z_conf/example.conf
+DEFAULT_CONFIG_PATH	=	z_notes/exemple.conf
 
 
 #	==============================	SOURCES	==============================	#

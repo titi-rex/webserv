@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/05 18:36:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 14:49:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ size_t	WebServer::getBodySizeLimit(void) const {
 
 WebServer::WebServer(std::string path) 
 {
+{
 	std::vector<std::string> 	fileVec;
 	uintptr_t					i = 0;
 	
@@ -97,6 +98,7 @@ WebServer::WebServer(std::string path)
 		++i;
 		
    	}
+}
 	this->debugServ();
 	
 	try

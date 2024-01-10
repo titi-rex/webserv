@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 12:54:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/10 14:44:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,25 +36,26 @@ void	WebServer::_SocketServerList_init(void)
 {
 	for (size_t i = 0; i < _virtualHost.size(); ++i)
 	{
-	std::clog << _virtualHost[i] << std::endl;
+	std::clog << std::endl <<  _virtualHost[i] << std::endl;
 		uint32_t	haddr = Socket::hstrtoint(_virtualHost[i].host_port.first);
 		uint16_t	hport = _virtualHost[i].host_port.second;
 		
 		if (sk_used(_SocketServersList, &_virtualHost[i], htonl(haddr), htons(hport)))
 			continue ;
 
-		SocketServer	new_SocketServer(haddr, hport);
-		new_SocketServer.bind();
-		new_SocketServer.listen(BACKLOG);
-		new_SocketServer.v_hosts.push_front(&_virtualHost[i]);
-		_SocketServersList[new_SocketServer.getFd()] = new_SocketServer;
+		SocketServer	tmp(haddr, hport);
+		int				key = tmp.getFd();
+
+		_SocketServersList[key] = tmp;
+		_SocketServersList[key].bind();
+		_SocketServersList[key].listen(BACKLOG);
+		_SocketServersList[key].v_hosts.push_front(&_virtualHost[i]);
 		
-		std::clog << "SocketServer added :" << new_SocketServer << std::endl;
-		_highSocket = new_SocketServer.getFd();
-		std::cout << "actual socket : " << new_SocketServer.getFd() << std::endl;
+	std::clog << "added : " << tmp;
+		_highSocket = key;
 	}
-	std::clog << "sokList: " << _SocketServersList << std::endl;
-	std::clog << "hightsocket: " << _highSocket << std::endl;
+std::clog << "sokList: " << _SocketServersList << std::endl;
+std::clog << "hightsocket: " << _highSocket << std::endl;
 }
 
 /**

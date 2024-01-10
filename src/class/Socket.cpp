@@ -33,15 +33,11 @@ Socket&	Socket::operator=(const Socket& src)
 	return (*this);
 };
 
-Socket::~Socket(void) 
-{
-	if (_fd != -1)
-		::close(_fd);
-};
+Socket::~Socket(void) {};
 
 
 // custom const
-Socket::Socket(int family, uint32_t haddr, uint16_t hport, int flags, int protocol) : _fd(-1)
+Socket::Socket(int family, uint32_t haddr, uint16_t hport, int flags, int protocol)
 {
 	const int	l = 1; //not short ?
 	
@@ -54,7 +50,6 @@ Socket::Socket(int family, uint32_t haddr, uint16_t hport, int flags, int protoc
 		throw std::runtime_error("600: cannot create Socket");
 	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &l, sizeof(l)) == -1)
 		throw std::runtime_error("601: cannot change Socket option");
-	std::cout << "new socket at fd : " << _fd << std::endl;
 };
 
 
