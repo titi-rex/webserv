@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/05 15:09:10 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/10 12:45:22 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,4 +120,11 @@ locationRedirection::~locationRedirection() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHR
 const char*	locationRedirection::what( void ) const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW
 {
 	return (this->_redirection.c_str());
+};
+
+faviconDetected::faviconDetected() {};
+faviconDetected::~faviconDetected() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW {};
+const char*	faviconDetected::what( void ) const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW
+{
+	return ("Favicon detected");
 };

@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 11:13:15 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/10 12:47:02 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ std::string HEAD( std::string & path, v_host_ptr & v_host )
 std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
+
+	if (req.getUri() == "/favicon.ico")
+		throw faviconDetected();
 
 	if (req.getUri() != "/" && isDirListReq(req))
 		return (dirList(req, v_host));
