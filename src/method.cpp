@@ -6,11 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/01/08 14:43:54 by lboudjem         ###   ########.fr       */
-=======
-/*   Updated: 2024/01/08 12:37:01 by jmoutous         ###   ########lyon.fr   */
->>>>>>> be7018ea5f26194ea6d04f471308d21b0850ea81
+/*   Updated: 2024/01/10 13:33:36 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,8 +163,8 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 			// std::cout << "GET JUJU" << std::endl;
 			return (GET(pagePath));
 		case ePOST:
+			std::cout << "POST JUJU" << std::endl;
 			return (POST(req.getBody()));
-			// std::cout << "POST JUJU" << std::endl;
 			break;
 		case eDELETE:
 			// std::cout << "DELETE JUJU" << std::endl;
@@ -202,6 +198,7 @@ std::string WebServer::POST(std::string post_data)
     std::istringstream iss(post_data);
 
     std::string key_value;
+	// std::cout << "RECUP DATA = " << post_data << std::endl;
     while (std::getline(iss, key_value, '&')) 
 	{
         size_t equals_pos = key_value.find('=');
@@ -212,7 +209,8 @@ std::string WebServer::POST(std::string post_data)
             post_params[key] = value;
         }
     }
-	std::string response = "HTTP/1.1 200 OK\r\n\r\n";
+	std::string response = "HTTP/1.1 201 Created\r\n\r\n";
 	
     return (response);
 }
+
