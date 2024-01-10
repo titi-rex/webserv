@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/10 10:45:20 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/10 11:22:39 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static std::string	makeDirList(std::string directory, v_host_ptr & v_host)
 	// Add the name of every file in the html page
 	while ((ptr_dir = readdir(dir)) != NULL)
 	{
-		// Folder . and .. don't have an uri
+		// Folder  .. doesn't have an uri
 		std::string	str = ptr_dir->d_name;
 		if (str == ".")
 			ss << "<dt><a href=\"http://localhost:8080" << directory.substr(v_host->getRoot().length() + 1, directory.length() - v_host->getRoot().length() + 1) << "\">" << ptr_dir->d_name << "</a></dt>\n";
