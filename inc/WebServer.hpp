@@ -19,6 +19,7 @@ typedef unsigned int long	uintptr_t;
 # include "virtual_host.hpp"
 # include "Socket.hpp"
 # include "Request.hpp"
+# include "utils.hpp"
 
 # include "map_operator.hpp"
 # include "deque_operator.hpp"

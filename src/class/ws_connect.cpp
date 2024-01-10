@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/08 14:58:58 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/10 12:46:37 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ void	WebServer::run(void)
 			//	send response to client
 				_send_response(client_fd, response);
 			}
+			catch (faviconDetected & fav) {}
 			catch (locationRedirection & lr)
 			{
 				std::stringstream ss;

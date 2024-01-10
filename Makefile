@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/04 13:30:21 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/10 12:55:21 by jmoutous         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@
 #	==============================	NAMES	==============================	#
 NAME		=	webserv
 DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_HTTP} ${DIR_SRCS_CLASS} 
-DEFAULT_CONFIG_PATH	=	z_conf/example.conf
+DEFAULT_CONFIG_PATH	=	z_notes/example.conf
 
 
 #	==============================	SOURCES	==============================	#
@@ -34,7 +34,7 @@ LST_SRCS_CLASS	=	Request.cpp Socket.cpp WebServer.cpp ws_init.cpp ws_connect.cpp
 SRCS_CLASS		=	${addprefix ${DIR_SRCS_CLASS}, ${LST_SRCS_CLASS}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	main.cpp signal.cpp method.cpp utils.cpp \
+LST_SRCS		=	main.cpp signal.cpp method.cpp utils.cpp directory_listing.cpp location_processing.cpp exceptions.cpp\
 					${SRCS_PARSE} ${SRCS_HTTP} ${SRCS_CLASS} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
@@ -65,7 +65,7 @@ endif
 
 #	==============================	HEADERS	==============================	#
 DIR_HEADER	=	inc/
-LST_HDR		=	${NAME}.hpp Request.hpp WebServer.hpp Socket.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp
+LST_HDR		=	${NAME}.hpp Request.hpp WebServer.hpp Socket.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp exceptions.hpp
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 IFLAGS		=	-I${DIR_HEADER} 
 
