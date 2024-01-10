@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/09 18:32:21 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/10 10:45:20 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,8 @@ static std::string	uriPage(std::string fileName, v_host_ptr & v_host)
 	{
 		if (v_host->locations[i->first].getIndex() == fileName)
 		{
-			// uriPage = v_host->getRoot() + v_host->locations[i->first].getRoot() + "/" + fileName;
 			uriPage = i->first;
-			std::cout << "uriPage :" << uriPage << std::endl;
+			// std::cout << "uriPage :" << uriPage << std::endl;
 			
 			return (uriPage);
 		}
@@ -54,11 +53,13 @@ static std::string	makeDirList(std::string directory, v_host_ptr & v_host)
 	{
 		// Folder . and .. don't have an uri
 		std::string	str = ptr_dir->d_name;
-		if (str == "." || str == "..")
+		if (str == ".")
+			ss << "<dt><a href=\"http://localhost:8080" << directory.substr(v_host->getRoot().length() + 1, directory.length() - v_host->getRoot().length() + 1) << "\">" << ptr_dir->d_name << "</a></dt>\n";
+		else if (str == "..")
 			ss << "<dt>" << ptr_dir->d_name << "</dt>\n";
 		else
 		{
-			ss << "<dt>" << "<a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, v_host) << "\">";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, v_host) << "\">";
 			ss << ptr_dir->d_name << "</a></dt>\n";
 		}
 	}
