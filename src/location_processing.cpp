@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/10 11:13:46 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/10 11:25:52 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,6 @@ static void checkPageFile(std::string pagePath)
 	if (access(file, R_OK) != 0)
 		throw std::runtime_error("423 locked ressource is locked, it can be accessed");
 }
-
-// determine the requested methode
-// std::string METHOD(Request& req, t_virtual_host* v_host);
-// RL 200 ok
-// heaers : dwdwd wdwD wLD 
-// body kjfhdkjwsdfhikwsujd
 
 // find dans location, celui le plus resamblant a l'uri
 std::string	findLocation(Request & req, v_host_ptr & v_host)
