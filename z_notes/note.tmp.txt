@@ -5,6 +5,13 @@ refaire request
 faire un fonction log
 
 
+bug :
+
+parsing : indiquer n ligne qund erreur 
+
+
+
+
 EPOLLERR
 error condition on fd 
 also reported for write end of pipe when read ened has been closed

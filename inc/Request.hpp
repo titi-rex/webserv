@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 21:27:41 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:04:19 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,3 +84,4 @@ std::ostream& operator<<(std::ostream& os, const Request& req);
 
 
 #endif
+

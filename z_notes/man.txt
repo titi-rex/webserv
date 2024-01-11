@@ -431,8 +431,8 @@ Don't  generate  a  SIGPIPE signal if the peer on a stream-oriented SocketServer
 provides similar behavior to using sigaction(2) to ignore SIGPIPE, but, whereas MSG_NOSIGNAL is a per-call feature,  ignoring  SIGPIPE  sets  a
 process attribute that affects all threads in the process.
 
-MSG_OOB
-Sends  out-of-band  data on SocketServers that support this notion (e.g., of type SOCK_STREAM); the underlying protocol must also support out-of-band data.
+MSG_BOOB
+Sends  out-of-band  data on sockets that support this notion (e.g., of type SOCK_STREAM); the underlying protocol must also support out-of-band data.
 
 
 recv:

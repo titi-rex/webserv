@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 21:43:51 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:25:22 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,12 +122,13 @@ void	WebServer::process_rq(Client &cl)
 
 		
 	v_host_ptr	host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl.request);
-std::cout << host << std::endl;
+std::cout << "host: " << host << std::endl;
 
 
 // prepare response based on request, there should be GET/HEAD/POST
-	cl.request.response = GET("data/default_page/index.html");
+	cl.request.response = Method(cl.request, host);
 	cl.cstatus = PROCEEDED;
+	std::clog << " response : " << std::endl << cl.request.response << std::endl;
 }
 
 void	WebServer::process_rq_error(Client &cl)
@@ -196,13 +197,28 @@ void	WebServer::run(void)
 		// change and use a list to client* for client to procced
 		for (std::map<int, Client*>::iterator it = _readyToProceedList.begin() ; it != _readyToProceedList.end(); ++it)
 		{
-			std::clog << "ready: " << *it->second << " clients" << std::endl;
+			std::clog << "ready: " << *it->second << std::endl;
 			try
 			{
 				if (it->second->cstatus == GATHERED)
 					process_rq(*it->second);
 				else if (it->second->cstatus == ERROR)
 					process_rq_error(*it->second);				
+			}
+			catch (faviconDetected & fav) 
+			{
+				std::clog << fav.what() << std::endl;
+				deleteClient(it->first);
+			}
+			catch (locationRedirection & lr)
+			{
+				std::stringstream ss;
+				ss << "HTTP/1.1 301 Moved Permanently\n";
+				ss << "Location: ";
+				ss << lr.what() << "\n" << "\r\n\r\n";
+
+				it->second->request.response = ss.str();
+				it->second->cstatus = PROCEEDED;
 			}
 			catch(const std::exception& e)
 			{

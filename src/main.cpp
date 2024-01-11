@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 14:06:22 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:04:44 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,31 +35,7 @@ sig_atomic_t	g_status = 1;
 
 
 int	main(int ac, char **av)
-{
-	// try
-	// {
-	// 	SocketServer s1(Socket::hstrtoint("0.0.0.0"), 8080);
-	// 	SocketServer s2(Socket::hstrtoint("127.0.0.1"), 8080);
-	// 	std::cout << s1 << std::endl;
-	// 	std::cout << s2 << std::endl;
-	// 	s1.bind();
-	// 	std::cout << "s1 bind" << std::endl;
-	// 	s1.listen(2);
-	// 	std::cout << "s1 listen" << std::endl;
-	// 	s2.bind();
-	// 	std::cout << "s2 bind" << std::endl;
-	// 	s2.listen(2);
-	// 	std::cout << "s2 listen" << std::endl;
-		
-	// }
-	// catch(const std::exception& e)
-	// {
-	// 	std::cerr << e.what() << '\n';
-	// 	std::cerr << "errno value: " << errno << std::endl;
-	// 	std::cerr << strerror(errno) << std::endl;
-	// }
-	
-	// exit(0);
+{	
 	if (ac != 2)
 	{
 		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;

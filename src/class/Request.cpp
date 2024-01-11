@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 21:28:01 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:05:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ const std::string	Request::getMethodName(void) const
 
 bool	Request::_is_method_known(std::string & test)
 {
-	std::string	ref[METHOD_COUNT] = {"GET", "HEAD", "POST", "DELETE"};
+	std::string	ref[METHOD_COUNT] = {"GET", "POST", "DELETE", "HEAD"};
 	
 	for (int i = 0; i < METHOD_COUNT; ++i)
 	{

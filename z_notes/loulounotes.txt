@@ -29,3 +29,9 @@ string::find_first_not_of 	: Recherche dans la string le premier char qui ne cor
 - allow methods n'accepte que get post ou delete
 
 
+		*------------- HTTP REQUESTS ------------*
+- POST :
+	- Post requests example with curl :
+	
+curl -d "param1=value1&param2=value2" -X POST http://localhost:8080/data
+curl -d "@data.json" -X POST http://localhost:8080/data

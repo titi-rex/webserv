@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/10 14:21:55 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/11 22:06:50 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ LST_SRCS_CLASS	=	Request.cpp Socket.cpp WebServer.cpp ws_init.cpp ws_connect.cpp
 SRCS_CLASS		=	${addprefix ${DIR_SRCS_CLASS}, ${LST_SRCS_CLASS}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	main.cpp signal.cpp method.cpp utils.cpp \
+LST_SRCS		=	main.cpp signal.cpp method.cpp utils.cpp directory_listing.cpp location_processing.cpp exceptions.cpp\
 					${SRCS_PARSE} ${SRCS_HTTP} ${SRCS_CLASS} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
@@ -67,7 +67,7 @@ endif
 #	==============================	HEADERS	==============================	#
 DIR_HEADER	=	inc/
 LST_HDR		=	${NAME}.hpp Request.hpp WebServer.hpp SocketServer.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
-				 Socket.hpp Client.hpp
+				 Socket.hpp Client.hpp exceptions.hpp
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 IFLAGS		=	-I${DIR_HEADER} 
 

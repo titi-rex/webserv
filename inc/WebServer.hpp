@@ -20,6 +20,8 @@ typedef unsigned int long	uintptr_t;
 # include "SocketServer.hpp"
 # include "Client.hpp"
 # include "Request.hpp"
+# include "utils.hpp"
+# include "exceptions.hpp"
 
 # include "map_operator.hpp"
 # include "deque_operator.hpp"
@@ -110,6 +112,7 @@ class WebServer
 		std::string	GET_error(int code);	//obsolete
 		std::string	GET_error2(std::string status);	// GET special pour error
 
+		std::string	POST(std::string path);
 
 };
 

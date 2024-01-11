@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 21:26:52 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:13:58 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void	Client::sendRequest(void)
 {
 	if (send(_fd, request.response.c_str() , request.response.length(), MSG_DONTWAIT) == -1)
 		throw std::runtime_error("621: send");
+	cstatus = SENT;
 }
 
 void	Client::reset(void)

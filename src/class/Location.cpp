@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2023/12/13 16:21:28 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:51:24 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,4 +112,3 @@ void	t_location::setAllowMethod(std::vector<std::string>	allowMethod){
 void	t_location::setRedirection(std::string redirection){
 	this->redirection = redirection;
 };
-
