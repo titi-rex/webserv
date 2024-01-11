@@ -14,7 +14,10 @@
 # include <string>
 
 
-SocketServer::SocketServer(void) {};
+SocketServer::SocketServer(void) 
+{
+	_name = "snameless";
+};
 
 SocketServer::SocketServer(const SocketServer& src) : Socket(src)
 {
@@ -31,19 +34,23 @@ SocketServer&	SocketServer::operator=(const SocketServer& src)
 	return (*this);
 };
 
-SocketServer::~SocketServer(void) {};
+SocketServer::~SocketServer(void) 
+{
+	std::clog << "deleted: " << *this << std::endl;
+};
 
 
 SocketServer::SocketServer(uint32_t haddr, uint16_t hport) : Socket(AF_INET, haddr, hport, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC) {};
 
 
-
+/**
+ * @brief format server/fd/host
+ */
 std::ostream& operator<<(std::ostream& os, const SocketServer& SocketServer)
 {
-	os << "Server Socket, fd : " << SocketServer.getFd() << ", for server : ";
+	os << "s/" << SocketServer.getFd() << "/" << SocketServer.getName() << "/";
 	for (size_t i = 0; i < SocketServer.v_hosts.size(); ++i)
 		os << SocketServer.v_hosts[i]->serverNames[0] << " ";
-	os << std::endl;
 	return (os);
 }
 

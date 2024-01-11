@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 14:59:04 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:52:31 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ Client::Client(const Client& src) : Socket(src)
 	_serverEndPoint = src._serverEndPoint;
 	request = src.request;
 	cstatus = src.cstatus;
+	keepConnection = src.keepConnection;
 	
 };
 
@@ -35,10 +36,14 @@ Client&	Client::operator=(const Client& src)
 	_serverEndPoint = src._serverEndPoint;
 	request = src.request;
 	cstatus = src.cstatus;
+	keepConnection = src.keepConnection;
 	return (*this);
 };
 
-Client::~Client(void) {};
+Client::~Client(void) 
+{
+	std::clog << "deleted: " << *this << std::endl;
+};
 
 
 
@@ -83,8 +88,6 @@ void	Client::proceedRequest(void)
 
 
 
-
-
 void	Client::sendRequest(void)
 {
 	if (send(_fd, request.response.c_str() , request.response.length(), MSG_DONTWAIT) == -1)
@@ -98,9 +101,11 @@ void	Client::reset(void)
 }
 
 
-
+/**
+ * @brief format client/fd/host
+ */
 std::ostream&	operator<<(std::ostream& os, const Client& Client)
 {
-	os << "Client socket, fd : " << (Socket) Client << std::endl;
+	os << "c/" << Client.getFd() << "/" << Client.getName();
 	return (os);
 };

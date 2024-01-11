@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 15:01:39 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:36:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:37:24 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,5 @@ std::ostream& operator<<(std::ostream &os, const std::map<T, U> m)
 	}
 	return (os);
 }
-
 
 #endif

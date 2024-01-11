@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 14:44:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:02:05 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ bool	sk_used(std::map<int, SocketServer>& SocketServersList, v_host_ptr v_host, 
 /**
  * @brief create all needed SocketServer per couple (host/port)
  * 	then store SocketServer fd as keymap with coresponding SocketServer as value 
- * 	throw: fatal
+ * @throw: fatal
  */
 void	WebServer::_SocketServerList_init(void)
 {
 	for (size_t i = 0; i < _virtualHost.size(); ++i)
 	{
-	std::clog << std::endl <<  _virtualHost[i] << std::endl;
+	std::clog << "v_host " <<  _virtualHost[i] << std::endl;
 		uint32_t	haddr = Socket::hstrtoint(_virtualHost[i].host_port.first);
 		uint16_t	hport = _virtualHost[i].host_port.second;
 		
@@ -51,33 +51,56 @@ void	WebServer::_SocketServerList_init(void)
 		_SocketServersList[key].listen(BACKLOG);
 		_SocketServersList[key].v_hosts.push_front(&_virtualHost[i]);
 		
-	std::clog << "added : " << tmp;
+	std::clog << "added: " << _SocketServersList[key] << std::endl << std::endl;
 		_highSocket = key;
 	}
-std::clog << "sokList: " << _SocketServersList << std::endl;
+// std::clog << "sokList: " << _SocketServersList << std::endl;
 std::clog << "hightsocket: " << _highSocket << std::endl;
+}
+
+
+/**
+ * @brief wrapper for epoll_ctl
+ * @throw: fatal
+ * @param fd target to monitor
+ */
+void	WebServer::modEpollList(int fd, int op, uint32_t events)
+{
+	struct epoll_event	e;
+
+	e.events = events;
+	e.data.fd = fd;
+	if (epoll_ctl(_efd, op, fd, &e) == 0)
+		return ;
+	
+	switch (op)
+	{
+		case EPOLL_CTL_ADD:
+			throw std::runtime_error("611: EPOLL_CTL_ADD");
+		case EPOLL_CTL_MOD:
+			throw std::runtime_error("612: EPOLL_CTL_MOD");
+		case EPOLL_CTL_DEL:
+			throw std::runtime_error("613: EPOLL_CTL_DEL");
+		default:
+			throw std::runtime_error("698: epoll_ctl wrong op");
+	}
 }
 
 /**
  * @brief initiate epoll instance and populate it with SocketServer fd
- * 	throw: fatal
+ * @throw: fatal
  */
 void	WebServer::_epoll_init(void)
 {
 // create epoll instance
 	_efd = epoll_create(1);
 	if (_efd == -1)
-		throw std::runtime_error("fatal: cannot create epoll instance");
+		throw std::runtime_error("610: cannot create epoll instance");
 
 // add interest to epoll
-	struct epoll_event event;
-	std::memset(&event, 0, sizeof(event));
-	event.events = EPOLLIN;
 	for (std::map<int, SocketServer>::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
 	{
-		event.data.fd = it->first;
-		if (epoll_ctl(_efd, EPOLL_CTL_ADD, event.data.fd, &event) == -1)
-			throw std::runtime_error("fatal: cannot add interest to epoll instance");
+		modEpollList(it->first, EPOLL_CTL_ADD, EPOLLIN);		
 		std::clog << "fd : " << it->first << " for " << _SocketServersList[it->first].getName() << " add to epoll list" << std::endl;
 	}
 }

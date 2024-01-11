@@ -30,7 +30,7 @@ typedef unsigned int long	uintptr_t;
 # define TIMEOUT 3000
 # define BACKLOG 5
 
-# define ERROR_500_MSG "500 HTTPS/1.1 Server goes wrong\r\n\r\n<html>\n<head><title>500 Internal Server Error</title></head>\n<body>\n<center><h1>500 Internal Server Error</h1></center>\n<hr><center>nginx/1.25.3</center>\n</body>\n</html>\n"
+# define ERROR_500_MSG "HTTPS/1.1 500 Server goes wrong\r\n\r\n<html>\n<head><title>500 Internal Server Error</title></head>\n<body>\n<center><h1>500 Internal Server Error</h1></center>\n<hr><center>nginx/1.25.3</center>\n</body>\n</html>\n"
 
 
 class Request;
@@ -45,8 +45,8 @@ class WebServer
 		std::vector<t_virtual_host>			_virtualHost;		//vector contenant tout les virtual hosts du server
 		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
 		int		_highSocket;
-		std::map<int, Client>					_ClientList;		//deque contenant les client du server
-		std::deque<Client*>						_readyToProceedList;			//list les client dont les request sont prete a etre proceder (fini de read)
+		std::map<int, Client>				_ClientList;		//map contenant les client du server
+		std::map<int, Client*>				_readyToProceedList;			//list les client dont les request sont prete a etre proceder (fini de read)
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -88,7 +88,10 @@ class WebServer
 
 		void	run(void);
 		void	addClient(int socketServerFd);
-		void	modClientEpoll(Client* cl, uint32_t events);
+
+		void	modEpollList(int fd, int op, uint32_t events);
+		void	deleteClient(int client_fd);
+
 		void	handle_epollerr(int event_id);
 		void	handle_epollhup(int event_id);
 		void	handle_epollin(int event_id);

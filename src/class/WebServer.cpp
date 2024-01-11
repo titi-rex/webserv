@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 14:49:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 17:57:53 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,17 +118,22 @@ void WebServer::addVirtualHost(const t_virtual_host& virtualHost)
 	_virtualHost.push_back(virtualHost);
 }
 
-
+/**
+ * @brief format id/names/host
+ */
 std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host)
 {
-	os << "id : " << v_host->sId << ", default name: " << v_host->serverNames[0];
-	os << ", listen on : " << v_host->host_port.first << ":" << v_host->host_port.second << std::endl;
+	
+	os << v_host->sId << "/" << v_host->serverNames << "/" << v_host->host_port.first << ":" << v_host->host_port.second;
 	return (os);
 }
 
+
+/**
+ * @brief format id/names/host
+ */
 std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host)
 {
-	os << "id : " << v_host.sId << ", default name: " << v_host.serverNames[0];
-	os << ", listen on : " << v_host.host_port.first << ":" << v_host.host_port.second << std::endl;
+	os << v_host.sId << "/" << v_host.serverNames << "/" << v_host.host_port.first << ":" << v_host.host_port.second;
 	return (os);
 }

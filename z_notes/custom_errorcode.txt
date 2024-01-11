@@ -5,11 +5,16 @@
 604: socket error listen
 605: socket error accept
 
-610: fail to add client to epoll
-611: add to epollout fail
-612: del from epoll fail
+
+610: cannot create epoll instance
+611: fail to add client to epoll
+612: add to epollout fail
+613: del from epoll fail
+614: epoll_wait
 
 620: input error
 621: output error
 
+
+698: programmer error
 699: system error

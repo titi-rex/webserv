@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:59:01 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:20:54 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:45:10 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ extern sig_atomic_t	g_status;
 void	sig_handler(int sig)
 {
 	(void)sig;
+	std::cout << "\b" << std::endl;
 	g_status = 0;
 }
 

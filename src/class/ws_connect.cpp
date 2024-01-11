@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 16:10:41 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 19:26:18 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,39 +18,47 @@ extern sig_atomic_t	g_status;
 void	WebServer::addClient(int socketServerFd)
 {
 	Client	cl;
-	struct epoll_event	e;
 
 	cl.accept(socketServerFd);//can throw (FATAL)
-	e.data.fd = cl.getFd();
-	e.events = EPOLLIN;
-	if (epoll_ctl(_efd, EPOLL_CTL_ADD, cl.getFd(), &e) == -1)
-		throw std::runtime_error("610: fail to add client to epoll");
+	modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);//can thow FATAL
 	_ClientList[cl.getFd()] = cl;
 }
 
-		
-
-
+void	WebServer::deleteClient(int client_fd)
+{
+	modEpollList(client_fd, EPOLL_CTL_DEL, 0);	//del from epoll // throw FATAL
+	close(_ClientList[client_fd].getFd());	// close socket fd
+	_ClientList.erase(client_fd);			// delete client from list
+	_readyToProceedList.erase(client_fd);	//delete from ready list
+}
 
 
 void	WebServer::handle_epollerr(int event_id)
 {
+
+	int			err;
+	socklen_t	errlen = sizeof(err);
+
+	getsockopt(event_id, SOL_SOCKET, SO_ERROR, &err, &errlen);
+	std::cerr << strerror(err) << std::endl;
+
 	std::cerr << "error happen " << std::endl;
+	
+	if (event_id > _highSocket)
+		deleteClient(event_id);
+	else if (event_id < 0)
+		close(-event_id);
+	
 }
 
 void	WebServer::handle_epollhup(int event_id)
 {
-	std::cerr << "hang up happen " << std::endl;
-}
-
-void	WebServer::modClientEpoll(Client* cl, uint32_t events)
-{
-	struct epoll_event	e;
-
-	e.events = events;
-	e.data.fd = cl->getFd();
-	if (epoll_ctl(_efd, EPOLL_CTL_MOD, cl->getFd(), &e) == -1)
-		throw std::runtime_error("611: add to epollout fail");
+	std::cerr << "unexpected close of socket" << std::endl;
+	if (event_id > _highSocket)
+		deleteClient(event_id);
+	else if (event_id < 0)
+		close(-event_id);
+	
 }
 
 
@@ -70,8 +78,8 @@ void	WebServer::handle_epollin(int event_id)
 			std::cout << "end read rq" << std::endl;
 		std::cout << cl->request << std::endl;
 
-			modClientEpoll(cl, EPOLLOUT);	//thow FATAL
-			// _readyToProceedList.push_back(cl);
+			modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLOUT);	//thow FATAL
+			_readyToProceedList[cl->getFd()] = cl;				//add to ready list
 		}
 		else
 			std::cout << "read rq continue" << std::endl;
@@ -80,16 +88,6 @@ void	WebServer::handle_epollin(int event_id)
 		std::cout << "cgiwait.." << std::endl;
 }
 
-
-void	WebServer::delClient(Client* cl, uint32_t events)
-{
-	struct epoll_event	e;
-
-	e.events = events;
-	e.data.fd = cl->getFd();
-	if (epoll_ctl(_efd, EPOLL_CTL_MOD, cl->getFd(), &e) == -1)
-		throw std::runtime_error("611: add to epollout fail");
-}
 
 void	WebServer::handle_epollout(int event_id)
 {
@@ -100,19 +98,15 @@ void	WebServer::handle_epollout(int event_id)
 	if (cl->cstatus == PROCEEDED)
 	{
 		cl->sendRequest();	//throw FATAL
-		// _readyToProceedList.erase(cl);
 		if (cl->keepConnection)	//keep client
-			{
-				cl->reset();
-				modClientEpoll(cl, EPOLLIN);	//Throw FATAL
-			}
-		else	//delete client
 		{
-			epoll_ctl(_efd, EPOLL_CTL_DEL, event_id, NULL);	//del from epoll
-			close(_ClientList[event_id].getFd());	// close socket fd
-			_ClientList.erase(event_id);	// del from clientlist
-			
+			std::clog << "keep client" << std::endl;
+			cl->reset();
+			modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLIN);	//Throw FATAL
+			_readyToProceedList.erase(cl->getFd());
 		}
+		else	//delete client
+			deleteClient(cl->getFd());	//throw fatal
 	}
 }
 
@@ -124,13 +118,22 @@ void	WebServer::process_rq(Client &cl)
 	
 // special instruction : execute shutdown
 	if (cl.request.getUri() == "/shutdown")
+	{
 		g_status = 0;
+		cl.request.response = GET("data/default_page/index.html");
+		cl.sendRequest();
+	}
 	if (cl.request.getUri() == "/throw")
 		throw std::runtime_error("404 Bof error");
 	if (cl.request.getUri() == "/fatal")
 		throw std::runtime_error("699 Bof fatal");
+
+
+		
 	v_host_ptr	host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl.request);
 std::cout << host << std::endl;
+
+
 // prepare response based on request, there should be GET/HEAD/POST
 	cl.request.response = GET("data/default_page/index.html");
 	cl.cstatus = PROCEEDED;
@@ -161,7 +164,7 @@ void	WebServer::run(void)
 		std::clog << "Waiting for event.." << std::endl;
 		int n_event = epoll_wait(_efd, revents, MAX_EVENTS, TIMEOUT);
 		if (n_event == -1)
-			throw std::runtime_error("fatal: epoll");
+			throw std::runtime_error("614: epoll_wait failed");
 		if (n_event)
 			std::clog << n_event << " events ready" << std::endl;
 
@@ -176,7 +179,7 @@ void	WebServer::run(void)
 					handle_epollhup(revents[i].data.fd);
 				if (revents[i].events & EPOLLIN)
 					handle_epollin(revents[i].data.fd);
-				if (revents[i].events & EPOLLOUT)
+				else if (revents[i].events & EPOLLOUT)
 					handle_epollout(revents[i].data.fd);
 			}
 			catch (std::exception & e)
@@ -190,22 +193,25 @@ void	WebServer::run(void)
 				std::cerr << "cerror code : " << err << std::endl;
 				if (revents[i].data.fd > _highSocket) //temp delete client
 				{
-					epoll_ctl(_efd, EPOLL_CTL_DEL, revents[i].data.fd, NULL);	//del from epoll
-					close(_ClientList[revents[i].data.fd].getFd());	// close socket fd
-					_ClientList.erase(revents[i].data.fd);
+					std::cerr << "ERROR FATAL, ABANDON CLIENT" << std::endl;
+					deleteClient(revents[i].data.fd);
 				}
 			}
 		}
 
+		
+		std::clog << "n client ready :" << _readyToProceedList.size() << std::endl;
+
 		// change and use a list to client* for client to procced
-		for (std::map<int, Client>::iterator it = _ClientList.begin() ; it != _ClientList.end(); ++it)
+		for (std::map<int, Client*>::iterator it = _readyToProceedList.begin() ; it != _readyToProceedList.end(); ++it)
 		{
+			std::clog << "ready: " << *it->second << std::endl;
 			try
 			{
-				if (it->second.cstatus == GATHERED)
-					process_rq(it->second);
-				else if (it->second.cstatus == ERROR)
-					process_rq_error(it->second);				
+				if (it->second->cstatus == GATHERED)
+					process_rq(*it->second);
+				else if (it->second->cstatus == ERROR)
+					process_rq_error(*it->second);				
 			}
 			catch(const std::exception& e)
 			{
@@ -216,68 +222,15 @@ void	WebServer::run(void)
 				if (err == 0)
 					err = 699;
 				std::cerr << "cerror code : " << err << std::endl;
-				if (it->second.cstatus == ERROR) //error fatal , delete client
+				if (it->second->cstatus == ERROR) //error fatal , delete client
 				{
 					std::cerr << "ERROR FATAL, ABANDON CLIENT" << std::endl;
-					epoll_ctl(_efd, EPOLL_CTL_DEL, it->second.getFd(), NULL);	//del from epoll
-					close(_ClientList[it->second.getFd()].getFd());	// close socket fd
-					_ClientList.erase(it->second.getFd());
+					deleteClient(it->first);
 				}
 				else
-					it->second.cstatus = ERROR;
+					it->second->cstatus = ERROR;
 			}
 		}
 	}
 }
 
-
-// process event
-	// 	for (int i = 0; i < n_event; ++i)
-	// 	{
-	// 		Client cl;
-			
-	// 		cl.accept(revents[i].data.fd);
-
-	// 		try
-	// 		{
-	// 		// read and parse request
-			
-	// 			std::string	raw = _read_request(cl.getFd());
-	// 			cl.request.build(raw);
-	// 		std::clog << cl.request << std::endl;
-
-	// 		// special instruction : execute shutdown
-	// 			if (cl.request.getUri() == "/shutdown")
-	// 				g_status = 0;
-	// 			if (cl.request.getUri() == "/throw")
-	// 				throw std::runtime_error("404 Bof");
-	// 			if (cl.request.getUri() == "/fatal")
-	// 				throw std::runtime_error("415 Bof");
-	// 			v_host_ptr	host = _selectServer(_SocketServersList[revents[i].data.fd], cl.request);
-	// 		// std::cout << host << std::endl;
-	// 		// prepare response based on request, there should be GET/HEAD/POST
-	// 			// std::string	response = GET("data/default_page/index.html");
-	// 			std::string	response = "response\r\n\r\n"; //Method(rq, host);
-
-	// 		//	send response to client
-	// 			_send_response(cl.getFd(), response);
-	// 		}
-	// 		catch (std::exception & e)
-	// 		{
-	// 		//	exception here should be interpreted :
-	// 		//	and proper response should be send to client
-	// 		//	aka GET to proper error file
-	// 		//	plus maybe error should be log into log file
-	// 			std::clog << e.what() << std::endl;
-
-	// 			std::cerr << "errno value: " << errno << std::endl;
-	// 			std::cerr << strerror(errno) << std::endl;
-				
-	// 			std::string	status(e.what(), 3);
-	// 			// if (status == 0)
-	// 			// 	status = 500;
-	// 			std::string response = GET_error2(status);
-
-	// 			_send_response(cl.getFd(), response);
-	// 		}
-	// 	}
