@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 12:42:45 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:27:41 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ class Request
 		~Request(void);
 		
 		bool	build(std::string raw);
+		bool	addCgi(std::string	buff);
 		void	clear(void);
 
 		int								getRid(void) const;

@@ -1,5 +1,10 @@
 
 
+to do :
+refaire request 
+faire un fonction log
+
+
 EPOLLERR
 error condition on fd 
 also reported for write end of pipe when read ened has been closed

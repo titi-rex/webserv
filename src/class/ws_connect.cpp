@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 19:26:18 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:43:51 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,41 +14,14 @@
 
 extern sig_atomic_t	g_status;
 
-
-void	WebServer::addClient(int socketServerFd)
-{
-	Client	cl;
-
-	cl.accept(socketServerFd);//can throw (FATAL)
-	modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);//can thow FATAL
-	_ClientList[cl.getFd()] = cl;
-}
-
-void	WebServer::deleteClient(int client_fd)
-{
-	modEpollList(client_fd, EPOLL_CTL_DEL, 0);	//del from epoll // throw FATAL
-	close(_ClientList[client_fd].getFd());	// close socket fd
-	_ClientList.erase(client_fd);			// delete client from list
-	_readyToProceedList.erase(client_fd);	//delete from ready list
-}
-
-
 void	WebServer::handle_epollerr(int event_id)
 {
-
-	int			err;
-	socklen_t	errlen = sizeof(err);
-
-	getsockopt(event_id, SOL_SOCKET, SO_ERROR, &err, &errlen);
-	std::cerr << strerror(err) << std::endl;
-
 	std::cerr << "error happen " << std::endl;
 	
 	if (event_id > _highSocket)
 		deleteClient(event_id);
 	else if (event_id < 0)
 		close(-event_id);
-	
 }
 
 void	WebServer::handle_epollhup(int event_id)
@@ -56,11 +29,9 @@ void	WebServer::handle_epollhup(int event_id)
 	std::cerr << "unexpected close of socket" << std::endl;
 	if (event_id > _highSocket)
 		deleteClient(event_id);
-	else if (event_id < 0)
+	else if (event_id < 0)	//pipe, if client still exist, should set cstatus to ERROR with request status 500
 		close(-event_id);
-	
 }
-
 
 
 void	WebServer::handle_epollin(int event_id)
@@ -69,7 +40,8 @@ void	WebServer::handle_epollin(int event_id)
 
 	if (event_id <= _highSocket)
 		addClient(event_id);	//throw FATAL 
-	else if (event_id > 0)
+
+	if (event_id > 0)
 	{
 		Client*	cl = &_ClientList[event_id];
 		
@@ -85,7 +57,26 @@ void	WebServer::handle_epollin(int event_id)
 			std::cout << "read rq continue" << std::endl;
 	}
 	else
-		std::cout << "cgiwait.." << std::endl;
+	{
+		std::cout << "reading cgi.." << std::endl;
+
+		Client*	cl = NULL;
+
+		// find client from cgi fd, should use a cgi_fd to client map insteed
+		for (std::map<int, Client>::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
+		{
+			if (it->second.getFd_cgi() == event_id)
+			{
+				cl = &it->second;
+				break ;
+			}
+		}
+		if (cl->readCgi())	//read cgi output, if end, deregister cgi from epoll
+		{
+			modEpollList(event_id,	EPOLL_CTL_DEL, 0);
+			close(event_id);
+		}
+	}
 }
 
 
@@ -205,7 +196,7 @@ void	WebServer::run(void)
 		// change and use a list to client* for client to procced
 		for (std::map<int, Client*>::iterator it = _readyToProceedList.begin() ; it != _readyToProceedList.end(); ++it)
 		{
-			std::clog << "ready: " << *it->second << std::endl;
+			std::clog << "ready: " << *it->second << " clients" << std::endl;
 			try
 			{
 				if (it->second->cstatus == GATHERED)

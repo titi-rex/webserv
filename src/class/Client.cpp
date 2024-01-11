@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 18:52:31 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:26:52 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,32 @@ bool	Client::readRequest(void)
 	char	buf[BUFFER_SIZE + 1] = {0};
 	int		n_rec = 0;
 	
-	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTROUTE | MSG_CMSG_CLOEXEC);
+	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC);
 	if (n_rec == -1)
 		throw std::runtime_error("620: recv");
 	buf[n_rec] = 0;
 	if (request.build(buf))//throw ERROR or FATAL
 	{
 		cstatus = GATHERED;
+		return (true);
+	}
+	return (false);
+}
+
+bool	Client::readCgi(void)
+{
+	std::cout << "client reading Cgi" << std::endl;
+	
+	char	buf[BUFFER_SIZE + 1] = {0};
+	int		n_rec = 0;
+	
+	n_rec = read(_fd_cgi, &buf, BUFFER_SIZE);
+	if (n_rec == -1)
+		throw std::runtime_error("699: read cgi");
+	buf[n_rec] = 0;
+	if (request.addCgi(buf))//throw ERROR or FATAL
+	{
+		cstatus = PROCEEDED;
 		return (true);
 	}
 	return (false);

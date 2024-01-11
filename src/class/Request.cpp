@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 15:41:02 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:28:01 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,12 @@ bool	Request::build(std::string raw)
 	if (_headers["transfert-encoding:"] != "chunked")
 		throw std::runtime_error("400 Unknow encoding");
 	unchunk(iss_raw);
+	return (true);
+}
+
+bool	Request::addCgi(std::string	buff)
+{
+	_body += buff;
 	return (true);
 }
 

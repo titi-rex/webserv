@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 18:02:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:40:08 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ bool	sk_used(std::map<int, SocketServer>& SocketServersList, v_host_ptr v_host, 
 /**
  * @brief create all needed SocketServer per couple (host/port)
  * 	then store SocketServer fd as keymap with coresponding SocketServer as value 
- * @throw: fatal
+ * @throw fatal
  */
 void	WebServer::_SocketServerList_init(void)
 {
@@ -61,7 +61,7 @@ std::clog << "hightsocket: " << _highSocket << std::endl;
 
 /**
  * @brief wrapper for epoll_ctl
- * @throw: fatal
+ * @throw fatal
  * @param fd target to monitor
  */
 void	WebServer::modEpollList(int fd, int op, uint32_t events)
@@ -88,7 +88,7 @@ void	WebServer::modEpollList(int fd, int op, uint32_t events)
 
 /**
  * @brief initiate epoll instance and populate it with SocketServer fd
- * @throw: fatal
+ * @throw fatal
  */
 void	WebServer::_epoll_init(void)
 {
@@ -103,4 +103,29 @@ void	WebServer::_epoll_init(void)
 		modEpollList(it->first, EPOLL_CTL_ADD, EPOLLIN);		
 		std::clog << "fd : " << it->first << " for " << _SocketServersList[it->first].getName() << " add to epoll list" << std::endl;
 	}
+}
+
+/**
+ * @brief accept client connection, add it to epoll list and _clientList
+ * @throw fatal
+ */
+void	WebServer::addClient(int socketServerFd)
+{
+	Client	cl;
+
+	cl.accept(socketServerFd);//can throw (FATAL)
+	modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);//can thow FATAL
+	_ClientList[cl.getFd()] = cl;
+}
+
+/**
+ * @brief close connection (socket) and remove client from epoll list and server
+ * @throw fatal
+ */
+void	WebServer::deleteClient(int client_fd)
+{
+	modEpollList(client_fd, EPOLL_CTL_DEL, 0);	//del from epoll // throw FATAL
+	close(_ClientList[client_fd].getFd());	// close socket fd
+	_ClientList.erase(client_fd);			// delete client from list
+	_readyToProceedList.erase(client_fd);	//delete from ready list
 }
