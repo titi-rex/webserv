@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/08 14:36:26 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/10 11:08:17 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ class Request
 	public	:
 		Request(std::string raw);
 		~Request(void);
+		
+		std::string	response;
 
 		int								getRid(void) const;
 		e_method 						getMid(void) const;

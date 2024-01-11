@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   virtual_host.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:53:28 by tlegrand          #+#    #+#             */
+<<<<<<< HEAD
+/*   Updated: 2024/01/10 12:10:26 by lboudjem         ###   ########.fr       */
+=======
 /*   Updated: 2024/01/10 12:50:30 by jmoutous         ###   ########lyon.fr   */
+>>>>>>> 09f81943da998b90701d5acfae673b3c2c9dafbc
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +104,8 @@ class	t_virtual_host
 		void								setServerNames(std::vector<std::string> serverNames);
 		void								setCgi(std::map<std::string, std::string> cgi);
 		void								setLocations(std::map<std::string, t_location> locations);
+
+		void								cgi_handler(void);
 };
 
 typedef t_virtual_host* v_host_ptr;	//typedef pour un pointer vers un virtual host
