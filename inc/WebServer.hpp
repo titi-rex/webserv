@@ -20,6 +20,7 @@ typedef unsigned int long	uintptr_t;
 # include "Socket.hpp"
 # include "Request.hpp"
 # include "utils.hpp"
+# include "exceptions.hpp"
 
 # include "map_operator.hpp"
 # include "deque_operator.hpp"
