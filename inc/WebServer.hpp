@@ -17,7 +17,8 @@
 typedef unsigned int long	uintptr_t;
 
 # include "virtual_host.hpp"
-# include "Socket.hpp"
+# include "SocketServer.hpp"
+# include "Client.hpp"
 # include "Request.hpp"
 # include "utils.hpp"
 # include "exceptions.hpp"
@@ -28,10 +29,10 @@ typedef unsigned int long	uintptr_t;
 
 # define MAXLINE 4096
 # define MAX_EVENTS 5
-# define TIMEOUT 2000
+# define TIMEOUT 3000
 # define BACKLOG 5
 
-# define ERROR_500_MSG "<html>\n<head><title>500 Internal Server Error</title></head>\n<body>\n<center><h1>500 Internal Server Error</h1></center>\n<hr><center>nginx/1.25.3</center>\n</body>\n</html>\n"
+# define ERROR_500_MSG "HTTPS/1.1 500 Server goes wrong\r\n\r\n<html>\n<head><title>500 Internal Server Error</title></head>\n<body>\n<center><h1>500 Internal Server Error</h1></center>\n<hr><center>nginx/1.25.3</center>\n</body>\n</html>\n"
 
 
 class Request;
@@ -44,21 +45,24 @@ class WebServer
 		std::string							_dirErrorPage;		//indique un repertoire specifique ou chercher les pqges d'erreur
 		std::map<std::string, std::string>	_errorPage;			//indique ou chercher une page d'erreur specifique (est regarde en premier )
 		std::vector<t_virtual_host>			_virtualHost;		//vector contenant tout les virtual hosts du server
-		std::map<int, Socket>				_socketsList;		// map des sockets utilise par le server (key: fd, value: Socket)
+		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
+		int		_highSocket;
+		std::map<int, Client>				_ClientList;		//map contenant les client du server
+		std::map<int, Client*>				_readyToProceedList;			//list les client dont les request sont prete a etre proceder (fini de read)
 
 		WebServer(void);
 		WebServer(const WebServer& src);
 		WebServer&	operator=(const WebServer& src);
 
-		void	_socketList_init(void);
+		void	_SocketServerList_init(void);
 		void	_epoll_init(void);
 
 		bool		_is_server_named(v_host_ptr v_host, const std::string& name);
-		v_host_ptr	_selectServer(Socket& sk, Request& rq);
+		v_host_ptr	_selectServer(SocketServer& sk, Request& rq);
 
-		int			_recept_request(int sock_listen);
-		std::string	_read_request(int client_fd);
+
 		void		_send_response(int client_fd, std::string response);
+
 
 	public	:
 		WebServer(std::string path);
@@ -84,7 +88,24 @@ class WebServer
 		void		displayCGI(const t_virtual_host& virtualHost);
 		void		debugServ();
 
-		void		run(void);
+		void	run(void);
+		void	addClient(int socketServerFd);
+
+		void	modEpollList(int fd, int op, uint32_t events);
+		void	deleteClient(int client_fd);
+
+		void	handle_epollerr(int event_id);
+		void	handle_epollhup(int event_id);
+		void	handle_epollin(int event_id);
+		void	handle_epollout(int event_id);
+
+
+		void	process_rq(Client &cl);
+		void	process_rq_error(Client &cl);
+
+
+
+
 
 		std::string	Method(Request & req, v_host_ptr & v_host);	
 		std::string	GET(std::string path);

@@ -1,0 +1,20 @@
+600: cannot create Socket
+601: cannot change Socket option
+602: socket error bind
+603: socket error connect
+604: socket error listen
+605: socket error accept
+
+
+610: cannot create epoll instance
+611: fail to add client to epoll
+612: add to epollout fail
+613: del from epoll fail
+614: epoll_wait
+
+620: input error
+621: output error
+
+
+698: programmer error
+699: system error

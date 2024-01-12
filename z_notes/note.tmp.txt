@@ -1,7 +1,238 @@
 
 
+to do :
+refaire request 
+faire un fonction log
 
-!!! attention overflow socket port (uint16_t) !!
+
+bug :
+
+parsing : indiquer n ligne qund erreur 
+
+
+
+
+EPOLLERR
+error condition on fd 
+also reported for write end of pipe when read ened has been closed
+
+EPOLLHUP
+hang up (unexpected close of socket) (write closed)
+after reading any readable data, reading closed
+!close could block until read complte ???!??
+
+
+EPOLLPRI
+excpetionnel condition on fd, see poll2
+
+
+
+
+
+
+
+
+epoll : 
+	init : register server SocketServer fd in EPOLLIN (read)
+
+	each loop: 
+		- each revents :
+			- check if EPOLLERR ou MARGARINE
+			- check if fd is (server_fd <0)	
+				-server:	create client (accept client_SocketServer) and ADD client to epoll with EPOLLIN
+				-client:
+					- IF EPOLLIN -> read request , IF end request -> set to EPOLLOUT + add reay list
+					- IF EPOLLOUT -> send request , IF "connection:close" -> EPOLL_DEL client ?
+				-cgi: 	add to request 
+		
+		- procced request, IF CGI -> add pipe to epoll with EPOLLIN
+
+
+============  LT ===
+timeout = -1 (no timeout)
+
+1) wait on epoll 
+
+2) for i in max event :
+try 
+{
+
+	- check for EPOLERR ou MARGARINE
+	- if EVENT IS EPOLLIN :
+		- if fd is SockServ -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
+		- if fd is SockCli -> read MAXBYTES && set CSTATUS to reading
+			-if EndOfRequest -> add fd client to EPOLLOUT && set CSTATUS to gathered 
+		- if fd is CGI -> ??
+	- if EVENT is EPOLLOUT
+		- if CSTATUS is PROCEEDED -> sent response
+		- if CSTATUS is CGIWAIT -> ??
+}
+error : 
+
+epollMod	-> FATAL 611
+addClient	-> accept -> FATAL  (client isnt added to client list) 605
+			-> epollAdd -> FATAL 610
+cl->readRequest -> recv -> FATAL 620
+				-> request.build	-> ERROR (400, 501, 505)
+									-> FATAL (memory, getline, transform, ) 699
+cl->sendRequest -> send -> FATAL 621
+
+catch 
+{
+	
+}
+
+3) for i in nclient
+	- if CSTATUS is GATHERED -> proceed request
+	- if CSTATUS is ERROR -> proceed ERROR request 
+	- if CSTATUS is FATAL -> proceed FATAL request 
+	- if CSTATUS is CGIWAIT -> ???
+
+
+
+
+
+============ ET ===
+ if no client -> timeout = -1, else timeout = 1ms
+
+1) wait on epoll 
+
+3) for i in nclient
+	- if CSTATUS is READING -> read MAXBYTES && chekc EoR with n_read technique
+		-if EndOfRequest -> add fd client to EPOLLOUT && set CSTATUS to gathered 
+	- if CSTATUS is GATHERED -> proceed request
+	- if CSTATUS is ERROR -> proceed ERROR request 
+	- if CSTATUS is FATAL -> proceed FATAL request 
+	- if CSTATUS is CGIWAIT -> ???
+
+2) for i in max event :
+	- check for EPOLERR ou MARGARINE
+	- if EVENT IS EPOLLIN :
+		- if fd is SockServ -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
+		- if fd is SockCli -> set CSTATUS to reading
+		- if fd is CGI -> ??
+	- if EVENT is EPOLLOUT
+		- if CSTATUS is PROCEEDED -> sent response
+		- if CSTATUS is CGIWAIT -> ??
+
+
+
+
+
+
+
+epoll multi: 
+	init : 
+		-server SocketServer instance : register server SocketServer fd in EPOLLIN (read)
+		-client SocketServer instance : empty
+		-cgi instance : empty
+		-master instance : register all epoll instace in EPOLLIN
+		
+
+	each loop: 
+		- each revents :
+			- check if EPOLLERR ou MARGARINE
+			- check if fd is (server_fd <0)	
+				-server:	create client (accept client_SocketServer) and ADD client to epoll with EPOLLIN
+				-client:
+					- IF EPOLLIN -> read request , IF end request -> set to EPOLLOUT
+					- IF EPOLLOUT -> send request , IF "connection:close" -> EPOLL_DEL client ?
+				-cgi: 	add to request 
+		
+		- procced request, IF CGI -> add pipe to epoll with EPOLLIN
+
+	
+	|------------|
+	|epoll MASTER|
+	|------------|
+
+|_> epoll SocketServer  (EPOLLIN)
+
+|_> epoll SocketClient (EPOLLIN & EPOLLOUT)
+
+|_> epoll CGI ?
+
+
+
+
+============  LT ===
+timeout = -1 (no timeout)
+
+1) wait on epoll master
+- check for EPOLERR ou MARGARINE
+
+2) for i in maxmasterevent 
+	- check for EPOLERR ou MARGARINE
+	- wait on epoll child (get event)
+		- if epoll child == SoscketServer -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
+		- if epoll child == SocketClient 
+			- if EPOLLIN-> read MAXBYTES && set CSTATUS to reading
+				-if EndOfRequest -> add fd client to EPOLLOUT && set CSTATUS to gathered 
+			- if EPOLLOUT && CSTATUS is PROCEEDED -> sent response
+		- if epoll child is CGI -> ??
+
+
+3) for i in nclient
+	- if CSTATUS is GATHERED -> proceed request
+	- if CSTATUS is ERROR -> proceed ERROR request 
+	- if CSTATUS is FATAL -> proceed FATAL request 
+	- if CSTATUS is CGIWAIT -> ???
+
+
+
+
+
+============ ET ===
+ if no client -> timeout = -1, else timeout = 1ms
+
+1) wait on epoll master
+- check for EPOLERR ou MARGARINE
+
+2) for i in maxmasterevent 
+	- check for EPOLERR ou MARGARINE
+	- wait on epoll child (get event)
+		- if epoll child == SoscketServer -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
+		- if epoll child == SocketClient 
+			- if EPOLLIN-> set CSTATUS to reading
+			- if EPOLLOUT && CSTATUS is PROCEEDED -> sent response
+		- if epoll child is CGI -> ??
+
+
+3) for i in nclient
+	- if CSTATUS is READING -> read MAXBYTES && chekc EoR with n_read technique
+		-if EndOfRequest -> add fd client to EPOLLOUT && set CSTATUS to gathered 
+	- if CSTATUS is GATHERED -> proceed request
+	- if CSTATUS is ERROR -> proceed ERROR request 
+	- if CSTATUS is FATAL -> proceed FATAL request 
+	- if CSTATUS is CGIWAIT -> ???
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OPT :
+	use multiple epoll instance : 
+	use dup to filter event : ? 
+		read and write a t same time ? 
+
+
+
+
+
+!!! attention overflow SocketServer port (uint16_t) !!
 
 // attention si strtol overflow -> thow
 // attention si getline throw

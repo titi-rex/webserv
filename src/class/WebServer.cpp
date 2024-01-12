@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:22:33 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/11 17:57:53 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ WebServer&	WebServer::operator=(const WebServer& src)
 
 WebServer::~WebServer(void) 
 {
-	for (std::map<int, Socket>::iterator it = _socketsList.begin(); it != _socketsList.end(); ++it)
+	for (std::map<int, SocketServer>::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
 	{
 		close(it->first);
 	}
@@ -78,6 +78,7 @@ size_t	WebServer::getBodySizeLimit(void) const {
 
 WebServer::WebServer(std::string path) 
 {
+{
 	std::vector<std::string> 	fileVec;
 	uintptr_t					i = 0;
 	
@@ -97,16 +98,17 @@ WebServer::WebServer(std::string path)
 		++i;
 		
    	}
+}
 	this->debugServ();
 	
 	try
 	{
-		_socketList_init();
+		_SocketServerList_init();
 		_epoll_init();
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		// std::cerr << e.what() << std::endl;
 		throw std::runtime_error(e.what());
 	}	
 };
@@ -116,17 +118,22 @@ void WebServer::addVirtualHost(const t_virtual_host& virtualHost)
 	_virtualHost.push_back(virtualHost);
 }
 
-
+/**
+ * @brief format id/names/host
+ */
 std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host)
 {
-	os << "id : " << v_host->sId << ", default name: " << v_host->serverNames[0];
-	os << ", listen on : " << v_host->host_port.first << ":" << v_host->host_port.second << std::endl;
+	
+	os << v_host->sId << "/" << v_host->serverNames << "/" << v_host->host_port.first << ":" << v_host->host_port.second;
 	return (os);
 }
 
+
+/**
+ * @brief format id/names/host
+ */
 std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host)
 {
-	os << "id : " << v_host.sId << ", default name: " << v_host.serverNames[0];
-	os << ", listen on : " << v_host.host_port.first << ":" << v_host.host_port.second << std::endl;
+	os << v_host.sId << "/" << v_host.serverNames << "/" << v_host.host_port.first << ":" << v_host.host_port.second;
 	return (os);
 }

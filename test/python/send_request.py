@@ -1,9 +1,9 @@
 import config
-import socket
+import SocketServer
 from http.client import HTTPResponse
 
 def send_request(request_header):
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client = SocketServer.SocketServer(SocketServer.AF_INET, SocketServer.SOCK_STREAM)
     client.connect((config.SERVER_ADDR, config.SERVER_PORT))
     client.send(request_header.encode())
     # read and parse http response

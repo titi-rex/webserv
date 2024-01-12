@@ -1,97 +1,125 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Socket.cpp                                         :+:      :+:    :+:   */
+/*   Socket.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 12:15:27 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 13:20:58 by lboudjem         ###   ########.fr       */
+/*   Created: 2024/01/05 16:32:26 by tlegrand          #+#    #+#             */
+/*   Updated: 2024/01/05 18:21:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
-# include <string>
 
 
-Socket::Socket(void) : _fd(-1), _host(0), _port(0) {};
+//  OFC
+Socket::Socket(void) : _fd(-1), _flags(0), _name("nameless") 
+{
+	std::memset(&_sin, 0, sizeof(_sin));
+};
 
-Socket::Socket(const Socket& src) : _fd(src._fd), _host(src._host), _port(src._port), _name(src._name), v_hosts(src.v_hosts) {};
+Socket::Socket(const Socket& src) {*this = src;};
 
 Socket&	Socket::operator=(const Socket& src) 
 {
 	if (this == &src)
 		return (*this);
 	_fd = src._fd;
-	_host = src._host;
-	_port = src._port;
-	_name = src._name;
-	v_hosts = src.v_hosts; 
+	_sin.sin_family = src._sin.sin_family;
+	_sin.sin_addr.s_addr = src._sin.sin_addr.s_addr;
+	_sin.sin_port = src._sin.sin_port;
+	this->setName();
 	return (*this);
 };
 
 Socket::~Socket(void) {};
 
-Socket::Socket(uint32_t host, uint16_t port) : _fd(-1), _host(host), _port(port) { setName(); };
+
+// custom const
+Socket::Socket(int family, uint32_t haddr, uint16_t hport, int flags, int protocol)
+{
+	const int	l = 1; //not short ?
+	
+	std::memset(&_sin, 0, sizeof(_sin));
+	_flags = flags;
+	setSin(family, haddr, hport);
+	setName();
+	_fd = socket(_sin.sin_family, flags, protocol);
+	if (_fd == -1)
+		throw std::runtime_error("600: cannot create Socket");
+	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &l, sizeof(l)) == -1)
+		throw std::runtime_error("601: cannot change Socket option");
+};
 
 
+//  set
+void	Socket::setFd(int fd) { this->_fd = fd; };
 
-int			Socket::getFd(void) const { return (this->_fd); };
-void		Socket::setFd(int fd)  { _fd = fd; };
-uint32_t	Socket::getHost(void) const { return (this->_host); };
-uint16_t	Socket::getPort(void) const { return (this->_port); };
-std::string	Socket::getName(void) const { return (_name); };
+void	Socket::setSin(int family, uint32_t addr, uint16_t port) 
+{
+	_sin.sin_family = family;
+	_sin.sin_addr.s_addr = htonl(addr);
+	_sin.sin_port = htons(port);
+};
 
 void	Socket::setName(void) 
 {
 	std::stringstream	strs;
+	uint32_t	host = ntohl(_sin.sin_addr.s_addr);
+	uint16_t	port = ntohs(_sin.sin_port);
 
-	strs << (_host >> 24) << "." << ((_host << 8) >> 24) << "." << ((_host << 16) >> 24) << "." << ((_host << 24) >> 24) << ":" << _port;
-	_name = strs.str();
+	strs << (host >> 24) << "." << ((host << 8) >> 24) << "." << ((host << 16) >> 24) << "." << ((host << 24) >> 24) << ":" << port;
+	_name = strs.str(); 
 };
 
+// get
+int	Socket::getFd(void) const { return (this->_fd); };
+const std::string&			Socket::getName(void) const { return (this->_name); };
+const struct sockaddr_in&	Socket::getSin(void) const { return (this->_sin); };
+
+
+// operator
 bool	Socket::operator==(Socket& ref) 
 {
-	if (_host == ref._host && _port == ref._port)
-		return (true);
-	return (false);
+	if (_sin.sin_family != ref._sin.sin_family)
+		return (false);
+	if (_sin.sin_addr.s_addr != ref._sin.sin_addr.s_addr)
+		return (false);
+	if (_sin.sin_port != ref._sin.sin_port)
+		return (false);
+	return (true);
 };
-	
 
-bool	Socket::is_already_used(std::map<int, Socket>& socketsList, v_host_ptr v_host)
+// custom func
+void	Socket::bind(void)
 {
-	for (std::map<int, Socket>::iterator it = socketsList.begin(); it != socketsList.end(); ++it)
-	{
-		if (it->second == *this)
-		{
-			it->second.v_hosts.push_back(v_host);
-			return (true);
-		}
-	}
-	return (false);
-};
-	
-void	Socket::sockInit(int backlog)
-{
-	struct sockaddr_in	sin;
-	const int			l = 1;
-	
-	_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
-	if (_fd == -1)
-		throw std::runtime_error("fatal: cannot create socket");
-	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &l, sizeof(int)) == -1)
-		throw std::runtime_error("fatal: cannot change socket option");
-
-	std::memset(&sin, 0, sizeof(sin));
-	sin = (struct sockaddr_in){AF_INET, htons(_port), {htonl(_host)}, {0}};
-std::clog << sin << std::endl;
-
-	if (bind(_fd, (struct sockaddr*) &sin, sizeof(sin)) == -1)
-		throw std::runtime_error("fatal: cannot bind socket");
-	if (listen(_fd, backlog) == -1)
-		throw std::runtime_error("fatal: socket cannot listen");
+	if (::bind(_fd, (struct sockaddr*) &_sin, sizeof(_sin)) == -1)
+		throw std::runtime_error("602: socket error bind");
 }
 
+void	Socket::connect(void)
+{
+	if (::connect(_fd, (struct sockaddr*) &_sin, sizeof(_sin)) == -1)
+		throw std::runtime_error("603: socket error connect");
+}
+
+void	Socket::listen(int backlog)
+{
+	if (::listen(_fd, backlog) == -1)
+		throw std::runtime_error("604: socket error listen");
+}
+
+void	Socket::accept(int sock_fd)
+{
+	socklen_t len = sizeof(_sin);
+
+	_fd = ::accept(sock_fd, (struct sockaddr*) &_sin, &len);
+	if (_fd == -1)
+		throw std::runtime_error("605: socket error accept");
+}
+
+// static function
 uint32_t Socket::hstrtoint(std::string host)
 {
 	std::istringstream	iss(host);
@@ -128,15 +156,12 @@ std::string	Socket::str_sock_family(const struct sockaddr_in& sock)
 	}
 }
 
-
 std::ostream& operator<<(std::ostream& os, const Socket& socket)
 {
-	os << "fd : " << socket.getFd() << ", host : " << socket.getName() << ", for server : ";
-	for (size_t i = 0; i < socket.v_hosts.size(); ++i)
-		os << socket.v_hosts[i]->serverNames[0] << " ";
-	os << std::endl;
+	os << "fd : " << socket.getFd() << ", host : " << socket.getName();
 	return (os);
 }
+
 
 std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock)
 {

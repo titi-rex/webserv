@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/10 11:08:17 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:04:19 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,20 @@ class Request
 
 		static size_t		_num_request;
 
-		Request(void);
-		Request(const Request& src);
-		Request&	operator=(const Request& src);
-
 		bool	_is_method_known(std::string& test);
 		void	unchunk(std::istringstream& iss_raw);
 		
 	public	:
-		Request(std::string raw);
+		std::string				response;
+		short int				status;
+		Request(void);
+		Request(const Request& src);
+		Request&	operator=(const Request& src);
 		~Request(void);
 		
-		std::string	response;
+		bool	build(std::string raw);
+		bool	addCgi(std::string	buff);
+		void	clear(void);
 
 		int								getRid(void) const;
 		e_method 						getMid(void) const;

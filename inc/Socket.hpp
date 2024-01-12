@@ -1,68 +1,64 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Socket.hpp                                         :+:      :+:    :+:   */
+/*   Socket.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 12:14:39 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:37:22 by tlegrand         ###   ########.fr       */
+/*   Created: 2024/01/05 16:32:00 by tlegrand          #+#    #+#             */
+/*   Updated: 2024/01/05 18:21:25 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _SOCKET_H__
-# define _SOCKET_H__
-# include <deque>
-# include <map>
+#ifndef _SocketServer_BASE_H__
+# define _SocketServer_BASE_H__
+# include <sys/socket.h>
+# include <arpa/inet.h>
+# include <unistd.h>
+# include <cstring>
 # include <iostream>
 # include <sstream>
 
-# include <sys/socket.h>
-# include <arpa/inet.h> 
-# include <cstring>
-
-# include "virtual_host.hpp"
-
-
-
 class Socket 
 {
-	
-	private	:
-		int			_fd;
-		uint32_t	_host;
-		uint16_t	_port;
-		std::string	_name;
+	protected:
+		int					_fd;
+		struct sockaddr_in	_sin;
+		int					_flags;
+		std::string			_name;
 
 	public	:
-		std::deque<v_host_ptr>	v_hosts;
 
 		Socket(void);
 		Socket(const Socket& src);
 		Socket&	operator=(const Socket& src);
-		~Socket(void);
+		virtual ~Socket(void);
 
-		Socket(uint32_t host, uint16_t port);
+		Socket(int family, uint32_t haddr, uint16_t hport, int flags = SOCK_STREAM, int protocol = 0);
 
-		int			getFd(void) const;
-		void		setFd(int fd);
-		uint32_t	getHost(void) const;
-		uint16_t	getPort(void) const;
-		std::string	getName(void) const;
-		void		setName(void);
+		void	setFd(int fd);
+		void	setSin(int family, uint32_t addr, uint16_t port);
+		virtual void	setName(void);
+		
+		int							getFd(void) const;
+		const std::string&			getName(void) const;
+		const struct sockaddr_in&	getSin(void) const;
 
 		bool	operator==(Socket& ref);
 
-		bool	is_already_used(std::map<int, Socket>& tmp, v_host_ptr v_host);
-		void	sockInit(int backlog);
+
+		void	bind(void);
+		void	connect(void);
+		void	listen(int backlog);
+		void	accept(int fd);
 
 		static uint32_t 	hstrtoint(std::string host);
 		static std::string	hintostr(uint32_t raw);
 		static std::string	str_sock_family(const struct sockaddr_in& sock);
-		
+
 };
 
-std::ostream& operator<<(std::ostream& os, const Socket& socket);
+std::ostream&	operator<<(std::ostream& os, const Socket& Socket);
 std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock);
 
 #endif
