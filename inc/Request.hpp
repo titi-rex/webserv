@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 11:23:27 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:49:48 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ class Request
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
+
+		void	setRheaders( std::string key, std::string value );
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);

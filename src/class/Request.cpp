@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 11:24:33 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:49:43 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ const std::string	Request::getMethodName(void) const
 			return ("UNKNOW");
 	}	
 }
+
+void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
+
 
 bool	Request::_is_method_known(std::string & test)
 {
