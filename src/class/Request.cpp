@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 12:49:43 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/12 13:35:08 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ const std::string	Request::getMethodName(void) const
 }
 
 void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
+void	Request::setRstatus( short int status ) { this->rstatus = status; };
 
 
 bool	Request::_is_method_known(std::string & test)
