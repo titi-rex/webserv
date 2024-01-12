@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/11 14:22:38 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/12 15:44:50 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 		// std::cout << "\n========== location prefix ==========" << std::endl;
 		for (i = v_host->locations.begin(); i != v_host->locations.end(); ++i)
 		{
+			// std::cout << "\npagePath :" << pagePath << std::endl;
 			// std::cout << "\nlocation :" << location << std::endl;
 			// std::cout << "i->first" << i->first << std::endl;
 
@@ -133,6 +134,12 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 
 	if (redirection != "")
 	{
+		// Fonction only if the parsing take the return with the error number and a string
+		req.setRstatus(std::atoi(redirection.substr(0, 3).c_str()));
+		req.setResponse(redirection.substr(4, redirection.length() - 4));
+
+		// std::cout << "req.response: " << req.response << std::endl;
+
 		locationRedirection	lr(redirection);
 		throw lr;
 	}

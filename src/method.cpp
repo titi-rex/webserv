@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 14:23:34 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/12 15:29:31 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ std::string HEAD( Request & req, v_host_ptr & v_host, std::string & path)
 
 	// New way to store the respond
 	req.setRstatus (200);
+	req.setRline("OK");
 	req.setRheaders("Server", v_host->serverNames[0]); // Place holder
 	req.setRheaders("Date", date);
 	req.setRheaders("Content-length", sContentLength);
@@ -94,7 +95,6 @@ std::string HEAD( Request & req, v_host_ptr & v_host, std::string & path)
 std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
-
 
 	if (req.getUri() != "/" && isDirListReq(req))
 		return (dirList(req, v_host));
@@ -139,6 +139,7 @@ std::string	WebServer::GET( Request & req, v_host_ptr & v_host, std::string & pa
 	char	sRespondLength[size];
 	sprintf(sRespondLength, "%lu", response.length());
 	req.setRstatus (200);
+	req.setRline ("OK");
 	req.setRheaders("Server", v_host->serverNames[0]); // Place holder
 	req.setRheaders("Content-length", sRespondLength);
 	req.setRbody(response);
