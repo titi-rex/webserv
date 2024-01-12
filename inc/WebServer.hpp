@@ -27,10 +27,9 @@ typedef unsigned int long	uintptr_t;
 # include "deque_operator.hpp"
 # include "vector_operator.hpp"
 
-# define MAXLINE 4096
-# define MAX_EVENTS 5
-# define TIMEOUT 3000
-# define BACKLOG 5
+# define MAX_EVENTS 50
+# define TIMEOUT 30000
+# define BACKLOG 50
 
 # define ERROR_500_MSG "HTTPS/1.1 500 Server goes wrong\r\n\r\n<html>\n<head><title>500 Internal Server Error</title></head>\n<body>\n<center><h1>500 Internal Server Error</h1></center>\n<hr><center>nginx/1.25.3</center>\n</body>\n</html>\n"
 

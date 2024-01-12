@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 16:19:37 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 23:10:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@
 # include "map_operator.hpp"
 
 
-# define RL_MIN_LENGHT 14
-# define RL_MAX_LENGHT 2500
-# define HD_MAX_LENGHT 1000
+# define RL_MIN_LENGTH 14
+# define RL_MAX_LENGTH 2500
+# define HD_MAX_LENGTH 1000
 
 # define METHOD_ENUM(TYPE) \
 	TYPE(eGET, 0) \
@@ -71,28 +71,33 @@ class Request
 
 
 		typedef enum {
-			RLWAIT,
 			RL,
 			HEADERS,
-			BODY_CLENGHT,
-			BODY_CHUNK,
+			BODYCLENGTH,
+			BODYCHUNK,
 			DONE,
 		}	parsing_status;
 		
 		parsing_status 	_pstatus;
 		std::string		_raw;
+		size_t			_size;
 
 		std::string							_rline;
 		std::string							_rbody;
 		std::map<std::string, std::string>	_rheaders;
 
-		size_t	_findBodySize(void);
+		bool	_findBodySize(void);
 		std::string	_extractRange(size_t& start, size_t& end, const char *set);
 		bool		_is_method_known(std::string& test);
+
+		bool	_parseRequestLine(void);
+		bool	_parseHeaders(void);
+		bool	_parseBodyByLength(void);
+		bool	_parseBodyByChunk(void);
+		
 		void		unchunk(std::istringstream& iss_raw);
 		
 	public	:
-		size_t			_bodyCount;
 		size_t			_bodySizeExpected;
 		std::string				response;
 		short int				rstatus;
@@ -102,11 +107,9 @@ class Request
 		Request(const Request& src);
 		Request&	operator=(const Request& src);
 		~Request(void);
+
 		
-		Request(size_t bodySize);
-		
-		bool	build2(std::string raw = "");
-		bool	build(std::string raw);
+		bool	build(std::string raw = "");
 		bool	addCgi(std::string	buff);
 		void	clear(void);
 

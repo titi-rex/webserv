@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 16:32:12 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 23:11:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ std::string	WebServer::GET_error2(std::string status)
 		std::clog << e.what() << ", for default page" << std::endl;
 	}
 	RL = getRL("500");
-	res = RL + "server: webserver\r\ncontent-lenght: 171" + ERROR_500_MSG;
+	res = RL + "server: webserver\r\ncontent-length: 171" + ERROR_500_MSG;
 	return (res);
 }
 

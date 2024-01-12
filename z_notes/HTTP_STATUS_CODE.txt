@@ -28,8 +28,8 @@ response header: connection: close
 request conflict with current state of target, motly in PUT method (uploading a file older than existing version)
 * 410 gone
 acces to the target is no longer available
-* 411 lenght required
-refuse to accept request without 'content-lenght' header
+* 411 length required
+refuse to accept request without 'content-length' header
 (! content-lengh is omitted with chunked data see transfert-encoding)
 412 precondition failed
 acces to target denied cause of condition defined in header (ex: if-unmodified-since)
@@ -43,7 +43,7 @@ server refuse request because  payload format is unsupported
 (ex : content-type or content-encoding)
 416 range not satisfiable
 cannot serve requested range
-response header: content-range: (unsatisfied range '*/current lenght')(ex bytes*/1224 )
+response header: content-range: (unsatisfied range '*/current length')(ex bytes*/1224 )
 417 expectation failed
 expect header could be met
 418 i'm a teapot

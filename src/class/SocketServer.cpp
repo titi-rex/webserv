@@ -22,7 +22,6 @@ SocketServer::SocketServer(void)
 SocketServer::SocketServer(const SocketServer& src) : Socket(src)
 {
 	*this = src;
-
 };
 
 SocketServer&	SocketServer::operator=(const SocketServer& src) 
@@ -34,10 +33,7 @@ SocketServer&	SocketServer::operator=(const SocketServer& src)
 	return (*this);
 };
 
-SocketServer::~SocketServer(void) 
-{
-	std::clog << "deleted: " << *this << std::endl;
-};
+SocketServer::~SocketServer(void) {};
 
 
 SocketServer::SocketServer(uint32_t haddr, uint16_t hport) : Socket(AF_INET, haddr, hport, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC) {};

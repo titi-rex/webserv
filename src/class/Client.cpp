@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 20:02:54 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 23:13:29 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,7 @@ Client&	Client::operator=(const Client& src)
 	return (*this);
 };
 
-Client::~Client(void) 
-{
-	std::clog << "deleted: " << *this << std::endl;
-};
+Client::~Client(void) {};
 
 
 
@@ -72,21 +69,20 @@ bool	Client::readRequest(void)
 	
 	char	buf[BUFFER_SIZE + 1] = {0};
 	int		n_rec = 0;
+	bool	rqwit;
 	
 	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC);
 	if (n_rec == -1)
 		throw std::runtime_error("620: recv");
 	buf[n_rec] = 0;
-	
-	if (request.build(buf))//throw ERROR or FATAL
+	rqwit = request.build(buf);// throw ERROR or FATAL
+	if (request._bodySizeExpected > _sizeLimit)
+		throw std::runtime_error("413: Request Entity Too Large");
+	if (rqwit)
 	{
-		if (request._bodySizeExpected > _sizeLimit)
-			throw std::runtime_error("413: Request Entity Too Large");
 		cstatus = GATHERED;
 		return (true);
 	}
-	if (request._bodySizeExpected > _sizeLimit)
-		throw std::runtime_error("413: Request Entity Too Large");
 	return (false);
 }
 
