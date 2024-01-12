@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 11:29:19 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:19:51 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,13 +105,16 @@ void	WebServer::handle_epollout(int event_id)
 void	WebServer::process_rq(Client &cl)
 {
 	std::cout << "request proceed" << std::endl;
+	v_host_ptr	host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl.request);
 
 	
 // special instruction : execute shutdown
 	if (cl.request.getUri() == "/shutdown")
 	{
+		std::string	shutPage = "data/default_page/index.html";
+
 		g_status = 0;
-		cl.request.response = GET("data/default_page/index.html");
+		cl.request.response = GET(cl.request, host, shutPage);
 		cl.sendRequest();
 	}
 	if (cl.request.getUri() == "/throw")
@@ -119,9 +122,6 @@ void	WebServer::process_rq(Client &cl)
 	if (cl.request.getUri() == "/fatal")
 		throw std::runtime_error("699 Bof fatal");
 
-
-		
-	v_host_ptr	host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl.request);
 std::cout << "host: " << host << std::endl;
 
 

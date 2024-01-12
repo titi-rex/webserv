@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 11:14:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:29:31 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <ctime>
+#include <cstdio>
 
 std::string	WebServer::GET_error(int code)
 {
@@ -33,7 +34,21 @@ static void ft_date( char * date )
 	strftime(date, 80,"%a, %d %b %Y %H:%M:%S", info);
 }
 
-std::string HEAD( std::string & path, v_host_ptr & v_host )
+static int	lengthSize( int contentLength )
+{
+	int	i = 0;
+	
+	if (contentLength == 0)
+		return (1);
+	while (contentLength != 0)
+	{
+		i++;
+		contentLength /= 10;
+	}
+	return (i);
+}
+
+std::string HEAD( Request & req, v_host_ptr & v_host, std::string & path)
 {
 	std::ifstream	requestedPage(path.c_str());
 
@@ -46,10 +61,21 @@ std::string HEAD( std::string & path, v_host_ptr & v_host )
 
 	getline(requestedPage, page, '\0');
 
-	int	contentLength = page.length();
+	int		contentLength = page.length();
+	int		size = lengthSize(contentLength);
+	char	sContentLength[size];
 	char	date[80];
 	
+	sprintf(sContentLength, "%d", contentLength);
 	ft_date(date);
+
+	// New way to store the respond
+	req.setRstatus (200);
+	req.setRline("OK");
+	req.setRheaders("Server", v_host->serverNames[0]); // Place holder
+	req.setRheaders("Date", date);
+	req.setRheaders("Content-length", sContentLength);
+	req.setRheaders("Connection", "keep-alive");
 
 	std::stringstream ss;
 	ss << "HTTP/1.1 200 OK\n";
@@ -70,7 +96,6 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
 
-
 	if (req.getUri() != "/" && isDirListReq(req))
 		return (dirList(req, v_host));
 	
@@ -80,7 +105,7 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 	{
 		case eGET:
 			// std::cout << "GET JUJU" << std::endl;
-			return (GET(pagePath));
+			return (GET(req, v_host, pagePath));
 		case ePOST:
 			std::cout << "POST JUJU" << std::endl;
 			return (POST(req.getBody()));
@@ -90,7 +115,7 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 			break;
 		case eHEAD:
 			// std::cout << "HEAD JUJU" << std::endl;
-			return (HEAD(pagePath, v_host));
+			return (HEAD(req, v_host, pagePath));
 		case eUNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
 	};
@@ -98,15 +123,27 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 }
 
 // std::string	get(Request rq, t_virtual_host v_host)
-std::string	WebServer::GET(std::string path)
+std::string	WebServer::GET( Request & req, v_host_ptr & v_host, std::string & path )
 {
 	std::string		response;
 	std::ifstream	indexPage(path.c_str());
+
 
 	if (indexPage.fail())
 		throw std::runtime_error("500 Error closing file");
 	std::getline(indexPage, response, '\0');
 	indexPage.close();
+
+	// New way to store the respond
+	int		size = lengthSize(response.length());
+	char	sRespondLength[size];
+	sprintf(sRespondLength, "%lu", response.length());
+	req.setRstatus (200);
+	req.setRline ("OK");
+	req.setRheaders("Server", v_host->serverNames[0]); // Place holder
+	req.setRheaders("Content-length", sRespondLength);
+	req.setRbody(response);
+
 	response = "HTTP/1.1 200 OK\r\n\r\n" + response + "\r\n\r\n";
 	return (response);
 }
