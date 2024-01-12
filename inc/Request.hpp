@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 22:04:19 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 11:23:27 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,17 +57,36 @@ class Request
 
 		static size_t		_num_request;
 
+
+		typedef enum {
+			RL,
+			HEADERS,
+			BODY,
+		}	parsing_status;
+		
+		parsing_status 	_pstatus;
+		std::string		_raw;
+
+		std::string							_rline;
+		std::string							_rbody;
+		std::map<std::string, std::string>	_rheaders;
+
+
+
 		bool	_is_method_known(std::string& test);
 		void	unchunk(std::istringstream& iss_raw);
 		
 	public	:
 		std::string				response;
-		short int				status;
+		short int				rstatus;
+
+
 		Request(void);
 		Request(const Request& src);
 		Request&	operator=(const Request& src);
 		~Request(void);
 		
+		bool	build2(std::string raw);
 		bool	build(std::string raw);
 		bool	addCgi(std::string	buff);
 		void	clear(void);

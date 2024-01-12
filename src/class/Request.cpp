@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 22:05:06 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 11:24:33 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,44 @@ void	Request::unchunk(std::istringstream& iss_raw)
 	}
 }
 
+
+
+
+/**
+ * @brief 
+ * take raw input with minimal size (BUFFER_SIZE)
+ * etape: 	1 RL
+ * 			2 headers
+ * 			3 body
+ * RL minimal size : "GET / HTTP/1.1" = 14 char
+ */
+bool	Request::build2(std::string	raw)
+{
+	switch (_pstatus)
+	{
+		case RL:
+		{
+			std::cout << "RL" << std::endl;
+			break;
+		}
+		case HEADERS:
+		{
+			std::cout << "HEADERS" << std::endl;
+			break;
+		}
+		case BODY:
+		{
+			std::cout << "BODY" << std::endl;
+			break;
+		}
+		default:
+		{
+			std::cout << "default" << std::endl;
+			break;
+		}
+	} 
+}
+
 bool	Request::build(std::string raw)
 {
 	static std::string	buff;
@@ -159,7 +197,7 @@ void	Request::clear(void)
 	_uri.clear();
 	_body.clear();
 	_headers.clear();
-	status = 0;
+	rstatus = 0;
 }
 
 std::ostream& operator<<(std::ostream& os, const Request& req)
