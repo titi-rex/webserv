@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 15:02:02 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/12 15:26:59 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ class Request
 		const std::string&				getBody(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
 
+		void	setRline( std::string line );
 		void	setRheaders( std::string key, std::string value );
 		void	setRstatus( short int status );
 		void	setRbody( std::string body );
