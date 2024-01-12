@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/13 15:08:17 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 14:20:57 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,4 +42,33 @@ bool	check_access(std::string& path)
 		return (false);
 	}
 	return (true);	
+}
+
+int	wrap_tolower(int c)
+{
+	return (std::tolower(c));
+}
+
+int	wrap_iscntrl(int c)
+{
+	if (std::iscntrl(c) != 0)
+		throw std::runtime_error("403: Forbidden ctl character");
+	return (c);
+}
+
+std::string&	ltrim(std::string& str, const char* set)
+{
+    str.erase(0, str.find_first_not_of(set));
+    return (str);
+}
+
+std::string&	rtrim(std::string& str, const char* set)
+{
+    str.erase(str.find_last_not_of(set) + 1);
+    return (str);
+}
+
+std::string&	trim(std::string& str, const char* set)
+{
+    return (ltrim(rtrim(str, set), set));
 }

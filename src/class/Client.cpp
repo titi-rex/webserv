@@ -6,13 +6,18 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 22:13:58 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:00:58 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) : _serverEndPoint(-1), _fd_cgi(-1), cstatus(CREATED), keepConnection(false)
+Client::Client(void) : _serverEndPoint(-1), _fd_cgi(-1), _sizeLimit(1024), cstatus(CREATED), keepConnection(false)
+{
+	_name = "cnameless";
+};
+
+Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _fd_cgi(-1), _sizeLimit(bodyLimit), cstatus(CREATED), keepConnection(false)
 {
 	_name = "cnameless";
 };
@@ -72,11 +77,15 @@ bool	Client::readRequest(void)
 	if (n_rec == -1)
 		throw std::runtime_error("620: recv");
 	buf[n_rec] = 0;
-	if (request.build(buf))//throw ERROR or FATAL
+	if (request.build2(buf))//throw ERROR or FATAL
 	{
+		if (request._bodySizeExpected > _sizeLimit)
+			throw std::runtime_error("413: Request Entity Too Large");
 		cstatus = GATHERED;
 		return (true);
 	}
+	if (request._bodySizeExpected > _sizeLimit)
+		throw std::runtime_error("413: Request Entity Too Large");
 	return (false);
 }
 

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 21:25:42 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:00:36 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,19 @@ class Client : public Socket
 	private	:
 		int		_serverEndPoint;
 		int		_fd_cgi;
+		size_t	_sizeLimit;
 
 	public	:
 		Request			request;
 		e_client_status	cstatus;
-		bool		keepConnection;
+		bool			keepConnection;
 
 		Client(void);
 		Client(const Client& src);
 		Client&	operator=(const Client& src);
 		~Client(void);
 
+		Client(size_t bodyLimit);
 
 		void	accept(int sock_fd);
 		bool	readRequest(void);

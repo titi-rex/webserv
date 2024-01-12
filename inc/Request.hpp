@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 11:23:27 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:00:08 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,16 @@
 # include <map>
 # include <stdexcept>
 # include <algorithm>
+# include <cstring>
+# include <cctype>
+# include <climits>
 
 # include "map_operator.hpp"
 
-# define RQ_SIZE_MAX 1024
-# define N_METHOD 5
+
+# define RL_MIN_LENGHT 14
+# define RL_MAX_LENGHT 2500
+# define HD_MAX_LENGHT 1000
 
 # define METHOD_ENUM(TYPE) \
 	TYPE(eGET, 0) \
@@ -46,6 +51,13 @@ enum {
 };
 
 
+int	wrap_tolower(int c);
+int	wrap_iscntrl(int c);
+
+std::string&	ltrim(std::string& str, const char* set);
+std::string&	rtrim(std::string& str, const char* set);
+std::string&	trim(std::string& str, const char* set);
+
 class Request 
 {
 	private	:
@@ -59,9 +71,11 @@ class Request
 
 
 		typedef enum {
+			RLWAIT,
 			RL,
 			HEADERS,
 			BODY,
+			DONE,
 		}	parsing_status;
 		
 		parsing_status 	_pstatus;
@@ -71,12 +85,14 @@ class Request
 		std::string							_rbody;
 		std::map<std::string, std::string>	_rheaders;
 
-
-
-		bool	_is_method_known(std::string& test);
-		void	unchunk(std::istringstream& iss_raw);
+		size_t	_findBodySize(void);
+		std::string	_extractRange(size_t& start, size_t& end, const char *set);
+		bool		_is_method_known(std::string& test);
+		void		unchunk(std::istringstream& iss_raw);
 		
 	public	:
+		size_t			_bodyCount;
+		size_t			_bodySizeExpected;
 		std::string				response;
 		short int				rstatus;
 
@@ -86,7 +102,9 @@ class Request
 		Request&	operator=(const Request& src);
 		~Request(void);
 		
-		bool	build2(std::string raw);
+		Request(size_t bodySize);
+		
+		bool	build2(std::string raw = "");
 		bool	build(std::string raw);
 		bool	addCgi(std::string	buff);
 		void	clear(void);

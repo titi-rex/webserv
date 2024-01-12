@@ -42,4 +42,12 @@ bool	 	isDirListReq(Request & req);
 std::string	dirList(Request & req, v_host_ptr & v_host);
 std::string	findLocation(Request & req, v_host_ptr & v_host);
 
+int	wrap_tolower(int c);
+int	wrap_iscntrl(int c);
+
+std::string&	ltrim(std::string& str, const char* set);
+std::string&	rtrim(std::string& str, const char* set);
+std::string&	trim(std::string& str, const char* set);
+
+
 #endif

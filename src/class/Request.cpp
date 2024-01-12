@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 11:24:33 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:05:00 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 size_t	Request::_num_request = 0;
 
 
+Request::Request(void) : _rId(_num_request++), _mId(eUNKNOW), _pstatus(RLWAIT), _bodyCount(0), _bodySizeExpected(0) {};
 
-
-
-Request::Request(void) : _rId(_num_request++), _mId(eUNKNOW) {};
 Request::Request(const Request& src) : _rId(_num_request++) {*this = src;};
+
 Request&	Request::operator=(const Request& src) 
 {
 	if (this == &src)
@@ -28,17 +27,19 @@ Request&	Request::operator=(const Request& src)
 	_uri = src._uri;
 	_body = src._body;
 	_headers = src._headers;
+	_pstatus = src._pstatus;
 	return (*this);
 };
 
 Request::~Request(void) {};
 
-
 int 				Request::getRid(void) const { return (this->_rId); };
 e_method 			Request::getMid(void) const {return (this->_mId);}
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
+
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
+
 
 const std::string	Request::getMethodName(void) const
 {
@@ -65,10 +66,7 @@ bool	Request::_is_method_known(std::string & test)
 	return (false);
 }
 
-int	wrap_tolower(int c)
-{
-	return (std::tolower(c));
-}
+
 
 void	Request::unchunk(std::istringstream& iss_raw)
 {
@@ -88,6 +86,32 @@ void	Request::unchunk(std::istringstream& iss_raw)
 }
 
 
+std::string	Request::_extractRange(size_t& start, size_t& end, const char *set)
+{
+	start = end + 1;
+	end = _raw.find_first_of(set, start);	
+	return (_raw.substr(start, end - start));
+}
+
+
+size_t	Request::_findBodySize(void)
+{
+	std::map<std::string, std::string>::iterator itCl = _headers.find("content-lenght");
+	std::map<std::string, std::string>::iterator itTe = _headers.find("transfert-encoding");
+	if (itCl == _headers.end() && itTe == _headers.end())
+		throw std::runtime_error("400: No lenght indication");
+	else if (itCl != _headers.end() && itTe != _headers.end())
+		throw std::runtime_error("400: Confusing lenght indication");
+	
+	if (itCl != _headers.end())
+	{
+		size_t	size = std::strtoul(itCl->second.c_str(), NULL, 10);
+		if (size == ULONG_MAX)
+			throw std::runtime_error("413: Request Entity Too Large");
+		return (size);
+	}
+	return (0);
+}
 
 
 /**
@@ -97,19 +121,104 @@ void	Request::unchunk(std::istringstream& iss_raw)
  * 			2 headers
  * 			3 body
  * RL minimal size : "GET / HTTP/1.1" = 14 char
+ *   field-line   = field-name ":" OWS field-value OWS
+ * Field values containing CR, LF, or NUL characters are invalid and dangerous
  */
 bool	Request::build2(std::string	raw)
 {
+	std::cout << "_raw :" << _raw << ":" << std::endl;
+	
+	_raw += raw;
+	size_t	start = 0;
+	size_t	end = -1;
+	std::string	tmp;
+	
 	switch (_pstatus)
 	{
+		case RLWAIT:
+		{
+			std::cout << "RLWAIT" << std::endl;
+
+			if (_raw.find("\r\n") == std::string::npos)
+			{
+				std::clog << "waiting for rl end" << std::endl;
+				if (_raw.size() > RL_MAX_LENGHT)
+					throw std::runtime_error("414: URI too long");
+				return (false);
+			}
+			if (_raw.size() < RL_MIN_LENGHT)
+				throw std::runtime_error("400: RL too short");
+			_pstatus = RL;
+		}
 		case RL:
 		{
 			std::cout << "RL" << std::endl;
+			
+			// check method
+			tmp = _extractRange(start, end, " ");
+			if (_is_method_known(tmp) == false)
+				throw std::runtime_error("501: Method not implemented");
+
+			//get URI
+			_uri = _extractRange(start, end, " ");
+			if (_uri.at(0) != '/')
+				throw std::runtime_error("400 Bad URI");
+
+			//get http version
+			tmp = _extractRange(start, end, " \n");
+			if (tmp.compare("HTTP/1.1") == false)
+				throw std::runtime_error("505 Wrong HTTP version");
+
+			_raw.erase(0, end + 1);
+			_pstatus = HEADERS;
 			break;
 		}
 		case HEADERS:
 		{
 			std::cout << "HEADERS" << std::endl;
+
+
+			while (_raw.find("\r\n") != std::string::npos)
+			{	
+				if (_raw[0] == '\r' && _raw[1] == '\n')
+				{
+					// end of header function : search for content-lenght or encrypt: chunked to read body or not
+					_pstatus = BODY;
+					_raw.erase(0, 2);
+					if (_headers.count("host") == 0)
+						throw std::runtime_error("400: No Host Header");
+					_bodySizeExpected = _findBodySize();
+					return (false);
+				}
+				
+				end = -1;
+				std::string	key = _extractRange(start, end, ":");
+				std::string	value = _extractRange(start, end, "\n");
+
+				// check for space in key (forbidden)
+				if (key.find_first_of(" ") != std::string::npos)
+					throw std::runtime_error("400 Bad URI");
+
+				// uncase headers and trim value
+				std::transform(key.begin(), key.end(), key.begin(), wrap_tolower);
+				std::transform(value.begin(), value.end(), value.begin(), wrap_tolower);
+				value = trim(value, " \r");
+
+				//look for ctl char (forbidden)
+				std::transform(key.begin(), key.end(), key.begin(), wrap_iscntrl);
+				std::transform(value.begin(), value.end(), value.begin(), wrap_iscntrl);
+
+				// add to header map
+				_headers[key] = value;
+				std::cout << "hget:" << key << "|" << _headers[key] << std::endl;
+				
+				_raw.erase(0, end + 1);
+			}
+
+			std::clog << "waiting for field-line end" << std::endl;
+			if (_raw.size() > HD_MAX_LENGHT)
+				throw std::runtime_error("414: URI too long");
+			return (false);
 			break;
 		}
 		case BODY:
@@ -123,6 +232,7 @@ bool	Request::build2(std::string	raw)
 			break;
 		}
 	} 
+	return (true);
 }
 
 bool	Request::build(std::string raw)

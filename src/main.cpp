@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 22:04:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:06:10 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,11 @@ sig_atomic_t	g_status = 1;
 // };
 
 
+		// std::cout << "start:" << start << ",end:" << end << std::endl;
+		// 	std::cout << "method is :" << tmp << ":" << std::endl;
 
 int	main(int ac, char **av)
-{	
+{
 	if (ac != 2)
 	{
 		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;
