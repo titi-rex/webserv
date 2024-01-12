@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 15:30:11 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 20:02:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ bool	Client::readRequest(void)
 		throw std::runtime_error("620: recv");
 	buf[n_rec] = 0;
 	
-	if (request.build2(buf))//throw ERROR or FATAL
+	if (request.build(buf))//throw ERROR or FATAL
 	{
 		if (request._bodySizeExpected > _sizeLimit)
 			throw std::runtime_error("413: Request Entity Too Large");

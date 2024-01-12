@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 16:19:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 20:03:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,8 +307,8 @@ bool	Request::build(std::string raw)
 		std::cout << "end header not found" << std::endl;
 		return (false);
 	}
-	if (buff.find("GET") == std::string::npos)
-		throw std::runtime_error("400: only accept get");
+	// if (buff.find("GET") == std::string::npos)
+	// 	throw std::runtime_error("400: only accept get");
 	
 	std::istringstream	iss_raw(buff);
 
