@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 15:03:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/12 11:14:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
 
-	if (req.getUri() == "/favicon.ico")
-		throw faviconDetected();
 
 	if (req.getUri() != "/" && isDirListReq(req))
 		return (dirList(req, v_host));

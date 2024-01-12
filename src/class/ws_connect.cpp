@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 22:25:22 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 11:14:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,11 +204,6 @@ void	WebServer::run(void)
 					process_rq(*it->second);
 				else if (it->second->cstatus == ERROR)
 					process_rq_error(*it->second);				
-			}
-			catch (faviconDetected & fav) 
-			{
-				std::clog << fav.what() << std::endl;
-				deleteClient(it->first);
 			}
 			catch (locationRedirection & lr)
 			{
