@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 15:00:08 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:50:46 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ class Request
 			RLWAIT,
 			RL,
 			HEADERS,
-			BODY,
+			BODY_CLENGHT,
+			BODY_CHUNK,
 			DONE,
 		}	parsing_status;
 		

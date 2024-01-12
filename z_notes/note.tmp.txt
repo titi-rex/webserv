@@ -8,7 +8,7 @@ faire un fonction log
 bug :
 
 parsing : indiquer n ligne qund erreur 
-
+parsing: infini loop avec juju2.conf ?
 
 
 

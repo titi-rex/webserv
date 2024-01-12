@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 15:05:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:18:20 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ size_t	Request::_findBodySize(void)
 	std::map<std::string, std::string>::iterator itCl = _headers.find("content-lenght");
 	std::map<std::string, std::string>::iterator itTe = _headers.find("transfert-encoding");
 	if (itCl == _headers.end() && itTe == _headers.end())
-		throw std::runtime_error("400: No lenght indication");
+		throw std::runtime_error("411: Length Required");
 	else if (itCl != _headers.end() && itTe != _headers.end())
 		throw std::runtime_error("400: Confusing lenght indication");
 	
@@ -110,7 +110,9 @@ size_t	Request::_findBodySize(void)
 			throw std::runtime_error("413: Request Entity Too Large");
 		return (size);
 	}
-	return (0);
+	if (itTe->second != "chunked")
+		throw std::runtime_error("500: Unknow encoding");
+	return (ULONG_MAX);
 }
 
 
@@ -180,14 +182,18 @@ bool	Request::build2(std::string	raw)
 
 			while (_raw.find("\r\n") != std::string::npos)
 			{	
-				if (_raw[0] == '\r' && _raw[1] == '\n')
+				if (_raw[0] == '\r' && _raw[1] == '\n') // use strncmp 
 				{
 					// end of header function : search for content-lenght or encrypt: chunked to read body or not
-					_pstatus = BODY;
 					_raw.erase(0, 2);
 					if (_headers.count("host") == 0)
 						throw std::runtime_error("400: No Host Header");
 					_bodySizeExpected = _findBodySize();
+					std::cout << "expect " << _bodySizeExpected << " char" << std::endl;
+					if (_bodySizeExpected != ULONG_MAX)
+						_pstatus = BODY_CLENGHT;
+					else
+						_pstatus = BODY_CHUNK;
 					return (false);
 				}
 				
@@ -219,11 +225,59 @@ bool	Request::build2(std::string	raw)
 			if (_raw.size() > HD_MAX_LENGHT)
 				throw std::runtime_error("414: URI too long");
 			return (false);
+			
 			break;
 		}
-		case BODY:
+		case BODY_CLENGHT:
 		{
-			std::cout << "BODY" << std::endl;
+			std::cout << "BODY CLENGHT" << std::endl;
+
+			_body += _raw;
+			_bodyCount = _body.size();
+			_raw.clear();
+		
+			// check if malicious user send more data than announced
+			if (_body.size()  > _bodySizeExpected)
+			{
+				std::cout << "size:" << _body.size() << std::endl;
+				throw std::runtime_error("400: More data than expected");
+			}
+			// check if all data has been receive
+			if (_body.size() == _bodySizeExpected)
+				return (true);
+
+			break;
+		}
+		case BODY_CHUNK:
+		{
+			std::cout << "BODY CHUNK" << std::endl;
+			
+			while (_raw.find("\r\n") != std::string::npos)
+			{
+				end = -1;
+				tmp = _extractRange(start, end, "\n");
+				size_t	len_chunk = std::strtoul(tmp.c_str(), NULL, 10);
+				if (len_chunk == 0) // 0 size chunk mean end of data (or malicious message) 
+					return (true) ;
+				
+				
+				
+					
+				std::cout << "chunk lenght:" << len_chunk << std::endl;
+				std::cout << "start:" << start << ",end:" << end << std::endl;
+				
+				_raw.erase(start, end + 1);
+				std::cout << "raw is :" << _raw << ":" << std::endl;
+				
+				_body += _raw.substr(start, len_chunk);
+				
+				std::cout << "body is :" << _body << ":" << std::endl;
+				_raw.erase(start, len_chunk + 2);
+				std::cout << "raw is :" << _raw << ":" << std::endl;
+
+			}
+
+			
 			break;
 		}
 		default:
