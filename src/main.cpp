@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 16:19:20 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 23:09:07 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,30 +36,12 @@ sig_atomic_t	g_status = 1;
 		// std::cout << "start:" << start << ",end:" << end << std::endl;
 		// 	std::cout << "method is :" << tmp << ":" << std::endl;
 
-#define RQL "GET / HTTP/1.1\r\nHost: mImi\r\nconTent-Lenght: 35\r\n\r\nthis is a body\r\nabody bodant!\r\n"
-#define RQC "GET / HTTP/1.1\r\nHost: mImi\r\ntransFerT-EncodinG: chunked\r\n\r\n14\r\nthis is a body\r\n6\r\nhello,\r\n0\r\n"
+#define RQL "GET / HTTP/1.1\r\nHost: mImi\r\nconTent-Length: 35\r\n\r\nthis is a body\nabody bodant!\n"
+#define RQC "GET / HTTP/1.1\r\nHost: mImi\r\ntransFerT-EncodinG: chunked\r\n\r\n14\r\nthis is a body\r\n7\r\n hello,\r\n7\r\n world!\r\n0\r\n"
 
 
 int	main(int ac, char **av)
 {
-	// Request rq;
-
-	
-	// try
-	// {
-	// 	rq.build2(RQC);
-	// 	rq.build2();
-	// 	rq.build2();
-	// 	std::cout << rq.getBody() << std::endl;
-	// }
-	// catch(const std::exception& e)
-	// {
-	// 	std::cerr << e.what() << '\n';
-	// }
-	
-	
-	
-	// exit(0);
 	if (ac != 2)
 	{
 		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;

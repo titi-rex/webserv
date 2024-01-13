@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 16:19:51 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 23:00:41 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	WebServer::handle_epollin(int event_id)
 	if (event_id <= _highSocket)
 		addClient(event_id);	//throw FATAL 
 
-	if (event_id > 0)
+	else if (event_id > 0)
 	{
 		Client*	cl = &_ClientList[event_id];
 		
@@ -191,8 +191,8 @@ void	WebServer::run(void)
 			}
 		}
 
-		
-		std::clog << "n client ready :" << _readyToProceedList.size() << std::endl;
+		if (_readyToProceedList.size())
+			std::clog << "n client ready :" << _readyToProceedList.size() << std::endl;
 
 		// change and use a list to client* for client to procced
 		for (std::map<int, Client*>::iterator it = _readyToProceedList.begin() ; it != _readyToProceedList.end(); ++it)
