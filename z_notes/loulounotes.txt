@@ -35,3 +35,88 @@ string::find_first_not_of 	: Recherche dans la string le premier char qui ne cor
 	
 curl -d "param1=value1&param2=value2" -X POST http://localhost:8080/data
 curl -d "@data.json" -X POST http://localhost:8080/data
+
+
+
+
+
+
+		*------------ POST EXEMPLES -----------*
+
+Exemple 1: Envoi de données JSON
+
+curl -X POST -H "Content-Type: application/json" -d '{"username": "john_doe", "password": "secretpass"}' https://127.0.0.1:8080/login
+
+    -H "Content-Type: application/json": Définit l'en-tête de contenu comme JSON.
+    -d '{"username": "john_doe", "password": "secretpass"}': Les données à envoyer, ici au format JSON.
+    https://127.0.0.1:8080/login: L'URL de destination.
+
+
+
+Exemple 2: Envoi de données sous forme de formulaire
+
+curl -X POST -d 'username=john_doe&password=secretpass' https://127.0.0.1:8080/login
+
+    -d 'username=john_doe&password=secretpass': Les données à envoyer, ici au format de formulaire.
+    https://127.0.0.1:8080/login: L'URL de destination.
+
+
+
+
+Exemple 3: Envoi de données avec un fichier binaire
+
+curl -X POST -F "file=@/path/to/file.jpg" https://127.0.0.1:8080/upload
+
+    -F "file=@/path/to/file.jpg": Envoie un fichier binaire spécifié avec l'option -F.
+    https://127.0.0.1:8080/upload: L'URL de destination.
+
+
+
+
+Exemple 4: Envoi de données avec un en-tête personnalisé
+
+curl -X POST -H "Authorization: Bearer YOUR_ACCESS_TOKEN" -d 'data=example' https://127.0.0.1:8080/protected
+
+    -H "Authorization: Bearer YOUR_ACCESS_TOKEN": Ajoute un en-tête d'autorisation personnalisé.
+    -d 'data=example': Les données à envoyer.
+    https://127.0.0.1:8080/protected: L'URL de destination.
+
+
+
+
+Exemple 5: Suivi des redirections
+
+curl -X POST -L -d 'data=example' https://127.0.0.1:8080/redirect
+
+    -L: Indique à cURL de suivre les redirections.
+    -d 'data=example': Les données à envoyer.
+    https://127.0.0.1:8080/redirect: L'URL de destination avec redirections éventuelles.
+
+
+
+
+
+
+		*------------ HTTP RESPONSE -----------*
+
+exemple d'une réponse HTTP suite à une requête POST :
+
+```
+		HTTP/1.1 200 OK
+		Content-Type: application/json
+		Content-Length: 42
+
+		{"status": "success", "message": "Données enregistrées avec succès."}
+```
+
+ 1.   Code de statut (Status Code) :
+        200 OK : La requête a été traitée avec succès.
+        201 Created : La ressource a été créée avec succès (utile pour les opérations d'ajout).
+        D'autres codes de statut peuvent indiquer des erreurs, comme 400 Bad Request, 401 Unauthorized, 404 Not Found, etc.
+
+ 2.   En-têtes (Headers) :
+        Content-Type : Indique le type de contenu du corps de la réponse.
+        Content-Length : Indique la taille en octets du corps de la réponse.
+
+ 3.   Corps de la réponse (Body) :
+        Contient les données retournées par le serveur. Le format dépend de ce qui est attendu pour votre application. Il pourrait s'agir de texte brut, de JSON, d'XML, etc.

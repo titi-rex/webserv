@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 16:19:37 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/12 20:17:17 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,6 @@ class Request
 		parsing_status 	_pstatus;
 		std::string		_raw;
 
-		std::string							_rline;
-		std::string							_rbody;
-		std::map<std::string, std::string>	_rheaders;
 
 		size_t	_findBodySize(void);
 		std::string	_extractRange(size_t& start, size_t& end, const char *set);
@@ -92,6 +89,12 @@ class Request
 		void		unchunk(std::istringstream& iss_raw);
 		
 	public	:
+		// a remettre en privé un jour
+		std::string							_rline;
+		std::string							_rbody;
+		std::map<std::string, std::string>	_rheaders;
+
+		
 		size_t			_bodyCount;
 		size_t			_bodySizeExpected;
 		std::string				response;

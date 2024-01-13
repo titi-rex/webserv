@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 15:29:31 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/12 20:24:25 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 			// std::cout << "GET JUJU" << std::endl;
 			return (GET(req, v_host, pagePath));
 		case ePOST:
-			std::cout << "POST JUJU" << std::endl;
+			// std::cout << "POST JUJU" << std::endl;
 			return (POST(req.getBody()));
 			break;
 		case eDELETE:
@@ -154,7 +154,7 @@ std::string WebServer::POST(std::string post_data)
     std::istringstream iss(post_data);
 
     std::string key_value;
-	// std::cout << "RECUP DATA = " << post_data << std::endl;
+	std::cout << "??? RECUP DATA = " << post_data << std::endl;
     while (std::getline(iss, key_value, '&')) 
 	{
         size_t equals_pos = key_value.find('=');
