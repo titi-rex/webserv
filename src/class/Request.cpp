@@ -6,13 +6,13 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 17:42:33 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/15 17:53:41 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(void) : _mId(eUNKNOW), _pstatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
+Request::Request(void) : _mId(UNKNOW), _pstatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
 
 Request::Request(const Request& src) {*this = src;};
 
@@ -142,7 +142,7 @@ bool	Request::_parseRequestLine(void)
 
 bool	Request::_findBodySize(void)
 {
-	if (_mId == eHEAD || _mId == eGET)
+	if (_mId == HEAD || _mId == GET)
 		return (true);
 
 	std::map<std::string, std::string>::iterator itCl = _headers.find("content-length");
@@ -402,7 +402,7 @@ bool	Request::addCgi(std::string	buff)
 
 void	Request::clear(void)
 {
-	_mId = eUNKNOW;
+	_mId = UNKNOW;
 	_uri.clear();
 	_body.clear();
 	_headers.clear();

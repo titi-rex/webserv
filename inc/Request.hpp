@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 17:43:07 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/15 17:55:08 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@
 # define HD_MAX_LENGTH 1000
 
 # define METHOD_ENUM(TYPE) \
-	TYPE(eGET, 0) \
-	TYPE(ePOST, 1) \
-	TYPE(eDELETE, 2) \
-	TYPE(eHEAD, 3) \
-	TYPE(eUNKNOW, 4) 
+	TYPE(GET, 0) \
+	TYPE(POST, 1) \
+	TYPE(DELETE, 2) \
+	TYPE(HEAD, 3) \
+	TYPE(UNKNOW, 4) 
 
 # define METHOD_ENUM_TYPE(NAME, VALUE) NAME = (VALUE),
 

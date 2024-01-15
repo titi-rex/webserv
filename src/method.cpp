@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 17:47:26 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/15 17:55:08 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	lengthSize( int contentLength )
 	return (i);
 }
 
-std::string HEAD( Request & req, v_host_ptr & v_host, std::string & path)
+std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
 {
 	std::ifstream	requestedPage(path.c_str());
 
@@ -82,7 +82,7 @@ std::string HEAD( Request & req, v_host_ptr & v_host, std::string & path)
 	return (req.response);
 }
 
-// WARNING ! mID est un enum mtn, qui peut prendre la valeur eUNKNOW, 
+// WARNING ! mID est un enum mtn, qui peut prendre la valeur UNKNOW, 
 // pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
 // pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
@@ -97,27 +97,27 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 
 	switch (req.getMid())
 	{
-		case eGET:
+		case GET:
 			// std::cout << "GET JUJU" << std::endl;
-			return (GET(req, v_host, pagePath));
-		case ePOST:
+			return (methodGet(req, v_host, pagePath));
+		case POST:
 			// std::cout << "POST JUJU" << std::endl;
-			return (POST(req.getBody()));
+			return (methodPost(req.getBody()));
 			break;
-		case eDELETE:
+		case DELETE:
 			// std::cout << "DELETE JUJU" << std::endl;
 			break;
-		case eHEAD:
+		case HEAD:
 			// std::cout << "HEAD JUJU" << std::endl;
-			return (HEAD(req, v_host, pagePath));
-		case eUNKNOW:
+			return (methodHead(req, v_host, pagePath));
+		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
 	};
 	return (NULL);
 }
 
 // std::string	get(Request rq, t_virtual_host v_host)
-std::string	WebServer::GET( Request & req, v_host_ptr & v_host, std::string & path )
+std::string	WebServer::methodGet( Request & req, v_host_ptr & v_host, std::string & path )
 {
 	std::string		body;
 	std::ifstream	indexPage(path.c_str());
@@ -143,7 +143,7 @@ std::string	WebServer::GET( Request & req, v_host_ptr & v_host, std::string & pa
 	return (req.response);
 }
 
-std::string WebServer::POST(std::string post_data)
+std::string WebServer::methodPost(std::string post_data)
 {
     std::map<std::string, std::string> post_params;
     std::istringstream iss(post_data);
