@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 16:07:44 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/15 17:47:26 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,22 +70,16 @@ std::string HEAD( Request & req, v_host_ptr & v_host, std::string & path)
 	ft_date(date);
 
 	// New way to store the respond
-	req.setRstatus (200);
+	req.setRstatus(200);
+	req.setRStrStatus("200");
 	req.setRline("OK");
 	req.setRheaders("Server", v_host->serverNames[0]); // Place holder
 	req.setRheaders("Date", date);
 	req.setRheaders("Content-length", sContentLength);
 	req.setRheaders("Connection", "keep-alive");
 
-	std::stringstream ss;
-	ss << "HTTP/1.1 200 OK\n";
-	ss << "Server: " << v_host->serverNames << "\n"; // mettre le serveur demandé par le client
-	ss << "Date: " << date << " GMT\n";
-	ss << "Content-length: " << contentLength << "\n";
-	ss << "Connection: keep-alive\n";
-	ss << "\r\n\r\n";
-
-	return (ss.str());
+	req.makeResponse();
+	return (req.response);
 }
 
 // WARNING ! mID est un enum mtn, qui peut prendre la valeur eUNKNOW, 
