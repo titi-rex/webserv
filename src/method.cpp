@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 20:24:25 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/15 16:07:44 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,27 +125,28 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 // std::string	get(Request rq, t_virtual_host v_host)
 std::string	WebServer::GET( Request & req, v_host_ptr & v_host, std::string & path )
 {
-	std::string		response;
+	std::string		body;
 	std::ifstream	indexPage(path.c_str());
 
 
 	if (indexPage.fail())
 		throw std::runtime_error("500 Error closing file");
-	std::getline(indexPage, response, '\0');
+	std::getline(indexPage, body, '\0');
 	indexPage.close();
 
-	// New way to store the respond
-	int		size = lengthSize(response.length());
+	// New way to store the response
+	int		size = lengthSize(body.length());
 	char	sRespondLength[size];
-	sprintf(sRespondLength, "%lu", response.length());
+	sprintf(sRespondLength, "%lu", body.length());
 	req.setRstatus (200);
+	req.setRStrStatus ("200");
 	req.setRline ("OK");
 	req.setRheaders("Server", v_host->serverNames[0]); // Place holder
 	req.setRheaders("Content-length", sRespondLength);
-	req.setRbody(response);
+	req.setRbody(body);
 
-	response = "HTTP/1.1 200 OK\r\n\r\n" + response + "\r\n\r\n";
-	return (response);
+	req.makeResponse();
+	return (req.response);
 }
 
 std::string WebServer::POST(std::string post_data)

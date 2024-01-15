@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 13:51:48 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 15:48:01 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,14 +99,14 @@ class Request
 	public	:
 		// a remettre en privé un jour
 		std::string							_rline;
-		std::string							_rbody;
 		std::map<std::string, std::string>	_rheaders;
-
+		std::string							_rbody;
+		std::string							_pathTranslated;
 		
 		size_t					_bodySizeExpected;
 		std::string				response;
+		std::string				_rStrStatus;
 		short int				rstatus;
-
 
 		Request(void);
 		Request(const Request& src);
@@ -128,8 +128,10 @@ class Request
 		void	setRline( std::string line );
 		void	setRheaders( std::string key, std::string value );
 		void	setRstatus( short int status );
+		void	setRStrStatus( std::string status );
 		void	setRbody( std::string body );
 		void	setResponse( std::string response );
+		void	makeResponse ( void );
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);

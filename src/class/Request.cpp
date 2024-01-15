@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 13:49:27 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 16:02:50 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,27 @@ const std::string	Request::getMethodName(void) const
 void	Request::setRline( std::string line ) { this->_rline = line; };
 void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
 void	Request::setRstatus( short int status ) { this->rstatus = status; };
+void	Request::setRStrStatus( std::string status ) { this->_rStrStatus = status; };
 void	Request::setRbody( std::string body ) { this->_rbody = body; };
 void	Request::setResponse( std::string response ) { this->response = response; };
 
+void	Request::makeResponse ( void )
+{
+	std::clog << "\nmakeResponse()" << std::endl;
+
+	std::map<std::string, std::string>::iterator	iter;
+
+	this->response = "HTTP/1.1 " + this->_rStrStatus + " " + this->_rline + "\n"; // Place holder for the status description
+
+	for (iter = this->_rheaders.begin(); iter != this->_rheaders.end(); ++iter)
+		this->response += iter->first + ": " + iter->second + "\n";
+
+	this->response += "\r\n\r\n";
+	this->response += _rbody;
+	this->response += "\r\n\r\n";
+
+	std::clog << this->response << std::endl;
+}
 
 bool	Request::_is_method_known(std::string & test)
 {
