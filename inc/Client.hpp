@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 13:50:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:57:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define _CLIENT_H__
 # include "Socket.hpp"
 # include "Request.hpp"
+# include "virtual_host.hpp"
 
 # define BUFFER_SIZE 2048
 typedef enum 
@@ -37,6 +38,7 @@ class Client : public Socket
 		size_t	_sizeLimit;
 
 	public	:
+		v_host_ptr		host;
 		Request			request;
 		e_client_status	cstatus;
 		bool			keepConnection;
