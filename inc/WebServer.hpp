@@ -39,15 +39,17 @@ class Request;
 class WebServer 
 {
 	private	:
-		int									_efd;				//fd permettqnt d'acceder a l'instance epoll
-		size_t								_bodySizeLimit;		//limite generale de la taille maximum du body des clients pour tout le server, active si le virtual host ne precise pas (si == size_t max => pas de limite )
-		std::string							_dirErrorPage;		//indique un repertoire specifique ou chercher les pqges d'erreur
-		std::map<std::string, std::string>	_errorPage;			//indique ou chercher une page d'erreur specifique (est regarde en premier )
-		std::vector<t_virtual_host>			_virtualHost;		//vector contenant tout les virtual hosts du server
+		int									_efd;				// fd permettqnt d'acceder a l'instance epoll
+		size_t								_bodySizeLimit;		// limite generale de la taille maximum du body des clients pour tout le server, active si le virtual host ne precise pas (si == size_t max => pas de limite )
+		std::string							_dirErrorPage;		// indique un repertoire specifique ou chercher les pqges d'erreur
+		std::map<std::string, std::string>	_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
+		std::vector<t_virtual_host>			_virtualHost;		// vector contenant tout les virtual hosts du server
 		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
 		int		_highSocket;
-		std::map<int, Client>				_ClientList;		//map contenant les client du server
-		std::map<int, Client*>				_readyToProceedList;			//list les client dont les request sont prete a etre proceder (fini de read)
+		std::map<int, Client>				_ClientList;		// map contenant les client du server
+		std::map<int, Client*>				_readyToProceedList;	// list les client dont les request sont prete a etre proceder (fini de read)
+
+		std::map<std::string, std::string>	_envCGI;			// variables d'environnement a envoyer aux CGI
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -102,6 +104,11 @@ class WebServer
 		void	process_rq(Client &cl);
 		void	process_rq_error(Client &cl);
 
+		// CGI
+		void initEnvCGI();
+		void fillElement(std::string key , std::string val);
+		void fillEnvCGI( std::string port, std::string root);
+		void execute_cgi(const std::string& script_path);
 
 
 
