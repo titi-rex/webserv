@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 15:00:36 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:50:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 # include "Socket.hpp"
 # include "Request.hpp"
 
-# define BUFFER_SIZE 1024
+# define BUFFER_SIZE 2048
 typedef enum 
 {
 	CREATED,

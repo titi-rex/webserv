@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 23:00:41 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:15:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,18 @@ void	WebServer::process_rq_error(Client &cl)
 {
 	std::cout << "error proceed" << std::endl;
 	
-	cl.request.response = ERROR_500_MSG;
-	cl.cstatus = PROCEEDED;
+	try
+	{
+		cl.request.response = ERROR_500_MSG;
+		cl.cstatus = PROCEEDED;
+	}
+	catch(const std::exception& e)
+	{
+		
+		std::cerr << "ERROR FATAL, ABANDON CLIENT" << std::endl;
+		std::cerr << strerror(errno) << std::endl;
+		deleteClient(cl.getFd());
+	}
 }
 
 
@@ -183,10 +193,17 @@ void	WebServer::run(void)
 				if (err == 0)
 					err = 699;
 				std::cerr << "cerror code : " << err << std::endl;
-				if (revents[i].data.fd > _highSocket) //temp delete client
+				
+				if (err >= 600) //temp delete client
 				{
 					std::cerr << "ERROR FATAL, ABANDON CLIENT" << std::endl;
 					deleteClient(revents[i].data.fd);
+				}
+				else
+				{
+					_ClientList[revents[i].data.fd].cstatus = ERROR;
+					modEpollList(revents[i].data.fd, EPOLL_CTL_MOD, EPOLLOUT);
+					_readyToProceedList[revents[i].data.fd] = &_ClientList[revents[i].data.fd];
 				}
 			}
 		}
@@ -203,7 +220,7 @@ void	WebServer::run(void)
 				if (it->second->cstatus == GATHERED)
 					process_rq(*it->second);
 				else if (it->second->cstatus == ERROR)
-					process_rq_error(*it->second);				
+					process_rq_error(*it->second);
 			}
 			catch (locationRedirection & lr)
 			{
@@ -224,13 +241,8 @@ void	WebServer::run(void)
 				if (err == 0)
 					err = 699;
 				std::cerr << "cerror code : " << err << std::endl;
-				if (it->second->cstatus == ERROR) //error fatal , delete client
-				{
-					std::cerr << "ERROR FATAL, ABANDON CLIENT" << std::endl;
-					deleteClient(it->first);
-				}
-				else
-					it->second->cstatus = ERROR;
+				
+				process_rq_error(*it->second);
 			}
 		}
 	}

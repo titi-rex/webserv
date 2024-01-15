@@ -30,7 +30,7 @@ request conflict with current state of target, motly in PUT method (uploading a 
 acces to the target is no longer available
 * 411 length required
 refuse to accept request without 'content-length' header
-(! content-lengh is omitted with chunked data see transfert-encoding)
+(! content-lengh is omitted with chunked data see transfer-encoding)
 412 precondition failed
 acces to target denied cause of condition defined in header (ex: if-unmodified-since)
 * 413 content too large

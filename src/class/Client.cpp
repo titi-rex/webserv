@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 23:13:29 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:19:49 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ bool	Client::readRequest(void)
 		throw std::runtime_error("620: recv");
 	buf[n_rec] = 0;
 	rqwit = request.build(buf);// throw ERROR or FATAL
-	if (request._bodySizeExpected > _sizeLimit)
+	if (request._bodySizeExpected > _sizeLimit)// check actua lbody for chunked data and sizeexpected for cl 
 		throw std::runtime_error("413: Request Entity Too Large");
 	if (rqwit)
 	{

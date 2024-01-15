@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 11:20:51 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:51:48 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,29 +70,31 @@ class Request
 		static size_t		_num_request;
 
 
-		typedef enum {
+		enum parsing_status {
 			RL,
 			HEADERS,
 			BODYCLENGTH,
 			BODYCHUNK,
 			DONE,
-		}	parsing_status;
-		
-		parsing_status 	_pstatus;
-		std::string		_raw;
-		size_t			_size;
+		}	;
+
+		//tmp variable for parsing
+		enum parsing_status	_pstatus;
+		std::string			_raw;
+		size_t				_size;
+		size_t				_lenChunk;
 
 
-		bool	_findBodySize(void);
+		//prsing request/cgi
+		bool		_findBodySize(void);
 		std::string	_extractRange(size_t& start, size_t& end, const char *set);
 		bool		_is_method_known(std::string& test);
 
 		bool	_parseRequestLine(void);
-		bool	_parseHeaders(void);
-		bool	_parseBodyByLength(void);
-		bool	_parseBodyByChunk(void);
+		bool	_parseHeaders(std::map<std::string, std::string> &headers);
+		bool	_parseBodyByLength(std::string &body);
+		bool	_parseBodyByChunk(std::string &body);
 		
-		void		unchunk(std::istringstream& iss_raw);
 		
 	public	:
 		// a remettre en privé un jour
@@ -101,8 +103,7 @@ class Request
 		std::map<std::string, std::string>	_rheaders;
 
 		
-		size_t			_bodyCount;
-		size_t			_bodySizeExpected;
+		size_t					_bodySizeExpected;
 		std::string				response;
 		short int				rstatus;
 
