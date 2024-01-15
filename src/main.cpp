@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 23:09:07 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:31:32 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,28 @@ sig_atomic_t	g_status = 1;
 		// std::cout << "start:" << start << ",end:" << end << std::endl;
 		// 	std::cout << "method is :" << tmp << ":" << std::endl;
 
-#define RQL "GET / HTTP/1.1\r\nHost: mImi\r\nconTent-Length: 35\r\n\r\nthis is a body\nabody bodant!\n"
-#define RQC "GET / HTTP/1.1\r\nHost: mImi\r\ntransFerT-EncodinG: chunked\r\n\r\n14\r\nthis is a body\r\n7\r\n hello,\r\n7\r\n world!\r\n0\r\n"
+#define RQL "POST / HTTP/1.1\r\nHost: mImi\r\nconTent-Length: 35\r\n\r\nthis is a body\nabody bodant!\n"
+#define RQC "POST / HTTP/1.1\r\nHost: mImi\r\ntransfer-EncodinG: chunked\r\n\r\n15\r\nthis is a body\n\r\n7\r\n hello,\r\n7\r\n world!\r\n0\r\n"
 
 
 int	main(int ac, char **av)
 {
+	// Request	rq;
+
+	// try
+	// {
+	// 	rq.build(RQC);
+	// 	// rq.build();
+
+	// 	std::cout << rq << std::endl;
+	// }
+	// catch(const std::exception& e)
+	// {
+	// 	std::cerr << e.what() << '\n';
+	// }
+	// exit(0);
+	
+	
 	if (ac != 2)
 	{
 		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;

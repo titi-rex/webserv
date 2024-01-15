@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 23:21:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:49:27 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 size_t	Request::_num_request = 0;
 
 
-Request::Request(void) : _rId(_num_request++), _mId(eUNKNOW), _pstatus(RL), _size(0), _bodySizeExpected(0) {};
+Request::Request(void) : _rId(_num_request++), _mId(eUNKNOW), _pstatus(RL), _size(0), _lenChunk(-1), _bodySizeExpected(0) {};
 
 Request::Request(const Request& src) : _rId(_num_request++) {*this = src;};
 
@@ -86,7 +86,7 @@ bool	Request::_findBodySize(void)
 		return (true);
 
 	std::map<std::string, std::string>::iterator itCl = _headers.find("content-length");
-	std::map<std::string, std::string>::iterator itTe = _headers.find("transfert-encoding");
+	std::map<std::string, std::string>::iterator itTe = _headers.find("transfer-encoding");
 
 	if (itCl == _headers.end() && itTe == _headers.end())
 		throw std::runtime_error("411: Length Required");
@@ -101,7 +101,7 @@ bool	Request::_findBodySize(void)
 	}
 	if (itTe->second != "chunked")
 		throw std::runtime_error("500: Unknow encoding");
-	_bodySizeExpected = ULONG_MAX;
+	_bodySizeExpected = 0;
 	return (false);
 }
 
@@ -139,7 +139,7 @@ bool	Request::_parseRequestLine(void)
 /**
  * @brief return true if more data is needed to parse header, else false
  */
-bool	Request::_parseHeaders(void)
+bool	Request::_parseHeaders(std::map<std::string, std::string> &headers)
 {
 	size_t		start = 0;
 	size_t		end = -1;
@@ -149,7 +149,7 @@ bool	Request::_parseHeaders(void)
 		if (std::strncmp(_raw.c_str(), "\r\n", 2) == 0)
 		{
 			_raw.erase(0, 2);
-			if (_headers.count("host") == 0)
+			if (headers.count("host") == 0)
 				throw std::runtime_error("400: No Host Header");
 			_findBodySize() ? _pstatus = BODYCLENGTH : _pstatus = BODYCHUNK;
 			return (false);
@@ -164,7 +164,7 @@ bool	Request::_parseHeaders(void)
 		std::transform(value.begin(), value.end(), value.begin(), wrap_tolower);
 		std::transform(key.begin(), key.end(), key.begin(), wrap_iscntrl);
 		std::transform(value.begin(), value.end(), value.begin(), wrap_iscntrl);
-		_headers[key] = value;
+		headers[key] = value;
 		_raw.erase(0, end + 1);
 		_size += end + 1;
 		if (_size > HD_MAX_LENGTH)
@@ -178,51 +178,57 @@ bool	Request::_parseHeaders(void)
 /**
  * @brief return true if all body data has been gathered, else flase
  */
-bool	Request::_parseBodyByLength(void)
+bool	Request::_parseBodyByLength(std::string &body)
 {
 	// if (_bodySizeExpected == 0)
 		
 	
-	_body += _raw;
+	body += _raw;
 	_raw.clear();
 
-	if (_body.size()  > _bodySizeExpected)
+	if (body.size()  > _bodySizeExpected)
 		throw std::runtime_error("400: More data than expected");
-	if (_body.size() == _bodySizeExpected)
+	if (body.size() == _bodySizeExpected)
 	{
 		_pstatus = DONE;
 		return (true);
 	}
+	std::cout << "CHONK" << std::endl;
+
 	return (false);
 }
 
 /**
  * @brief return true if all body data has benn gathered (0 lengh chunk found), ese false
  */
-bool	Request::_parseBodyByChunk(void)
+bool	Request::_parseBodyByChunk(std::string &body)
 {
 	std::string	tmp;
 	size_t		start = 0;
 	size_t		end = -1;
-	
+	size_t		check = 0;
+
 	while (_raw.find("\r\n") != std::string::npos)
 	{
-		size_t	len_chunk;
-		size_t check;
-
 		end = -1;
-		tmp = _extractRange(start, end, "\n");
-		len_chunk = std::strtoul(tmp.c_str(), NULL, 10);
-		if (len_chunk == 0)
-			return (true) ;
-		_raw.erase(start, end + 1);
-		check = _raw.find_first_of('\n', 0);
+		if (_lenChunk == ULONG_MAX)
+		{
+			tmp = _extractRange(start, end, "\n");
+			_lenChunk = std::strtoul(tmp.c_str(), NULL, 16);
+			if (_lenChunk == 0)
+				return (true) ;
+			_raw.erase(start, end + 1);
+		}
+		check = _raw.find("\r\n", 0);
+		if (check == std::string::npos)
+			return (false);
 		if (_raw.at(check - 1) == '\r')
 			--check;
-		if (check != len_chunk)
+		if (check != _lenChunk)
 			throw std::runtime_error("400: Malicious chunked data");
-		_body += _raw.substr(start, len_chunk);
-		_raw.erase(start, len_chunk + 2);
+		body += _raw.substr(0, _lenChunk);
+		_raw.erase(0, _lenChunk + 2);
+		_lenChunk = ULONG_MAX;
 	}
 	return (false);
 }
@@ -241,6 +247,7 @@ bool	Request::_parseBodyByChunk(void)
 bool	Request::build(std::string	raw)
 {
 	_raw += raw;
+	std::cout << " build" << std::endl;
 	switch (_pstatus)
 	{
 		case RL:
@@ -251,29 +258,27 @@ bool	Request::build(std::string	raw)
 		}
 		case HEADERS:
 		{
-			if (_parseHeaders())
+			if (_parseHeaders(_headers))
 				return (false);
-			if (_pstatus == BODYCLENGTH)	
-				__attribute__((fallthrough));
-			else
-				break ;
+			__attribute__((fallthrough));
 		}
 		case BODYCLENGTH:
 		{
-			if (_parseBodyByLength())
-				return (true);
-			break;
+			if (_pstatus == BODYCLENGTH)
+				if (_parseBodyByLength(_body))
+					return (true);
+			__attribute__((fallthrough));
 		}
 		case BODYCHUNK:
 		{
-			if (_parseBodyByChunk())
+			
+			if (_parseBodyByChunk(_body))
 				return (true);
 			break;
 		}
 		case DONE:
-		default:
 		{
-			std::cout << "default" << std::endl;
+			std::cout << "DONE" << std::endl;
 			break;
 		}
 	} 
