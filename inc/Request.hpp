@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 15:48:01 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/15 17:34:56 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,42 +58,44 @@ std::string&	ltrim(std::string& str, const char* set);
 std::string&	rtrim(std::string& str, const char* set);
 std::string&	trim(std::string& str, const char* set);
 
+typedef enum {
+	RL,
+	HEADERS,
+	BODYCLENGTH,
+	BODYCHUNK,
+	CGIHD,
+	CGICL,
+	CGIEOF,
+	DONE,
+}	e_parsingStatus;
+
 class Request 
 {
 	private	:
-		size_t					_rId;
 		e_method 				_mId;
 		std::string				_uri;
+		std::string				_query;
 		std::string				_body;
 		std::map<std::string, std::string>	_headers;
 
-		static size_t		_num_request;
 
-
-		enum parsing_status {
-			RL,
-			HEADERS,
-			BODYCLENGTH,
-			BODYCHUNK,
-			DONE,
-		}	;
 
 		//tmp variable for parsing
-		enum parsing_status	_pstatus;
+		e_parsingStatus		_pstatus;
 		std::string			_raw;
 		size_t				_size;
 		size_t				_lenChunk;
 
 
-		//prsing request/cgi
+		//parsing request/cgi
 		bool		_findBodySize(void);
 		std::string	_extractRange(size_t& start, size_t& end, const char *set);
 		bool		_is_method_known(std::string& test);
-
-		bool	_parseRequestLine(void);
-		bool	_parseHeaders(std::map<std::string, std::string> &headers);
-		bool	_parseBodyByLength(std::string &body);
-		bool	_parseBodyByChunk(std::string &body);
+		bool		_parseRequestLine(void);
+		bool		_parseHeaders(void);
+		bool		_parseCgiHeaders(void);
+		bool		_parseBodyByLength(std::string &body);
+		bool		_parseBodyByChunk(std::string &body);
 		
 		
 	public	:
@@ -120,10 +122,13 @@ class Request
 
 		int								getRid(void) const;
 		e_method 						getMid(void) const;
+		e_parsingStatus					getPstatus(void) const;
 		const std::string				getMethodName(void) const;
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
+		const std::string&				getQuery(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
+		bool	isChunked(void) const;
 
 		void	setRline( std::string line );
 		void	setRheaders( std::string key, std::string value );
