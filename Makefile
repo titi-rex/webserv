@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+         #
+#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/15 11:26:10 by lboudjem         ###   ########.fr        #
+#    Updated: 2024/01/15 20:36:46 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ SRCS_CLASS		=	${addprefix ${DIR_SRCS_CLASS}, ${LST_SRCS_CLASS}}
 
 DIR_SRCS		=	src/
 LST_SRCS		=	main.cpp signal.cpp method.cpp utils.cpp directory_listing.cpp \
-					location_processing.cpp exceptions.cpp cgi_handler.cpp \
+					location_processing.cpp exceptions.cpp cgi_handler.cpp log.cpp \
 					${SRCS_PARSE} ${SRCS_HTTP} ${SRCS_CLASS} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 

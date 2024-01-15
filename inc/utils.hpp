@@ -32,6 +32,20 @@
 # include "virtual_host.hpp"
 # include "Request.hpp"
 
+typedef enum {
+	logDEBUG,
+	logINFO,
+	logWARNING,
+	logERROR,
+}	e_logLevel;
+
+
+#define FDEBUG "\001\033[32m\002"
+#define FINFO  "\001\033[0;37m\002"
+#define FWARNING "\001\033[0;33m\002"
+#define FERROR "\001\033[0;31m\002"
+#define END "\001\033[0m\002"
+
 void	sig_init(void (*handler) (int sig));
 void	sig_handler(int sig);
 
