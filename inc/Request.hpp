@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 17:34:56 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/15 17:43:07 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ class Request
 		const std::map<std::string, std::string>&	getHeaders(void) const;
 		bool	isChunked(void) const;
 
+		void	setPathtranslated( std::string path );
 		void	setRline( std::string line );
 		void	setRheaders( std::string key, std::string value );
 		void	setRstatus( short int status );
