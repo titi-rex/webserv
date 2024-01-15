@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 13:56:53 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 14:53:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,6 @@ void	WebServer::process_rq_error(Client &cl)
 	}
 	catch(const std::exception& e)
 	{
-		
 		std::cerr << "ERROR FATAL, ABANDON CLIENT" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		deleteClient(cl.getFd());

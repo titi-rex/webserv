@@ -6,18 +6,15 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 13:49:27 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 16:02:40 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-size_t	Request::_num_request = 0;
+Request::Request(void) : _mId(eUNKNOW), _pstatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
 
-
-Request::Request(void) : _rId(_num_request++), _mId(eUNKNOW), _pstatus(RL), _size(0), _lenChunk(-1), _bodySizeExpected(0) {};
-
-Request::Request(const Request& src) : _rId(_num_request++) {*this = src;};
+Request::Request(const Request& src) {*this = src;};
 
 Request&	Request::operator=(const Request& src) 
 {
@@ -33,13 +30,13 @@ Request&	Request::operator=(const Request& src)
 
 Request::~Request(void) {};
 
-int 				Request::getRid(void) const { return (this->_rId); };
-e_method 			Request::getMid(void) const {return (this->_mId);}
+
+e_method 			Request::getMid(void) const {return (this->_mId);};
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
-
+const std::string&	Request::getQuery(void) const { return (this->_query); };
+e_parsingStatus		Request::getPstatus(void) const {return (this->_pstatus);};
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
-
 
 const std::string	Request::getMethodName(void) const
 {
@@ -56,6 +53,12 @@ void	Request::setRheaders( std::string key, std::string value ) { this->_rheader
 void	Request::setRstatus( short int status ) { this->rstatus = status; };
 void	Request::setRbody( std::string body ) { this->_rbody = body; };
 void	Request::setResponse( std::string response ) { this->response = response; };
+
+
+bool	Request::isChunked(void) const
+{
+	return (_pstatus == BODYCHUNK);
+};
 
 
 bool	Request::_is_method_known(std::string & test)
@@ -78,6 +81,44 @@ std::string	Request::_extractRange(size_t& start, size_t& end, const char *set)
 	start = end + 1;
 	end = _raw.find_first_of(set, start);	
 	return (_raw.substr(start, end - start));
+}
+
+
+
+/**
+ * @brief return true if we need more data to complete the RL, false else
+ */
+bool	Request::_parseRequestLine(void)
+{
+	std::string	tmp;
+	size_t		start = 0;
+	size_t		end = -1;
+	size_t 		i;
+	
+	if (_raw.size() > RL_MAX_LENGTH)
+		throw std::runtime_error("414: URI too long");
+	if (_raw.find("\r\n") == std::string::npos)
+		return (true);
+	if (_raw.size() < RL_MIN_LENGTH)
+		throw std::runtime_error("400: RL too short");
+	tmp = _extractRange(start, end, " ");
+	if (_is_method_known(tmp) == false)
+		throw std::runtime_error("501: Method not implemented");
+	_uri = _extractRange(start, end, " ");
+	if (_uri.at(0) != '/')
+		throw std::runtime_error("400 Bad URI");
+	i = _uri.find_first_of('?');
+	if (i != std::string::npos)
+	{	
+		_query = _uri.substr(i + 1, _uri.size());
+		_uri.erase(i, _uri.size());
+	}
+	tmp = _extractRange(start, end, " \n");
+	if (tmp.compare("HTTP/1.1") == false)
+		throw std::runtime_error("505 Wrong HTTP version");
+	_raw.erase(0, end + 1);
+	_pstatus = HEADERS;
+	return (false);
 }
 
 bool	Request::_findBodySize(void)
@@ -105,41 +146,10 @@ bool	Request::_findBodySize(void)
 	return (false);
 }
 
-
-/**
- * @brief return true if we need more data to complete the RL, false else
- */
-bool	Request::_parseRequestLine(void)
-{
-	std::string	tmp;
-	size_t		start = 0;
-	size_t		end = -1;
-	
-	if (_raw.size() > RL_MAX_LENGTH)
-		throw std::runtime_error("414: URI too long");
-	if (_raw.find("\r\n") == std::string::npos)
-		return (true);
-	if (_raw.size() < RL_MIN_LENGTH)
-		throw std::runtime_error("400: RL too short");
-	tmp = _extractRange(start, end, " ");
-	if (_is_method_known(tmp) == false)
-		throw std::runtime_error("501: Method not implemented");
-	_uri = _extractRange(start, end, " ");
-	if (_uri.at(0) != '/')
-		throw std::runtime_error("400 Bad URI");
-	tmp = _extractRange(start, end, " \n");
-	if (tmp.compare("HTTP/1.1") == false)
-		throw std::runtime_error("505 Wrong HTTP version");
-	_raw.erase(0, end + 1);
-	_pstatus = HEADERS;
-	return (false);
-}
-
-
 /**
  * @brief return true if more data is needed to parse header, else false
  */
-bool	Request::_parseHeaders(std::map<std::string, std::string> &headers)
+bool	Request::_parseHeaders(void)
 {
 	size_t		start = 0;
 	size_t		end = -1;
@@ -149,7 +159,7 @@ bool	Request::_parseHeaders(std::map<std::string, std::string> &headers)
 		if (std::strncmp(_raw.c_str(), "\r\n", 2) == 0)
 		{
 			_raw.erase(0, 2);
-			if (headers.count("host") == 0)
+			if (_headers.count("host") == 0)
 				throw std::runtime_error("400: No Host Header");
 			_findBodySize() ? _pstatus = BODYCLENGTH : _pstatus = BODYCHUNK;
 			return (false);
@@ -164,7 +174,7 @@ bool	Request::_parseHeaders(std::map<std::string, std::string> &headers)
 		std::transform(value.begin(), value.end(), value.begin(), wrap_tolower);
 		std::transform(key.begin(), key.end(), key.begin(), wrap_iscntrl);
 		std::transform(value.begin(), value.end(), value.begin(), wrap_iscntrl);
-		headers[key] = value;
+		_headers[key] = value;
 		_raw.erase(0, end + 1);
 		_size += end + 1;
 		if (_size > HD_MAX_LENGTH)
@@ -180,9 +190,6 @@ bool	Request::_parseHeaders(std::map<std::string, std::string> &headers)
  */
 bool	Request::_parseBodyByLength(std::string &body)
 {
-	// if (_bodySizeExpected == 0)
-		
-	
 	body += _raw;
 	_raw.clear();
 
@@ -193,8 +200,6 @@ bool	Request::_parseBodyByLength(std::string &body)
 		_pstatus = DONE;
 		return (true);
 	}
-	std::cout << "CHONK" << std::endl;
-
 	return (false);
 }
 
@@ -215,8 +220,13 @@ bool	Request::_parseBodyByChunk(std::string &body)
 		{
 			tmp = _extractRange(start, end, "\n");
 			_lenChunk = std::strtoul(tmp.c_str(), NULL, 16);
+			if (_lenChunk == ULONG_MAX)
+				throw std::runtime_error("400: Chunk length overflow");
 			if (_lenChunk == 0)
+			{
+				_pstatus = DONE;
 				return (true) ;
+			}
 			_raw.erase(start, end + 1);
 		}
 		check = _raw.find("\r\n", 0);
@@ -224,6 +234,7 @@ bool	Request::_parseBodyByChunk(std::string &body)
 			return (false);
 		if (_raw.at(check - 1) == '\r')
 			--check;
+		std::cout << "check " << check << std::endl;
 		if (check != _lenChunk)
 			throw std::runtime_error("400: Malicious chunked data");
 		body += _raw.substr(0, _lenChunk);
@@ -247,7 +258,6 @@ bool	Request::_parseBodyByChunk(std::string &body)
 bool	Request::build(std::string	raw)
 {
 	_raw += raw;
-	std::cout << " build" << std::endl;
 	switch (_pstatus)
 	{
 		case RL:
@@ -258,55 +268,134 @@ bool	Request::build(std::string	raw)
 		}
 		case HEADERS:
 		{
-			if (_parseHeaders(_headers))
+			if (_parseHeaders())
 				return (false);
 			__attribute__((fallthrough));
 		}
 		case BODYCLENGTH:
 		{
 			if (_pstatus == BODYCLENGTH)
+			{	
 				if (_parseBodyByLength(_body))
 					return (true);
+				break ;
+			}
 			__attribute__((fallthrough));
 		}
 		case BODYCHUNK:
 		{
-			
 			if (_parseBodyByChunk(_body))
 				return (true);
 			break;
 		}
+		case CGIHD:
+		case CGICL:
+		case CGIEOF:
 		case DONE:
-		{
-			std::cout << "DONE" << std::endl;
-			break;
-		}
+			throw std::runtime_error("698: request parsing loop");
 	} 
 	return (false);
 }
 
 
+
+bool	Request::_parseCgiHeaders(void)
+{
+	size_t		start = 0;
+	size_t		end = -1;
+
+	while (_raw.find("\r\n") != std::string::npos)
+	{	
+		if (std::strncmp(_raw.c_str(), "\r\n", 2) == 0)
+		{
+			_raw.erase(0, 2);
+			if (_rheaders.find("content-length") == _rheaders.end())
+				_pstatus = CGIEOF;
+			else
+			{
+				_pstatus = CGICL;
+				_bodySizeExpected = std::strtoul(_rheaders["content-length"].c_str(), NULL, 10);
+				if (_bodySizeExpected == ULONG_MAX)
+					throw std::runtime_error("413: Request Entity Too Large");
+			}
+			return (false);
+		}
+		end = -1;
+		std::string	key = _extractRange(start, end, ":");
+		std::string	value = _extractRange(start, end, "\n");
+		if (key.find_first_of(" ") != std::string::npos)
+			throw std::runtime_error("400: Forbidden space in header");
+		value = trim(value, " \r");
+		std::transform(key.begin(), key.end(), key.begin(), wrap_tolower);
+		std::transform(value.begin(), value.end(), value.begin(), wrap_tolower);
+		std::transform(key.begin(), key.end(), key.begin(), wrap_iscntrl);
+		std::transform(value.begin(), value.end(), value.begin(), wrap_iscntrl);
+		_rheaders[key] = value;
+		_raw.erase(0, end + 1);
+		_size += end + 1;
+		if (_size > HD_MAX_LENGTH)
+			throw std::runtime_error("431: Request Header Field Too Large");		
+	}
+	if (_raw.size() > HD_MAX_LENGTH)
+		throw std::runtime_error("431: Request Header Field Too Large");
+	return (true);
+}
+
+/**
+ * @brief parse CGI response, work like Request::build 
+ * 
+ */
 bool	Request::addCgi(std::string	buff)
 {
-	_body += buff;
+	switch (_pstatus)
+	{
+		case CGIHD:
+		{
+			if (_parseCgiHeaders())
+				return (false);
+			__attribute__((fallthrough));
+		}
+		case CGICL:
+		{
+			if (_pstatus == CGICL)
+			{	
+				if (_parseBodyByLength(_body))
+					return (true);
+				break ;
+			}
+			__attribute__((fallthrough));
+		}
+		case CGIEOF:
+		{
+			_body += buff;
+			break;
+		}
+		case RL:
+		case HEADERS:
+		case BODYCLENGTH:
+		case BODYCHUNK:
+		case DONE:
+			throw std::runtime_error("698: request parsing loop (cgi)");
+	}
 	return (true);
 }
 
 
 void	Request::clear(void)
 {
-	_rId = _num_request++;
 	_mId = eUNKNOW;
 	_uri.clear();
 	_body.clear();
 	_headers.clear();
+	_rbody.clear();
+	_rheaders.clear();
 	rstatus = 0;
 }
 
 std::ostream& operator<<(std::ostream& os, const Request& req)
 {
-	os << "rid: " << req.getRid() << std::endl;
 	os << "RL: " << req.getMethodName() << " " << req.getUri() << " HTTP/1.1" << std::endl;
+	os << "query:" << req.getQuery() << std::endl;
 	os << "Headers :" << std::endl;
 	os << req.getHeaders();
 	os << "Body :" << std::endl;
