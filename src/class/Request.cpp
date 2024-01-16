@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 17:53:41 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 12:41:35 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
 const std::string&	Request::getQuery(void) const { return (this->_query); };
 e_parsingStatus		Request::getPstatus(void) const {return (this->_pstatus);};
+const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
 
 const std::string	Request::getMethodName(void) const
