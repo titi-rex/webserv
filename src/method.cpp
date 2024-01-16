@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 11:39:42 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 12:28:45 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,17 +86,11 @@ std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
 // pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
 // pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
-std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
+std::string	WebServer::Method(Client &cl, Request & req, v_host_ptr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
-	// typedef std::map<std::string, std::string>::const_iterator LocationIterator;
 
-    // for (LocationIterator it = req.getHeaders().begin(); it != req.getHeaders().end(); ++it) {
-	// 	std::cout << std::endl;
-    //     std::cout << "Header first = " << it->first << std::endl;
-    //     std::cout << "Header second = : " << it->second << std::endl;
-    // }
-
+	fillEnvCGI(cl);
 
 	if (req.getUri() != "/" && isDirListReq(req))
 		return (dirList(req, v_host));

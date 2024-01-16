@@ -106,15 +106,16 @@ class WebServer
 		void	process_rq_error(Client &cl);
 
 		// CGI
-		void initEnvCGI();
-		void fillElement(std::string key , std::string val);
-		void fillEnvCGI(const Client& client);
-		void execute_cgi(const std::string& script_path);
+		void	initEnvCGI();
+		void	fillElement(std::string key , std::string val);
+		void	fillValueFromHeader(std::map<std::string, std::string> header, std::string key);
+		void	fillEnvCGI(const Client& client);
+		void	execute_cgi(const std::string& script_path);
 
 
 
 
-		std::string	Method(Request & req, v_host_ptr & v_host);	
+		std::string	Method(Client &cl, Request & req, v_host_ptr & v_host);	
 		std::string	methodGet( Request & req, v_host_ptr & v_host, std::string & path );
 		std::string	GET_error(int code);	//obsolete
 		std::string	GET_error2(std::string status);	// GET special pour error

@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 11:34:41 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 12:33:54 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,28 @@ void WebServer::initEnvCGI()
         it->second = "";
 }
 
+//doit creer la key si elle n'existe pas
 void WebServer::fillElement(std::string key, std::string val) 
 {
     std::map<std::string, std::string>::iterator it = _envCGI.find(key);
 
     if (it != _envCGI.end())
         it->second = val;
+    else
+        _envCGI[key] = val;
+}
+
+void WebServer::fillValueFromHeader(std::map<std::string, std::string> header, std::string key) 
+{
+    std::map<std::string, std::string>::iterator it = header.find(key);
+
+    if (it != header.end())
+    {
+        std::string upperKey = key;
+        std::transform(upperKey.begin(), upperKey.end(), upperKey.begin(), ::toupper);
+
+        _envCGI[upperKey] = it->second;
+    }
 }
 
 std::string uint16tostr(uint16_t value) {
@@ -58,16 +74,24 @@ void    WebServer::fillEnvCGI(const Client& client)
         fillElement("REQUEST_METHOD", "GET");
     else
         fillElement("REQUEST_METHOD", "POST");
-    // PATH_INFO
-    // SCRIPT_NAME
+    fillElement("PATH_INFO", client.request.getPathInfo());
     fillElement("PATH_TRANSLATED", client.request._pathTranslated);
     fillElement("QUERY_STRING", client.request.getQuery());
     fillElement("REMOTE_HOST", "");
     fillElement("REMOTE_ADDR", uint32tostr(client.getSin().sin_addr.s_addr)); // dans _sin dans socket (client herite de socket)
     fillElement("AUTH_TYPE", "null");
+    // SCRIPT_NAME
 
-    // CONTENT_TYPE
-    // CONTENT_LENGTH
+    fillValueFromHeader(client.request.getHeaders(), "content-type");
+    fillValueFromHeader(client.request.getHeaders(), "content-length");
+
+    std::cout << "*------- DEBUG CGI ENV -------*" << std::endl;
+	typedef std::map<std::string, std::string>::const_iterator LocationIterator;
+    for (LocationIterator it = _envCGI.begin(); it != _envCGI.end(); ++it) {
+		std::cout << std::endl;
+        std::cout << "CGI first = " << it->first << std::endl;
+        std::cout << "CGI second = : " << it->second << std::endl;
+    }
 
     // client
     // HTTP_ACCEPT
