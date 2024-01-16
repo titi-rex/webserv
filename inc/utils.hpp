@@ -23,6 +23,7 @@
 
 # include <signal.h>
 # include <iostream>
+# include <iomanip>
 # include <stdexcept>
 
 # include "map_operator.hpp"
@@ -45,6 +46,41 @@ typedef enum {
 #define FWARNING "\001\033[0;33m\002"
 #define FERROR "\001\033[0;31m\002"
 #define END "\001\033[0m\002"
+
+#define LOGLEVEL 0
+
+template <typename T>
+void	operator<<(e_logLevel lvl, T log)
+{
+	switch (lvl)
+	{
+		case logDEBUG:
+		{
+			if (logDEBUG >= LOGLEVEL)
+				std::clog << FDEBUG << std::setw(12) << "[DEBUG] : " << log << END << std::endl;
+			break;
+		}
+		case logINFO:
+		{
+			if (logINFO >= LOGLEVEL)
+				std::clog << FINFO << std::setw(12) << "[INFO] : " << log << END << std::endl;
+			break;
+		}
+		case logWARNING:
+		{
+			if (logWARNING >= LOGLEVEL)
+				std::clog << FWARNING << std::setw(12) << "[WARNING] : " << log << END << std::endl;
+			break;
+		}
+		case logERROR:
+		{
+			if (logERROR >= LOGLEVEL)
+				std::clog << FERROR << std::setw(12) << "[ERROR] : " << log << END << std::endl;
+			break;
+		}
+	}
+}
+
 
 void	sig_init(void (*handler) (int sig));
 void	sig_handler(int sig);
