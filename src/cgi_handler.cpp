@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/15 15:41:04 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 11:34:41 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,14 @@ std::string uint16tostr(uint16_t value) {
     return strValue;
 }
 
+std::string uint32tostr(uint32_t value) {
+    std::ostringstream oss;
+    oss << value;
+    std::string strValue = oss.str();
+
+    return strValue;
+}
+
 void    WebServer::fillEnvCGI(const Client& client) 
 {
     // serveur
@@ -51,14 +59,13 @@ void    WebServer::fillEnvCGI(const Client& client)
     else
         fillElement("REQUEST_METHOD", "POST");
     // PATH_INFO
-    // PATH_TRANSLATED
-    // SCRIPT_NAME 
-    // QUERY_STRING
+    // SCRIPT_NAME
+    fillElement("PATH_TRANSLATED", client.request._pathTranslated);
+    fillElement("QUERY_STRING", client.request.getQuery());
     fillElement("REMOTE_HOST", "");
-    fillElement("REMOTE_ADDR", client.host->getHostPort().first); // dans sin dans socket (client herite de socket)
+    fillElement("REMOTE_ADDR", uint32tostr(client.getSin().sin_addr.s_addr)); // dans _sin dans socket (client herite de socket)
     fillElement("AUTH_TYPE", "null");
-    // REMOTE_USER
-    // REMOTE_IDENT
+
     // CONTENT_TYPE
     // CONTENT_LENGTH
 

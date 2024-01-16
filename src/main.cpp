@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 22:21:46 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 11:16:48 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ int	main(int ac, char **av)
 {
 
 	logDEBUG << "debug text";
-	logINFO << "some info";
+	logINFO << "some MIMI";
 	logWARNING << "attention..";
-	logERROR << "euh..ERROR..";
+	logERROR << "euh...ouin.";
 	
 	if (ac != 2)
 	{
