@@ -17,7 +17,7 @@
 
 typedef unsigned int long	uintptr_t;
 
-# include "virtual_host.hpp"
+# include "VirtualHost.hpp"
 # include "SocketServer.hpp"
 # include "Client.hpp"
 # include "Request.hpp"
@@ -44,7 +44,7 @@ class WebServer
 		size_t								_bodySizeLimit;		// limite generale de la taille maximum du body des clients pour tout le server, active si le virtual host ne precise pas (si == size_t max => pas de limite )
 		std::string							_dirErrorPage;		// indique un repertoire specifique ou chercher les pqges d'erreur
 		std::map<std::string, std::string>	_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
-		std::vector<t_virtual_host>			_virtualHost;		// vector contenant tout les virtual hosts du server
+		std::vector<VirtualHost>			_virtualHost;		// vector contenant tout les virtual hosts du server
 		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
 		int									_highSocket;
 		std::map<int, Client>				_ClientList;		// map contenant les client du server
@@ -70,23 +70,23 @@ class WebServer
 		~WebServer(void);
 
 
-		void								setVirtualHost(std::vector<t_virtual_host> virtualHost);
+		void								setVirtualHost(std::vector<VirtualHost> vHost);
 		void								setErrorPage(std::string key, std::string value); 
 		void								setDirErrorPage(std::string dirErrorPage);
 		void								setBodySizeLimit(size_t bodySizeLimit);
 		
-		std::vector<t_virtual_host>			getVirtualHost(void) const;
+		std::vector<VirtualHost>			getVirtualHost(void) const;
 		std::map<std::string,std::string>&	getErrorPage(void);
 		std::string							getDirErrorPage(void) const;
 		size_t								getBodySizeLimit(void) const;
 
-		t_location	parseLocation(std::vector<std::string> fileVec, std::vector<std::string> sLine, uintptr_t *i);
+		Location	parseLocation(std::vector<std::string> fileVec, std::vector<std::string> sLine, uintptr_t *i);
 		int			parseConf(std::string &line);
 		void		parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
 		void 		findServ(std::vector<std::string> fileVec, uintptr_t *i);
-		void		addVirtualHost(const t_virtual_host& virtualHost);
-		void		displayLocations(const t_virtual_host& virtualHost);
-		void		displayCGI(const t_virtual_host& virtualHost);
+		void		addVirtualHost(const VirtualHost& vHost);
+		void		displayLocations(const VirtualHost& vHost);
+		void		displayCGI(const VirtualHost& vHost);
 		void		debugServ();
 
 		void	run(void);
@@ -122,11 +122,11 @@ class WebServer
 
 };
 
-void						initLocation(t_location* loc);
+void						initLocation(Location* loc);
 void 						formatLine(std::string &line);
 std::vector<std::string>	splitLine(const std::string& line);
 
 std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host);
-std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host);
+std::ostream&	operator<<(std::ostream &os, const VirtualHost& v_host);
 
 #endif

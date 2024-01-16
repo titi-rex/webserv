@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 17:01:24 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 20:24:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ std::string	WebServer::Method(Client &cl, Request & req, v_host_ptr & v_host)
 	return (NULL);
 }
 
-// std::string	get(Request rq, t_virtual_host v_host)
+// std::string	get(Request rq, VirtualHost v_host)
 std::string	WebServer::methodGet( Request & req, v_host_ptr & v_host, std::string & path )
 {
 	std::string		body = getFile(path);

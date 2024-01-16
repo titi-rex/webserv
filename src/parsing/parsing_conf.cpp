@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/16 16:26:27 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 20:31:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ int WebServer::parseConf(std::string &line)
 	return (0);
 }
 
-t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vector<std::string> sLine, uintptr_t *i)
+Location WebServer::parseLocation(std::vector<std::string> fileVec, std::vector<std::string> sLine, uintptr_t *i)
 {
-	t_location newLoc;
+	Location newLoc;
 	std::string first = sLine[1];
 	
 	++(*i);
@@ -75,7 +75,7 @@ t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vecto
 
 void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end)
 {
-	t_virtual_host 				newServ;
+	VirtualHost 				newServ;
 	std::vector<std::string>	sLine;
 
 	for (uintptr_t i = start; i <= end; ++i) 
@@ -86,7 +86,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			continue ;
 		else if (sLine[0] == "location")
 		{
-			t_location newLoc;
+			Location newLoc;
 			newLoc = parseLocation(fileVec, sLine, &i);
 			newServ.setLocations(newLoc);
 		}
@@ -147,11 +147,11 @@ void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
 }
 
 
-void WebServer::displayLocations(const t_virtual_host& virtualHost) {
-    typedef std::map<std::string, t_location>::const_iterator LocationIterator;
+void WebServer::displayLocations(const VirtualHost& vHost) {
+    typedef std::map<std::string, Location>::const_iterator LocationIterator;
 
-    for (LocationIterator it = virtualHost.locations.begin(); it != virtualHost.locations.end(); ++it) {
-        const t_location& location = it->second;
+    for (LocationIterator it = vHost.locations.begin(); it != vHost.locations.end(); ++it) {
+        const Location& location = it->second;
 		std::cout << std::endl;
         std::cout << "Location ID: " << it->first << std::endl;
         std::cout << "Is path: " << (location.isPath ? "true" : "false") << std::endl;
@@ -167,11 +167,11 @@ void WebServer::displayLocations(const t_virtual_host& virtualHost) {
     }
 }
 
-void WebServer::displayCGI(const t_virtual_host& virtualHost) {
+void WebServer::displayCGI(const VirtualHost& vHost) {
     typedef std::map<std::string, std::string>::const_iterator LocationIterator;
 
-	std::cout << "CGI directory: " << virtualHost.getDirCgi() << std::endl;
-    for (LocationIterator it = virtualHost.cgi.begin(); it != virtualHost.cgi.end(); ++it) {
+	std::cout << "CGI directory: " << vHost.getDirCgi() << std::endl;
+    for (LocationIterator it = vHost.cgi.begin(); it != vHost.cgi.end(); ++it) {
 		std::cout << std::endl;
         std::cout << "CGI exec: " << it->first << std::endl;
         std::cout << "CGI path: " << it->second << std::endl;

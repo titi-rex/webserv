@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/11 14:59:32 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 20:31:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ bool isDirListReq(Request & req)
 
 std::string	dirList(Request & req, v_host_ptr & v_host)
 {
-		std::map<std::string, t_location>::iterator	i;
+		std::map<std::string, Location>::iterator	i;
 		std::string									directory = req.getUri();
 
 	for ( i = v_host->locations.begin(); i != v_host->locations.end(); ++i)

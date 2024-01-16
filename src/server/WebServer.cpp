@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 16:17:34 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 20:24:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ WebServer::~WebServer(void)
 };
 
 
-void	WebServer::setVirtualHost(std::vector<t_virtual_host> virtualHost) { 
-	this->_virtualHost = virtualHost; 
+void	WebServer::setVirtualHost(std::vector<VirtualHost> vHost) { 
+	this->_virtualHost = vHost; 
 };
 
 void	WebServer::setErrorPage(std::string key, std::string value) { 
@@ -64,7 +64,7 @@ void	WebServer::setBodySizeLimit(size_t bodySizeLimit) {
 	this->_bodySizeLimit = bodySizeLimit;
 };
 
-std::vector<t_virtual_host>	WebServer::getVirtualHost(void) const { 
+std::vector<VirtualHost>	WebServer::getVirtualHost(void) const { 
 	return (this->_virtualHost); 
 };
 
@@ -116,9 +116,9 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErr
 	}	
 };
 	
-void WebServer::addVirtualHost(const t_virtual_host& virtualHost) 
+void WebServer::addVirtualHost(const VirtualHost& vHost) 
 {
-	_virtualHost.push_back(virtualHost);
+	_virtualHost.push_back(vHost);
 }
 
 /**
@@ -135,7 +135,7 @@ std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host)
 /**
  * @brief format id/names/host
  */
-std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host)
+std::ostream&	operator<<(std::ostream &os, const VirtualHost& v_host)
 {
 	os << v_host.sId << "/" << v_host.serverNames << "/" << v_host.host_port.first << ":" << v_host.host_port.second;
 	return (os);

@@ -30,7 +30,7 @@
 # include "deque_operator.hpp"
 # include "vector_operator.hpp"
 
-# include "virtual_host.hpp"
+# include "VirtualHost.hpp"
 # include "Request.hpp"
 
 typedef enum {

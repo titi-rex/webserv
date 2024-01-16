@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/16 16:08:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 20:31:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ static bool	isPrefix(std::string pagePath, std::string prefix)
 // find dans location, celui le plus resamblant a l'uri
 std::string	findLocation(Request & req, v_host_ptr & v_host)
 {
-	std::map<std::string, t_location>::iterator	i;
+	std::map<std::string, Location>::iterator	i;
 	std::string									pagePath = req.getUri();
 	std::string									location = "";
 

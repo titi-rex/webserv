@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
+/*   parsing_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 14:09:34 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 16:13:25 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 20:31:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void formatLine(std::string &line)
         line.erase(line.length() - 1);
 }
 
-void	initLocation(t_location* loc)
+void	initLocation(Location* loc)
 {
 	loc->isPath = true;
 	loc->autoIndex = true;

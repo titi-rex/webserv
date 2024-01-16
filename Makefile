@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/16 20:19:29 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/16 20:41:03 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,11 +65,16 @@ endif
 
 
 #	==============================	HEADERS	==============================	#
+DIR_HDR_CLASS	=	class/
+LST_HDR_CLASS	=	WebServer.hpp Socket.hpp SocketServer.hpp Client.hpp Request.hpp VirtualHost.hpp Location.hpp 
+HDR_CLASS		=	${addprefix ${DIR_HDR_CLASS}, ${LST_HDR_CLASS}}
+
+
 DIR_HEADER	=	inc/
-LST_HDR		=	${NAME}.hpp Request.hpp WebServer.hpp SocketServer.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
-				 Socket.hpp Client.hpp exceptions.hpp
+LST_HDR		=	exceptions.hpp utils.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
+				${HDR_CLASS}
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
-IFLAGS		=	-I${DIR_HEADER} 
+IFLAGS		=	-I${DIR_HEADER} -I${DIR_HEADER}${DIR_HDR_CLASS}
 
 
 #	==============================	COMMANDS	==============================	#
@@ -103,6 +108,9 @@ endif
 #	==============================	BASIC	==============================	#
 all		:	${NAME}
 
+msg:
+	@echo ${IFLAGS}
+
 clean	:
 		@${RM} ${DIR_OBJS}
 
@@ -126,23 +134,23 @@ hard	:
 
 #	==============================	COMPILATION	==============================	#
 ${NAME}			:	${DIR_OBJS} ${OBJS}
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${OBJS} -o ${NAME}
+				@${CXX} ${IFLAGS} ${CXXFLAGS} ${OBJS} -o ${NAME}
 				@printf "$(GREEN_LIGHT)$@ created !\n$(END)"
 
 
 ${DIR_OBJS}%.o	:	${DIR_SRCS}%.cpp 
 				@printf "$(YELLOW)Making $@...\n$(END)"
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
+				@${CXX} ${IFLAGS} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
 
 
 ${DIR_OBJS}%.debug.o	:	${DIR_SRCS}%.cpp 
 				@printf "$(YELLOW)Making $@...\n$(END)"
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} ${FSFLAGS} -c $< -o $@
+				@${CXX} ${IFLAGS} ${CXXFLAGS} ${DEPFLAGS} ${FSFLAGS} -c $< -o $@
 
 
 ${DIR_OBJS}%.valg.o	:	${DIR_SRCS}%.cpp 
 				@printf "$(YELLOW)Making $@...\n$(END)"
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
+				@${CXX} ${IFLAGS} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
 
 -include $(DEPS)
 
