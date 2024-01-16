@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 12:58:53 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 15:19:57 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	Request::setResponse( std::string response ) { this->response = response; }
 
 void	Request::makeResponse ( void )
 {
-	std::clog << "\nmakeResponse()" << std::endl;
+	// std::clog << "\nmakeResponse()" << std::endl;
 
 	std::map<std::string, std::string>::iterator	iter;
 
@@ -71,10 +71,10 @@ void	Request::makeResponse ( void )
 		this->response += iter->first + ": " + iter->second + "\n";
 
 	this->response += "\r\n\r\n";
-	this->response += _rbody;
+	this->response += this->_rbody;
 	this->response += "\r\n\r\n";
 
-	std::clog << this->response << std::endl;
+	// std::clog << this->_body << std::endl;
 }
 
 bool	Request::isChunked(void) const

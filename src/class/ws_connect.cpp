@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 12:26:19 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 14:14:53 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,8 @@ void	WebServer::process_rq_error(Client &cl)
 	
 	try
 	{
-		cl.request.response = ERROR_500_MSG;
+		getError(cl.request.getRStrStatus(), cl.request);
+		// cl.request.response = ERROR_500_MSG;
 		cl.cstatus = PROCEEDED;
 	}
 	catch(const std::exception& e)
@@ -240,6 +241,8 @@ void	WebServer::run(void)
 				if (err == 0)
 					err = 699;
 				std::cerr << "cerror code : " << err << std::endl;
+				it->second->request.setRStrStatus(e.what());
+				it->second->request.setRstatus(err);
 				
 				process_rq_error(*it->second);
 			}
