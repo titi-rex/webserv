@@ -99,5 +99,7 @@ std::string&	ltrim(std::string& str, const char* set);
 std::string&	rtrim(std::string& str, const char* set);
 std::string&	trim(std::string& str, const char* set);
 
+void	getDate( char * date );
+int		lengthSize( int contentLength );
 
 #endif

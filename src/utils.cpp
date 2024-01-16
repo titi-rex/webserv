@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 14:20:57 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 14:03:49 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,30 @@ std::string&	rtrim(std::string& str, const char* set)
 std::string&	trim(std::string& str, const char* set)
 {
     return (ltrim(rtrim(str, set), set));
+}
+
+void getDate( char * date )
+{
+	time_t rawtime;
+	struct tm *info;
+
+	time( &rawtime );
+
+	info = localtime( &rawtime );
+
+	strftime(date, 80,"%a, %d %b %Y %H:%M:%S", info);
+}
+
+int	lengthSize( int contentLength )
+{
+	int	i = 0;
+	
+	if (contentLength == 0)
+		return (1);
+	while (contentLength != 0)
+	{
+		i++;
+		contentLength /= 10;
+	}
+	return (i);
 }
