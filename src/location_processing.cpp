@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/16 12:43:26 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 14:23:05 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 		pagePath += ".html";
 		file = pagePath.c_str();
 		if (access(file, F_OK) != 0)
-			throw std::runtime_error("404 Page not found (JUJU)");
+			throw std::runtime_error("404");
 	}
 
 	// Check if the page asked is readable
@@ -131,6 +131,7 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 
 	// Check if there is a redirection
 	std::string	redirection = v_host->locations[location].getRedirection();
+	// std::pair<std::string, std::string>	redirection = v_host->locations[location].getRedirection();
 
 	if (redirection != "")
 	{
