@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 11:38:07 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 12:58:26 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,7 @@ class Request
 		const std::string&				getExt(void) const;
 
 		
+		const std::string&				getRStrStatus(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
 		bool	isChunked(void) const;
 

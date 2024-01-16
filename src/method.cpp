@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 17:55:08 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 15:44:53 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
 // pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
 // pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
-std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
+std::string	WebServer::Method(Client &cl, Request & req, v_host_ptr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
 
@@ -102,7 +102,7 @@ std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
 			return (methodGet(req, v_host, pagePath));
 		case POST:
 			// std::cout << "POST JUJU" << std::endl;
-			return (methodPost(req.getBody()));
+			return (methodPost(cl));
 			break;
 		case DELETE:
 			// std::cout << "DELETE JUJU" << std::endl;
@@ -143,25 +143,38 @@ std::string	WebServer::methodGet( Request & req, v_host_ptr & v_host, std::strin
 	return (req.response);
 }
 
-std::string WebServer::methodPost(std::string post_data)
+std::string WebServer::methodPost(Client &client)
 {
-    std::map<std::string, std::string> post_params;
-    std::istringstream iss(post_data);
+	// SEARCH CGI PATH
+	// if no path found -> error
+	// fill envp
+	// execute cgi with path
+	// check for timeout?
 
-    std::string key_value;
-	std::cout << "??? RECUP DATA = " << post_data << std::endl;
-    while (std::getline(iss, key_value, '&')) 
-	{
-        size_t equals_pos = key_value.find('=');
-        if (equals_pos != std::string::npos) 
-		{
-            std::string key = key_value.substr(0, equals_pos);
-            std::string value = key_value.substr(equals_pos + 1);
-            post_params[key] = value;
-        }
-    }
-	std::string response = "HTTP/1.1 201 Created\r\n\r\n";
+	std::map<std::string, std::string>	cgi = client.host->getCgi();
+	std::string							ext = client.request.getExt();
+	std::string							script_path;
 	
-    return (response);
-}
+    std::map<std::string, std::string>::iterator it2 = cgi.find(ext);
+    if (it2 != cgi.end())
+	{	
+        script_path = it2->second;
+	}
+    // else
+    //     script_path.clear(); // ERROR
+	std::cout <<  "EXEC CGI with path : " << script_path << std::endl;
+	fillEnvCGI(client);
+	execute_cgi(script_path);
 
+	// CGI output !!!!!!!!
+	
+	client.request.setRstatus (201);
+	client.request.setRStrStatus ("201");
+	client.request.setRline ("created");
+	client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
+	client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
+	// client.request.setRbody(body);
+
+	client.request.makeResponse();
+	return (client.request.response);
+}

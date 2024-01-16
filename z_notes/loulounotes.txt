@@ -45,7 +45,7 @@ curl -d "@data.json" -X POST http://localhost:8080/data
 
 Exemple 1: Envoi de données JSON
 
-curl -X POST -H "Content-Type: application/json" -d '{"username": "john_doe", "password": "secretpass"}' https://127.0.0.1:8080/login
+curl -v -X POST -H "Content-Type: application/json" -d '{"username": "john_doe", "password": "secretpass"}' http://127.0.0.1:8080/login
 
     -H "Content-Type: application/json": Définit l'en-tête de contenu comme JSON.
     -d '{"username": "john_doe", "password": "secretpass"}': Les données à envoyer, ici au format JSON.
@@ -55,42 +55,42 @@ curl -X POST -H "Content-Type: application/json" -d '{"username": "john_doe", "p
 
 Exemple 2: Envoi de données sous forme de formulaire
 
-curl -X POST -d 'username=john_doe&password=secretpass' https://127.0.0.1:8080/login
+curl -v -X POST -d 'username=john_doe&password=secretpass' http://127.0.0.1:8080/login
 
     -d 'username=john_doe&password=secretpass': Les données à envoyer, ici au format de formulaire.
-    https://127.0.0.1:8080/login: L'URL de destination.
+    http://127.0.0.1:8080/login: L'URL de destination.
 
 
 
 
 Exemple 3: Envoi de données avec un fichier binaire
 
-curl -X POST -F "file=@/path/to/file.jpg" https://127.0.0.1:8080/upload
+curl -v -X POST -F "file=@/z_notes/body.txt" http://127.0.0.1:8080/upload
 
     -F "file=@/path/to/file.jpg": Envoie un fichier binaire spécifié avec l'option -F.
-    https://127.0.0.1:8080/upload: L'URL de destination.
+    http://127.0.0.1:8080/upload: L'URL de destination.
 
 
 
 
 Exemple 4: Envoi de données avec un en-tête personnalisé
 
-curl -X POST -H "Authorization: Bearer YOUR_ACCESS_TOKEN" -d 'data=example' https://127.0.0.1:8080/protected
+curl -v -X POST -H "Authorization: Bearer YOUR_ACCESS_TOKEN" -d 'data=example' http://127.0.0.1:8080/protected
 
     -H "Authorization: Bearer YOUR_ACCESS_TOKEN": Ajoute un en-tête d'autorisation personnalisé.
     -d 'data=example': Les données à envoyer.
-    https://127.0.0.1:8080/protected: L'URL de destination.
+    http://127.0.0.1:8080/protected: L'URL de destination.
 
 
 
 
 Exemple 5: Suivi des redirections
 
-curl -X POST -L -d 'data=example' https://127.0.0.1:8080/redirect
+curl -X POST -L -d 'data=example' http://127.0.0.1:8080/redirect
 
     -L: Indique à cURL de suivre les redirections.
     -d 'data=example': Les données à envoyer.
-    https://127.0.0.1:8080/redirect: L'URL de destination avec redirections éventuelles.
+    http://127.0.0.1:8080/redirect: L'URL de destination avec redirections éventuelles.
 
 
 

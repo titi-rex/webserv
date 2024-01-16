@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 12:05:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 15:48:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErr
 	file.close();
 
 	this->debugServ();
-	exit(0);
+	
 	try
 	{
 		_SocketServerList_init();
