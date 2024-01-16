@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 14:03:47 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 14:52:12 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,7 @@ std::string	WebServer::Method(Client &cl, Request & req, v_host_ptr & v_host)
 // std::string	get(Request rq, t_virtual_host v_host)
 std::string	WebServer::methodGet( Request & req, v_host_ptr & v_host, std::string & path )
 {
-	std::string		body;
-	std::ifstream	indexPage(path.c_str());
-
-
-	if (indexPage.fail())
-		throw std::runtime_error("500 Error closing file");
-	std::getline(indexPage, body, '\0');
-	indexPage.close();
+	std::string		body = getFile(path);
 
 	// New way to store the response
 	int		size = lengthSize(body.length());
