@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 15:20:31 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 15:59:13 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,62 +59,75 @@ std::string	getDefaultPage(std::string status)
 }
 */
 
-std::string	WebServer::getError(std::string status, Request& req)
+static void	prepareResponse(Request& req, std::string status, std::string body)
+{
+	int		contentLength = body.length();
+	int		size = lengthSize(contentLength);
+	char	sContentLength[size];
+	char	date[80];
+
+	sprintf(sContentLength, "%lu", body.length());
+	getDate(date);
+
+	req.setRstatus(std::atoi(status.c_str()));
+	req.setRStrStatus(status);
+	req.setRline("Page not found");
+	// req.setRheaders("Server", v_host->serverNames[0]); // Place holder
+	req.setRheaders("Date", date);
+	req.setRheaders("Content-length", sContentLength);
+	req.setRbody(body);
+}
+
+void	WebServer::getError(std::string status, Request& req)
 {
 	std::cout << "\ngetError with status: " << status << std::endl;
 
 	std::string	pageDir;
 	std::string	body;
-	// std::string	page;
 	
-	// if(!_errorPage.empty()) try 
-	// {
-	// 	std::map<std::string, std::string>::iterator	it;
+	// Use the error_page part of the config file to display a page in case of an error
+	if(!_errorPage.empty()) try 
+	{
+		std::map<std::string, std::string>::iterator	it;
 
-	// 	it = getErrorPage().find(status);
+		it = getErrorPage().find(status);
 
-	// 	if (it != getErrorPage().end())
-	// 	{
-	// 		pageDir = it->second;
-	// 		if (check_access(pageDir))
-	// 		{
-	// 			page = getFile(pageDir);
-	// 		}
-	// 	}
-	// }
-	// catch (std::exception & e)
-	// {
-	// 	std::clog << e.what() << ", for custom page location" << std::endl;
-	// }
+		if (it != getErrorPage().end())
+		{
+			pageDir = "." + it->second;
 
+			if (check_access(pageDir))
+			{
+				body = getFile(pageDir);
+
+				prepareResponse(req, status, body);
+				req.makeResponse();
+				return ;
+			}
+		}
+	}
+	catch (std::exception & e)
+	{
+		std::clog << e.what() << ", for custom page location" << std::endl;
+	}
+
+	// Use the dirErrorPage part of the config file to display a page in case of an error
 	if(!_dirErrorPage.empty()) try 
 	{
 		body = getPageByDir(_dirErrorPage, status);
 
-		int		contentLength = body.length();
-		int		size = lengthSize(contentLength);
-		char	sContentLength[size];
-		char	date[80];
-
-		sprintf(sContentLength, "%lu", body.length());
-		getDate(date);
-	
-		req.setRstatus(std::atoi(status.c_str()));
-		req.setRStrStatus(status);
-		req.setRline("Page not found");
-		// req.setRheaders("Server", v_host->serverNames[0]); // Place holder
-		req.setRheaders("Date", date);
-		req.setRheaders("Content-length", sContentLength);
-		req.setRbody(body);
-
+		prepareResponse(req, status, body);
 		req.makeResponse();
+		return ;
 	}
 	catch (std::exception & e)
 	{
 		std::clog << e.what() << ", for custom dir" << std::endl;
 	}
-	
-	return ("");
+
+	body = "<html><head><title>ERROR " + status + "</title></head><body><h1>ERROR " + status + "</h1><hr>webserv</body></html>";
+	prepareResponse(req, status, body);
+	req.makeResponse();
 }
 
 /*
