@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 12:28:45 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 14:03:47 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,32 +20,6 @@ std::string	WebServer::GET_error(int code)
 {
 	(void)code;
 	return ("500 Internal Server Error\r\n\r\n");
-}
-
-static void ft_date( char * date )
-{
-	time_t rawtime;
-	struct tm *info;
-
-	time( &rawtime );
-
-	info = localtime( &rawtime );
-
-	strftime(date, 80,"%a, %d %b %Y %H:%M:%S", info);
-}
-
-static int	lengthSize( int contentLength )
-{
-	int	i = 0;
-	
-	if (contentLength == 0)
-		return (1);
-	while (contentLength != 0)
-	{
-		i++;
-		contentLength /= 10;
-	}
-	return (i);
 }
 
 std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
@@ -67,7 +41,7 @@ std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
 	char	date[80];
 	
 	sprintf(sContentLength, "%d", contentLength);
-	ft_date(date);
+	getDate(date);
 
 	// New way to store the respond
 	req.setRstatus(200);
