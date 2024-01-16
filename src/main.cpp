@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 15:49:01 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 15:58:41 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	main(int ac, char **av)
 	try 
 	{
 		WebServer	server(av[1]);
-		// server.run();
+		server.run();
 	}
 	catch (std::exception & e)
 	{

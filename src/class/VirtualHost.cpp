@@ -6,14 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 15:41:34 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:17:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "virtual_host.hpp"
 
-t_virtual_host::t_virtual_host(void) 
-: sId(0), bodySize(1024), root("/data"), index("index.html"), host_port("0.0.0.0", 80) {}
+t_virtual_host::t_virtual_host(void) : sId(0), bodySize(1024), root("/data"), index("index.html"), dirCgi("/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
 
 t_virtual_host::~t_virtual_host(void) {}
 
@@ -51,6 +50,10 @@ const std::string&	t_virtual_host::getRoot() const{
 
 const std::string&	t_virtual_host::getIndex() const{
 	return(this->index);
+};
+
+const std::string&	t_virtual_host::getDirCgi() const{
+	return(this->dirCgi);
 };
 
 const std::pair<std::string, uint16_t>&	t_virtual_host::getHostPort() const{
@@ -92,6 +95,14 @@ void	t_virtual_host::setIndex(std::vector<std::string>& sLine)
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: index supplied but value is missing");
 	this->index = sLine.at(1);
+};
+
+
+void	t_virtual_host::setDirCgi(std::vector<std::string>& sLine)
+{
+	if (sLine.size() < 2)
+		throw std::runtime_error("Server: dir_cgi supplied but value is missing");
+	this->dirCgi = sLine.at(1);
 };
 
 
@@ -167,7 +178,9 @@ void	t_virtual_host::setCgi(std::vector<std::string>& sLine, bool oneCgi)
 	{
 		if (sLine.size() < 3)
 			throw std::runtime_error("Server: path_cgi supplied but value is missing");
-		cgi[sLine[1]] = sLine[2];
+		if (sLine[2].at(0) == '/')
+			sLine[2].erase(0,1);
+		cgi[sLine[1]] = this->dirCgi + sLine[2];
 	}
 	else
 	{
@@ -176,7 +189,7 @@ void	t_virtual_host::setCgi(std::vector<std::string>& sLine, bool oneCgi)
 		for (size_t j = 1; j < sLine.size(); ++j)
 		{
 			if (cgi.count(sLine[j]) == 0)
-				cgi[sLine[j]] = "/data/cgi-bin/" + sLine[j];
+				cgi[sLine[j]] = this->dirCgi + sLine[j];
 		}
 	}
 };
