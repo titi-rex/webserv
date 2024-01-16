@@ -6,20 +6,17 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 23:15:48 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 15:48:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 
-WebServer::WebServer(void) : _bodySizeLimit(-1) {};
+WebServer::WebServer(void) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_pages") {};
 
 WebServer::WebServer(const WebServer& src) 
 {
-	this->setVirtualHost(src.getVirtualHost());
-	// this->setErrorPage(src.getErrorPage());
-	this->setDirErrorPage(src.getDirErrorPage());
-	this->setBodySizeLimit(src.getBodySizeLimit());
+	*this = src;
 	
 };
 
@@ -27,10 +24,16 @@ WebServer&	WebServer::operator=(const WebServer& src)
 {
 	if (this == &src)
 		return (*this);
-	this->setVirtualHost(src.getVirtualHost());
-	// this->setErrorPage(src.getErrorPage());
-	this->setDirErrorPage(src.getDirErrorPage());
-	this->setBodySizeLimit(src.getBodySizeLimit());
+	_efd = src._efd;
+	_bodySizeLimit = src._bodySizeLimit;
+	_dirErrorPage = src._dirErrorPage;
+	_virtualHost = src._virtualHost;
+	_errorPage = src._errorPage;
+	_SocketServersList = src._SocketServersList;
+	_highSocket = src._highSocket;
+	_ClientList = src._ClientList;
+	_readyToProceedList = src._readyToProceedList;
+	_envCGI = src._envCGI;	
 	return (*this);
 };
 
@@ -77,8 +80,7 @@ size_t	WebServer::getBodySizeLimit(void) const {
 	 return (this->_bodySizeLimit); 
 };
 
-WebServer::WebServer(std::string path) 
-{
+WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_pages")
 {
 	std::vector<std::string> 	fileVec;
 	uintptr_t					i = 0;
@@ -99,8 +101,9 @@ WebServer::WebServer(std::string path)
 		++i;
 		
    	}
-}
-	// this->debugServ();
+	file.close();
+
+	this->debugServ();
 	
 	try
 	{

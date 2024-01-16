@@ -46,7 +46,7 @@ class WebServer
 		std::map<std::string, std::string>	_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
 		std::vector<t_virtual_host>			_virtualHost;		// vector contenant tout les virtual hosts du server
 		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
-		int		_highSocket;
+		int									_highSocket;
 		std::map<int, Client>				_ClientList;		// map contenant les client du server
 		std::map<int, Client*>				_readyToProceedList;	// list les client dont les request sont prete a etre proceder (fini de read)
 
@@ -63,7 +63,6 @@ class WebServer
 		v_host_ptr	_selectServer(SocketServer& sk, Request& rq);
 
 
-		void		_send_response(int client_fd, std::string response);
 
 
 	public	:
@@ -106,9 +105,9 @@ class WebServer
 		void	process_rq_error(Client &cl);
 
 		// CGI
-		void	initEnvCGI();
 		void	fillElement(std::string key , std::string val);
 		void	fillValueFromHeader(std::map<std::string, std::string> header, std::string key);
+		void	fillValueFromCGI(std::map<std::string, std::string> cgi, std::string key, std::string value); 
 		void	fillEnvCGI(const Client& client);
 		void	execute_cgi(const std::string& script_path);
 
@@ -119,7 +118,7 @@ class WebServer
 		std::string	methodGet( Request & req, v_host_ptr & v_host, std::string & path );
 		std::string	GET_error(int code);	//obsolete
 		void		getError(std::string status, Request& req);	// GET special pour error
-		std::string	methodPost(std::string path);
+		std::string	methodPost(Client &client);
 
 };
 

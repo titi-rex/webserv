@@ -1,0 +1,13 @@
+#!/usr/bin/php-cgi
+<?php
+
+header("Content-type: text/html");
+
+echo "<html>";
+echo "<head><title>Script CGI PHP</title></head>";
+echo "<body>";
+echo "<h1>Bienvenue sur mon script CGI en PHP</h1>";
+echo "<p>Ceci est une page dynamique générée en PHP via CGI.</p>";
+echo "</body>";
+echo "</html>";
+?>

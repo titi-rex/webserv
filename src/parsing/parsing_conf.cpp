@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_conf.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/13 16:28:20 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 15:43:48 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,13 @@ int WebServer::parseConf(std::string &line)
 	splitedLine = splitLine(line);
 	if (splitedLine.empty() || splitedLine[0] == "\n")
 		return (0);
-	else if (splitedLine[0] == "bodySizeLimit"){
+	else if (splitedLine[0] == "body_size_limit")
+	{
 		std::stringstream stream(splitedLine[1]);
 		stream >> tmp;
 		setBodySizeLimit(tmp);
 	}
-	else if (splitedLine[0] == "dirErrorPage")
+	else if (splitedLine[0] == "dir_error_page")
 		setDirErrorPage(splitedLine[1]);
 	else if (splitedLine[0] == "error_page")
 		setErrorPage(splitedLine[1], splitedLine[2]);
@@ -43,17 +44,20 @@ t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vecto
 	t_location newLoc;
 	std::string first = sLine[1];
 	
-	initLocation(&newLoc);
 	++(*i);
-	while ((fileVec[*i].find("}") == std::string::npos)){
+	while ((fileVec[*i].find("}") == std::string::npos))
+	{
 		formatLine(fileVec[*i]);
 		sLine = splitLine(fileVec[*i]);
 		if (sLine[0].empty())
+		{
+			++(*i);
 			continue;
+		}
 		else if (sLine[0] == "root")
 			newLoc.setRoot(sLine[1]);
 		else if (sLine[0] ==  "return")
-			newLoc.setRedirection(sLine[1]);
+			newLoc.setRedirection(sLine);
 		else if (sLine[0] ==  "index")
 			newLoc.setIndex(sLine[1]);
 		else if (sLine[0] ==  "allow_methods")
@@ -61,44 +65,12 @@ t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vecto
 		else if (sLine[0] ==  "autoindex")
 			newLoc.setAutoIndex(sLine[1]);
 		else
-			throw std::runtime_error("Unrecognised line in configuration file : Location");
+			throw std::runtime_error("Location: Unrecognised line in configuration file : " + fileVec[*i]);
 		++(*i);
 	}
 	newLoc.setUriOrExt(first);
-	return newLoc;
-}
-
-bool verifieSyntaxe(const std::string& s) 
-{
-    std::istringstream ss(s);
-    int num;
-
-    for (int i = 0; i < 4; ++i) {
-        if (!(ss >> num)) 
-            return false;
-        if (i < 3 && ss.get() != '.')
-            return false;
-        if (num < 0 || num > 255) 
-            return false;
-    }
-
-    return ss.eof();
-}
-
-uint16_t isIntValid(const std::string& s) 
-{
-    for (size_t i = 0; i < s.size(); ++i)
-        if (s[i] < '0' || s[i] > '9') 
-            throw std::runtime_error("Error : invalid port value");
-
-    std::istringstream ss(s);
-    int num;
-    ss >> num;
-
-    if (!ss.fail() && ss.eof() && num >= std::numeric_limits<uint16_t>::min() && num <= std::numeric_limits<uint16_t>::max())
-        return (num);
-	else
-        throw std::runtime_error("Error : invalid port");
+	newLoc.isLegit();
+	return (newLoc);
 }
 
 void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end)
@@ -108,73 +80,38 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 	std::string					sPort;
 	size_t						tmp = 0;
 
-	for (uintptr_t i = start; i <= end; ++i) {
+	for (uintptr_t i = start; i <= end; ++i) 
+	{
 		formatLine(fileVec[i]);
 		sLine = splitLine(fileVec[i]);
 		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{" || sLine[0] == "\n")
 			continue ;
-		else if (sLine[0] == "location"){
+		else if (sLine[0] == "location")
+		{
 			t_location newLoc;
-			std::string first = sLine[1];
 			newLoc = parseLocation(fileVec, sLine, &i);
-			newServ.locations.insert(std::pair<std::string, t_location>(first, newLoc));
+			newServ.setLocations(newLoc);
 		}
-		else if (sLine[0] == "listen"){
-			tmp = sLine[1].find(':');
-			if (tmp == std::string::npos)
-			{
-				if (verifieSyntaxe(sLine[1]) == true)
-				{
-					newServ.host_port.first = sLine[1];
-					newServ.host_port.second = 80;
-				}
-				else
-				{
-					newServ.host_port.first = "127.0.0.1";
-					newServ.host_port.second = isIntValid(sLine[1]);
-				}
-			}
-			else
-			{
-				newServ.host_port.first = sLine[1].substr(0, tmp);
-				sPort = sLine[1].substr(tmp + 1, sLine[1].size() - tmp - 1);
-				if (sPort == "*")
-					newServ.host_port.second = 80;
-				else {
-					newServ.host_port.second  = isIntValid(sPort);
-				}
-			}
-		}
-		else if (sLine[0] == "server_name"){
-			for (size_t j = 1; j < sLine.size(); ++j)
-				newServ.serverNames.push_back(sLine[j]);
-		}
+		else if (sLine[0] == "listen")
+			newServ.setHostPort(sLine);
+		else if (sLine[0] == "server_name")
+			newServ.setServerNames(sLine);
 		else if (sLine[0] == "root")
-			newServ.root = sLine[1];
+			newServ.setRoot(sLine);
 		else if (sLine[0] == "index")
-			newServ.index = sLine[1];
-		else if (sLine[0] == "bodySizeLimit"){
-			tmp = 0;
-			std::stringstream stream(sLine[1]);
-			stream >> tmp;
-			newServ.bodySize = tmp;
-		}
+			newServ.setIndex(sLine);
+		else if (sLine[0] == "body_size_limit")
+			newServ.setBodySize(sLine);
 		else if (sLine[0] == "path_cgi")
-			newServ.cgi.insert(std::pair<std::string, std::string>(sLine[1], sLine[2]));
-		else if (sLine[0] == "cgi_available"){
-			for (size_t j = 1; j < sLine.size(); ++j){
-				for (std::map<std::string, std::string>::iterator it = newServ.cgi.begin(); it != newServ.cgi.end(); ++it)
-					if (sLine[j] != it->first)
-						newServ.cgi.insert(std::pair<std::string, std::string>(sLine[j], "/data/cgi-bin/"));
-			}
-		}
+			newServ.setCgi(sLine, true);
+		else if (sLine[0] == "cgi_available")
+			newServ.setCgi(sLine, false);
 		else
 		{
 			std::cout << "error line = " << fileVec[i]<< std::endl;
 			throw std::runtime_error("Unrecognised line in configuration file : Server");
 		}
 	}
-
 	addVirtualHost(newServ);
 }
 
@@ -185,18 +122,22 @@ void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
     int 		bracket = 0;
 	char		c;
 
-    for (uintptr_t j = *i; j < fileVec.size(); ++j){
+    for (uintptr_t j = *i; j < fileVec.size(); ++j)
+	{
         const std::string &line = fileVec[j];
-        for (size_t k = 0; k < line.size(); ++k){
+        for (size_t k = 0; k < line.size(); ++k)
+		{
             c = line[k];
             if (c == '{'){
                 if (start == 0)
                     start = j + 1;
                 ++bracket;
             }
-            else if (c == '}'){
+            else if (c == '}')
+			{
                 --bracket;
-                if (bracket == 0){
+                if (bracket == 0)
+				{
                     *i = j + 1;
                     end = j;
                     parseServ(fileVec, start, end);
@@ -216,11 +157,11 @@ void WebServer::displayLocations(const t_virtual_host& virtualHost) {
         const t_location& location = it->second;
 		std::cout << std::endl;
         std::cout << "Location ID: " << it->first << std::endl;
-        std::cout << "Is path: " << location.isPath << std::endl;
-        std::cout << "Auto index: " << location.autoIndex << std::endl;
+        std::cout << "Is path: " << (location.isPath ? "true" : "false") << std::endl;
+        std::cout << "Auto index: " << (location.autoIndex ? "on" : "off") << std::endl;
         std::cout << "Location URI or Extension: " << location.uri_or_ext << std::endl;
-        std::cout << "Location root: " << location.root << std::endl;
-        std::cout << "Location return: " << location.redirection << std::endl;
+        std::cout << "Location root: " << (location.root.empty() ? "empty" : location.root) << std::endl;
+        std::cout << "Location return: " << (location.redirection.first.empty() ? "empty" : (location.redirection.first + " " + location.redirection.second)) << std::endl;
 		std::cout << "Location index: " << location.index << std::endl;
 		std::cout << "Location methods: ";
 		for (size_t j = 0; j < location.allowMethod.size(); ++j)
@@ -245,8 +186,13 @@ void	WebServer::debugServ()
 	std::cout << "size body max = " << getBodySizeLimit() << std::endl;
 	std::cout << "error page directory = " << getDirErrorPage() << std::endl;
 	std::cout << "error page value = ";
-	std::cout << getErrorPage();
-	std::cout <<std::endl;
+	if (_errorPage.empty() == false)
+	{
+		std::cout << getErrorPage();
+	}
+	else
+		std::cout << "none";
+	std::cout << std::endl;
 
 	std::cout << "*------------- SERV --------------*" << std::endl;
 	for (size_t i = 0; i < _virtualHost.size(); ++i) {
