@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 12:53:34 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 12:56:50 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ std::string	getDefaultPage(std::string status)
 {
 	std::string	target = "./data/default_page/" + status + ".html";
 	std::cout << target << std::endl;
-	if (check_access_error(target))
+	if (check_access(target))
 	{
 		body = getfile(target);
 
@@ -73,7 +73,7 @@ std::string	WebServer::GET_error2(std::string status)
 		if (it != getErrorPage().end())
 		{
 			pageDir = it->second;
-			if (check_access_error(pageDir))
+			if (check_access(pageDir))
 			{
 				page = getFile(pageDir);
 				return (page);
@@ -132,7 +132,7 @@ std::string	WebServer::GET_error2(std::string status)
 		/*
 		if (_errorPage.count(status))
 		{
-			if (check_access_error(_errorPage[status]))
+			if (check_access(_errorPage[status]))
 			{
 				body = getfile(_errorPage[status]);
 				
@@ -146,7 +146,7 @@ std::string	WebServer::GET_error2(std::string status)
 		if (_dirErrorPage.empty() == false)
 		{
 			std::string target = _dirErrorPage + status + ".html";
-			if (check_access_error(target))
+			if (check_access(target))
 			{
 				body = getfile(target);
 				
