@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 16:17:16 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:30:36 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,9 @@ void	t_virtual_host::setCgi(std::vector<std::string>& sLine, bool oneCgi)
 		if (sLine[2].at(0) == '/')
 			sLine[2].erase(0,1);
 		cgi[sLine[1]] = this->dirCgi + sLine[2];
+		// if (access(cgi[sLine[1]].c_str(), F_OK))
+		// 	throw std::runtime_error("Server: cgi " + sLine[1] + " doesn't exist");
+			
 	}
 	else
 	{

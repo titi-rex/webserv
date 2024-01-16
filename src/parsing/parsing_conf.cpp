@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/16 16:15:51 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:26:27 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 		else if (sLine[0] == "cgi_available")
 			newServ.setCgi(sLine, false);
 		else
-		{
-			std::cout << "error line = " << fileVec[i]<< std::endl;
-			throw std::runtime_error("Unrecognised line in configuration file : Server");
-		}
+			throw std::runtime_error("Server: Unrecognised line in configuration file : " + fileVec[i]);
 	}
 	addVirtualHost(newServ);
 }

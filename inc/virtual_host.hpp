@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:53:28 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 16:07:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:28:18 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 # include <vector>
 # include <map>
 # include <string>
-# include <arpa/inet.h> 
 # include <iostream> 
 # include <map>
 # include <stdexcept>
@@ -23,6 +22,8 @@
 # include <string>
 # include <sstream>
 # include <limits>
+# include <arpa/inet.h>
+# include <unistd.h>
 
 
 class	t_location
