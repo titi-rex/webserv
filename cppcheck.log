@@ -1,0 +1,411 @@
+inc/Client.hpp:55:3: style: Class 'Client' has a constructor with 1 argument that is not explicit. [noExplicitConstructor]
+  Client(size_t bodyLimit);
+  ^
+inc/exceptions.hpp:25:3: style: Class 'locationRedirection' has a constructor with 1 argument that is not explicit. [noExplicitConstructor]
+  locationRedirection(const std::string & redir);
+  ^
+inc/WebServer.hpp:69:3: style: Class 'WebServer' has a constructor with 1 argument that is not explicit. [noExplicitConstructor]
+  WebServer(std::string path);
+  ^
+epoll_test.cpp:60:10: warning: Identical condition 'nm==0', second condition is always false [identicalConditionAfterEarlyExit]
+  if (nm == 0)
+         ^
+epoll_test.cpp:52:10: note: If condition 'nm==0' is true, the function will return/exit
+  if (nm == 0)
+         ^
+epoll_test.cpp:60:10: note: Testing identical condition 'nm==0'
+  if (nm == 0)
+         ^
+inc/map_operator.hpp:19:65: performance: Function parameter 'm' should be passed by const reference. [passedByValue]
+std::ostream& operator<<(std::ostream &os, const std::map<T, U> m)
+                                                                ^
+epoll_test.cpp:21:26: style: Unused variable: efd_c2 [unusedVariable]
+ int efd_master, efd_c1, efd_c2;
+                         ^
+getaddrinfo_test.cpp:50:30: style: C-style pointer casting [cstyleCast]
+  struct sockaddr_in sin = *(struct sockaddr_in *) rp->ai_addr;
+                             ^
+getaddrinfo_test.cpp:25:11: style: The scope of the variable 'fd' can be reduced. [variableScope]
+ int ret, fd;
+          ^
+getaddrinfo_test.cpp:52:20: style: Variable 'proto' can be declared as pointer to const [constVariablePointer]
+  struct protoent* proto = getprotobynumber(rp->ai_protocol);
+                   ^
+read_test.cpp:22:8: style: Variable 'r' is assigned a value that is never used. [unreadVariable]
+ int r = socketpair(AF_UNIX, SOCK_STREAM | SOCK_NONBLOCK, 0, sock);
+       ^
+src/cgi_handler.cpp:23:41: performance: Function parameter 'key' should be passed by const reference. [passedByValue]
+void WebServer::fillElement(std::string key, std::string val) {
+                                        ^
+src/cgi_handler.cpp:23:58: performance: Function parameter 'val' should be passed by const reference. [passedByValue]
+void WebServer::fillElement(std::string key, std::string val) {
+                                                         ^
+src/cgi_handler.cpp:31:44: performance: Function parameter 'port' should be passed by const reference. [passedByValue]
+void    WebServer::fillEnvCGI( std::string port, std::string root) {
+                                           ^
+src/cgi_handler.cpp:31:62: performance: Function parameter 'root' should be passed by const reference. [passedByValue]
+void    WebServer::fillEnvCGI( std::string port, std::string root) {
+                                                             ^
+src/class/Client.cpp:15:9: warning: Member variable 'Client::host' is not initialized in the constructor. [uninitMemberVar]
+Client::Client(void) : _serverEndPoint(-1), _fd_cgi(-1), _sizeLimit(1024), cstatus(CREATED), keepConnection(false)
+        ^
+src/class/Client.cpp:25:9: warning: Member variable 'Client::_sizeLimit' is not initialized in the copy constructor. [uninitMemberVar]
+Client::Client(const Client& src) : Socket(src)
+        ^
+src/class/Client.cpp:25:9: warning: Member variable 'Client::host' is not initialized in the copy constructor. [uninitMemberVar]
+Client::Client(const Client& src) : Socket(src)
+        ^
+src/class/Client.cpp:35:17: warning: Member variable 'Client::_sizeLimit' is not assigned a value in 'Client::operator='. [operatorEqVarError]
+Client& Client::operator=(const Client& src)
+                ^
+src/class/Client.cpp:35:17: warning: Member variable 'Client::host' is not assigned a value in 'Client::operator='. [operatorEqVarError]
+Client& Client::operator=(const Client& src)
+                ^
+src/class/Client.cpp:20:9: warning: Member variable 'Client::host' is not initialized in the constructor. [uninitMemberVar]
+Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _fd_cgi(-1), _sizeLimit(bodyLimit), cstatus(CREATED), keepConnection(false)
+        ^
+src/class/Client.cpp:66:41: style: Parameter 'rq' can be declared as reference to const [constParameterReference]
+void Client::_checkRequestSize(Request& rq)
+                                        ^
+src/class/Location.cpp:15:13: warning: Member variable 't_location::isPath' is not initialized in the constructor. [uninitMemberVar]
+t_location::t_location(){}
+            ^
+src/class/Location.cpp:15:13: warning: Member variable 't_location::autoIndex' is not initialized in the constructor. [uninitMemberVar]
+t_location::t_location(){}
+            ^
+src/class/Location.cpp:15:13: warning: Member variable 't_location::lId' is not initialized in the constructor. [uninitMemberVar]
+t_location::t_location(){}
+            ^
+src/class/Location.cpp:81:43: performance: Function parameter 'autoIndex' should be passed by const reference. [passedByValue]
+void t_location::setAutoIndex(std::string autoIndex){
+                                          ^
+src/class/Location.cpp:94:42: performance: Function parameter 'uri_or_ext' should be passed by const reference. [passedByValue]
+void t_location::setUriOrExt(std::string uri_or_ext){
+                                         ^
+src/class/Location.cpp:98:38: performance: Function parameter 'root' should be passed by const reference. [passedByValue]
+void t_location::setRoot(std::string root){
+                                     ^
+src/class/Location.cpp:102:39: performance: Function parameter 'index' should be passed by const reference. [passedByValue]
+void t_location::setIndex(std::string index){
+                                      ^
+src/class/Location.cpp:112:45: performance: Function parameter 'redirection' should be passed by const reference. [passedByValue]
+void t_location::setRedirection(std::string redirection){
+                                            ^
+src/class/Request.cpp:15:10: warning: Member variable 'Request::rstatus' is not initialized in the constructor. [uninitMemberVar]
+Request::Request(void) : _mId(UNKNOW), _pstatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
+         ^
+src/class/Request.cpp:19:19: warning: Member variable 'Request::_size' is not assigned a value in 'Request::operator='. [operatorEqVarError]
+Request& Request::operator=(const Request& src)
+                  ^
+src/class/Request.cpp:19:19: warning: Member variable 'Request::_lenChunk' is not assigned a value in 'Request::operator='. [operatorEqVarError]
+Request& Request::operator=(const Request& src)
+                  ^
+src/class/Request.cpp:19:19: warning: Member variable 'Request::_bodySizeExpected' is not assigned a value in 'Request::operator='. [operatorEqVarError]
+Request& Request::operator=(const Request& src)
+                  ^
+src/class/Request.cpp:19:19: warning: Member variable 'Request::rstatus' is not assigned a value in 'Request::operator='. [operatorEqVarError]
+Request& Request::operator=(const Request& src)
+                  ^
+src/class/Request.cpp:174:10: style: The scope of the variable 'end' can be reduced. [variableScope]
+ size_t  end = -1;
+         ^
+src/class/Request.cpp:232:10: style: The scope of the variable 'end' can be reduced. [variableScope]
+ size_t  end = -1;
+         ^
+src/class/Request.cpp:233:10: style: The scope of the variable 'check' can be reduced. [variableScope]
+ size_t  check = 0;
+         ^
+src/class/Request.cpp:324:10: style: The scope of the variable 'end' can be reduced. [variableScope]
+ size_t  end = -1;
+         ^
+src/class/Request.cpp:51:46: performance: Function parameter 'path' should be passed by const reference. [passedByValue]
+void Request::setPathtranslated( std::string path ) { this->_pathTranslated = path; };
+                                             ^
+src/class/Request.cpp:52:37: performance: Function parameter 'line' should be passed by const reference. [passedByValue]
+void Request::setRline( std::string line ) { this->_rline = line; };
+                                    ^
+src/class/Request.cpp:53:40: performance: Function parameter 'key' should be passed by const reference. [passedByValue]
+void Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
+                                       ^
+src/class/Request.cpp:53:57: performance: Function parameter 'value' should be passed by const reference. [passedByValue]
+void Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
+                                                        ^
+src/class/Request.cpp:55:42: performance: Function parameter 'status' should be passed by const reference. [passedByValue]
+void Request::setRStrStatus( std::string status ) { this->_rStrStatus = status; };
+                                         ^
+src/class/Request.cpp:56:37: performance: Function parameter 'body' should be passed by const reference. [passedByValue]
+void Request::setRbody( std::string body ) { this->_rbody = body; };
+                                    ^
+src/class/Request.cpp:57:40: performance: Function parameter 'response' should be passed by const reference. [passedByValue]
+void Request::setResponse( std::string response ) { this->response = response; };
+                                       ^
+src/class/Request.cpp:277:33: performance: Function parameter 'raw' should be passed by const reference. [passedByValue]
+bool Request::build(std::string raw)
+                                ^
+src/class/Request.cpp:367:34: performance: Function parameter 'buff' should be passed by const reference. [passedByValue]
+bool Request::addCgi(std::string buff)
+                                 ^
+src/class/Request.cpp:174:14: style: Variable 'end' is assigned a value that is never used. [unreadVariable]
+ size_t  end = -1;
+             ^
+src/class/Request.cpp:232:14: style: Variable 'end' is assigned a value that is never used. [unreadVariable]
+ size_t  end = -1;
+             ^
+src/class/Request.cpp:233:16: style: Variable 'check' is assigned a value that is never used. [unreadVariable]
+ size_t  check = 0;
+               ^
+src/class/Request.cpp:324:14: style: Variable 'end' is assigned a value that is never used. [unreadVariable]
+ size_t  end = -1;
+             ^
+src/class/Socket.cpp:24:17: warning: Member variable 'Socket::_flags' is not assigned a value in 'Socket::operator='. [operatorEqVarError]
+Socket& Socket::operator=(const Socket& src)
+                ^
+inc/Socket.hpp:41:16: style: Virtual function 'setName' is called from constructor 'Socket(int family,uint32_t haddr,uint16_t hport,int flags=SOCK_STREAM,int protocol=0)' at line 47. Dynamic binding is not used. [virtualCallInConstructor]
+  virtual void setName(void);
+               ^
+src/class/Socket.cpp:47:2: note: Calling setName
+ setName();
+ ^
+inc/Socket.hpp:41:16: note: setName is a virtual function
+  virtual void setName(void);
+               ^
+src/class/Socket.cpp:97:19: style: C-style pointer casting [cstyleCast]
+ if (::bind(_fd, (struct sockaddr*) &_sin, sizeof(_sin)) == -1)
+                  ^
+src/class/Socket.cpp:103:22: style: C-style pointer casting [cstyleCast]
+ if (::connect(_fd, (struct sockaddr*) &_sin, sizeof(_sin)) == -1)
+                     ^
+src/class/Socket.cpp:117:27: style: C-style pointer casting [cstyleCast]
+ _fd = ::accept(sock_fd, (struct sockaddr*) &_sin, &len);
+                          ^
+src/class/Socket.cpp:83:33: style: Parameter 'ref' can be declared as reference to const [constParameterReference]
+bool Socket::operator==(Socket& ref)
+                                ^
+src/class/VirtualHost.cpp:15:17: warning: Member variable 't_virtual_host::defaultServer' is not initialized in the constructor. [uninitMemberVar]
+t_virtual_host::t_virtual_host(){}
+                ^
+src/class/VirtualHost.cpp:15:17: warning: Member variable 't_virtual_host::sId' is not initialized in the constructor. [uninitMemberVar]
+t_virtual_host::t_virtual_host(){}
+                ^
+src/class/VirtualHost.cpp:15:17: warning: Member variable 't_virtual_host::bodySize' is not initialized in the constructor. [uninitMemberVar]
+t_virtual_host::t_virtual_host(){}
+                ^
+src/class/VirtualHost.cpp:95:42: performance: Function parameter 'root' should be passed by const reference. [passedByValue]
+void t_virtual_host::setRoot(std::string root){
+                                         ^
+src/class/VirtualHost.cpp:99:43: performance: Function parameter 'index' should be passed by const reference. [passedByValue]
+void t_virtual_host::setIndex(std::string index){
+                                          ^
+src/class/VirtualHost.cpp:107:62: performance: Function parameter 'serverNames' should be passed by const reference. [passedByValue]
+void t_virtual_host::setServerNames(std::vector<std::string> serverNames){
+                                                             ^
+src/class/VirtualHost.cpp:111:64: performance: Function parameter 'cgi' should be passed by const reference. [passedByValue]
+void t_virtual_host::setCgi(std::map<std::string, std::string> cgi){
+                                                               ^
+src/class/VirtualHost.cpp:115:69: performance: Function parameter 'locations' should be passed by const reference. [passedByValue]
+void t_virtual_host::setLocations(std::map<std::string, t_location> locations){
+                                                                    ^
+src/class/WebServer.cpp:26:23: warning: Member variable 'WebServer::_efd' is not assigned a value in 'WebServer::operator='. [operatorEqVarError]
+WebServer& WebServer::operator=(const WebServer& src)
+                      ^
+src/class/WebServer.cpp:26:23: warning: Member variable 'WebServer::_highSocket' is not assigned a value in 'WebServer::operator='. [operatorEqVarError]
+WebServer& WebServer::operator=(const WebServer& src)
+                      ^
+src/class/WebServer.cpp:48:60: performance: Function parameter 'virtualHost' should be passed by const reference. [passedByValue]
+void WebServer::setVirtualHost(std::vector<t_virtual_host> virtualHost) {
+                                                           ^
+src/class/WebServer.cpp:52:42: performance: Function parameter 'key' should be passed by const reference. [passedByValue]
+void WebServer::setErrorPage(std::string key, std::string value) {
+                                         ^
+src/class/WebServer.cpp:52:59: performance: Function parameter 'value' should be passed by const reference. [passedByValue]
+void WebServer::setErrorPage(std::string key, std::string value) {
+                                                          ^
+src/class/WebServer.cpp:56:45: performance: Function parameter 'dirErrorPage' should be passed by const reference. [passedByValue]
+void WebServer::setDirErrorPage(std::string dirErrorPage) {
+                                            ^
+src/class/WebServer.cpp:80:34: performance: Function parameter 'path' should be passed by const reference. [passedByValue]
+WebServer::WebServer(std::string path)
+                                 ^
+src/class/ws_connect.cpp:74:7: warning: Possible null pointer dereference: cl [nullPointer]
+  if (cl->readCgi()) //read cgi output, if end, deregister cgi from epoll
+      ^
+src/class/ws_connect.cpp:63:16: note: Assignment 'cl=NULL', assigned value is 0
+  Client* cl = NULL;
+               ^
+src/class/ws_connect.cpp:66:69: note: Assuming condition is false
+  for (std::map<int, Client>::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
+                                                                    ^
+src/class/ws_connect.cpp:74:7: note: Null pointer dereference
+  if (cl->readCgi()) //read cgi output, if end, deregister cgi from epoll
+      ^
+src/class/ws_connect.cpp:69:4: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
+   {
+   ^
+src/class/ws_error.cpp:19:31: performance: Function parameter 'status' should be passed by const reference. [passedByValue]
+std::string getRL(std::string status)
+                              ^
+src/class/ws_error.cpp:28:38: performance: Function parameter 'dir' should be passed by const reference. [passedByValue]
+std::string getPageByDir(std::string dir, std::string code)
+                                     ^
+src/class/ws_error.cpp:28:55: performance: Function parameter 'code' should be passed by const reference. [passedByValue]
+std::string getPageByDir(std::string dir, std::string code)
+                                                      ^
+src/class/ws_error.cpp:59:47: performance: Function parameter 'status' should be passed by const reference. [passedByValue]
+std::string WebServer::GET_error2(std::string status)
+                                              ^
+src/class/ws_init.cpp:21:3: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
+  {
+  ^
+src/class/ws_utils.cpp:25:64: style: Parameter 'rq' can be declared as reference to const [constParameterReference]
+v_host_ptr WebServer::_selectServer(SocketServer& sk, Request& rq)
+                                                               ^
+src/class/ws_utils.cpp:19:0: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+  if (*it == name)
+^
+src/class/ws_utils.cpp:31:0: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
+   if (_is_server_named(*it, rq.getHeaders().at("host:")))
+^
+src/directory_listing.cpp:17:40: performance: Function parameter 'fileName' should be passed by const reference. [passedByValue]
+static std::string uriPage(std::string fileName, std::string directory, v_host_ptr & v_host)
+                                       ^
+src/directory_listing.cpp:17:62: performance: Function parameter 'directory' should be passed by const reference. [passedByValue]
+static std::string uriPage(std::string fileName, std::string directory, v_host_ptr & v_host)
+                                                             ^
+src/directory_listing.cpp:77:44: performance: Function parameter 'dirIndex' should be passed by const reference. [passedByValue]
+static std::string returnIndex(std::string dirIndex)
+                                           ^
+src/directory_listing.cpp:90:29: style: Parameter 'req' can be declared as reference to const [constParameterReference]
+bool isDirListReq(Request & req)
+                            ^
+src/directory_listing.cpp:100:31: style: Parameter 'req' can be declared as reference to const [constParameterReference]
+std::string dirList(Request & req, v_host_ptr & v_host)
+                              ^
+src/location_processing.cpp:20:84: performance: Function parameter 'methodAsked' should be passed by const reference. [passedByValue]
+static void checkAllowedMethod(std::vector<std::string> methodAllowed, std::string methodAsked)
+                                                                                   ^
+src/location_processing.cpp:41:63: performance: Function parameter 'indexPage' should be passed by const reference. [passedByValue]
+static void checkPageFile(std::string & pagePath, std::string indexPage)
+                                                              ^
+src/location_processing.cpp:70:34: performance: Function parameter 'pagePath' should be passed by const reference. [passedByValue]
+static bool isPrefix(std::string pagePath, std::string prefix)
+                                 ^
+src/location_processing.cpp:70:56: performance: Function parameter 'prefix' should be passed by const reference. [passedByValue]
+static bool isPrefix(std::string pagePath, std::string prefix)
+                                                       ^
+src/location_processing.cpp:34:0: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
+  if (*i == methodAsked)
+^
+src/method.cpp:134:2: portability: %lu in format string (no. 1) requires 'unsigned long' but the argument type is 'std::size_t {aka unsigned long}'. [invalidPrintfArgType_uint]
+ sprintf(sRespondLength, "%lu", body.length());
+ ^
+src/method.cpp:51:75: style: Parameter 'path' can be declared as reference to const [constParameterReference]
+std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
+                                                                          ^
+src/method.cpp:120:85: style: Parameter 'path' can be declared as reference to const [constParameterReference]
+std::string WebServer::methodGet( Request & req, v_host_ptr & v_host, std::string & path )
+                                                                                    ^
+src/method.cpp:160:30: style: Variable 'post_params[key]' is assigned a value that is never used. [unreadVariable]
+            post_params[key] = value;
+                             ^
+src/parsing/parsing_conf.cpp:181:51: performance: Function parameter 'fileVec' should be passed by const reference. [passedByValue]
+void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
+                                                  ^
+src/parsing/parsing_conf.cpp:184:16: style: Variable 'end' is assigned a value that is never used. [unreadVariable]
+ uintptr_t end = 0;
+               ^
+src/parsing/parsing_utils.cpp:35:10: style: The scope of the variable 'wasSpace' can be reduced. [variableScope]
+ bool    wasSpace = false;
+         ^
+src/parsing/parsing_utils.cpp:37:11: style: The scope of the variable 'end' can be reduced. [variableScope]
+ size_t   end;
+          ^
+src/utils.cpp:22:34: style: Parameter 'path' can be declared as reference to const [constParameterReference]
+std::string getFile(std::string& path)
+                                 ^
+src/utils.cpp:37:32: style: Parameter 'path' can be declared as reference to const [constParameterReference]
+bool check_access(std::string& path)
+                               ^
+src/cgi_handler.cpp:17:0: style: The function 'initEnvCGI' is never used. [unusedFunction]
+void WebServer::initEnvCGI()
+^
+src/cgi_handler.cpp:23:0: style: The function 'fillElement' is never used. [unusedFunction]
+void WebServer::fillElement(std::string key, std::string val) {
+^
+src/cgi_handler.cpp:40:0: style: The function 'execute_cgi' is never used. [unusedFunction]
+void WebServer::execute_cgi(const std::string& script_path)
+^
+src/class/Client.cpp:124:0: style: The function 'proceedRequest' is never used. [unusedFunction]
+void Client::proceedRequest(void)
+^
+src/class/Location.cpp:45:0: style: The function 'getIsPath' is never used. [unusedFunction]
+bool t_location::getIsPath() const{
+^
+src/class/Location.cpp:53:0: style: The function 'getLId' is never used. [unusedFunction]
+int t_location::getLId() const{
+^
+src/class/Location.cpp:57:0: style: The function 'getUriOrExt' is never used. [unusedFunction]
+std::string t_location::getUriOrExt() const{
+^
+src/class/Location.cpp:77:0: style: The function 'setIsPath' is never used. [unusedFunction]
+void t_location::setIsPath(bool path){
+^
+src/class/Location.cpp:90:0: style: The function 'setLId' is never used. [unusedFunction]
+void t_location::setLId(int lId){
+^
+src/class/Request.cpp:77:0: style: The function 'isChunked' is never used. [unusedFunction]
+bool Request::isChunked(void) const
+^
+src/class/Socket.cpp:57:0: style: The function 'setFd' is never used. [unusedFunction]
+void Socket::setFd(int fd) { this->_fd = fd; };
+^
+src/class/VirtualHost.cpp:47:0: style: The function 'getDefaultServer' is never used. [unusedFunction]
+bool t_virtual_host::getDefaultServer() const{
+^
+src/class/VirtualHost.cpp:51:0: style: The function 'getSId' is never used. [unusedFunction]
+int t_virtual_host::getSId() const{
+^
+src/class/VirtualHost.cpp:55:0: style: The function 'getBodySize' is never used. [unusedFunction]
+size_t t_virtual_host::getBodySize() const{
+^
+src/class/VirtualHost.cpp:71:0: style: The function 'getServerNames' is never used. [unusedFunction]
+std::vector<std::string> t_virtual_host::getServerNames() const{
+^
+src/class/VirtualHost.cpp:75:0: style: The function 'getCgi' is never used. [unusedFunction]
+std::map<std::string, std::string> t_virtual_host::getCgi() const{
+^
+src/class/VirtualHost.cpp:79:0: style: The function 'getLocations' is never used. [unusedFunction]
+std::map<std::string, t_location> t_virtual_host::getLocations() const{
+^
+src/class/VirtualHost.cpp:83:0: style: The function 'setDefaultServer' is never used. [unusedFunction]
+void t_virtual_host::setDefaultServer(bool defaultServer){
+^
+src/class/VirtualHost.cpp:87:0: style: The function 'setSId' is never used. [unusedFunction]
+void t_virtual_host::setSId(int sId){
+^
+src/class/VirtualHost.cpp:91:0: style: The function 'setBodySize' is never used. [unusedFunction]
+void t_virtual_host::setBodySize(size_t bodySize){
+^
+src/class/VirtualHost.cpp:103:0: style: The function 'setHostPort' is never used. [unusedFunction]
+void t_virtual_host::setHostPort(std::pair<std::string, uint16_t> host_port){
+^
+src/class/VirtualHost.cpp:107:0: style: The function 'setServerNames' is never used. [unusedFunction]
+void t_virtual_host::setServerNames(std::vector<std::string> serverNames){
+^
+src/class/VirtualHost.cpp:111:0: style: The function 'setCgi' is never used. [unusedFunction]
+void t_virtual_host::setCgi(std::map<std::string, std::string> cgi){
+^
+src/class/VirtualHost.cpp:115:0: style: The function 'setLocations' is never used. [unusedFunction]
+void t_virtual_host::setLocations(std::map<std::string, t_location> locations){
+^
+src/class/ws_error.cpp:59:0: style: The function 'GET_error2' is never used. [unusedFunction]
+std::string WebServer::GET_error2(std::string status)
+^
+src/method.cpp:19:0: style: The function 'GET_error' is never used. [unusedFunction]
+std::string WebServer::GET_error(int code)
+^
+src/parsing/parsing_conf.cpp:242:0: style: The function 'debugServ' is never used. [unusedFunction]
+void WebServer::debugServ()
+^
+src/utils.cpp:37:0: style: The function 'check_access' is never used. [unusedFunction]
+bool check_access(std::string& path)
+^

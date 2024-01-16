@@ -115,11 +115,11 @@ class WebServer
 
 
 		std::string	Method(Request & req, v_host_ptr & v_host);	
-		std::string	GET( Request & req, v_host_ptr & v_host, std::string & path );
+		std::string	methodGet( Request & req, v_host_ptr & v_host, std::string & path );
 		std::string	GET_error(int code);	//obsolete
 		std::string	GET_error2(std::string status);	// GET special pour error
 
-		std::string	POST(std::string path);
+		std::string	methodPost(std::string path);
 
 };
 

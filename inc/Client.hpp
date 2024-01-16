@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 13:57:35 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 14:53:20 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ typedef enum
 	GATHERED,
 	PROCEEDED,
 	CGIWAIT,
+	CGIOK,
 	ERROR,
 	FATAL,
 	SENT,
@@ -36,6 +37,9 @@ class Client : public Socket
 		int		_serverEndPoint;
 		int		_fd_cgi;
 		size_t	_sizeLimit;
+
+	void	_checkRequestSize(Request& rq);
+
 
 	public	:
 		v_host_ptr		host;

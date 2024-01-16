@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/12 15:44:50 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/15 17:56:19 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ extern sig_atomic_t	g_status;
 static void	checkAllowedMethod(std::vector<std::string> methodAllowed, std::string methodAsked)
 {
 	// Always allow HEADs
-	if (methodAsked == "eHEAD")
+	if (methodAsked == "HEAD")
 		return;
 
 	std::vector<std::string>::iterator	i;
@@ -31,7 +31,7 @@ static void	checkAllowedMethod(std::vector<std::string> methodAllowed, std::stri
 	{
 		// std::cout << "\n*i (methodAllowed): " << *i << std::endl;
 
-		if ("e" + *i == methodAsked)
+		if (*i == methodAsked)
 			return;
 	}
 	throw std::runtime_error("405 Method Not Allowed");
@@ -156,5 +156,7 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 	checkPageFile(pagePath, v_host->locations[location].getIndex());
 
 	// std::cout << "End of findLocation: pagePath: " << pagePath << std::endl;
+
+	req.setPathtranslated(pagePath);
 	return (pagePath);
 }

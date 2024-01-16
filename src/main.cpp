@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 13:31:32 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 22:21:46 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,26 +37,45 @@ sig_atomic_t	g_status = 1;
 		// 	std::cout << "method is :" << tmp << ":" << std::endl;
 
 #define RQL "POST / HTTP/1.1\r\nHost: mImi\r\nconTent-Length: 35\r\n\r\nthis is a body\nabody bodant!\n"
-#define RQC "POST / HTTP/1.1\r\nHost: mImi\r\ntransfer-EncodinG: chunked\r\n\r\n15\r\nthis is a body\n\r\n7\r\n hello,\r\n7\r\n world!\r\n0\r\n"
+#define RQC "POST / HTTP/1.1\r\nHost: mImi\r\ntransfer-EncodinG: chunked\r\n\r\nf\r\nthis is a body\n\r\n7\r\n hello,\r\n7\r\n world!\r\n0\r\n"
+#define RQG "GET /?why=mimi HTTP/1.1\r\nHost: mImi\r\n\r\n"
+
+template <typename T>
+void	operator<<(e_logLevel lvl, T log)
+{
+	switch (lvl)
+	{
+		case logDEBUG:
+		{
+			std::clog << FDEBUG << "[ DEBUG ] " << log << END << std::endl;
+			break;
+		}
+		case logINFO:
+		{
+			std::clog << FINFO << "[ INFO ] " << log << END << std::endl;
+			break;
+		}
+		case logWARNING:
+		{
+			std::clog << FWARNING << "[ WARNING ] " << log << END << std::endl;
+			break;
+		}
+		case logERROR:
+		{
+			std::clog << FERROR << "[ ERROR ] " << log << END << std::endl;
+			break;
+		}
+	}
+}
 
 
 int	main(int ac, char **av)
 {
-	// Request	rq;
 
-	// try
-	// {
-	// 	rq.build(RQC);
-	// 	// rq.build();
-
-	// 	std::cout << rq << std::endl;
-	// }
-	// catch(const std::exception& e)
-	// {
-	// 	std::cerr << e.what() << '\n';
-	// }
-	// exit(0);
-	
+	logDEBUG << "debug text";
+	logINFO << "some info";
+	logWARNING << "attention..";
+	logERROR << "euh..ERROR..";
 	
 	if (ac != 2)
 	{

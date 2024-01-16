@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 13:56:53 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/15 17:49:36 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void	WebServer::process_rq(Client &cl)
 		std::string	shutPage = "data/default_page/index.html";
 
 		g_status = 0;
-		cl.request.response = GET(cl.request, cl.host, shutPage);
+		cl.request.response = methodGet(cl.request, cl.host, shutPage);
 		cl.sendRequest();
 	}
 	if (cl.request.getUri() == "/throw")
@@ -142,7 +142,6 @@ void	WebServer::process_rq_error(Client &cl)
 	}
 	catch(const std::exception& e)
 	{
-		
 		std::cerr << "ERROR FATAL, ABANDON CLIENT" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		deleteClient(cl.getFd());
