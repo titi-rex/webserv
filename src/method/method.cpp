@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 20:24:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 21:56:05 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <ctime>
 #include <cstdio>
 
-std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
+std::string methodHead( Request & req, vHostPtr & v_host, std::string & path)
 {
 	std::ifstream	requestedPage(path.c_str());
 
@@ -41,7 +41,7 @@ std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
 	req.setRstatus(200);
 	req.setRStrStatus("200");
 	req.setRline("OK");
-	req.setRheaders("Server", v_host->serverNames[0]); // Place holder
+	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
 	req.setRheaders("Date", date);
 	req.setRheaders("Content-length", sContentLength);
 	req.setRheaders("Connection", "keep-alive");
@@ -54,7 +54,7 @@ std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
 // pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
 // pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
-std::string	WebServer::Method(Client &cl, Request & req, v_host_ptr & v_host)
+std::string	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
 
@@ -85,7 +85,7 @@ std::string	WebServer::Method(Client &cl, Request & req, v_host_ptr & v_host)
 }
 
 // std::string	get(Request rq, VirtualHost v_host)
-std::string	WebServer::methodGet( Request & req, v_host_ptr & v_host, std::string & path )
+std::string	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path )
 {
 	std::string		body = getFile(path);
 
@@ -96,7 +96,7 @@ std::string	WebServer::methodGet( Request & req, v_host_ptr & v_host, std::strin
 	req.setRstatus (200);
 	req.setRStrStatus ("200");
 	req.setRline ("OK");
-	req.setRheaders("Server", v_host->serverNames[0]); // Place holder
+	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
 	req.setRheaders("Content-length", sRespondLength);
 	req.setRbody(body);
 
@@ -112,11 +112,11 @@ std::string WebServer::methodPost(Client &client)
 	// execute cgi with path
 	// check for timeout?
 
-	std::map<std::string, std::string>	cgi = client.host->getCgi();
+	MapStrStr_t	cgi = client.host->getCgi();
 	std::string							ext = client.request.getExt();
 	std::string							script_path;
 	
-    std::map<std::string, std::string>::iterator it2 = cgi.find(ext);
+    MapStrStr_t::iterator it2 = cgi.find(ext);
     if (it2 != cgi.end())
 	{	
         script_path = it2->second;

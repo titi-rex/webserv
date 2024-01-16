@@ -12,62 +12,54 @@
 
 #ifndef _VIRTUAL_HOST_H__
 # define _VIRTUAL_HOST_H__
-# include <vector>
-# include <map>
-# include <string>
-# include <iostream> 
-# include <map>
-# include <stdexcept>
-# include <algorithm>
-# include <string>
 # include <sstream>
 # include <limits>
-# include <arpa/inet.h>
-# include <unistd.h>
-
 # include "Location.hpp"
+# include "container.hpp"
 
 
 class	VirtualHost
 {
 	private:
+		size_t					bodySize;		//limite de taille pour les client body
+		std::string				root;			//repertoire par defaut ou chercher les cibles des request
+		std::string				index;			//fichier par default a chercher si la requete est un repertoire
+		std::string				dirCgi;			//repertoire des cgi (default/data/cgi-bin)
+		PairStrUint16_t			host_port; 		// host:port ou le virtualhost doit ecouter, par default 0.0.0.0:80
+		VecStr_t				serverNames;	//list des nom auquels le virtual host doit repondre
+		MapStrStr_t				cgi;			// s1 nom executable, s2 path exacte de l'executable
+		MapStrLoc_t				locations;		//list des locations enregistrer dans le virtual host
 	
 	public:
 		VirtualHost(const VirtualHost& src);
 		VirtualHost& operator=(const VirtualHost& src);
 		VirtualHost();
 		~VirtualHost();
-	
-		int									sId;			//id du virtual host
-		size_t								bodySize;		//limite de taille pour les client body
-		std::string							root;			//repertoire par defaut ou chercher les cibles des request
-		std::string							index;			//fichier par default a chercher si la requete est un repertoire
-		std::string							dirCgi;			//repertoire des cgi (default/data/cgi-bin)
-		std::pair<std::string, uint16_t>	host_port; 		// host:port ou le virtualhost doit ecouter, par default 0.0.0.0:80
-		std::vector<std::string>			serverNames;	//list des nom auquels le virtual host doit repondre
-		std::map<std::string, std::string>	cgi;			// s1 nom executable, s2 path exacte de l'executable
-		std::map<std::string, Location>	locations;		//list des locations enregistrer dans le virtual host
 
-		int										getSId() const;
-		size_t									getBodySize() const;
-		const std::string&							getRoot() const;
-		const std::string&							getIndex() const;
-		const std::string&							getDirCgi() const;
-		const std::pair<std::string, uint16_t>&		getHostPort() const;
-		const std::vector<std::string>&				getServerNames() const;
-		const std::map<std::string, std::string>&	getCgi() const;
-		const std::map<std::string, Location>&	getLocations() const;
+		size_t					getBodySize() const;
+		const std::string&		getRoot() const;
+		const std::string&		getIndex() const;
+		const std::string&		getDirCgi() const;
+		const PairStrUint16_t&	getHostPort() const;
+		const VecStr_t&			getServerNames() const;
+		const MapStrStr_t&		getCgi() const;
+		const MapStrLoc_t&		getLocations() const;
 
-		void								setBodySize(std::vector<std::string>& sLine);
-		void								setRoot(std::vector<std::string>& sLine);
-		void								setIndex(std::vector<std::string>& sLine);
-		void								setDirCgi(std::vector<std::string>& sLine);
-		void								setHostPort(std::vector<std::string>& sLine);
-		void								setServerNames(std::vector<std::string>& sLine);
-		void								setCgi(std::vector<std::string>& sLine, bool oneCgi);
-		void								setLocations(Location& newLoc);
+		void					setBodySize(VecStr_t& sLine);
+		void					setRoot(VecStr_t& sLine);
+		void					setIndex(VecStr_t& sLine);
+		void					setDirCgi(VecStr_t& sLine);
+		void					setHostPort(VecStr_t& sLine);
+		void					setServerNames(VecStr_t& sLine);
+		void					setCgi(VecStr_t& sLine, bool oneCgi);
+		void					setLocations(Location& newLoc);
 };
 
-typedef VirtualHost* v_host_ptr;	//typedef pour un pointer vers un virtual host
+typedef VirtualHost* 				vHostPtr;
+typedef std::vector<VirtualHost>	VecVHost_t;
+typedef std::deque<vHostPtr>		DeqVHostPtr_t;
+
+std::ostream&	operator<<(std::ostream &os, const vHostPtr v_host);
+std::ostream&	operator<<(std::ostream &os, const VirtualHost& v_host);
 
 #endif

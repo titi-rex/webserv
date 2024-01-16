@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/16 20:41:03 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/16 21:59:17 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,24 +17,24 @@
 #	==============================	NAMES	==============================	#
 NAME		=	webserv
 DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_SERVER} ${DIR_SRCS_METHOD} 
-DEFAULT_CONFIG_PATH	=	z_notes/exemple.conf
+DEFAULT_CONFIG_PATH	=	conf/juju.conf
 
 
 #	==============================	SOURCES	==============================	#
 DIR_SRCS_METHOD	=	method/
-LST_SRCS_METHOD	=	method.cpp location_processing.cpp cgi_handler.cpp directory_listing.cpp  ws_error.cpp
+LST_SRCS_METHOD	=	cgi_handler.cpp directory_listing.cpp location_processing.cpp method.cpp ws_error.cpp
 SRCS_METHOD		=	${addprefix ${DIR_SRCS_METHOD}, ${LST_SRCS_METHOD}}
 
 DIR_SRCS_PARSE	=	parsing/
-LST_SRCS_PARSE	=	parsing_conf.cpp parsing_utils.cpp VirtualHost.cpp Location.cpp Request.cpp  
+LST_SRCS_PARSE	=	Location.cpp parsing_conf.cpp parsing_utils.cpp Request.cpp VirtualHost.cpp 
 SRCS_PARSE		=	${addprefix ${DIR_SRCS_PARSE}, ${LST_SRCS_PARSE}}
 
 DIR_SRCS_SERVER	=	server/
-LST_SRCS_SERVER	=	WebServer.cpp ws_init.cpp ws_connect.cpp ws_utils.cpp Socket.cpp SocketServer.cpp Client.cpp
+LST_SRCS_SERVER	=	Client.cpp Socket.cpp SocketServer.cpp WebServer.cpp ws_connect.cpp ws_init.cpp ws_utils.cpp 
 SRCS_SERVER		=	${addprefix ${DIR_SRCS_SERVER}, ${LST_SRCS_SERVER}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	 main.cpp signal.cpp  utils.cpp exceptions.cpp \
+LST_SRCS		=	exceptions.cpp main.cpp signal.cpp utils.cpp \
 					${SRCS_PARSE} ${SRCS_SERVER} ${SRCS_METHOD} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
@@ -81,7 +81,7 @@ IFLAGS		=	-I${DIR_HEADER} -I${DIR_HEADER}${DIR_HDR_CLASS}
 CXX			=	c++ -std=c++98
 MKDIR 		=	mkdir -p
 RM			=	rm -rf
-MAKE		=	make --silent
+MAKE		=	make --silent -j
 DEBUG		=	no
 
 
@@ -122,7 +122,7 @@ re		:	fclean
 		@${MAKE} all
 
 fsan	:
-	@${MAKE} DEBUG=fsanitize ${NAME} 
+	@${MAKE} DEBUG=fsanitize ${NAME} && ./${NAME} ${DEFAULT_CONFIG_PATH}
 
 val		:
 	@${MAKE} DEBUG=valgrind && valgrind ${VALFLAGS} ./${NAME} ${DEFAULT_CONFIG_PATH}

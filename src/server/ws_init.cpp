@@ -6,16 +6,16 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 23:14:41 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 21:50:02 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 
 
-bool	sk_used(std::map<int, SocketServer>& SocketServersList, v_host_ptr v_host, uint32_t addr, uint16_t port)
+bool	sk_used(MapFdSockServ_t& SocketServersList, vHostPtr v_host, uint32_t addr, uint16_t port)
 {
-	for (std::map<int, SocketServer>::iterator it = SocketServersList.begin(); it != SocketServersList.end(); ++it)
+	for (MapFdSockServ_t::iterator it = SocketServersList.begin(); it != SocketServersList.end(); ++it)
 	{
 		if (it->second.getSin().sin_addr.s_addr == addr && it->second.getSin().sin_port == port)
 		{
@@ -37,8 +37,8 @@ void	WebServer::_SocketServerList_init(void)
 	for (size_t i = 0; i < _virtualHost.size(); ++i)
 	{
 	std::clog << "v_host " <<  _virtualHost[i] << std::endl;
-		uint32_t	haddr = Socket::hstrtoint(_virtualHost[i].host_port.first);
-		uint16_t	hport = _virtualHost[i].host_port.second;
+		uint32_t	haddr = Socket::hstrtoint(_virtualHost[i].getHostPort().first);
+		uint16_t	hport = _virtualHost[i].getHostPort().second;
 		
 		if (sk_used(_SocketServersList, &_virtualHost[i], htonl(haddr), htons(hport)))
 			continue ;
@@ -98,7 +98,7 @@ void	WebServer::_epoll_init(void)
 		throw std::runtime_error("610: cannot create epoll instance");
 
 // add interest to epoll
-	for (std::map<int, SocketServer>::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
+	for (MapFdSockServ_t::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
 	{
 		modEpollList(it->first, EPOLL_CTL_ADD, EPOLLIN);		
 		std::clog << "fd : " << it->first << " for " << _SocketServersList[it->first].getName() << " add to epoll list" << std::endl;

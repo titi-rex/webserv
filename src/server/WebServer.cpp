@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 20:24:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 22:16:22 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ WebServer&	WebServer::operator=(const WebServer& src)
 
 WebServer::~WebServer(void) 
 {
-	for (std::map<int, SocketServer>::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
+	for (MapFdSockServ_t::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
 	{
 		close(it->first);
 		std::clog << "deleted: " << it->second << std::endl;
@@ -48,7 +48,7 @@ WebServer::~WebServer(void)
 };
 
 
-void	WebServer::setVirtualHost(std::vector<VirtualHost> vHost) { 
+void	WebServer::setVirtualHost(VecVHost_t vHost) { 
 	this->_virtualHost = vHost; 
 };
 
@@ -64,11 +64,11 @@ void	WebServer::setBodySizeLimit(size_t bodySizeLimit) {
 	this->_bodySizeLimit = bodySizeLimit;
 };
 
-std::vector<VirtualHost>	WebServer::getVirtualHost(void) const { 
+VecVHost_t	WebServer::getVirtualHost(void) const { 
 	return (this->_virtualHost); 
 };
 
-std::map<std::string,std::string>&	WebServer::getErrorPage(void) { 
+MapStrStr_t&	WebServer::getErrorPage(void) { 
 	return (this->_errorPage); 
 };
 
@@ -82,15 +82,16 @@ size_t	WebServer::getBodySizeLimit(void) const {
 
 WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_pages")
 {
-	std::vector<std::string> 	fileVec;
-	uintptr_t					i = 0;
+	VecStr_t 	fileVec;
+	uintptr_t	i = 0;
 	
 	std::ifstream file(path.c_str());
     if (!file.is_open()) 
 		throw std::runtime_error("Error : could not open configuration file");
 	
 	std::string line;
-    while (std::getline(file, line)) {
+    while (std::getline(file, line)) 
+	{
 		fileVec.push_back(line);
     }
 	
@@ -121,22 +122,3 @@ void WebServer::addVirtualHost(const VirtualHost& vHost)
 	_virtualHost.push_back(vHost);
 }
 
-/**
- * @brief format id/names/host
- */
-std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host)
-{
-	
-	os << v_host->sId << "/" << v_host->serverNames << "/" << v_host->host_port.first << ":" << v_host->host_port.second;
-	return (os);
-}
-
-
-/**
- * @brief format id/names/host
- */
-std::ostream&	operator<<(std::ostream &os, const VirtualHost& v_host)
-{
-	os << v_host.sId << "/" << v_host.serverNames << "/" << v_host.host_port.first << ":" << v_host.host_port.second;
-	return (os);
-}

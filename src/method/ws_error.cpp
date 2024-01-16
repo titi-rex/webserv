@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_error.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 15:59:13 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 21:15:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	WebServer::getError(std::string status, Request& req)
 	// Use the error_page part of the config file to display a page in case of an error
 	if(!_errorPage.empty()) try 
 	{
-		std::map<std::string, std::string>::iterator	it;
+		MapStrStr_t::iterator	it;
 
 		it = getErrorPage().find(status);
 

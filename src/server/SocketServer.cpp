@@ -46,7 +46,7 @@ std::ostream& operator<<(std::ostream& os, const SocketServer& SocketServer)
 {
 	os << "s/" << SocketServer.getFd() << "/" << SocketServer.getName() << "/";
 	for (size_t i = 0; i < SocketServer.v_hosts.size(); ++i)
-		os << SocketServer.v_hosts[i]->serverNames[0] << " ";
+		os << SocketServer.v_hosts[i]->getServerNames().at(0) << " ";
 	return (os);
 }
 

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 20:18:06 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 21:15:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ const std::string&	Request::getPathInfo(void) const { return (this->_pathInfo); 
 const std::string&	Request::getExt(void) const { return (this->_ext); };
 e_parsingStatus		Request::getPstatus(void) const {return (this->_pstatus);};
 const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
-const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
+const MapStrStr_t&	Request::getHeaders(void) const { return (this->_headers); };
 
 const std::string	Request::getMethodName(void) const
 {
@@ -74,7 +74,7 @@ void	Request::makeResponse (void)
 {
 	// std::clog << "\nmakeResponse()" << std::endl;
 
-	std::map<std::string, std::string>::iterator	iter;
+	MapStrStr_t::iterator	iter;
 
 	this->response = "HTTP/1.1 " + this->_rStrStatus + " " + this->_rline + "\n"; // Place holder for the status description
 
@@ -165,8 +165,8 @@ bool	Request::_findBodySize(void)
 	if (_mId == HEAD || _mId == GET)
 		return (true);
 
-	std::map<std::string, std::string>::iterator itCl = _headers.find("content-length");
-	std::map<std::string, std::string>::iterator itTe = _headers.find("transfer-encoding");
+	MapStrStr_t::iterator itCl = _headers.find("content-length");
+	MapStrStr_t::iterator itTe = _headers.find("transfer-encoding");
 
 	if (itCl == _headers.end() && itTe == _headers.end())
 		throw std::runtime_error("411: Length Required");

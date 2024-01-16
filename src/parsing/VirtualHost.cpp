@@ -6,13 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 20:31:59 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 21:48:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "VirtualHost.hpp"
 
-VirtualHost::VirtualHost(void) : sId(0), bodySize(1024), root("/data"), index("index.html"), dirCgi("/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
+VirtualHost::VirtualHost(void) : bodySize(1024), root("/data"), index("index.html"), dirCgi("/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
 
 VirtualHost::~VirtualHost(void) {}
 
@@ -25,7 +25,6 @@ VirtualHost&	VirtualHost::operator=(const VirtualHost& src)
 {
 	if (this == &src)
 		return (*this);
-	this->sId = src.sId;
 	this->bodySize = src.bodySize;
 	this->root = src.root;
 	this->index = src.index;
@@ -34,10 +33,6 @@ VirtualHost&	VirtualHost::operator=(const VirtualHost& src)
 	this->cgi = src.cgi;
 	this->locations = src.locations;
 	return (*this);
-};
-
-int	VirtualHost::getSId() const{
-	return(this->sId);
 };
 
 size_t VirtualHost::getBodySize() const{
@@ -56,31 +51,31 @@ const std::string&	VirtualHost::getDirCgi() const{
 	return(this->dirCgi);
 };
 
-const std::pair<std::string, uint16_t>&	VirtualHost::getHostPort() const{
+const PairStrUint16_t&	VirtualHost::getHostPort() const{
 	return(this->host_port);
 };
 
-const std::vector<std::string>&	VirtualHost::getServerNames() const{
+const VecStr_t&	VirtualHost::getServerNames() const{
 	return(this->serverNames);
 };
 
-const std::map<std::string, std::string>&	VirtualHost::getCgi() const{
+const MapStrStr_t&	VirtualHost::getCgi() const{
 	return(this->cgi);
 };
 
-const std::map<std::string, Location>&	VirtualHost::getLocations() const{
+const MapStrLoc_t&	VirtualHost::getLocations() const{
 	return(this->locations);
 };
 
 
-void	VirtualHost::setBodySize(std::vector<std::string>& sLine)
+void	VirtualHost::setBodySize(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: body_size_limit supplied but value is missing");
 	this->bodySize = std::strtoul(sLine.at(1).c_str(), NULL, 10);	
 };
 
-void	VirtualHost::setRoot(std::vector<std::string>& sLine)
+void	VirtualHost::setRoot(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: root supplied but value is missing");
@@ -90,7 +85,7 @@ void	VirtualHost::setRoot(std::vector<std::string>& sLine)
 	this->root = sLine.at(1);
 };
 
-void	VirtualHost::setIndex(std::vector<std::string>& sLine)
+void	VirtualHost::setIndex(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: index supplied but value is missing");
@@ -98,7 +93,7 @@ void	VirtualHost::setIndex(std::vector<std::string>& sLine)
 };
 
 
-void	VirtualHost::setDirCgi(std::vector<std::string>& sLine)
+void	VirtualHost::setDirCgi(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: dir_cgi supplied but value is missing");
@@ -140,7 +135,7 @@ uint16_t isIntValid(const std::string& s)
 }
 
 
-void	VirtualHost::setHostPort(std::vector<std::string>& sLine)
+void	VirtualHost::setHostPort(VecStr_t& sLine)
 {
 	size_t	tmp;
 	std::string 	sPort;
@@ -164,7 +159,7 @@ void	VirtualHost::setHostPort(std::vector<std::string>& sLine)
 	}	
 };
 
-void	VirtualHost::setServerNames(std::vector<std::string>& sLine)
+void	VirtualHost::setServerNames(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: sever_name supplied but value is missing");
@@ -172,7 +167,7 @@ void	VirtualHost::setServerNames(std::vector<std::string>& sLine)
 			this->serverNames.push_back(sLine[j]);
 };
 
-void	VirtualHost::setCgi(std::vector<std::string>& sLine, bool oneCgi)
+void	VirtualHost::setCgi(VecStr_t& sLine, bool oneCgi)
 {
 	if (oneCgi)
 	{
@@ -199,5 +194,24 @@ void	VirtualHost::setCgi(std::vector<std::string>& sLine, bool oneCgi)
 
 void	VirtualHost::setLocations(Location& newLoc)
 {
-	this->locations.insert(std::pair<std::string, Location>(newLoc.uri_or_ext, newLoc));
+	this->locations.insert(std::pair<std::string, Location>(newLoc.getUriOrExt(), newLoc));
 };
+
+/**
+ * @brief format id/names/host
+ */
+std::ostream&	operator<<(std::ostream &os, const vHostPtr v_host)
+{
+	
+	os << v_host->getServerNames() << "/" << v_host->getHostPort().first << ":" << v_host->getHostPort().second;
+	return (os);
+}
+
+/**
+ * @brief format id/names/host
+ */
+std::ostream&	operator<<(std::ostream &os, const VirtualHost& v_host)
+{
+	os << v_host.getServerNames() << "/" << v_host.getHostPort().first << ":" << v_host.getHostPort().second;
+	return (os);
+}

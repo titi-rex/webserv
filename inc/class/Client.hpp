@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 20:27:06 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 21:32:44 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Client : public Socket
 
 
 	public	:
-		v_host_ptr		host;
+		vHostPtr		host;
 		Request			request;
 		e_client_status	cstatus;
 		bool			keepConnection;
@@ -68,5 +68,8 @@ class Client : public Socket
 };
 
 std::ostream&	operator<<(std::ostream& os, const Client& Client);
+
+typedef std::map<int, Client>		MapFdClient_t;
+typedef std::map<int, Client*>		MapFdClientPtr_t;
 
 #endif
