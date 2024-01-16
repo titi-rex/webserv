@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/15 17:56:19 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 12:43:26 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,7 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 
 		locationRedirection	lr(redirection);
 		throw lr;
+		// throw std::runtime_error(req.getRStrStatus());
 	}
 
 	// Delete prefix
