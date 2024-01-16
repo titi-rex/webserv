@@ -11,3 +11,7 @@ echo "<p>Ceci est une page dynamique générée en PHP via CGI.</p>";
 echo "</body>";
 echo "</html>";
 ?>
+
+# /usr/bin/php-cgi est le chemin complet vers l'interpréteur PHP CGI. 
+# Cela indique au système où trouver l'exécutable nécessaire pour interpréter 
+# et exécuter le script.
