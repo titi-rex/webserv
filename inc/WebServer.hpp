@@ -106,9 +106,9 @@ class WebServer
 		void	process_rq_error(Client &cl);
 
 		// CGI
-		void	initEnvCGI();
 		void	fillElement(std::string key , std::string val);
 		void	fillValueFromHeader(std::map<std::string, std::string> header, std::string key);
+		void	fillValueFromCGI(std::map<std::string, std::string> cgi, std::string key, std::string value); 
 		void	fillEnvCGI(const Client& client);
 		void	execute_cgi(const std::string& script_path);
 
