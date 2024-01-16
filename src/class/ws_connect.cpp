@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 17:49:36 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 12:26:19 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ std::cout << "host: " << cl.host << std::endl;
 
 
 // prepare response based on request, there should be GET/HEAD/POST
-	cl.request.response = Method(cl.request, cl.host);
+	cl.request.response = Method(cl, cl.request, cl.host);
 	cl.cstatus = PROCEEDED;
 	std::clog << " response : " << std::endl << cl.request.response << std::endl;
 }

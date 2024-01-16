@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 12:41:35 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 12:58:53 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ e_method 			Request::getMid(void) const {return (this->_mId);};
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
 const std::string&	Request::getQuery(void) const { return (this->_query); };
+const std::string&	Request::getPathInfo(void) const { return (this->_pathInfo); };
+const std::string&	Request::getExt(void) const { return (this->_ext); };
 e_parsingStatus		Request::getPstatus(void) const {return (this->_pstatus);};
 const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
@@ -133,6 +135,12 @@ bool	Request::_parseRequestLine(void)
 		_query = _uri.substr(i + 1, _uri.size());
 		_uri.erase(i, _uri.size());
 	}
+	i = _uri.find_last_of('/');
+	_pathInfo = _uri.substr(i, _uri.size());
+	i = _uri.find_last_of('.');
+	if (i != std::string::npos)
+		_ext = _uri.substr(i + 1, _uri.size());
+	
 	tmp = _extractRange(start, end, " \n");
 	if (tmp.compare("HTTP/1.1") == false)
 		throw std::runtime_error("505 Wrong HTTP version");
@@ -416,6 +424,8 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 {
 	os << "RL: " << req.getMethodName() << " " << req.getUri() << " HTTP/1.1" << std::endl;
 	os << "query:" << req.getQuery() << std::endl;
+	os << "pathInfo:" << req.getPathInfo() << std::endl;
+	os << "extentsion:" << req.getExt() << std::endl;
 	os << "Headers :" << std::endl;
 	os << req.getHeaders();
 	os << "Body :" << std::endl;

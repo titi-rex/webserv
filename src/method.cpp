@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 17:55:08 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 12:28:45 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,11 @@ std::string methodHead( Request & req, v_host_ptr & v_host, std::string & path)
 // pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
 // pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
-std::string	WebServer::Method(Request & req, v_host_ptr & v_host)
+std::string	WebServer::Method(Client &cl, Request & req, v_host_ptr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
+
+	fillEnvCGI(cl);
 
 	if (req.getUri() != "/" && isDirListReq(req))
 		return (dirList(req, v_host));

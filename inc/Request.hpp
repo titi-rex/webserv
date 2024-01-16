@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 12:41:37 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 12:58:26 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,10 @@ class Request
 		e_method 				_mId;
 		std::string				_uri;
 		std::string				_query;
+		std::string				_pathInfo;
+		std::string				_ext;
 		std::string				_body;
 		std::map<std::string, std::string>	_headers;
-
 
 
 		//tmp variable for parsing
@@ -127,6 +128,10 @@ class Request
 		const std::string&				getUri(void) const;
 		const std::string&				getBody(void) const;
 		const std::string&				getQuery(void) const;
+		const std::string&				getPathInfo(void) const;
+		const std::string&				getExt(void) const;
+
+		
 		const std::string&				getRStrStatus(void) const;
 		const std::map<std::string, std::string>&	getHeaders(void) const;
 		bool	isChunked(void) const;
