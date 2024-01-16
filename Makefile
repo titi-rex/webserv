@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/16 20:07:24 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/16 20:19:29 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,11 +22,11 @@ DEFAULT_CONFIG_PATH	=	z_notes/exemple.conf
 
 #	==============================	SOURCES	==============================	#
 DIR_SRCS_METHOD	=	method/
-LST_SRCS_METHOD	=	method.cpp location_processing.cpp cgi_handler.cpp directory_listing.cpp 
+LST_SRCS_METHOD	=	method.cpp location_processing.cpp cgi_handler.cpp directory_listing.cpp  ws_error.cpp
 SRCS_METHOD		=	${addprefix ${DIR_SRCS_METHOD}, ${LST_SRCS_METHOD}}
 
 DIR_SRCS_PARSE	=	parsing/
-LST_SRCS_PARSE	=	parsing_conf.cpp parsing_utils.cpp VirtualHost.cpp Location.cpp 
+LST_SRCS_PARSE	=	parsing_conf.cpp parsing_utils.cpp VirtualHost.cpp Location.cpp Request.cpp  
 SRCS_PARSE		=	${addprefix ${DIR_SRCS_PARSE}, ${LST_SRCS_PARSE}}
 
 DIR_SRCS_SERVER	=	server/
@@ -34,7 +34,7 @@ LST_SRCS_SERVER	=	WebServer.cpp ws_init.cpp ws_connect.cpp ws_utils.cpp Socket.c
 SRCS_SERVER		=	${addprefix ${DIR_SRCS_SERVER}, ${LST_SRCS_SERVER}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	Request.cpp  ws_error.cpp main.cpp signal.cpp  utils.cpp exceptions.cpp \
+LST_SRCS		=	 main.cpp signal.cpp  utils.cpp exceptions.cpp \
 					${SRCS_PARSE} ${SRCS_SERVER} ${SRCS_METHOD} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
@@ -63,12 +63,14 @@ else
 	DEPS	=	${addprefix ${DIR_OBJS}, ${LST_SRCS:.cpp=.d}}
 endif
 
+
 #	==============================	HEADERS	==============================	#
 DIR_HEADER	=	inc/
 LST_HDR		=	${NAME}.hpp Request.hpp WebServer.hpp SocketServer.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
 				 Socket.hpp Client.hpp exceptions.hpp
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 IFLAGS		=	-I${DIR_HEADER} 
+
 
 #	==============================	COMMANDS	==============================	#
 CXX			=	c++ -std=c++98
@@ -84,9 +86,8 @@ DEPFLAGS	=	-MMD -MP
 FSFLAGS		=	-g3 -fsanitize=leak,address,pointer-subtract,pointer-compare,undefined 
 VALFLAGS 	=	--leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes \
 				--track-fds=yes --trace-children=yes 
-#				--time-stamp=yes --error-markers=begin,end
+				--time-stamp=yes --error-markers=begin,end
 HARDFLAGS	=	--read-var-info=yes --read-inline-info=yes
-
 
 ifeq ($(DEBUG), fsanitize)
 	CXXFLAGS += $(FSFLAGS)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 15:19:57 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 20:18:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,20 @@ Request&	Request::operator=(const Request& src)
 		return (*this);
 	_mId = src._mId;
 	_uri = src._uri;
+	_query = src._query;
+	_pathInfo = src._pathInfo;
+	_ext = src._ext;
 	_body = src._body;
 	_headers = src._headers;
 	_pstatus = src._pstatus;
+	_rline = src._rline;
+	_rheaders = src._rheaders;
+	_rbody = src._rbody;
+	_pathTranslated = src._pathTranslated;
+	_bodySizeExpected = src._bodySizeExpected;
+	response = src.response;
+	rstatus = src.rstatus;
+	_rStrStatus = src._rStrStatus;
 	return (*this);
 };
 
@@ -59,7 +70,7 @@ void	Request::setRStrStatus( std::string status ) { this->_rStrStatus = status; 
 void	Request::setRbody( std::string body ) { this->_rbody = body; };
 void	Request::setResponse( std::string response ) { this->response = response; };
 
-void	Request::makeResponse ( void )
+void	Request::makeResponse (void)
 {
 	// std::clog << "\nmakeResponse()" << std::endl;
 
@@ -82,7 +93,6 @@ bool	Request::isChunked(void) const
 	return (_pstatus == BODYCHUNK);
 };
 
-
 bool	Request::_is_method_known(std::string & test)
 {
 	std::string	ref[METHOD_COUNT] = {"GET", "POST", "DELETE", "HEAD"};
@@ -104,8 +114,6 @@ std::string	Request::_extractRange(size_t& start, size_t& end, const char *set)
 	end = _raw.find_first_of(set, start);	
 	return (_raw.substr(start, end - start));
 }
-
-
 
 /**
  * @brief return true if we need more data to complete the RL, false else
@@ -149,6 +157,9 @@ bool	Request::_parseRequestLine(void)
 	return (false);
 }
 
+/**
+ * @brief find the body size, return true if a content-length has been supplied, false if data is chunked
+ */
 bool	Request::_findBodySize(void)
 {
 	if (_mId == HEAD || _mId == GET)
@@ -275,13 +286,7 @@ bool	Request::_parseBodyByChunk(std::string &body)
 
 /**
  * @brief return true if request is complete, else false
- * take raw input with minimal size (BUFFER_SIZE)
- * etape: 	1 RL
- * 			2 headers
- * 			3 body
- * RL minimal size : "GET / HTTP/1.1" = 14 char
- *   field-line   = field-name ":" OWS field-value OWS
- * Field values containing CR, LF, or NUL characters are invalid and dangerous
+ * take raw input with minimal size (BUFFER_SIZE) 
  */
 bool	Request::build(std::string	raw)
 {
@@ -324,7 +329,6 @@ bool	Request::build(std::string	raw)
 	} 
 	return (false);
 }
-
 
 
 bool	Request::_parseCgiHeaders(void)
@@ -408,7 +412,6 @@ bool	Request::addCgi(std::string	buff)
 	return (true);
 }
 
-
 void	Request::clear(void)
 {
 	_mId = UNKNOW;
@@ -432,4 +435,3 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 	os << "{" << req.getBody() << "}" << std::endl;
 	return (os);
 };
-
