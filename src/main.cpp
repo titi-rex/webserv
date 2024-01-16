@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 11:39:53 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 11:53:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int	main(int ac, char **av)
 	logWARNING << "attention..";
 	logERROR << "euh..ERROR..";
 
+	// exit(0);
 	if (ac != 2)
 	{
 		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;
@@ -58,7 +59,7 @@ int	main(int ac, char **av)
 	try 
 	{
 		WebServer	server(av[1]);
-		server.run();
+		// server.run();
 	}
 	catch (std::exception & e)
 	{

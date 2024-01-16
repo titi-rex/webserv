@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   virtual_host.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:53:28 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/11 15:02:45 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 15:29:00 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # include <algorithm>
 # include <string>
 # include <sstream>
+# include <limits>
+
 
 class	t_location
 {
@@ -33,23 +35,23 @@ class	t_location
 		t_location();
 		~t_location();
 
+		int									lId;			//id de l'instance
 		bool								isPath;			//if false its an extension ! vrai par default
 		bool								autoIndex;		//directory listing, indique si le vhost doit repondre avec un index si la requet est un repertoire, si non renvoyer une erreur true par default
-		int									lId;			//id de l'instance
-		std::string							uri_or_ext;		//valeur depuis laquelle la location est utilise
+		std::string							uri_or_ext;		//valeur depuis laquelle la location est utilise (key)
 		std::string							root;			//repertoire ou chercher la cible de la requete, si empty utiliser celle du virtual host
 		std::string							index;			//fichier par default a chercher si la requet est un repertoire, si empty utiliser celle du virtual host
 		std::vector<std::string>			allowMethod;	//METHOD autorise pour cette location, GET par default si empty
-		std::string							redirection;	//substitue  la cible de la requete  ( ou la valeur de la location seulement, je crois pas mais plus de recherche sont necessaire), la method doit a nouveau etre utilise avec cette nouvelle cible
+		std::pair<std::string, std::string>	redirection;	//substitue  la cible de la requete  ( ou la valeur de la location seulement, je crois pas mais plus de recherche sont necessaire), la method doit a nouveau etre utilise avec cette nouvelle cible
 		
 		bool								getIsPath() const;	
 		bool								getAutoIndex() const;
 		int									getLId() const;
-		std::string							getUriOrExt() const;
-		std::string							getRoot() const;
-		std::string							getIndex() const;
-		std::vector<std::string>			getAllowMethod() const;
-		std::string							getRedirection() const;
+		const std::string&						getUriOrExt() const;
+		const std::string&						getRoot() const;
+		const std::string&						getIndex() const;
+		const std::vector<std::string>&			getAllowMethod() const;
+		const std::pair<std::string, std::string>&	getRedirection() const;
 		
 		void								setIsPath(bool path);	
 		void								setAutoIndex(std::string autoIndex);
@@ -57,8 +59,10 @@ class	t_location
 		void								setUriOrExt(std::string uri_or_ext);
 		void								setRoot(std::string root);
 		void								setIndex(std::string index);
-		void								setAllowMethod(std::vector<std::string>	allowMethod);
-		void								setRedirection(std::string redirection);
+		void								setAllowMethod(std::vector<std::string>& allowMethod);
+		void								setRedirection(std::vector<std::string>& sLine);
+
+		void								isLegit() const;
 };
 
 class	t_virtual_host
@@ -71,7 +75,6 @@ class	t_virtual_host
 		t_virtual_host();
 		~t_virtual_host();
 	
-		bool								defaultServer;	// si plusieur server avec meme host/ports (obsolete) le premier est celui par default;
 		int									sId;			//id du virtual host
 		size_t								bodySize;		//limite de taille pour les client body
 		std::string							root;			//repertoire par defaut ou chercher les cibles des request
@@ -81,27 +84,22 @@ class	t_virtual_host
 		std::map<std::string, std::string>	cgi;			// s1 nom executable, s2 path exacte de l'executable
 		std::map<std::string, t_location>	locations;		//list des locations enregistrer dans le virtual host
 
-		bool								getDefaultServer() const;
-		int									getSId() const;
-		size_t								getBodySize() const;
-		std::string							getRoot() const;
-		std::string							getIndex() const;
-		std::pair<std::string, uint16_t>	getHostPort() const;
-		std::vector<std::string>			getServerNames() const;
-		std::map<std::string, std::string>	getCgi() const;
-		std::map<std::string, t_location>	getLocations() const;
+		int										getSId() const;
+		size_t									getBodySize() const;
+		const std::string&							getRoot() const;
+		const std::string&							getIndex() const;
+		const std::pair<std::string, uint16_t>&		getHostPort() const;
+		const std::vector<std::string>&				getServerNames() const;
+		const std::map<std::string, std::string>&	getCgi() const;
+		const std::map<std::string, t_location>&	getLocations() const;
 
-		void								setDefaultServer(bool defaultServer);
-		void								setSId(int sId);
-		void								setBodySize(size_t bodySize);
-		void								setRoot(std::string root);
-		void								setIndex(std::string index);
-		void								setHostPort(std::pair<std::string, uint16_t> host_port);
-		void								setServerNames(std::vector<std::string> serverNames);
-		void								setCgi(std::map<std::string, std::string> cgi);
-		void								setLocations(std::map<std::string, t_location> locations);
-
-		void								cgi_handler(void);
+		void								setBodySize(std::vector<std::string>& sLine);
+		void								setRoot(std::vector<std::string>& sLine);
+		void								setIndex(std::vector<std::string>& sLine);
+		void								setHostPort(std::vector<std::string>& sLine);
+		void								setServerNames(std::vector<std::string>& sLine);
+		void								setCgi(std::vector<std::string>& sLine, bool oneCgi);
+		void								setLocations(t_location& newLoc);
 };
 
 typedef t_virtual_host* v_host_ptr;	//typedef pour un pointer vers un virtual host
