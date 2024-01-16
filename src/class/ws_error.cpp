@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_error.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 23:11:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 12:53:34 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,48 +58,47 @@ std::string	getDefaultPage(std::string status)
 
 std::string	WebServer::GET_error2(std::string status)
 {
-	std::string	RL;
+	std::cout << "\nGET_error2" << std::endl;
+
+	std::string	pageDir;
 	std::string	body;
-	std::string	res;
+	std::string	page;
 	
-
-
-	if(_dirErrorPage.empty()) try 
+	if(!_errorPage.empty()) try 
 	{
-		RL = getRL(status);
-		body = getPageByDir(_dirErrorPage, status);
-		return (res);
+		std::map<std::string, std::string>::iterator	it;
+
+		it = getErrorPage().find(status);
+
+		if (it != getErrorPage().end())
+		{
+			pageDir = it->second;
+			if (check_access_error(pageDir))
+			{
+				page = getFile(pageDir);
+				return (page);
+			}
+		}
 	}
 	catch (std::exception & e)
 	{
 		std::clog << e.what() << ", for custom page location" << std::endl;
 	}
 
-	if(_dirErrorPage.empty()) try 
+	if(!_dirErrorPage.empty()) try 
 	{
-		RL = getRL(status);
-		body = getPageByDir(_dirErrorPage, status);
-		return (res);
+		page = getPageByDir(_dirErrorPage, status);
+		return (page);
 	}
 	catch (std::exception & e)
 	{
 		std::clog << e.what() << ", for custom dir" << std::endl;
 	}
 	
-	try
-	{
-		RL = getRL(status);
-		body = getPageByDir("./data/default_page/", status);
-		return (res);
-	}
-	catch (std::exception & e)
-	{
-		std::clog << e.what() << ", for default page" << std::endl;
-	}
-	RL = getRL("500");
-	res = RL + "server: webserver\r\ncontent-length: 171" + ERROR_500_MSG;
-	return (res);
+	// throw std::runtime_error("FATAL");
+	return ("");
 }
+
 
 /*
 <html>
