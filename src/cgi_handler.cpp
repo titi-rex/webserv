@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 13:18:35 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 15:37:57 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,14 +85,6 @@ void    WebServer::fillEnvCGI(const Client& client)
     fillValueFromHeader(client.request.getHeaders(), "content-type");
     fillValueFromHeader(client.request.getHeaders(), "content-length");
 
-    // std::cout << "*------- DEBUG CGI ENV -------*" << std::endl;
-	// typedef std::map<std::string, std::string>::const_iterator LocationIterator;
-    // for (LocationIterator it = _envCGI.begin(); it != _envCGI.end(); ++it) {
-	// 	std::cout << std::endl;
-    //     std::cout << "CGI first = " << it->first << std::endl;
-    //     std::cout << "CGI second = : " << it->second << std::endl;
-    // }
-
     // client
     // HTTP_ACCEPT
     // HTTP_ACCEPT_LANGUAGE
@@ -105,10 +97,11 @@ void convertToEnvp(const std::map<std::string, std::string>& map, char**& envp)
 {
     int i = 0;
     int envpSize = map.size() + 1; 
-
-
+    
     envp = new char*[envpSize];
 
+    std::cout << "*------- CGI ENVIROMMENT -------*" << std::endl;
+    std::cout << std::endl;
     for (std::map<std::string, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         std::string keyValue = it->first + "=" + it->second;
@@ -161,7 +154,7 @@ void WebServer::execute_cgi(const std::string& script_path)
         perror("Error : fork");
 
     for (int i = 0; envp[i] != NULL; ++i)
-        free(envp[i]);
+        delete[] envp[i];
 
     delete[] envp;
 }

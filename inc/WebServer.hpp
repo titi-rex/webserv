@@ -120,7 +120,7 @@ class WebServer
 		std::string	GET_error(int code);	//obsolete
 		std::string	GET_error2(std::string status);	// GET special pour error
 
-		std::string	methodPost(std::string path);
+		std::string	methodPost(Client &client);
 
 };
 

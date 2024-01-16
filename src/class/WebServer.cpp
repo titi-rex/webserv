@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/12 23:15:48 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 14:54:16 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ WebServer::WebServer(std::string path)
 		
    	}
 }
-	// this->debugServ();
+	//this->debugServ();
 	
 	try
 	{
