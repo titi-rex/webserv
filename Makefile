@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/15 20:36:46 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/16 20:07:24 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,28 +16,26 @@
 
 #	==============================	NAMES	==============================	#
 NAME		=	webserv
-DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_HTTP} ${DIR_SRCS_CLASS} 
+DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_SERVER} ${DIR_SRCS_METHOD} 
 DEFAULT_CONFIG_PATH	=	z_notes/exemple.conf
 
 
 #	==============================	SOURCES	==============================	#
+DIR_SRCS_METHOD	=	method/
+LST_SRCS_METHOD	=	method.cpp location_processing.cpp cgi_handler.cpp directory_listing.cpp 
+SRCS_METHOD		=	${addprefix ${DIR_SRCS_METHOD}, ${LST_SRCS_METHOD}}
+
 DIR_SRCS_PARSE	=	parsing/
-LST_SRCS_PARSE	=	parsing_conf.cpp parsing_utils.cpp
+LST_SRCS_PARSE	=	parsing_conf.cpp parsing_utils.cpp VirtualHost.cpp Location.cpp 
 SRCS_PARSE		=	${addprefix ${DIR_SRCS_PARSE}, ${LST_SRCS_PARSE}}
 
-DIR_SRCS_HTTP	=	http/
-LST_SRCS_HTTP	=	
-SRCS_HTTP		=	${addprefix ${DIR_SRCS_HTTP}, ${LST_SRCS_HTTP}}
-
-DIR_SRCS_CLASS	=	class/
-LST_SRCS_CLASS	=	Request.cpp Socket.cpp WebServer.cpp ws_init.cpp ws_connect.cpp ws_utils.cpp ws_error.cpp \
-					VirtualHost.cpp Location.cpp SocketServer.cpp Client.cpp
-SRCS_CLASS		=	${addprefix ${DIR_SRCS_CLASS}, ${LST_SRCS_CLASS}}
+DIR_SRCS_SERVER	=	server/
+LST_SRCS_SERVER	=	WebServer.cpp ws_init.cpp ws_connect.cpp ws_utils.cpp Socket.cpp SocketServer.cpp Client.cpp
+SRCS_SERVER		=	${addprefix ${DIR_SRCS_SERVER}, ${LST_SRCS_SERVER}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	main.cpp signal.cpp method.cpp utils.cpp directory_listing.cpp \
-					location_processing.cpp exceptions.cpp cgi_handler.cpp log.cpp \
-					${SRCS_PARSE} ${SRCS_HTTP} ${SRCS_CLASS} 
+LST_SRCS		=	Request.cpp  ws_error.cpp main.cpp signal.cpp  utils.cpp exceptions.cpp \
+					${SRCS_PARSE} ${SRCS_SERVER} ${SRCS_METHOD} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
 
