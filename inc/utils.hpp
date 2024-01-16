@@ -86,7 +86,7 @@ void	sig_init(void (*handler) (int sig));
 void	sig_handler(int sig);
 
 std::string	getFile(std::string& path);
-bool		check_access_error(std::string& path);
+bool		check_access(std::string& path);
 
 bool	 	isDirListReq(Request & req);
 std::string	dirList(Request & req, v_host_ptr & v_host);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 11:39:36 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 12:58:53 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ const std::string&	Request::getQuery(void) const { return (this->_query); };
 const std::string&	Request::getPathInfo(void) const { return (this->_pathInfo); };
 const std::string&	Request::getExt(void) const { return (this->_ext); };
 e_parsingStatus		Request::getPstatus(void) const {return (this->_pstatus);};
+const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
 const std::map<std::string, std::string>&	Request::getHeaders(void) const { return (this->_headers); };
 
 const std::string	Request::getMethodName(void) const
