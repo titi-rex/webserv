@@ -1,8 +1,12 @@
 
 
 to do :
-refaire request 
+
 faire un fonction log
+
+parsing check cgi existe + execute 
+	+ location { qui chhuine
+clean tout architecture 
 
 
 bug :

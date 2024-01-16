@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 16:10:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 17:01:24 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ std::string WebServer::methodPost(Client &client)
     //     script_path.clear(); // ERROR
 	std::cout <<  "EXEC CGI with path : " << script_path << std::endl;
 	fillEnvCGI(client);
-	execute_cgi(script_path);
+	execute_cgi("." + script_path);
 
 	// CGI output !!!!!!!!
 	

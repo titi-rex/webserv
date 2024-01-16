@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/16 15:43:48 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:26:27 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,6 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 {
 	t_virtual_host 				newServ;
 	std::vector<std::string>	sLine;
-	std::string					sPort;
-	size_t						tmp = 0;
 
 	for (uintptr_t i = start; i <= end; ++i) 
 	{
@@ -100,6 +98,8 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			newServ.setRoot(sLine);
 		else if (sLine[0] == "index")
 			newServ.setIndex(sLine);
+		else if (sLine[0] == "dir_cgi")
+			newServ.setDirCgi(sLine);
 		else if (sLine[0] == "body_size_limit")
 			newServ.setBodySize(sLine);
 		else if (sLine[0] == "path_cgi")
@@ -107,10 +107,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 		else if (sLine[0] == "cgi_available")
 			newServ.setCgi(sLine, false);
 		else
-		{
-			std::cout << "error line = " << fileVec[i]<< std::endl;
-			throw std::runtime_error("Unrecognised line in configuration file : Server");
-		}
+			throw std::runtime_error("Server: Unrecognised line in configuration file : " + fileVec[i]);
 	}
 	addVirtualHost(newServ);
 }
@@ -173,6 +170,7 @@ void WebServer::displayLocations(const t_virtual_host& virtualHost) {
 void WebServer::displayCGI(const t_virtual_host& virtualHost) {
     typedef std::map<std::string, std::string>::const_iterator LocationIterator;
 
+	std::cout << "CGI directory: " << virtualHost.getDirCgi() << std::endl;
     for (LocationIterator it = virtualHost.cgi.begin(); it != virtualHost.cgi.end(); ++it) {
 		std::cout << std::endl;
         std::cout << "CGI exec: " << it->first << std::endl;

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 15:48:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:17:34 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,8 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErr
    	}
 	file.close();
 
-	this->debugServ();
-	
+	// this->debugServ();
+	// exit(0);
 	try
 	{
 		_SocketServerList_init();
@@ -112,7 +112,6 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErr
 	}
 	catch(const std::exception& e)
 	{
-		// std::cerr << e.what() << std::endl;
 		throw std::runtime_error(e.what());
 	}	
 };
