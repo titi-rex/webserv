@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/15 13:53:14 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/15 15:41:04 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,54 @@ void WebServer::initEnvCGI()
         it->second = "";
 }
 
-void WebServer::fillElement(std::string key, std::string val) {
+void WebServer::fillElement(std::string key, std::string val) 
+{
     std::map<std::string, std::string>::iterator it = _envCGI.find(key);
 
     if (it != _envCGI.end())
         it->second = val;
 }
 
+std::string uint16tostr(uint16_t value) {
+    std::ostringstream oss;
+    oss << value;
+    std::string strValue = oss.str();
 
-void    WebServer::fillEnvCGI( std::string port, std::string root) {
-	// fillEnvCGI("USER", getenv("USER"));
-	// fillEnvCGI("HOME", getenv("HOME"));
-	// fillEnvCGI("HTTP_CACHE_CONTROL", HTTP_CACHE_CONTROL);
-	// fillEnvCGI("HTTP_UPGRADE_INSECURE_REQUESTS", HTTP_UPGRADE_INSECURE_REQUESTS);
-	// fillEnvCGI("HTTP_CONNECTION", HTTP_CONNECTION);
-	fillEnvCGI("HTTP_ORIGIN", "http://" + getVirtualHost()[0].getHostPort().first); // host
+    return strValue;
+}
+
+void    WebServer::fillEnvCGI(const Client& client) 
+{
+    // serveur
+    fillElement("SERVER_SOFTWARE", "Webserver/1.01");
+    fillElement("SERVER_NAME", client.host->getServerNames()[0]);
+    fillElement("GATEWAY_INTERFACE", "CGI/1.1");
+
+    // requete
+    fillElement("SERVER_PROTOCOL", "HTTP/1.1");
+    fillElement("SERVER_PORT", uint16tostr(client.host->getHostPort().second));
+    if (client.request.getMid() == 0)
+        fillElement("REQUEST_METHOD", "GET");
+    else
+        fillElement("REQUEST_METHOD", "POST");
+    // PATH_INFO
+    // PATH_TRANSLATED
+    // SCRIPT_NAME 
+    // QUERY_STRING
+    fillElement("REMOTE_HOST", "");
+    fillElement("REMOTE_ADDR", client.host->getHostPort().first); // dans sin dans socket (client herite de socket)
+    fillElement("AUTH_TYPE", "null");
+    // REMOTE_USER
+    // REMOTE_IDENT
+    // CONTENT_TYPE
+    // CONTENT_LENGTH
+
+    // client
+    // HTTP_ACCEPT
+    // HTTP_ACCEPT_LANGUAGE
+    // HTTP_USER_AGENT
+    // HTTP_COOKIE
+    // HTTP_REFERER
 }
 
 void WebServer::execute_cgi(const std::string& script_path) 

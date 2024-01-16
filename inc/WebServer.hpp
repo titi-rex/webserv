@@ -7,6 +7,7 @@
 # include <sstream>
 # include <cstring>
 # include <limits>
+# include <string> 
 
 # include <unistd.h>
 # include <sys/epoll.h>
@@ -107,7 +108,7 @@ class WebServer
 		// CGI
 		void initEnvCGI();
 		void fillElement(std::string key , std::string val);
-		void fillEnvCGI( std::string port, std::string root);
+		void fillEnvCGI(const Client& client);
 		void execute_cgi(const std::string& script_path);
 
 
