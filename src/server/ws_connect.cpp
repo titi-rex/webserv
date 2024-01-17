@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 21:24:07 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:18:32 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	WebServer::handle_epollin(int event_id)
 		// find client from cgi fd, should use a cgi_fd to client map insteed
 		for (MapFdClient_t::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
 		{
-			if (it->second.getFd_cgi() == event_id)
+			if (it->second.getFd_cgi()[0] == event_id)
 			{
 				cl = &it->second;
 				break ;
