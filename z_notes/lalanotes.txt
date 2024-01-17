@@ -1,4 +1,12 @@
+srcs : main signal utils 
 
+srcs/method : post method location_process directory handler cgi_handler
+
+srcs/parsing : location vhost
+
+srcs/server : socket sockserv client  webserver 
+
+request ?
 
 to do :
 

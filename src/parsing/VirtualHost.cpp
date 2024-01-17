@@ -6,26 +6,25 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 16:30:36 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 21:48:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "virtual_host.hpp"
+#include "VirtualHost.hpp"
 
-t_virtual_host::t_virtual_host(void) : sId(0), bodySize(1024), root("/data"), index("index.html"), dirCgi("/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
+VirtualHost::VirtualHost(void) : bodySize(1024), root("/data"), index("index.html"), dirCgi("/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
 
-t_virtual_host::~t_virtual_host(void) {}
+VirtualHost::~VirtualHost(void) {}
 
-t_virtual_host::t_virtual_host(const t_virtual_host& src) 
+VirtualHost::VirtualHost(const VirtualHost& src) 
 {
 	*this = src;
 };
 
-t_virtual_host&	t_virtual_host::operator=(const t_virtual_host& src) 
+VirtualHost&	VirtualHost::operator=(const VirtualHost& src) 
 {
 	if (this == &src)
 		return (*this);
-	this->sId = src.sId;
 	this->bodySize = src.bodySize;
 	this->root = src.root;
 	this->index = src.index;
@@ -36,51 +35,47 @@ t_virtual_host&	t_virtual_host::operator=(const t_virtual_host& src)
 	return (*this);
 };
 
-int	t_virtual_host::getSId() const{
-	return(this->sId);
-};
-
-size_t t_virtual_host::getBodySize() const{
+size_t VirtualHost::getBodySize() const{
 	return(this->bodySize);
 };
 
-const std::string&	t_virtual_host::getRoot() const{
+const std::string&	VirtualHost::getRoot() const{
 	return(this->root);
 };
 
-const std::string&	t_virtual_host::getIndex() const{
+const std::string&	VirtualHost::getIndex() const{
 	return(this->index);
 };
 
-const std::string&	t_virtual_host::getDirCgi() const{
+const std::string&	VirtualHost::getDirCgi() const{
 	return(this->dirCgi);
 };
 
-const std::pair<std::string, uint16_t>&	t_virtual_host::getHostPort() const{
+const PairStrUint16_t&	VirtualHost::getHostPort() const{
 	return(this->host_port);
 };
 
-const std::vector<std::string>&	t_virtual_host::getServerNames() const{
+const VecStr_t&	VirtualHost::getServerNames() const{
 	return(this->serverNames);
 };
 
-const std::map<std::string, std::string>&	t_virtual_host::getCgi() const{
+const MapStrStr_t&	VirtualHost::getCgi() const{
 	return(this->cgi);
 };
 
-const std::map<std::string, t_location>&	t_virtual_host::getLocations() const{
+const MapStrLoc_t&	VirtualHost::getLocations() const{
 	return(this->locations);
 };
 
 
-void	t_virtual_host::setBodySize(std::vector<std::string>& sLine)
+void	VirtualHost::setBodySize(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: body_size_limit supplied but value is missing");
 	this->bodySize = std::strtoul(sLine.at(1).c_str(), NULL, 10);	
 };
 
-void	t_virtual_host::setRoot(std::vector<std::string>& sLine)
+void	VirtualHost::setRoot(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: root supplied but value is missing");
@@ -90,7 +85,7 @@ void	t_virtual_host::setRoot(std::vector<std::string>& sLine)
 	this->root = sLine.at(1);
 };
 
-void	t_virtual_host::setIndex(std::vector<std::string>& sLine)
+void	VirtualHost::setIndex(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: index supplied but value is missing");
@@ -98,7 +93,7 @@ void	t_virtual_host::setIndex(std::vector<std::string>& sLine)
 };
 
 
-void	t_virtual_host::setDirCgi(std::vector<std::string>& sLine)
+void	VirtualHost::setDirCgi(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: dir_cgi supplied but value is missing");
@@ -140,7 +135,7 @@ uint16_t isIntValid(const std::string& s)
 }
 
 
-void	t_virtual_host::setHostPort(std::vector<std::string>& sLine)
+void	VirtualHost::setHostPort(VecStr_t& sLine)
 {
 	size_t	tmp;
 	std::string 	sPort;
@@ -164,7 +159,7 @@ void	t_virtual_host::setHostPort(std::vector<std::string>& sLine)
 	}	
 };
 
-void	t_virtual_host::setServerNames(std::vector<std::string>& sLine)
+void	VirtualHost::setServerNames(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: sever_name supplied but value is missing");
@@ -172,7 +167,7 @@ void	t_virtual_host::setServerNames(std::vector<std::string>& sLine)
 			this->serverNames.push_back(sLine[j]);
 };
 
-void	t_virtual_host::setCgi(std::vector<std::string>& sLine, bool oneCgi)
+void	VirtualHost::setCgi(VecStr_t& sLine, bool oneCgi)
 {
 	if (oneCgi)
 	{
@@ -197,7 +192,26 @@ void	t_virtual_host::setCgi(std::vector<std::string>& sLine, bool oneCgi)
 	}
 };
 
-void	t_virtual_host::setLocations(t_location& newLoc)
+void	VirtualHost::setLocations(Location& newLoc)
 {
-	this->locations.insert(std::pair<std::string, t_location>(newLoc.uri_or_ext, newLoc));
+	this->locations.insert(std::pair<std::string, Location>(newLoc.getUriOrExt(), newLoc));
 };
+
+/**
+ * @brief format id/names/host
+ */
+std::ostream&	operator<<(std::ostream &os, const vHostPtr v_host)
+{
+	
+	os << v_host->getServerNames() << "/" << v_host->getHostPort().first << ":" << v_host->getHostPort().second;
+	return (os);
+}
+
+/**
+ * @brief format id/names/host
+ */
+std::ostream&	operator<<(std::ostream &os, const VirtualHost& v_host)
+{
+	os << v_host.getServerNames() << "/" << v_host.getHostPort().first << ":" << v_host.getHostPort().second;
+	return (os);
+}

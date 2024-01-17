@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/11 14:59:32 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 21:57:20 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-static std::string	uriPage(std::string fileName, std::string directory, v_host_ptr & v_host)
+static std::string	uriPage(std::string fileName, std::string directory, vHostPtr & v_host)
 {
 	std::string	uriPage = directory + fileName;
 
@@ -34,7 +34,7 @@ static std::string	uriPage(std::string fileName, std::string directory, v_host_p
 	return (uriPage);
 }
 
-static std::string	makeDirList(std::string directory, v_host_ptr & v_host)
+static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 {
 	// std::cout << "makeDirList" << std::endl;
 
@@ -97,12 +97,12 @@ bool isDirListReq(Request & req)
 	return false;
 }
 
-std::string	dirList(Request & req, v_host_ptr & v_host)
+std::string	dirList(Request & req, vHostPtr & v_host)
 {
-		std::map<std::string, t_location>::iterator	i;
-		std::string									directory = req.getUri();
+		MapStrLoc_t::const_iterator	i;
+		std::string					directory = req.getUri();
 
-	for ( i = v_host->locations.begin(); i != v_host->locations.end(); ++i)
+	for ( i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
 	{
 			// std::cout << "i->first: " << i->first << std::endl;
 			// std::cout << "directory: " << directory << std::endl;
@@ -120,7 +120,7 @@ std::string	dirList(Request & req, v_host_ptr & v_host)
 			//ERROR http://localhost:8080/redirections/ should not work !!! erreur de parsing
 			if (access(dirIndex.c_str(), R_OK) == 0)
 				return (returnIndex(dirIndex));
-			else if (v_host->locations[i->first].getAutoIndex() == true)
+			else if (v_host->getLocations().at(i->first).getAutoIndex() == true)
 				return (makeDirList(directory, v_host));
 		}
 	}

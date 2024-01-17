@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   post.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 12:37:59 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/15 11:27:31 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 20:27:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "WebServer.hpp"
-#include "virtual_host.hpp"
+#include "VirtualHost.hpp"
 
 
 // curl -X POST -d "nom=John&email=john@example.com&message=Bonjour" http://example.com/process_form

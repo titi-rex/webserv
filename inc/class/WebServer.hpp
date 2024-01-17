@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   WebServer.hpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
+/*   Updated: 2024/01/16 21:32:44 by tlegrand         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef _WEB_SERVER_H__
 # define _WEB_SERVER_H__
 # include <string>
@@ -17,16 +29,15 @@
 
 typedef unsigned int long	uintptr_t;
 
-# include "virtual_host.hpp"
+# include "VirtualHost.hpp"
 # include "SocketServer.hpp"
 # include "Client.hpp"
 # include "Request.hpp"
+
 # include "utils.hpp"
 # include "exceptions.hpp"
+# include "container.hpp"
 
-# include "map_operator.hpp"
-# include "deque_operator.hpp"
-# include "vector_operator.hpp"
 
 # define MAX_EVENTS 50
 # define TIMEOUT 30000
@@ -43,14 +54,14 @@ class WebServer
 		int									_efd;				// fd permettqnt d'acceder a l'instance epoll
 		size_t								_bodySizeLimit;		// limite generale de la taille maximum du body des clients pour tout le server, active si le virtual host ne precise pas (si == size_t max => pas de limite )
 		std::string							_dirErrorPage;		// indique un repertoire specifique ou chercher les pqges d'erreur
-		std::map<std::string, std::string>	_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
-		std::vector<t_virtual_host>			_virtualHost;		// vector contenant tout les virtual hosts du server
-		std::map<int, SocketServer>			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
+		MapStrStr_t	_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
+		VecVHost_t			_virtualHost;		// vector contenant tout les virtual hosts du server
+		MapFdSockServ_t			_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
 		int									_highSocket;
-		std::map<int, Client>				_ClientList;		// map contenant les client du server
-		std::map<int, Client*>				_readyToProceedList;	// list les client dont les request sont prete a etre proceder (fini de read)
+		MapFdClient_t				_ClientList;		// map contenant les client du server
+		MapFdClientPtr_t				_readyToProceedList;	// list les client dont les request sont prete a etre proceder (fini de read)
 
-		std::map<std::string, std::string>	_envCGI;			// variables d'environnement a envoyer aux CGI
+		MapStrStr_t	_envCGI;			// variables d'environnement a envoyer aux CGI
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -59,8 +70,8 @@ class WebServer
 		void	_SocketServerList_init(void);
 		void	_epoll_init(void);
 
-		bool		_is_server_named(v_host_ptr v_host, const std::string& name);
-		v_host_ptr	_selectServer(SocketServer& sk, Request& rq);
+		bool		_is_server_named(vHostPtr v_host, const std::string& name);
+		vHostPtr	_selectServer(SocketServer& sk, Request& rq);
 
 
 
@@ -70,23 +81,23 @@ class WebServer
 		~WebServer(void);
 
 
-		void								setVirtualHost(std::vector<t_virtual_host> virtualHost);
+		void								setVirtualHost(VecVHost_t vHost);
 		void								setErrorPage(std::string key, std::string value); 
 		void								setDirErrorPage(std::string dirErrorPage);
 		void								setBodySizeLimit(size_t bodySizeLimit);
 		
-		std::vector<t_virtual_host>			getVirtualHost(void) const;
-		std::map<std::string,std::string>&	getErrorPage(void);
+		VecVHost_t			getVirtualHost(void) const;
+		MapStrStr_t&	getErrorPage(void);
 		std::string							getDirErrorPage(void) const;
 		size_t								getBodySizeLimit(void) const;
 
-		t_location	parseLocation(std::vector<std::string> fileVec, std::vector<std::string> sLine, uintptr_t *i);
+		Location	parseLocation(VecStr_t fileVec, VecStr_t sLine, uintptr_t *i);
 		int			parseConf(std::string &line);
-		void		parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end);
-		void 		findServ(std::vector<std::string> fileVec, uintptr_t *i);
-		void		addVirtualHost(const t_virtual_host& virtualHost);
-		void		displayLocations(const t_virtual_host& virtualHost);
-		void		displayCGI(const t_virtual_host& virtualHost);
+		void		parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end);
+		void 		findServ(VecStr_t fileVec, uintptr_t *i);
+		void		addVirtualHost(const VirtualHost& vHost);
+		void		displayLocations(const VirtualHost& vHost);
+		void		displayCGI(const VirtualHost& vHost);
 		void		debugServ();
 
 		void	run(void);
@@ -106,27 +117,26 @@ class WebServer
 
 		// CGI
 		void	fillElement(std::string key , std::string val);
-		void	fillValueFromHeader(std::map<std::string, std::string> header, std::string key);
-		void	fillValueFromCGI(std::map<std::string, std::string> cgi, std::string key, std::string value); 
+		void	fillValueFromHeader(MapStrStr_t header, std::string key);
+		void	fillValueFromCGI(MapStrStr_t cgi, std::string key, std::string value); 
 		void	fillEnvCGI(const Client& client);
 		void	execute_cgi(const std::string& script_path);
 
 
 
 
-		std::string	Method(Client &cl, Request & req, v_host_ptr & v_host);	
-		std::string	methodGet( Request & req, v_host_ptr & v_host, std::string & path );
+		std::string	Method(Client &cl, Request & req, vHostPtr & v_host);	
+		std::string	methodGet( Request & req, vHostPtr & v_host, std::string & path );
 		std::string	GET_error(int code);	//obsolete
 		void		getError(std::string status, Request& req);	// GET special pour error
 		std::string	methodPost(Client &client);
 
 };
 
-void						initLocation(t_location* loc);
+void						initLocation(Location* loc);
 void 						formatLine(std::string &line);
-std::vector<std::string>	splitLine(const std::string& line);
+VecStr_t	splitLine(const std::string& line);
 
-std::ostream&	operator<<(std::ostream &os, const v_host_ptr v_host);
-std::ostream&	operator<<(std::ostream &os, const t_virtual_host& v_host);
+
 
 #endif

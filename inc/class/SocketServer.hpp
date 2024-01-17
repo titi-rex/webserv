@@ -12,8 +12,6 @@
 
 #ifndef _SocketServer_H__
 # define _SocketServer_H__
-# include <deque>
-# include <map>
 # include <iostream>
 # include <sstream>
 
@@ -21,14 +19,15 @@
 # include <arpa/inet.h> 
 # include <cstring>
 
-# include "virtual_host.hpp"
+# include "VirtualHost.hpp"
 # include "Socket.hpp"
+# include "container.hpp"
 
 
 class SocketServer : public Socket
 {
 	public	:
-		std::deque<v_host_ptr>	v_hosts;
+		DeqVHostPtr_t	v_hosts;
 
 		SocketServer(void);
 		SocketServer(const SocketServer& src);
@@ -39,5 +38,7 @@ class SocketServer : public Socket
 };
 
 std::ostream&	operator<<(std::ostream& os, const SocketServer& SocketServer);
+
+typedef std::map<int, SocketServer>	MapFdSockServ_t;
 
 #endif

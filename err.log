@@ -1,0 +1,52 @@
+==51694== Memcheck, a memory error detector
+==51694== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==51694== Using Valgrind-3.21.0 and LibVEX; rerun with -h for copyright info
+==51694== Command: ./webserv conf/juju.conf
+==51694== 
+
+==51694== Invalid read of size 8
+==51694==    at 0x49CAEE8: ::basic_string( const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==51694==    by 0x10F93C: construct (new_allocator.h:201)
+==51694==    by 0x10F93C: construct<std::__cxx11::basic_string<char> > (alloc_traits.h:155)
+==51694==    by 0x10F93C: ocator<std::__cxx11::basic_string<char, ) (vector.tcc:468)
+==51694==    by 0x10F240: ocator<std::__cxx11::basic_string<char, s (stl_vector.h:1289)
+==51694==    by 0x10EDDA: Location::setAllowMethod() (Location.cpp:115)
+==51694==    by 0x111652: WebServer::parseLocation() (parsing_conf.cpp:64)
+==51694==    by 0x111B70: WebServer::parseServ() (parsing_conf.cpp:90)
+==51694==    by 0x1121A4: WebServer::findServ() (parsing_conf.cpp:140)
+==51694==    by 0x125F4E: WebServer::WebServer() (WebServer.cpp:100)
+==51694==    by 0x10D6BD: main (main.cpp:61)
+==51694==  Address 0x4e19008 is 24 bytes before a block of size 20 free'd
+==51694==    at 0x484873F: operator delete(void*) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==51694==    by 0x114B20: formatLine() (parsing_utils.cpp:47)
+==51694==    by 0x111437: WebServer::parseLocation() (parsing_conf.cpp:50)
+==51694==    by 0x111B70: WebServer::parseServ() (parsing_conf.cpp:90)
+==51694==    by 0x1121A4: WebServer::findServ() (parsing_conf.cpp:140)
+==51694==    by 0x125F4E: WebServer::WebServer() (WebServer.cpp:100)
+==51694==    by 0x10D6BD: main (main.cpp:61)
+==51694==  Block was alloc'd at
+==51694==    at 0x4845FA3: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==51694==    by 0x49CAFA9: void ::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==51694==    by 0x49CB1B6: ::substr(unsigned long, unsigned long) const (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==51694==    by 0x114AFE: formatLine(&) (parsing_utils.cpp:47)
+==51694==    by 0x111437: WebServer::parseLocation() (parsing_conf.cpp:50)
+==51694==    by 0x111B70: WebServer::parseServ() (parsing_conf.cpp:90)
+==51694==    by 0x1121A4: WebServer::findServ() (parsing_conf.cpp:140)
+==51694==    by 0x125F4E: WebServer::WebServer() (WebServer.cpp:100)
+==51694==    by 0x10D6BD: main (main.cpp:61)
+==51694== 
+==51694== Invalid read of size 8
+==51694==    at 0x49CAEEF: ::basic_string( const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==51694==    by 0x10F93C: construct (new_allocator.h:201)
+==51694==    by 0x10F93C: construct<std::__cxx11::basic_string<char> > (alloc_traits.h:155)
+==51694==    by 0x10F93C: ocator<std::__cxx11::basic_string<char, ) (vector.tcc:468)
+==51694==    by 0x10F240: ocator<std::__cxx11::basic_string<char, s (stl_vector.h:1289)
+==51694==    by 0x10EDDA: Location::setAllowMethod( (Location.cpp:115)
+==51694==    by 0x111652: WebServer::parseLocation() (parsing_conf.cpp:64)
+==51694==    by 0x111B70: WebServer::parseServ() (parsing_conf.cpp:90)
+==51694==    by 0x1121A4: WebServer::findServ() (parsing_conf.cpp:140)
+==51694==    by 0x125F4E: WebServer::WebServer() (WebServer.cpp:100)
+==51694==    by 0x10D6BD: main (main.cpp:61)
+==51694==  Address 0x4e19000 is 32 bytes before a block of size 32 in arena "client"
+==51694== 
+==51694== 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi_handler.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 15:37:57 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 21:15:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 void WebServer::fillElement(std::string key, std::string val) 
 {
-    std::map<std::string, std::string>::iterator it = _envCGI.find(key);
+    MapStrStr_t::iterator it = _envCGI.find(key);
 
     if (it != _envCGI.end())
         it->second = val;
@@ -24,9 +24,9 @@ void WebServer::fillElement(std::string key, std::string val)
         _envCGI[key] = val;
 }
 
-void WebServer::fillValueFromHeader(std::map<std::string, std::string> header, std::string key) 
+void WebServer::fillValueFromHeader(MapStrStr_t header, std::string key) 
 {
-    std::map<std::string, std::string>::iterator it = header.find(key);
+    MapStrStr_t::iterator it = header.find(key);
 
     if (it != header.end())
     {
@@ -37,9 +37,9 @@ void WebServer::fillValueFromHeader(std::map<std::string, std::string> header, s
     }
 }
 
-void WebServer::fillValueFromCGI(std::map<std::string, std::string> cgi, std::string key, std::string value) 
+void WebServer::fillValueFromCGI(MapStrStr_t cgi, std::string key, std::string value) 
 {
-    std::map<std::string, std::string>::iterator it = cgi.find(value);
+    MapStrStr_t::iterator it = cgi.find(value);
 
     if (it != cgi.end())
         _envCGI[key] = it->second;
@@ -93,7 +93,7 @@ void    WebServer::fillEnvCGI(const Client& client)
     // HTTP_REFERER
 }
 
-void convertToEnvp(const std::map<std::string, std::string>& map, char**& envp)
+void convertToEnvp(const MapStrStr_t& map, char**& envp)
 {
     int i = 0;
     int envpSize = map.size() + 1; 
@@ -102,7 +102,7 @@ void convertToEnvp(const std::map<std::string, std::string>& map, char**& envp)
 
     std::cout << "*------- CGI ENVIROMMENT -------*" << std::endl;
     std::cout << std::endl;
-    for (std::map<std::string, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
+    for (MapStrStr_t::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         std::string keyValue = it->first + "=" + it->second;
         envp[i] = strdup(keyValue.c_str());

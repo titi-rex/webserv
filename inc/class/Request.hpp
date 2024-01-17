@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 12:58:26 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 21:15:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <cctype>
 # include <climits>
 
-# include "map_operator.hpp"
+# include "container.hpp"
 
 
 # define RL_MIN_LENGTH 14
@@ -78,7 +78,7 @@ class Request
 		std::string				_pathInfo;
 		std::string				_ext;
 		std::string				_body;
-		std::map<std::string, std::string>	_headers;
+		MapStrStr_t	_headers;
 
 
 		//tmp variable for parsing
@@ -102,7 +102,7 @@ class Request
 	public	:
 		// a remettre en privé un jour
 		std::string							_rline;
-		std::map<std::string, std::string>	_rheaders;
+		MapStrStr_t	_rheaders;
 		std::string							_rbody;
 		std::string							_pathTranslated;
 		
@@ -133,7 +133,7 @@ class Request
 
 		
 		const std::string&				getRStrStatus(void) const;
-		const std::map<std::string, std::string>&	getHeaders(void) const;
+		const MapStrStr_t&	getHeaders(void) const;
 		bool	isChunked(void) const;
 
 		void	setPathtranslated( std::string path );

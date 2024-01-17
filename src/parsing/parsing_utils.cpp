@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
+/*   parsing_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 14:09:34 by louisa            #+#    #+#             */
-/*   Updated: 2023/12/12 16:13:25 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/16 21:41:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 #include "Request.hpp"
 
-std::vector<std::string> splitLine(const std::string& line)
+VecStr_t splitLine(const std::string& line)
 {
-    std::vector<std::string> 	splitedLine;
+    VecStr_t 	splitedLine;
     std::string 				tempLine = line;
     size_t 						pos = 0;
 
@@ -64,11 +64,4 @@ void formatLine(std::string &line)
 	// 	throw std::runtime_error("Error : Wrong synthax in configuration file");
 	if (!line.empty() && line[line.length() - 1] == ';')
         line.erase(line.length() - 1);
-}
-
-void	initLocation(t_location* loc)
-{
-	loc->isPath = true;
-	loc->autoIndex = true;
-	loc->allowMethod.push_back("GET");
 }

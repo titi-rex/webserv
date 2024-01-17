@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/15 20:36:46 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/16 21:59:17 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,28 +16,26 @@
 
 #	==============================	NAMES	==============================	#
 NAME		=	webserv
-DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_HTTP} ${DIR_SRCS_CLASS} 
-DEFAULT_CONFIG_PATH	=	z_notes/exemple.conf
+DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_SERVER} ${DIR_SRCS_METHOD} 
+DEFAULT_CONFIG_PATH	=	conf/juju.conf
 
 
 #	==============================	SOURCES	==============================	#
+DIR_SRCS_METHOD	=	method/
+LST_SRCS_METHOD	=	cgi_handler.cpp directory_listing.cpp location_processing.cpp method.cpp ws_error.cpp
+SRCS_METHOD		=	${addprefix ${DIR_SRCS_METHOD}, ${LST_SRCS_METHOD}}
+
 DIR_SRCS_PARSE	=	parsing/
-LST_SRCS_PARSE	=	parsing_conf.cpp parsing_utils.cpp
+LST_SRCS_PARSE	=	Location.cpp parsing_conf.cpp parsing_utils.cpp Request.cpp VirtualHost.cpp 
 SRCS_PARSE		=	${addprefix ${DIR_SRCS_PARSE}, ${LST_SRCS_PARSE}}
 
-DIR_SRCS_HTTP	=	http/
-LST_SRCS_HTTP	=	
-SRCS_HTTP		=	${addprefix ${DIR_SRCS_HTTP}, ${LST_SRCS_HTTP}}
-
-DIR_SRCS_CLASS	=	class/
-LST_SRCS_CLASS	=	Request.cpp Socket.cpp WebServer.cpp ws_init.cpp ws_connect.cpp ws_utils.cpp ws_error.cpp \
-					VirtualHost.cpp Location.cpp SocketServer.cpp Client.cpp
-SRCS_CLASS		=	${addprefix ${DIR_SRCS_CLASS}, ${LST_SRCS_CLASS}}
+DIR_SRCS_SERVER	=	server/
+LST_SRCS_SERVER	=	Client.cpp Socket.cpp SocketServer.cpp WebServer.cpp ws_connect.cpp ws_init.cpp ws_utils.cpp 
+SRCS_SERVER		=	${addprefix ${DIR_SRCS_SERVER}, ${LST_SRCS_SERVER}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	main.cpp signal.cpp method.cpp utils.cpp directory_listing.cpp \
-					location_processing.cpp exceptions.cpp cgi_handler.cpp log.cpp \
-					${SRCS_PARSE} ${SRCS_HTTP} ${SRCS_CLASS} 
+LST_SRCS		=	exceptions.cpp main.cpp signal.cpp utils.cpp \
+					${SRCS_PARSE} ${SRCS_SERVER} ${SRCS_METHOD} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
 
@@ -65,18 +63,25 @@ else
 	DEPS	=	${addprefix ${DIR_OBJS}, ${LST_SRCS:.cpp=.d}}
 endif
 
+
 #	==============================	HEADERS	==============================	#
+DIR_HDR_CLASS	=	class/
+LST_HDR_CLASS	=	WebServer.hpp Socket.hpp SocketServer.hpp Client.hpp Request.hpp VirtualHost.hpp Location.hpp 
+HDR_CLASS		=	${addprefix ${DIR_HDR_CLASS}, ${LST_HDR_CLASS}}
+
+
 DIR_HEADER	=	inc/
-LST_HDR		=	${NAME}.hpp Request.hpp WebServer.hpp SocketServer.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
-				 Socket.hpp Client.hpp exceptions.hpp
+LST_HDR		=	exceptions.hpp utils.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
+				${HDR_CLASS}
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
-IFLAGS		=	-I${DIR_HEADER} 
+IFLAGS		=	-I${DIR_HEADER} -I${DIR_HEADER}${DIR_HDR_CLASS}
+
 
 #	==============================	COMMANDS	==============================	#
 CXX			=	c++ -std=c++98
 MKDIR 		=	mkdir -p
 RM			=	rm -rf
-MAKE		=	make --silent
+MAKE		=	make --silent -j
 DEBUG		=	no
 
 
@@ -86,9 +91,8 @@ DEPFLAGS	=	-MMD -MP
 FSFLAGS		=	-g3 -fsanitize=leak,address,pointer-subtract,pointer-compare,undefined 
 VALFLAGS 	=	--leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes \
 				--track-fds=yes --trace-children=yes 
-#				--time-stamp=yes --error-markers=begin,end
+				--time-stamp=yes --error-markers=begin,end
 HARDFLAGS	=	--read-var-info=yes --read-inline-info=yes
-
 
 ifeq ($(DEBUG), fsanitize)
 	CXXFLAGS += $(FSFLAGS)
@@ -104,6 +108,9 @@ endif
 #	==============================	BASIC	==============================	#
 all		:	${NAME}
 
+msg:
+	@echo ${IFLAGS}
+
 clean	:
 		@${RM} ${DIR_OBJS}
 
@@ -115,7 +122,7 @@ re		:	fclean
 		@${MAKE} all
 
 fsan	:
-	@${MAKE} DEBUG=fsanitize ${NAME} 
+	@${MAKE} DEBUG=fsanitize ${NAME} && ./${NAME} ${DEFAULT_CONFIG_PATH}
 
 val		:
 	@${MAKE} DEBUG=valgrind && valgrind ${VALFLAGS} ./${NAME} ${DEFAULT_CONFIG_PATH}
@@ -127,23 +134,23 @@ hard	:
 
 #	==============================	COMPILATION	==============================	#
 ${NAME}			:	${DIR_OBJS} ${OBJS}
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${OBJS} -o ${NAME}
+				@${CXX} ${IFLAGS} ${CXXFLAGS} ${OBJS} -o ${NAME}
 				@printf "$(GREEN_LIGHT)$@ created !\n$(END)"
 
 
 ${DIR_OBJS}%.o	:	${DIR_SRCS}%.cpp 
 				@printf "$(YELLOW)Making $@...\n$(END)"
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
+				@${CXX} ${IFLAGS} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
 
 
 ${DIR_OBJS}%.debug.o	:	${DIR_SRCS}%.cpp 
 				@printf "$(YELLOW)Making $@...\n$(END)"
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} ${FSFLAGS} -c $< -o $@
+				@${CXX} ${IFLAGS} ${CXXFLAGS} ${DEPFLAGS} ${FSFLAGS} -c $< -o $@
 
 
 ${DIR_OBJS}%.valg.o	:	${DIR_SRCS}%.cpp 
 				@printf "$(YELLOW)Making $@...\n$(END)"
-				@${CXX} -I${DIR_HEADER} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
+				@${CXX} ${IFLAGS} ${CXXFLAGS} ${DEPFLAGS} -c $< -o $@
 
 -include $(DEPS)
 

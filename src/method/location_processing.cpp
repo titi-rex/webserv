@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/16 17:14:51 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 09:59:38 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@
 
 extern sig_atomic_t	g_status;
 
-static void	checkAllowedMethod(std::vector<std::string> methodAllowed, std::string methodAsked)
+static void	checkAllowedMethod(VecStr_t methodAllowed, std::string methodAsked)
 {
 	// Always allow HEADs
 	if (methodAsked == "HEAD")
 		return;
 
-	std::vector<std::string>::iterator	i;
+	VecStr_t::iterator	i;
 
 	// std::cout << "\nmethodAsked: " << methodAsked;
 
@@ -81,9 +81,9 @@ static bool	isPrefix(std::string pagePath, std::string prefix)
 }
 
 // find dans location, celui le plus resamblant a l'uri
-std::string	findLocation(Request & req, v_host_ptr & v_host)
+std::string	findLocation(Request & req, vHostPtr & v_host)
 {
-	std::map<std::string, t_location>::iterator	i;
+	MapStrLoc_t::const_iterator	i;
 	std::string									pagePath = req.getUri();
 	std::string									location = "";
 
@@ -98,7 +98,7 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 
 	// Find if there are an location equal to the request
 	// std::cout << "\n========== location exact ==========" << std::endl;
-	for (i = v_host->locations.begin(); i != v_host->locations.end(); ++i)
+	for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
 	{
 		// std::cout << "\nlocation :" << location << std::endl;
 		// std::cout << "*" << pagePath << "* in *" << i->first << "*: " << (i->first.find(pagePath) == std::string::npos) << std::endl;
@@ -114,7 +114,7 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 	{
 		// Find if the closest location from the request
 		// std::cout << "\n========== location prefix ==========" << std::endl;
-		for (i = v_host->locations.begin(); i != v_host->locations.end(); ++i)
+		for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
 		{
 			// std::cout << "\npagePath :" << pagePath << std::endl;
 			// std::cout << "\nlocation :" << location << std::endl;
@@ -130,7 +130,7 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 	// std::cout << "Chosen location:" << location << std::endl;
 
 	// Check if there is a redirection
-	std::pair<std::string, std::string>	redirection = v_host->locations[location].getRedirection();
+	PairStrStr_t	redirection = v_host->getLocations().at(location).getRedirection();
 
 	if (redirection.first != "")
 	{
@@ -145,11 +145,11 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 	if (pagePath.compare(0, 1, "/") != 0)
 		pagePath = "/" + pagePath;
 
-	pagePath = "." + v_host->getRoot() + v_host->locations[location].getRoot() + pagePath;
+	pagePath = "." + v_host->getRoot() + v_host->getLocations().at(location).getRoot() + pagePath;
 	// std::cout << "After deleting prefix pagePath: " << pagePath << std::endl;
 
-	checkAllowedMethod(v_host->locations[location].getAllowMethod(), req.getMethodName());
-	checkPageFile(pagePath, v_host->locations[location].getIndex());
+	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
+	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());
 
 	// std::cout << "End of findLocation: pagePath: " << pagePath << std::endl;
 

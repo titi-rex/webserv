@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/16 16:26:27 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/16 22:14:49 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 int WebServer::parseConf(std::string &line)
 {
-	std::vector<std::string>	splitedLine;
+	VecStr_t	splitedLine;
 	size_t						tmp;
 	
 	formatLine(line);
@@ -39,9 +39,9 @@ int WebServer::parseConf(std::string &line)
 	return (0);
 }
 
-t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vector<std::string> sLine, uintptr_t *i)
+Location WebServer::parseLocation(VecStr_t fileVec, VecStr_t sLine, uintptr_t *i)
 {
-	t_location newLoc;
+	Location newLoc;
 	std::string first = sLine[1];
 	
 	++(*i);
@@ -73,10 +73,10 @@ t_location WebServer::parseLocation(std::vector<std::string> fileVec, std::vecto
 	return (newLoc);
 }
 
-void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uintptr_t end)
+void WebServer::parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end)
 {
-	t_virtual_host 				newServ;
-	std::vector<std::string>	sLine;
+	VirtualHost 				newServ;
+	VecStr_t	sLine;
 
 	for (uintptr_t i = start; i <= end; ++i) 
 	{
@@ -86,7 +86,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 			continue ;
 		else if (sLine[0] == "location")
 		{
-			t_location newLoc;
+			Location newLoc;
 			newLoc = parseLocation(fileVec, sLine, &i);
 			newServ.setLocations(newLoc);
 		}
@@ -112,7 +112,7 @@ void WebServer::parseServ(std::vector<std::string> fileVec, uintptr_t start, uin
 	addVirtualHost(newServ);
 }
 
-void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
+void WebServer::findServ(VecStr_t fileVec, uintptr_t *i)
 {
 	uintptr_t	start = 0;
 	uintptr_t	end = 0;
@@ -147,31 +147,31 @@ void WebServer::findServ(std::vector<std::string> fileVec, uintptr_t *i)
 }
 
 
-void WebServer::displayLocations(const t_virtual_host& virtualHost) {
-    typedef std::map<std::string, t_location>::const_iterator LocationIterator;
+void WebServer::displayLocations(const VirtualHost& vHost) {
+    typedef MapStrLoc_t::const_iterator LocationIterator;
 
-    for (LocationIterator it = virtualHost.locations.begin(); it != virtualHost.locations.end(); ++it) {
-        const t_location& location = it->second;
+    for (LocationIterator it = vHost.getLocations().begin(); it != vHost.getLocations().end(); ++it) {
+        const Location& location = it->second;
 		std::cout << std::endl;
         std::cout << "Location ID: " << it->first << std::endl;
-        std::cout << "Is path: " << (location.isPath ? "true" : "false") << std::endl;
-        std::cout << "Auto index: " << (location.autoIndex ? "on" : "off") << std::endl;
-        std::cout << "Location URI or Extension: " << location.uri_or_ext << std::endl;
-        std::cout << "Location root: " << (location.root.empty() ? "empty" : location.root) << std::endl;
-        std::cout << "Location return: " << (location.redirection.first.empty() ? "empty" : (location.redirection.first + " " + location.redirection.second)) << std::endl;
-		std::cout << "Location index: " << location.index << std::endl;
+        std::cout << "Is path: " << (location.getIsPath() ? "true" : "false") << std::endl;
+        std::cout << "Auto index: " << (location.getAutoIndex() ? "on" : "off") << std::endl;
+        std::cout << "Location URI or Extension: " << location.getUriOrExt() << std::endl;
+        std::cout << "Location root: " << (location.getRoot().empty() ? "empty" : location.getRoot()) << std::endl;
+        std::cout << "Location return: " << (location.getRedirection().first.empty() ? "empty" : (location.getRedirection().first + " " + location.getRedirection().second)) << std::endl;
+		std::cout << "Location index: " << location.getIndex() << std::endl;
 		std::cout << "Location methods: ";
-		for (size_t j = 0; j < location.allowMethod.size(); ++j)
-			std::cout << location.allowMethod[j] << " ";
+		for (size_t j = 0; j < location.getAllowMethod().size(); ++j)
+			std::cout << location.getAllowMethod()[j] << " ";
 		std::cout << std::endl;
     }
 }
 
-void WebServer::displayCGI(const t_virtual_host& virtualHost) {
-    typedef std::map<std::string, std::string>::const_iterator LocationIterator;
+void WebServer::displayCGI(const VirtualHost& vHost) {
+    typedef MapStrStr_t::const_iterator LocationIterator;
 
-	std::cout << "CGI directory: " << virtualHost.getDirCgi() << std::endl;
-    for (LocationIterator it = virtualHost.cgi.begin(); it != virtualHost.cgi.end(); ++it) {
+	std::cout << "CGI directory: " << vHost.getDirCgi() << std::endl;
+    for (LocationIterator it = vHost.getCgi().begin(); it != vHost.getCgi().end(); ++it) {
 		std::cout << std::endl;
         std::cout << "CGI exec: " << it->first << std::endl;
         std::cout << "CGI path: " << it->second << std::endl;
@@ -194,13 +194,13 @@ void	WebServer::debugServ()
 
 	std::cout << "*------------- SERV --------------*" << std::endl;
 	for (size_t i = 0; i < _virtualHost.size(); ++i) {
-		std::cout << "Server host = " << _virtualHost[i].host_port.first << std::endl;
-		std::cout << "Server port = " << _virtualHost[i].host_port.second << std::endl;
-		for (size_t l = 0; l < _virtualHost[i].serverNames.size(); ++l)
-			std::cout << "Server names = " << _virtualHost[i].serverNames[l] << std::endl;
-		std::cout << "Server root = " << _virtualHost[i].root << std::endl;
-		std::cout << "Server index = " << _virtualHost[i].index << std::endl;
-		std::cout << "Server bodySize = " << _virtualHost[i].bodySize << std::endl;
+		std::cout << "Server host = " << _virtualHost[i].getHostPort().first << std::endl;
+		std::cout << "Server port = " << _virtualHost[i].getHostPort().second << std::endl;
+		for (size_t l = 0; l < _virtualHost[i].getServerNames().size(); ++l)
+			std::cout << "Server names = " << _virtualHost[i].getServerNames()[l] << std::endl;
+		std::cout << "Server root = " << _virtualHost[i].getRoot() << std::endl;
+		std::cout << "Server index = " << _virtualHost[i].getIndex() << std::endl;
+		std::cout << "Server bodySize = " << _virtualHost[i].getBodySize() << std::endl;
 		displayCGI(_virtualHost[i]);
 		std::cout << std::endl;
 		

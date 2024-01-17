@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 17:13:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 10:00:17 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	WebServer::handle_epollin(int event_id)
 		Client*	cl = NULL;
 
 		// find client from cgi fd, should use a cgi_fd to client map insteed
-		for (std::map<int, Client>::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
+		for (MapFdClient_t::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
 		{
 			if (it->second.getFd_cgi() == event_id)
 			{
@@ -212,7 +212,7 @@ void	WebServer::run(void)
 			std::clog << "n client ready :" << _readyToProceedList.size() << std::endl;
 
 		// change and use a list to client* for client to procced
-		for (std::map<int, Client*>::iterator it = _readyToProceedList.begin() ; it != _readyToProceedList.end(); ++it)
+		for (MapFdClientPtr_t::iterator it = _readyToProceedList.begin() ; it != _readyToProceedList.end(); ++it)
 		{
 			std::clog << "ready: " << *it->second << std::endl;
 			try

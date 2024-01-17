@@ -26,11 +26,7 @@
 # include <iomanip>
 # include <stdexcept>
 
-# include "map_operator.hpp"
-# include "deque_operator.hpp"
-# include "vector_operator.hpp"
-
-# include "virtual_host.hpp"
+# include "VirtualHost.hpp"
 # include "Request.hpp"
 
 typedef enum {
@@ -39,6 +35,8 @@ typedef enum {
 	logWARNING,
 	logERROR,
 }	e_logLevel;
+
+
 
 
 #define FDEBUG "\001\033[32m\002"
@@ -89,8 +87,8 @@ std::string	getFile(std::string& path);
 bool		check_access(std::string& path);
 
 bool	 	isDirListReq(Request & req);
-std::string	dirList(Request & req, v_host_ptr & v_host);
-std::string	findLocation(Request & req, v_host_ptr & v_host);
+std::string	dirList(Request & req, vHostPtr & v_host);
+std::string	findLocation(Request & req, vHostPtr & v_host);
 
 int	wrap_tolower(int c);
 int	wrap_iscntrl(int c);
