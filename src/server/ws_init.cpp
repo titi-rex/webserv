@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 21:50:02 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 12:57:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ void	WebServer::addClient(int socketServerFd)
 void	WebServer::deleteClient(int client_fd)
 {
 	Client	cl = _ClientList[client_fd];
-	
+
 	modEpollList(client_fd, EPOLL_CTL_DEL, 0);	//del from epoll // throw FATAL
 	close(_ClientList[client_fd].getFd());	// close socket fd
 	_ClientList.erase(client_fd);			// delete client from list

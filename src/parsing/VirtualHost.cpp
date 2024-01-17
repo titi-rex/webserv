@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 21:48:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 12:40:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ VirtualHost&	VirtualHost::operator=(const VirtualHost& src)
 	this->bodySize = src.bodySize;
 	this->root = src.root;
 	this->index = src.index;
+	this->dirCgi = src.dirCgi;
 	this->host_port = src.host_port;
 	this->serverNames = src.serverNames;
 	this->cgi = src.cgi;
@@ -79,7 +80,6 @@ void	VirtualHost::setRoot(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: root supplied but value is missing");
-	
 	if (sLine.at(1).at(0) != '/' && sLine.at(1).at(0) != '.')
 		std::runtime_error("Server: root is not a valid path");
 	this->root = sLine.at(1);
@@ -137,8 +137,8 @@ uint16_t isIntValid(const std::string& s)
 
 void	VirtualHost::setHostPort(VecStr_t& sLine)
 {
-	size_t	tmp;
-	std::string 	sPort;
+	size_t		tmp;
+	std::string sPort;
 
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: host supplied but value is missing");
@@ -176,9 +176,10 @@ void	VirtualHost::setCgi(VecStr_t& sLine, bool oneCgi)
 		if (sLine[2].at(0) == '/')
 			sLine[2].erase(0,1);
 		cgi[sLine[1]] = this->dirCgi + sLine[2];
-		// if (access(cgi[sLine[1]].c_str(), F_OK))
-		// 	throw std::runtime_error("Server: cgi " + sLine[1] + " doesn't exist");
-			
+		if (access(cgi[sLine[1]].c_str(), F_OK))
+			throw std::runtime_error("Server: cgi " + cgi[sLine[1]] + " doesn't exist");
+		if (access(cgi[sLine[1]].c_str(), X_OK))
+			throw std::runtime_error("Server: can't execute cgi: " + cgi[sLine[1]]);
 	}
 	else
 	{
@@ -188,6 +189,12 @@ void	VirtualHost::setCgi(VecStr_t& sLine, bool oneCgi)
 		{
 			if (cgi.count(sLine[j]) == 0)
 				cgi[sLine[j]] = this->dirCgi + sLine[j];
+			else
+				continue;
+			if (access(cgi[sLine[j]].c_str(), F_OK))
+				throw std::runtime_error("Server: cgi " + cgi[sLine[j]] + " doesn't exist");
+			if (access(cgi[sLine[j]].c_str(), X_OK))
+				throw std::runtime_error("Server: can't execute cgi: " + cgi[sLine[j]]);
 		}
 	}
 };

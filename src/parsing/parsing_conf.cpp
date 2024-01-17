@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/16 22:14:49 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 12:41:02 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ void WebServer::displayLocations(const VirtualHost& vHost) {
 void WebServer::displayCGI(const VirtualHost& vHost) {
     typedef MapStrStr_t::const_iterator LocationIterator;
 
-	std::cout << "CGI directory: " << vHost.getDirCgi() << std::endl;
+	std::cout << "CGI directory: " << (vHost.getDirCgi().empty() ? "empty" : vHost.getDirCgi()) << std::endl;
     for (LocationIterator it = vHost.getCgi().begin(); it != vHost.getCgi().end(); ++it) {
 		std::cout << std::endl;
         std::cout << "CGI exec: " << it->first << std::endl;
