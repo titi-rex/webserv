@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:44:56 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:12:11 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ void	WebServer::run(void)
 				else if (revents[i].events & EPOLLOUT)
 					handle_epollout(revents[i].data.fd);
 			}
-			catch (std::exception & e)
+			catch (std::exception & e)// 450: truc pas bien 
 			{	
 				std::cerr << e.what() << std::endl;
 				std::cerr << strerror(errno) << std::endl;

@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:43:09 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:11:57 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ bool	Request::_parseRequestLine(void)
 		throw std::runtime_error("501: Method not implemented");
 	_uri = _extractRange(start, end, " ");
 	if (_uri.at(0) != '/')
-		throw std::runtime_error("400 Bad URI");
+		throw std::runtime_error("400: Bad URI");
 	i = _uri.find_first_of('?');
 	if (i != std::string::npos)
 	{	
@@ -151,7 +151,7 @@ bool	Request::_parseRequestLine(void)
 	
 	tmp = _extractRange(start, end, " \n");
 	if (tmp.compare("HTTP/1.1") == false)
-		throw std::runtime_error("505 Wrong HTTP version");
+		throw std::runtime_error("505: Wrong HTTP version");
 	_raw.erase(0, end + 1);
 	_pstatus = HEADERS;
 	return (false);

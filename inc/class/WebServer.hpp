@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:22:26 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:12:02 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class WebServer
 		MapFdClientPtr_t	_readyToProceedList;// list les client dont les request sont prete a etre proceder (fini de read)
 
 		MapStrStr_t			_envCGI;		// variables d'environnement a envoyer aux CGI
+		MapStrStr_t			_httpStatus;	//map http status <-> response line 
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -87,6 +88,7 @@ class WebServer
 		
 		VecVHost_t			getVirtualHost(void) const;
 		MapStrStr_t&		getErrorPage(void);
+		MapStrStr_t&		getHttpStatus(void);
 		std::string			getDirErrorPage(void) const;
 		size_t				getBodySizeLimit(void) const;
 

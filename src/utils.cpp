@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 14:03:49 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 14:07:31 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,12 @@ bool	check_access(std::string& path)
 		return (false);
 	}
 	return (true);	
+}
+
+void	wrap_close(int fd)
+{
+	if (fd != -1)
+		close(fd);
 }
 
 int	wrap_tolower(int c)
