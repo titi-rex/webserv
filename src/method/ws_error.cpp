@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:15:46 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 14:38:37 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ static void	prepareResponse(Request& req, std::string status, std::string body)
 
 	req.setRstatus(std::atoi(status.c_str()));
 	req.setRStrStatus(status);
-	req.setRline("Faire une fonction!!!");
 	// req.setRheaders("Server", v_host->serverNames[0]); // Place holder
 	req.setRheaders("Date", date);
 	req.setRheaders("Content-length", sContentLength);
@@ -85,7 +84,26 @@ void	WebServer::getError(std::string status, Request& req)
 
 	std::string	pageDir;
 	std::string	body;
+	std::string	RLine;
 	
+	try {
+		if (_httpStatus.count(status.substr(0, 3)))
+		{
+			RLine = _httpStatus.at(status.substr(0, 3));
+			req.setRline(RLine);
+			std::cout << "RLine: " << RLine << std::endl;
+		}
+		else
+		{
+			std::cout << "yapa: " <<  status.substr(0,3) << std::endl;
+		}
+			
+	}
+	catch (std::exception & e) {
+		std::cout << "errRLine : " << RLine << std::endl;
+
+	}
+
 	// Use for redirection
 	if (status.compare(0, 1, "3") == 0)
 	{
@@ -147,7 +165,7 @@ void	WebServer::getError(std::string status, Request& req)
 	}
 
 	// Default simple error_page
-	body = "<html><head><title>ERROR " + status + "</title></head><body><h1>ERROR " + status + "</h1><hr>webserv</body></html>";
+	body = "<html><head><title>ERROR " + status + " " + RLine + "</title></head><body><h1>ERROR " + status + " " + RLine + "</h1><hr>webserv</body></html>";
 	prepareResponse(req, status, body);
 	req.makeResponse();
 
