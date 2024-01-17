@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:37:35 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:19:02 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ std::string WebServer::methodPost(Client &client)
 	std::string							ext = client.request.getExt();
 	std::string							script_path;
 	
+	// si ya pas de fichier !!!!!
     MapStrStr_t::iterator it2 = cgi.find(ext);
     if (it2 != cgi.end())
 	{	
