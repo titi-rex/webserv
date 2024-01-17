@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:56:40 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:10:56 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,9 @@ WebServer::~WebServer(void)
 	}
 	for (MapFdClient_t::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
 	{
-		close(it->first);
+		wrap_close(it->second.getFd_cgi()[0]);
+		wrap_close(it->second.getFd_cgi()[1]);
+		wrap_close(it->first);
 		std::clog << "deleted: " << it->second << std::endl;
 	}
 	close(_efd);
