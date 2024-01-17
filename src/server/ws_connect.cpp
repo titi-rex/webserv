@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:20:10 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:44:56 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	WebServer::handle_epollin(int event_id)
 		// find client from cgi fd, should use a cgi_fd to client map insteed
 		for (MapFdClient_t::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
 		{
-			if (it->second.getFd_cgi()[0] == event_id)
+			if (it->second.getFd_cgi()[0] == -event_id)
 			{
 				cl = &it->second;
 				break ;
@@ -73,8 +73,8 @@ void	WebServer::handle_epollin(int event_id)
 		}
 		if (cl->readCgi())	//read cgi output, if end, deregister cgi from epoll
 		{
-			modEpollList(event_id,	EPOLL_CTL_DEL, 0);
-			close(event_id);
+			modEpollList(-event_id,	EPOLL_CTL_DEL, 0);
+			close(-event_id);
 		}
 	}
 }

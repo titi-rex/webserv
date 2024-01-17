@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:05:10 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:43:09 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -379,7 +379,7 @@ bool	Request::_parseCgiHeaders(void)
  */
 bool	Request::addCgi(std::string	buff)
 {
-	//_raw += raw;
+	_raw += buff;
 	switch (_pstatus)
 	{
 		case CGIHD:
