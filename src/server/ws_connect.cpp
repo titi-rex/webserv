@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 10:00:17 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 13:19:40 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ std::cout << "host: " << cl.host << std::endl;
 // prepare response based on request, there should be GET/HEAD/POST
 	cl.request.response = Method(cl, cl.request, cl.host);
 	cl.cstatus = PROCEEDED;
-	std::clog << " response : " << std::endl << cl.request.response << std::endl;
+	// std::clog << "response : " << std::endl << cl.request.response << std::endl;
 }
 
 void	WebServer::process_rq_error(Client &cl)
