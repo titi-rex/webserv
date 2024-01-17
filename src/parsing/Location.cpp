@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 22:16:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 11:46:04 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
 
-Location::Location(void) : isPath(true), autoIndex(true), index("index.html")
+Location::Location(void) : isPath(true), autoIndex(false), index("index.html")
 {
 	allowMethod.push_back("GET");
 }
