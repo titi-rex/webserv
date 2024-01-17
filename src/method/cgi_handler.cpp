@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi_handler.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/16 21:15:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:02:38 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,8 @@ void WebServer::execute_cgi(const std::string& script_path)
         close(pipe_fd[1]);
         
         waitpid(pid, NULL, 0);
+
+        // modEpollList(it->first, EPOLL_CTL_ADD, EPOLLIN);
             
         char buffer[BUFFER_SIZE];
         ssize_t read_bytes;

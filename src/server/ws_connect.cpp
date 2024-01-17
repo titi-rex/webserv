@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:19:40 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 14:11:18 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	WebServer::handle_epollin(int event_id)
 		// find client from cgi fd, should use a cgi_fd to client map insteed
 		for (MapFdClient_t::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
 		{
-			if (it->second.getFd_cgi() == event_id)
+			if (it->second.getFd_cgi()[0] == event_id)
 			{
 				cl = &it->second;
 				break ;
@@ -184,7 +184,7 @@ void	WebServer::run(void)
 				else if (revents[i].events & EPOLLOUT)
 					handle_epollout(revents[i].data.fd);
 			}
-			catch (std::exception & e)
+			catch (std::exception & e)// 450: truc pas bien 
 			{	
 				std::cerr << e.what() << std::endl;
 				std::cerr << strerror(errno) << std::endl;

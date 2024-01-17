@@ -3,22 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/15 15:25:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:17:59 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) : _serverEndPoint(-1), _fd_cgi(-1), _sizeLimit(1024), cstatus(CREATED), keepConnection(false)
+Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), cstatus(CREATED), keepConnection(false)
 {
+	_fd_cgi[0] = -1;
+	_fd_cgi[1] = -1;
 	_name = "cnameless";
 };
 
-Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _fd_cgi(-1), _sizeLimit(bodyLimit), cstatus(CREATED), keepConnection(false)
+Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), cstatus(CREATED), keepConnection(false)
 {
+	_fd_cgi[0] = -1;
+	_fd_cgi[1] = -1;
 	_name = "cnameless";
 };
 
@@ -50,9 +54,14 @@ Client::~Client(void) {};
 
 
 int		Client::getServerEndPoint(void) const { return (this->_serverEndPoint); };
-int		Client::getFd_cgi(void) const { return (this->_fd_cgi); };
+int*	Client::getFd_cgi(void) const { 
+	return const_cast<int*>(_fd_cgi);
+};
 
-void	Client::setFd_cgi(int fd_cgi) { this->_fd_cgi = fd_cgi; };
+void	Client::setFd_cgi(int fd_cgi[2]) { 
+	this->_fd_cgi[0] = fd_cgi[0]; 
+	this->_fd_cgi[1] = fd_cgi[1]; 
+};
 
 
 void	Client::accept(int socketServerFd)
@@ -106,7 +115,7 @@ bool	Client::readCgi(void)
 	int		n_rec = 0;
 	bool	end = false;
 	
-	n_rec = read(_fd_cgi, &buf, BUFFER_SIZE);
+	n_rec = read(_fd_cgi[0], &buf, BUFFER_SIZE);
 	if (n_rec == -1)
 		throw std::runtime_error("699: read cgi");
 	if (n_rec < BUFFER_SIZE || buf[n_rec] == '\0')

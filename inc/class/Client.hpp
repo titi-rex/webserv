@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 21:32:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:13:45 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Client : public Socket
 {
 	private	:
 		int		_serverEndPoint;
-		int		_fd_cgi;
+		int		_fd_cgi[2];
 		size_t	_sizeLimit;
 
 	void	_checkRequestSize(Request& rq);
@@ -62,9 +62,9 @@ class Client : public Socket
 		void	reset(void);
 		
 		int		getServerEndPoint(void) const;
-		int		getFd_cgi(void) const;
+		int*	getFd_cgi(void) const;
 
-		void	setFd_cgi(int fd_cgi);
+		void	setFd_cgi(int fd_cgi[2]);
 };
 
 std::ostream&	operator<<(std::ostream& os, const Client& Client);
