@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 10:00:17 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 13:30:14 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ void	WebServer::run(void)
 				else if (revents[i].events & EPOLLOUT)
 					handle_epollout(revents[i].data.fd);
 			}
-			catch (std::exception & e)
+			catch (std::exception & e)// 450: truc pas bien 
 			{	
 				std::cerr << e.what() << std::endl;
 				std::cerr << strerror(errno) << std::endl;

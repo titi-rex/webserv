@@ -1,26 +1,21 @@
-srcs : main signal utils 
 
-srcs/method : post method location_process directory handler cgi_handler
-
-srcs/parsing : location vhost
-
-srcs/server : socket sockserv client  webserver 
-
-request ?
 
 to do :
 
 faire un fonction log
 
-parsing check cgi existe + execute 
+
+close all fd / close on exe fd
+
+parsing : indiquer n ligne qund erreur 
 	+ location { qui chhuine
-clean tout architecture 
+
+
 
 
 bug :
 
-parsing : indiquer n ligne qund erreur 
-parsing: infini loop avec juju2.conf ?
+
 
 debug
 GREEN 
