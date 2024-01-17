@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:13:45 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 20:30:28 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,27 @@
 # include "VirtualHost.hpp"
 
 # define BUFFER_SIZE 2048
-typedef enum 
+
+# define CLIENT_ENUM(TYPE) \
+	TYPE(CREATED) \
+	TYPE(ACCEPTED) \
+	TYPE(READING) \
+	TYPE(GATHERED) \
+	TYPE(PROCEEDED) \
+	TYPE(CGIWAIT) \
+	TYPE(CGIOK) \
+	TYPE(ERROR) \
+	TYPE(FATAL) \
+	TYPE(SENT) 
+
+# define CLIENT_ENUM_TYPE(NAME) NAME,
+
+typedef enum
 {
-	CREATED,
-	ACCEPTED,
-	READING,
-	GATHERED,
-	PROCEEDED,
-	CGIWAIT,
-	CGIOK,
-	ERROR,
-	FATAL,
-	SENT,
+	CLIENT_ENUM(CLIENT_ENUM_TYPE)
 } e_client_status;
+
+# define CLIENT_ENUM_CASE(NAME, ...) case NAME: return #NAME;
 
 class Client : public Socket
 {
@@ -61,6 +69,7 @@ class Client : public Socket
 		void	sendRequest(void);
 		void	reset(void);
 		
+		const std::string	getStatusStr(void) const;
 		int		getServerEndPoint(void) const;
 		int*	getFd_cgi(void) const;
 

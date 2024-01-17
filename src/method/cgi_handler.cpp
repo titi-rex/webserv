@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi_handler.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/17 14:08:46 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 21:42:57 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,27 +117,33 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
 void WebServer::execute_cgi(const std::string& script_path, Client& client) 
 {
     // int         pipe_fd[2];
-	char**      envp;
+	// char**      envp;
 
-    std::cout <<  "EXEC CGI with path : " << script_path << std::endl;
-    convertToEnvp(_envCGI, envp);
+    std::clog <<  "EXEC CGI with path : " << script_path << std::endl;
+    // convertToEnvp(_envCGI, envp);
     //pipe(pipe_fd);
+	
     pipe(client.getFd_cgi());
-    pid_t pid = fork();
+	client.request.setPstatus(CGIHD);
+	modEpollList(-client.getFd_cgi()[0], EPOLL_CTL_ADD, EPOLLIN);
+        // close(client.getFd_cgi()[1]);
+        
 
+    pid_t pid = fork();
     if (pid == 0) 
     {
         // dup2(pipe_fd[1], STDOUT_FILENO);
         // close(pipe_fd[0]);
         // close(pipe_fd[1]);
         dup2(client.getFd_cgi()[1], STDOUT_FILENO);
-        close(client.getFd_cgi()[0]);
-        close(client.getFd_cgi()[1]);
+		this->~WebServer();
+        // close(client.getFd_cgi()[0]);
+        // close(client.getFd_cgi()[1]);
 
         char* const argc[] = {const_cast<char*>(script_path.c_str()), NULL};
-        char* const argv[] = {NULL};
+        // char* const argv[] = {NULL};
         
-        execve(argc[0], argv, envp);
+        execve(argc[0], argc, NULL);
 
         perror("error : execve");
         exit(EXIT_FAILURE);
@@ -145,11 +151,11 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
     else if (pid > 0) 
     {
         //close(pipe_fd[1]);
-        close(client.getFd_cgi()[1]);
+        // close(client.getFd_cgi()[1]);
         
-        // waitpid(pid, NULL, 0);
+        waitpid(pid, NULL, 0);
+		
 
-        modEpollList(client.getFd_cgi()[0], EPOLL_CTL_ADD, EPOLLIN);
             
         // char buffer[BUFFER_SIZE];
         // ssize_t read_bytes;
@@ -160,15 +166,15 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
         //     std::cout << "buffer = " << buffer << std::endl;
 
         // close(pipe_fd[0]);
-        close(client.getFd_cgi()[0]);
+        // close(client.getFd_cgi()[0]);
     }
     else
         perror("Error : fork");
 
-    for (int i = 0; envp[i] != NULL; ++i)
-        delete[] envp[i];
+    // for (int i = 0; envp[i] != NULL; ++i)
+    //     delete[] envp[i];
 
-    delete[] envp;
+    // delete[] envp;
 }
 
 

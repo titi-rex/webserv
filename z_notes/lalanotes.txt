@@ -5,7 +5,7 @@ to do :
 faire un fonction log
 
 
-close all fd / close on exe fd
+cgi parsing : si cgi renvoit pas header que body -> read rien 
 
 parsing : indiquer n ligne qund erreur 
 	+ location { qui chhuine

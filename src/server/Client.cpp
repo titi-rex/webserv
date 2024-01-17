@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:17:59 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 20:55:27 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,15 @@ Client&	Client::operator=(const Client& src)
 
 Client::~Client(void) {};
 
-
+const std::string	Client::getStatusStr(void) const
+{
+	switch (this->cstatus)
+	{
+		CLIENT_ENUM(CLIENT_ENUM_CASE)
+		default:
+			return ("UNKNOW");
+	}	
+}
 
 int		Client::getServerEndPoint(void) const { return (this->_serverEndPoint); };
 int*	Client::getFd_cgi(void) const { 
@@ -89,7 +97,7 @@ void	Client::_checkRequestSize(Request& rq)
 
 bool	Client::readRequest(void)
 {
-	std::cout << "client reading request" << std::endl;
+	std::clog << "client reading request" << std::endl;
 	
 	char	buf[BUFFER_SIZE + 1] = {0};
 	int		n_rec = 0;
@@ -109,7 +117,7 @@ bool	Client::readRequest(void)
 
 bool	Client::readCgi(void)
 {
-	std::cout << "client reading Cgi" << std::endl;
+	std::clog << "client reading Cgi" << std::endl;
 	
 	char	buf[BUFFER_SIZE + 1] = {0};
 	int		n_rec = 0;

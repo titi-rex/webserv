@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 14:39:36 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 20:52:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,14 +110,14 @@ WebServer::~WebServer(void)
 	for (MapFdSockServ_t::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
 	{
 		close(it->first);
-		std::clog << "deleted: " << it->second << std::endl;
+		// logINFO << "deleted: " << it->second;
 	}
 	for (MapFdClient_t::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
 	{
 		wrap_close(it->second.getFd_cgi()[0]);
 		wrap_close(it->second.getFd_cgi()[1]);
 		wrap_close(it->first);
-		std::clog << "deleted: " << it->second << std::endl;
+		// logINFO << "deleted: " << it->second;
 	}
 	close(_efd);
 };

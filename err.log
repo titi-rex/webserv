@@ -50,3 +50,23 @@
 ==51694==  Address 0x4e19000 is 32 bytes before a block of size 32 in arena "client"
 ==51694== 
 ==51694== 
+
+
+==36519== Mismatched free() / delete / delete []
+==36519==    at 0x484995F: operator delete[](void*) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==36519==    by 0x1389D6: WebServer::execute_cgi() (cgi_handler.cpp:171)
+==36519==    by 0x13C84F: WebServer::methodPost[abi:cxx11](Client&) (method.cpp:129)
+==36519==    by 0x13BFC9: WebServer::Method[abi:cxx11](Client&, Request&, VirtualHost*&) (method.cpp:73)
+==36519==    by 0x131120: WebServer::process_rq(Client&) (ws_connect.cpp:129)
+==36519==    by 0x13173C: WebServer::run() (ws_connect.cpp:221)
+==36519==    by 0x10D684: main (main.cpp:55)
+==36519==  Address 0x4e37980 is 0 bytes inside a block of size 15 alloc'd
+==36519==    at 0x4845828: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==36519==    by 0x4BADB6D: strdup (strdup.c:42)
+==36519==    by 0x1386E4: convertToEnvp() (cgi_handler.cpp:109)
+==36519==    by 0x138887: WebServer::execute_cgi() (cgi_handler.cpp:123)
+==36519==    by 0x13C84F: WebServer::methodPost[abi:cxx11](Client&) (method.cpp:129)
+==36519==    by 0x13BFC9: WebServer::Method[abi:cxx11](Client&, Request&, VirtualHost*&) (method.cpp:73)
+==36519==    by 0x131120: WebServer::process_rq(Client&) (ws_connect.cpp:129)
+==36519==    by 0x13173C: WebServer::run() (ws_connect.cpp:221)
+==36519==    by 0x10D684: main (main.cpp:55)

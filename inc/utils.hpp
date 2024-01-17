@@ -48,7 +48,7 @@ typedef enum {
 #define LOGLEVEL 0
 
 template <typename T>
-void	operator<<(e_logLevel lvl, T log)
+e_logLevel	operator<<(e_logLevel lvl, T log)
 {
 	switch (lvl)
 	{
@@ -61,7 +61,7 @@ void	operator<<(e_logLevel lvl, T log)
 		case logINFO:
 		{
 			if (logINFO >= LOGLEVEL)
-				std::clog << FINFO << std::setw(12) << "[INFO] : " << log << END << std::endl;
+				std::clog << FINFO << std::setw(12) << " ---------- " << log << END << std::endl;
 			break;
 		}
 		case logWARNING:
@@ -77,6 +77,7 @@ void	operator<<(e_logLevel lvl, T log)
 			break;
 		}
 	}
+	return (lvl);
 }
 
 

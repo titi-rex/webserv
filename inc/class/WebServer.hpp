@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 14:12:02 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/17 21:21:34 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,7 @@ class WebServer
 		void				modEpollList(int fd, int op, uint32_t events);
 		void				deleteClient(int client_fd);
 
-		void				handle_epollerr(int event_id);
-		void				handle_epollhup(int event_id);
+		void				handle_epoll_error(int event_id, uint32_t event_mask);
 		void				handle_epollin(int event_id);
 		void				handle_epollout(int event_id);
 
