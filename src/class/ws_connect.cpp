@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 14:14:53 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 17:13:29 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,16 +221,6 @@ void	WebServer::run(void)
 					process_rq(*it->second);
 				else if (it->second->cstatus == ERROR)
 					process_rq_error(*it->second);
-			}
-			catch (locationRedirection & lr)
-			{
-				std::stringstream ss;
-				ss << "HTTP/1.1 301 Moved Permanently\n";
-				ss << "Location: ";
-				ss << lr.what() << "\n" << "\r\n\r\n";
-
-				it->second->request.response = ss.str();
-				it->second->cstatus = PROCEEDED;
 			}
 			catch(const std::exception& e)
 			{
