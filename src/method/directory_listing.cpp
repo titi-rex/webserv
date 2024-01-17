@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/17 15:10:48 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 15:29:29 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,8 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 		}
 		else
 		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, directory, v_host) << "/\">FOLDER: ";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, directory, v_host) << "/\">";
+			ss << "<img src=\"https://i.pinimg.com/736x/6e/8d/fe/6e8dfe5444398a4d024637809a492929.jpg\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
 			ss << ptr_dir->d_name << "</a></dt>\n";
 		}
 	}
