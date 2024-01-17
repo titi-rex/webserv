@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:29:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:57:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -379,6 +379,7 @@ bool	Request::_parseCgiHeaders(void)
  */
 bool	Request::addCgi(std::string	buff)
 {
+	//_raw += raw;
 	switch (_pstatus)
 	{
 		case CGIHD:
