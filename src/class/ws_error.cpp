@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 15:59:13 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 09:58:21 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static void	prepareResponse(Request& req, std::string status, std::string body)
 
 	req.setRstatus(std::atoi(status.c_str()));
 	req.setRStrStatus(status);
-	req.setRline("Page not found");
+	req.setRline("Faire une fonction!!!");
 	// req.setRheaders("Server", v_host->serverNames[0]); // Place holder
 	req.setRheaders("Date", date);
 	req.setRheaders("Content-length", sContentLength);
@@ -85,11 +85,23 @@ void	WebServer::getError(std::string status, Request& req)
 	std::string	pageDir;
 	std::string	body;
 	
+	// Use for redirection
+	// std::map<std::string, std::string>::const_iterator	cIt;
+
+	// cIt = req.getHeaders().find("Location: ");
+	// if (cIt != req.getHeaders().end())
+	// {
+
+	// 	prepareResponse(req, status, "");
+	// 	req.makeResponse();
+	// 	return ;
+	// }
+
 	// Use the error_page part of the config file to display a page in case of an error
-	if(!_errorPage.empty()) try 
+	if (!_errorPage.empty()) try 
 	{
 		std::map<std::string, std::string>::iterator	it;
-
+		
 		it = getErrorPage().find(status);
 
 		if (it != getErrorPage().end())
@@ -112,7 +124,7 @@ void	WebServer::getError(std::string status, Request& req)
 	}
 
 	// Use the dirErrorPage part of the config file to display a page in case of an error
-	if(!_dirErrorPage.empty()) try 
+	if (!_dirErrorPage.empty()) try 
 	{
 		body = getPageByDir(_dirErrorPage, status);
 

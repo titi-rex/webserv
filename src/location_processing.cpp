@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/16 16:08:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/16 17:14:51 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	checkAllowedMethod(std::vector<std::string> methodAllowed, std::stri
 	throw std::runtime_error("405 Method Not Allowed");
 }
 
-// http://localhost:8080/default_page and http://localhost:8080/example_page must sent 404 !!
+// ERROR http://localhost:8080/default_page and http://localhost:8080/example_page must sent 404 !!
 static void checkPageFile(std::string & pagePath, std::string indexPage)
 {
 	// std::cout << "checkfile :" << std::endl;
@@ -60,7 +60,7 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 
 	// Check if the page asked is readable
 	if (access(file, R_OK) != 0)
-		throw std::runtime_error("423 locked ressource is locked, it can be accessed");
+		throw std::runtime_error("423");
 	
 	// Shutdown the server when visiting the page shutdown.html
 	if (pagePath.compare(pagePath.length() - 14, 15, "/shutdown.html") == 0)
@@ -132,17 +132,13 @@ std::string	findLocation(Request & req, v_host_ptr & v_host)
 	// Check if there is a redirection
 	std::pair<std::string, std::string>	redirection = v_host->locations[location].getRedirection();
 
-	// if (redirection.first != "")
-	// {
-	// 	// Fonction only if the parsing take the return with the error number and a string
-	// 	req.setRstatus(std::atoi(redirection.substr(0, 3).c_str()));
-	// 	req.setResponse(redirection.substr(4, redirection.length() - 4));
+	if (redirection.first != "")
+	{
+		// Fonction only if the parsing take the return with the error number and a string
+		req.setRheaders("Location: ", redirection.second);
 
-	// 	// std::cout << "req.response: " << req.response << std::endl;
-
-	// 	locationRedirection	lr(redirection);
-	// 	throw lr;
-	// }
+		throw std::runtime_error(redirection.first);
+	}
 
 	// Delete prefix
 	pagePath = pagePath.substr(location.length(), pagePath.length() - location.length());
