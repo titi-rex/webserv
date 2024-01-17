@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 10:00:05 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 11:15:52 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,22 +80,17 @@ static void	prepareResponse(Request& req, std::string status, std::string body)
 
 void	WebServer::getError(std::string status, Request& req)
 {
-	std::cout << "\ngetError with status: " << status << std::endl;
+	// std::cout << "\ngetError with status: " << status << std::endl;
 
 	std::string	pageDir;
 	std::string	body;
 	
 	// Use for redirection
-	// std::map<std::string, std::string>::const_iterator	cIt;
-
-	// cIt = req.getHeaders().find("Location: ");
-	// if (cIt != req.getHeaders().end())
-	// {
-
-	// 	prepareResponse(req, status, "");
-	// 	req.makeResponse();
-	// 	return ;
-	// }
+	if (status.compare(0, 1, "3"))
+	{
+		req.makeResponse();
+		return ;
+	}
 
 	// Use the error_page part of the config file to display a page in case of an error
 	if (!_errorPage.empty()) try 
