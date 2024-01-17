@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/17 14:08:38 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 15:10:48 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,6 @@ static std::string	uriPage(std::string fileName, std::string directory, vHostPtr
 
 static std::string	goBack(std::string folder)
 {
-	logDEBUG << "folder";
-	logDEBUG << folder;
-
 	folder = folder.substr(0, folder.length() - 1);
 	
 	std::size_t	found = folder.rfind('/');
@@ -46,7 +43,7 @@ static std::string	goBack(std::string folder)
 
 	if (found != 0)
 	{
-		prevFolder = folder.substr(0, folder.length() - found);
+		prevFolder = folder.substr(0, found + 1);
 		return (prevFolder);
 	}
 
@@ -57,11 +54,11 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 {
 	// std::cout << "makeDirList" << std::endl;
 
+	struct dirent*	ptr_dir = NULL;
 	DIR				*dir = opendir(directory.c_str());
 	if (!dir)
 		throw std::runtime_error("opendir() failed");
 
-	struct dirent*	ptr_dir = NULL;
 
 	std::stringstream ss;
 	std::string	pointDir = directory.substr(v_host->getRoot().length() + 1, directory.length() - v_host->getRoot().length() + 1);
@@ -80,12 +77,16 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 			ss << "<dt><a href=\"http://localhost:8080" << pointDir << "\">" << ptr_dir->d_name << "</a></dt>\n";
 		else if (str == "..")
 		{
-			
 			ss << "<dt><a href=\"http://localhost:8080" << pointPointDir << "\">" << ptr_dir->d_name << "</a></dt>\n";
+		}
+		else if (str.substr(str.length() - 5, 5) == ".html")
+		{
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, directory, v_host) << "\">";
+			ss << ptr_dir->d_name << "</a></dt>\n";
 		}
 		else
 		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, directory, v_host) << "\">";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, directory, v_host) << "/\">FOLDER: ";
 			ss << ptr_dir->d_name << "</a></dt>\n";
 		}
 	}
