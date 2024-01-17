@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:57:16 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:11:57 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -379,7 +379,7 @@ bool	Request::_parseCgiHeaders(void)
  */
 bool	Request::addCgi(std::string	buff)
 {
-	//_raw += raw;
+	_raw += buff;
 	switch (_pstatus)
 	{
 		case CGIHD:

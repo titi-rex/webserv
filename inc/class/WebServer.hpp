@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:56:12 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:12:02 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ class WebServer
 		void				fillValueFromHeader(MapStrStr_t header, std::string key);
 		void				fillValueFromCGI(MapStrStr_t cgi, std::string key, std::string value); 
 		void				fillEnvCGI(const Client& client);
-		void				execute_cgi(const std::string& script_path);
+		void				execute_cgi(const std::string& script_path,Client& client);
 
 
 
