@@ -14,6 +14,7 @@
 # define _VIRTUAL_HOST_H__
 # include <sstream>
 # include <limits>
+# include <unistd.h>
 # include "Location.hpp"
 # include "container.hpp"
 
