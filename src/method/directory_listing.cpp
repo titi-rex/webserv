@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/17 13:13:44 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 14:08:38 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,25 @@ static std::string	uriPage(std::string fileName, std::string directory, vHostPtr
 	return (uriPage);
 }
 
+static std::string	goBack(std::string folder)
+{
+	logDEBUG << "folder";
+	logDEBUG << folder;
+
+	folder = folder.substr(0, folder.length() - 1);
+	
+	std::size_t	found = folder.rfind('/');
+	std::string	prevFolder;
+
+	if (found != 0)
+	{
+		prevFolder = folder.substr(0, folder.length() - found);
+		return (prevFolder);
+	}
+
+	return (folder + "/");
+}
+
 static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 {
 	// std::cout << "makeDirList" << std::endl;
@@ -45,6 +64,8 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 	struct dirent*	ptr_dir = NULL;
 
 	std::stringstream ss;
+	std::string	pointDir = directory.substr(v_host->getRoot().length() + 1, directory.length() - v_host->getRoot().length() + 1);
+	std::string pointPointDir = goBack(pointDir);
 
 	ss << "HTTP/1.1 200 OK\r\n\r\n";
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << directory << "</title>\n</head>\n";
@@ -56,9 +77,12 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 		// Folder  .. doesn't have an uri
 		std::string	str = ptr_dir->d_name;
 		if (str == ".")
-			ss << "<dt><a href=\"http://localhost:8080" << directory.substr(v_host->getRoot().length() + 1, directory.length() - v_host->getRoot().length() + 1) << "\">" << ptr_dir->d_name << "</a></dt>\n";
+			ss << "<dt><a href=\"http://localhost:8080" << pointDir << "\">" << ptr_dir->d_name << "</a></dt>\n";
 		else if (str == "..")
-			ss << "<dt>" << ptr_dir->d_name << "</dt>\n";
+		{
+			
+			ss << "<dt><a href=\"http://localhost:8080" << pointPointDir << "\">" << ptr_dir->d_name << "</a></dt>\n";
+		}
 		else
 		{
 			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, directory, v_host) << "\">";
