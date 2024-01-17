@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 11:15:52 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 13:15:46 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,17 @@ static void	prepareResponse(Request& req, std::string status, std::string body)
 
 void	WebServer::getError(std::string status, Request& req)
 {
-	// std::cout << "\ngetError with status: " << status << std::endl;
+	// logDEBUG << "getError with status: ";
+	// logDEBUG << status;
 
 	std::string	pageDir;
 	std::string	body;
 	
 	// Use for redirection
-	if (status.compare(0, 1, "3"))
+	if (status.compare(0, 1, "3") == 0)
 	{
+		// logDEBUG << "Redirection";
+
 		req.makeResponse();
 		return ;
 	}
@@ -95,6 +98,8 @@ void	WebServer::getError(std::string status, Request& req)
 	// Use the error_page part of the config file to display a page in case of an error
 	if (!_errorPage.empty()) try 
 	{
+		// logDEBUG << "_errorPage";
+
 		MapStrStr_t::iterator	it;
 
 		it = getErrorPage().find(status);
@@ -121,20 +126,32 @@ void	WebServer::getError(std::string status, Request& req)
 	// Use the dirErrorPage part of the config file to display a page in case of an error
 	if (!_dirErrorPage.empty()) try 
 	{
-		body = getPageByDir(_dirErrorPage, status);
+		// logDEBUG << "_dirErrorPage";
 
-		prepareResponse(req, status, body);
-		req.makeResponse();
-		return ;
+		pageDir = _dirErrorPage + status;
+		if (pageDir.compare(0, 1, ".") != 0)
+			pageDir = "." + pageDir;
+
+		if (access(pageDir.c_str(),  F_OK | R_OK))
+		{
+			body = getFile(pageDir);
+
+			prepareResponse(req, status, body);
+			req.makeResponse();
+			return ;
+		}
 	}
 	catch (std::exception & e)
 	{
 		std::clog << e.what() << ", for custom dir" << std::endl;
 	}
 
+	// Default simple error_page
 	body = "<html><head><title>ERROR " + status + "</title></head><body><h1>ERROR " + status + "</h1><hr>webserv</body></html>";
 	prepareResponse(req, status, body);
 	req.makeResponse();
+
+	// logDEBUG << "End getError";
 }
 
 /*

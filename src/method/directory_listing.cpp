@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/16 21:57:20 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:13:44 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,12 +117,11 @@ std::string	dirList(Request & req, vHostPtr & v_host)
 			// std::cout << "Access(): " << access(dirIndex.c_str(), R_OK) << std::endl;
 			// std::cout << "Autoindex: " << v_host->locations[i->first].getAutoIndex() << std::endl;
 
-			//ERROR http://localhost:8080/redirections/ should not work !!! erreur de parsing
 			if (access(dirIndex.c_str(), R_OK) == 0)
 				return (returnIndex(dirIndex));
 			else if (v_host->getLocations().at(i->first).getAutoIndex() == true)
 				return (makeDirList(directory, v_host));
 		}
 	}
-	throw std::runtime_error("403 Directory Index Listing not available for this directory");
+	throw std::runtime_error("403");
 }
