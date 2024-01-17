@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/17 11:14:18 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/17 11:39:49 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,10 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	if (pagePath.compare(0, 1, "/") != 0)
 		pagePath = "/" + pagePath;
 
-	pagePath = "." + v_host->getRoot() + v_host->getLocations().at(location).getRoot() + pagePath;
+	if (v_host->getLocations().at(location).getRoot() != "")
+		pagePath = "." + v_host->getLocations().at(location).getRoot() + pagePath;
+	else
+		pagePath = "." + v_host->getRoot() + pagePath;
 	// std::cout << "After deleting prefix pagePath: " << pagePath << std::endl;
 
 	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
