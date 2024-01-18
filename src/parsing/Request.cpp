@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:30:54 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:09:16 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void	Request::setPstatus(e_parsingStatus newStatus) {_pstatus = newStatus;};
 void	Request::setRStrStatus( std::string status ) { this->_rStrStatus = status; };
 void	Request::setRbody( std::string body ) { this->_rbody = body; };
 void	Request::setResponse( std::string response ) { this->response = response; };
+void	Request::setExt( std::string extension ) { this->_ext = extension; };
 
 void	Request::makeResponse (void)
 {

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:45:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:12:07 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,18 +126,20 @@ class Request
 		const std::string&	getRStrStatus(void) const;
 		const MapStrStr_t&	getHeaders(void) const;
 
-		void				setPathtranslated( std::string path );
-		void				setRline( std::string line );
-		void				setRheaders( std::string key, std::string value );
-		void				setPstatus(e_parsingStatus newStatus);
-		void				setRStrStatus( std::string status );
-		void				setRbody( std::string body );
-		void				setResponse( std::string response );
+		void	setPathtranslated( std::string path );
+		void	setRline( std::string line );
+		void	setRheaders( std::string key, std::string value );
+		void	setPstatus(e_parsingStatus newStatus);
+		void	setRstatus( short int status );
+		void	setRStrStatus( std::string status );
+		void	setRbody( std::string body );
+		void	setResponse( std::string response );
+		void	setExt( std::string extension );
+		void	makeResponse ( void );
 
-		bool				build(std::string raw = "");
-		bool				addCgi(std::string	buff);
-		void				clear(void);
-		void				makeResponse ( void );
+		bool	build(std::string raw = "");
+		bool	addCgi(std::string	buff);
+		void	clear(void);
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);
