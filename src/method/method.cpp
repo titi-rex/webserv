@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:53:16 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:53:31 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,12 @@
 #include <ctime>
 #include <cstdio>
 
-std::string methodHead( Request & req, vHostPtr & v_host, std::string & path)
+void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path)
 {
 	std::ifstream	requestedPage(path.c_str());
 
-	if(requestedPage.fail()) {
-		std::cerr << "Error:\nPage not found" << std::endl;
-		return ("Error");
-	}
+	if(requestedPage.fail())
+		throw std::runtime_error("404");
 
 	std::string	page;
 
@@ -47,47 +45,49 @@ std::string methodHead( Request & req, vHostPtr & v_host, std::string & path)
 	req.setRheaders("Connection", "keep-alive");
 
 	req.makeResponse();
-	return (req.response);
 }
 
 // WARNING ! mID est un enum mtn, qui peut prendre la valeur UNKNOW, 
 // pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
 // pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
-std::string	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
+void	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
 {
 	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
 
 	if (req.getUri() != "/" && isDirListReq(req))
-		return (dirList(req, v_host));
+	{
+		dirList(req, v_host);
+		return ;
+	}
 	
 	std::string	pagePath = findLocation(req, v_host);
-	std::cout << "PAGE PATH: " << pagePath << std::endl;
+	// std::cout << "PAGE PATH: " << pagePath << std::endl;
 
 	switch (req.getMid())
 	{
 		case GET:
 			// std::cout << "GET JUJU" << std::endl;
-			return (methodGet(req, v_host, pagePath));
+			methodGet(req, v_host, pagePath);
+			break ;
 		case POST:
 			// std::cout << "POST JUJU" << std::endl;
-			return (methodPost(cl));
-			break;
+			methodPost(cl);
+			break ;
 		case DELETE:
 			// std::cout << "DELETE JUJU" << std::endl;
-			return (methodDelete(cl));
-			break;
+			methodDelete(cl);
+			break ;
 		case HEAD:
 			// std::cout << "HEAD JUJU" << std::endl;
-			return (methodHead(req, v_host, pagePath));
+			methodHead(req, v_host, pagePath);
+			break ;
 		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
 	};
-	return (NULL);
 }
 
-// std::string	get(Request rq, VirtualHost v_host)
-std::string	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path )
+void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path )
 {
 	std::string		body = getFile(path);
 
@@ -103,10 +103,9 @@ std::string	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string 
 	req.setRbody(body);
 
 	req.makeResponse();
-	return (req.response);
 }
 
-std::string WebServer::methodPost(Client &client)
+void WebServer::methodPost(Client &client)
 {
 	MapStrStr_t	cgi = client.host->getCgi();
 	std::string							ext = client.request.getExt();
@@ -118,7 +117,7 @@ std::string WebServer::methodPost(Client &client)
 	{
 		client.request.makeResponse();
 		client.cstatus = PROCEEDED;
-		return (client.request.response);
+		return ;
 	}
 	
 	// si ya pas de fichier !!!!!
@@ -142,11 +141,10 @@ std::string WebServer::methodPost(Client &client)
 	// client.request.setRbody(body);
 
 	client.request.makeResponse();
-	return (client.request.response);
 }
 
 
-std::string WebServer::methodDelete(Client &client)
+void WebServer::methodDelete(Client &client)
 {
 	// 200 OK : suppression de la ressource effectuée avec succès.
 	// 204 No Content : suppression effectuée avec succès, mais le serveur 
@@ -164,5 +162,6 @@ std::string WebServer::methodDelete(Client &client)
 	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
 	// client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
 	// return (client.request.response);
-	return ("unfinished DELETE");
+	
+	// return ("unfinished DELETE");
 }

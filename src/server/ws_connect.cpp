@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:06:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:49:02 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,12 +93,12 @@ void	WebServer::process_rq(Client &cl)
 		std::string	shutPage = "data/default_page/index.html";
 
 		g_status = 0;
-		cl.request.response = methodGet(cl.request, cl.host, shutPage);
+		methodGet(cl.request, cl.host, shutPage);
 		cl.sendRequest();
 	}
 
 // prepare response based on request, there should be GET/HEAD/POST
-	cl.request.response = Method(cl, cl.request, cl.host);
+	Method(cl, cl.request, cl.host);
 	if (cl.request.getMid() == POST && cl.cstatus == GATHERED)
 		cl.cstatus = CGIWAIT;
 	else

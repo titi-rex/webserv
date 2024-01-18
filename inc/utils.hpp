@@ -88,7 +88,7 @@ std::string	getFile(std::string& path);
 bool		check_access(std::string& path);
 
 bool	 	isDirListReq(Request & req);
-std::string	dirList(Request & req, vHostPtr & v_host);
+void		dirList(Request & req, vHostPtr & v_host);
 std::string	findLocation(Request & req, vHostPtr & v_host);
 
 int		wrap_tolower(int c);

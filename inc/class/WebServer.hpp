@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 14:44:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:52:49 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +125,12 @@ class WebServer
 
 
 
-		std::string			Method(Client &cl, Request & req, vHostPtr & v_host);	
-		std::string			methodGet( Request & req, vHostPtr & v_host, std::string & path );
-		std::string			GET_error(int code);	//obsolete
-		void				getError(std::string status, Request& req);	// GET special pour error
-		std::string			methodPost(Client &client);
-		std::string			methodDelete(Client &client);
+		void	Method(Client &cl, Request & req, vHostPtr & v_host);	
+		void	methodGet( Request & req, vHostPtr & v_host, std::string & path );
+		void	methodHead( Request & req, vHostPtr & v_host, std::string & path) ;
+		void	getError(std::string status, Request& req);	// GET special pour error
+		void	methodPost(Client &client);
+		void	methodDelete(Client &client);
 
 };
 
