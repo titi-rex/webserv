@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/18 14:06:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 15:46:13 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ bool isDirListReq(Request & req)
 	return false;
 }
 
-std::string	dirList(Request & req, vHostPtr & v_host)
+void	dirList(Request & req, vHostPtr & v_host)
 {
 		MapStrLoc_t::const_iterator	i;
 		std::string					directory = req.getUri();
@@ -153,9 +153,15 @@ std::string	dirList(Request & req, vHostPtr & v_host)
 			// std::cout << "Autoindex: " << v_host->locations[i->first].getAutoIndex() << std::endl;
 
 			if (access(dirIndex.c_str(), R_OK) == 0)
-				return (returnIndex(dirIndex));
+			{
+				req.setResponse(returnIndex(dirIndex));
+				return ;
+			}
 			else if (v_host->getLocations().at(i->first).getAutoIndex() == true)
-				return (makeDirList(directory, v_host));
+			{
+				req.setResponse(makeDirList(directory, v_host));
+				return ;
+			}
 		}
 	}
 	throw std::runtime_error("403");
