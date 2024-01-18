@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:22:22 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:36:11 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 
 void	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
 {
-	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
-
 	if (req.getUri() != "/" && isDirListReq(req))
 	{
 		dirList(req, v_host);
@@ -61,24 +59,19 @@ void	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
 	}
 	
 	std::string	pagePath = findLocation(req, v_host);
-	// std::cout << "PAGE PATH: " << pagePath << std::endl;
 
 	switch (req.getMid())
 	{
 		case GET:
-			// std::cout << "GET JUJU" << std::endl;
 			methodGet(req, v_host, pagePath);
 			break ;
 		case POST:
-			// std::cout << "POST JUJU" << std::endl;
 			methodPost(cl);
 			break ;
 		case DELETE:
-			// std::cout << "DELETE JUJU" << std::endl;
 			methodDelete(cl);
 			break ;
 		case HEAD:
-			// std::cout << "HEAD JUJU" << std::endl;
 			methodHead(req, v_host, pagePath);
 			break ;
 		case UNKNOW:
@@ -117,8 +110,7 @@ void WebServer::methodPost(Client &client)
 		client.cstatus = PROCEEDED;
 		return ;
 	}
-	
-	// si ya pas de fichier !!!!!
+
     MapStrStr_t::iterator it2 = cgi.find(ext);
     if (it2 != cgi.end())
 	{	
@@ -150,13 +142,9 @@ void WebServer::methodDelete(Client &client)
 {
 	if (std::remove(client.request._pathTranslated.c_str()) != 0)
 		throw std::runtime_error("500: Remove return error");
-
-	// client.request.setRstatus (200);
-	// client.request.setRStrStatus ("200");
-	// client.request.setRline ("OK");
+	client.request.setRStrStatus ("200");
+	client.request.setRline ("OK");
 	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
 	// client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
-	// return (client.request.response);
-	
-	// return ("unfinished DELETE");
+	client.request.makeResponse();
 }
