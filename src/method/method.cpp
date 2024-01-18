@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 17:04:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 17:06:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,9 @@ void	WebServer::Method(Client &cl)
 			methodGet(cl.request, cl.host, pagePath);
 			break ;
 		case POST:
-			// std::cout << "POST JUJU" << std::endl;
 			methodPost(cl);
 			break ;
 		case DELETE:
-			// std::cout << "DELETE JUJU" << std::endl;
 			methodDelete(cl);
 			break ;
 		case HEAD:
@@ -160,25 +158,11 @@ bool doesFileExist(const std::string& pagePath) {
 
 void WebServer::methodDelete(Client &client)
 {
-	// 200 OK : suppression de la ressource effectuée avec succès.
-	// 204 No Content : suppression effectuée avec succès, mais le serveur 
-	// ne renvoie pas de corps de réponse
-	// 202 Accepted : la requête a été acceptée pour traitement, mais 
-	// le traitement n'est pas nécessairement terminé
-	// 404 Not Found : la ressource à supprimer n'a pas été trouvée sur le serveur.
-	// 405 Method Not Allowed : la méthode DELETE pas autorisée pour la ressource spécifiée
-	
-
-	if (std::remove(client.request._pathTranslated.c_str()) != 0) {
-		std::cout << "ERROR DELETE" << std::endl;
-		// return;
-	}
-	// client.request.setRstatus (200);
-	// client.request.setRStrStatus ("200");
-	// client.request.setRline ("OK");
+	if (std::remove(client.request._pathTranslated.c_str()) != 0)
+		throw std::runtime_error("500: Remove return error");
+	client.request.setRStrStatus ("200");
+	client.request.setRline ("OK");
 	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
 	// client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
-	// return (client.request.response);
-	
-	// return ("unfinished DELETE");
+	client.request.makeResponse();
 }

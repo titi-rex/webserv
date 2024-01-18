@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:46:40 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:45:24 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ WebServer::WebServer(void) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/dat
 	_httpStatus["415"] = "Unsupported Media Type";
 	_httpStatus["416"] = "Requested Range Not Satisfiable";
 	_httpStatus["417"] = "Expectation Failed";
-	_httpStatus["418"] = "I’m a teapot";
+	_httpStatus["418"] = "I'm a teapot";
 	_httpStatus["419"] = "Page expired";
 	
 	_httpStatus["421"] = "Misdirected Request";
