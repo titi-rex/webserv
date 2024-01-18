@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:53:16 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:01:00 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ std::string	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
 			break;
 		case DELETE:
 			// std::cout << "DELETE JUJU" << std::endl;
-			return (methodDelete(cl));
+			return (methodDelete(cl, pagePath));
 			break;
 		case HEAD:
 			// std::cout << "HEAD JUJU" << std::endl;
@@ -145,8 +145,13 @@ std::string WebServer::methodPost(Client &client)
 	return (client.request.response);
 }
 
+bool doesFileExist(const std::string& pagePath) {
+    struct stat buffer;
+    return (stat(pagePath.c_str(), &buffer) == 0);
+}
 
-std::string WebServer::methodDelete(Client &client)
+
+std::string WebServer::methodDelete(Client &client, std::string	pagePath)
 {
 	// 200 OK : suppression de la ressource effectuée avec succès.
 	// 204 No Content : suppression effectuée avec succès, mais le serveur 
@@ -157,7 +162,10 @@ std::string WebServer::methodDelete(Client &client)
 	// 405 Method Not Allowed : la méthode DELETE pas autorisée pour la ressource spécifiée
 	
 
-	
+	if (std::remove(pagePath.c_str()) != 0) {
+		std::cout << "ERROR DELETE" << std::endl;
+		// return;
+	}
 	// client.request.setRstatus (200);
 	// client.request.setRStrStatus ("200");
 	// client.request.setRline ("OK");

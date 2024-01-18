@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 14:44:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:18:49 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <sys/epoll.h>
 # include <errno.h>
 # include <signal.h>
+# include <sys/stat.h>
 # include "Request.hpp"
 
 typedef unsigned int long	uintptr_t;
@@ -130,7 +131,7 @@ class WebServer
 		std::string			GET_error(int code);	//obsolete
 		void				getError(std::string status, Request& req);	// GET special pour error
 		std::string			methodPost(Client &client);
-		std::string			methodDelete(Client &client);
+		std::string			methodDelete(Client &client, std::string pagePath);
 
 };
 
