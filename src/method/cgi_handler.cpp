@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/17 21:42:57 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 11:39:17 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,12 +116,10 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
 
 void WebServer::execute_cgi(const std::string& script_path, Client& client) 
 {
-    // int         pipe_fd[2];
 	// char**      envp;
 
     std::clog <<  "EXEC CGI with path : " << script_path << std::endl;
     // convertToEnvp(_envCGI, envp);
-    //pipe(pipe_fd);
 	
     pipe(client.getFd_cgi());
 	client.request.setPstatus(CGIHD);
@@ -132,16 +130,12 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
     pid_t pid = fork();
     if (pid == 0) 
     {
-        // dup2(pipe_fd[1], STDOUT_FILENO);
-        // close(pipe_fd[0]);
-        // close(pipe_fd[1]);
+
         dup2(client.getFd_cgi()[1], STDOUT_FILENO);
 		this->~WebServer();
-        // close(client.getFd_cgi()[0]);
-        // close(client.getFd_cgi()[1]);
 
         char* const argc[] = {const_cast<char*>(script_path.c_str()), NULL};
-        // char* const argv[] = {NULL};
+
         
         execve(argc[0], argc, NULL);
 
@@ -150,7 +144,6 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
     } 
     else if (pid > 0) 
     {
-        //close(pipe_fd[1]);
         // close(client.getFd_cgi()[1]);
         
         waitpid(pid, NULL, 0);

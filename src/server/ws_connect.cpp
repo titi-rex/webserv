@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 21:45:08 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 11:36:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,14 @@ void	WebServer::handle_epoll_error(int event_id, uint32_t event_mask)
 	else
 		logWARNING << "unexpected close of fd";
 
-	if (event_id > _highSocket)
-		deleteClient(event_id);
-	else if (event_id < 0)
-		close(-event_id);
+	throw std::runtime_error("615: epollerr");
+	// if (event_id > _highSocket)
+	// 	deleteClient(event_id);
+	// else if (event_id < 0)
+	// {
+	// 	close(-event_id);
+		
+	// }
 }
 
 
@@ -215,6 +219,7 @@ void	WebServer::run(void)
 								break ;
 							}
 						}
+						close(-revents[i].data.fd);
 						cl->cstatus = ERROR;
 						cl->request.setRStrStatus("500");
 					}
