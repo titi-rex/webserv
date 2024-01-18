@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/18 14:56:03 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 15:21:43 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,10 +184,23 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());
 
 
+
+	req.setPathtranslated(pagePath);
+	
+	// Recuperer l'extention -> req.setExt()
+	// logDEBUG << "Find extension:";
+	std::size_t	found = pagePath.rfind('.');
+	std::string	extension;
+
+	if (found != 0)
+	{
+		extension = pagePath.substr(found, pagePath.length() - found);
+		req.setExt(extension);
+	}
+	// std::clog << "extension: " << extension << std::endl;
+
 	// logDEBUG << "End of findLocation:";
 	// logDEBUG << "pagePath";
 	// logDEBUG << pagePath;
-
-	req.setPathtranslated(pagePath);
 	return (pagePath);
 }
