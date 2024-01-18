@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 14:12:02 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:03:24 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ class WebServer
 		std::string			GET_error(int code);	//obsolete
 		void				getError(std::string status, Request& req);	// GET special pour error
 		std::string			methodPost(Client &client);
+		std::string			methodDelete(Client &client);
 
 };
 
