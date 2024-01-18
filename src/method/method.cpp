@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:53:16 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:16:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ std::string methodHead( Request & req, vHostPtr & v_host, std::string & path)
 	getDate(date);
 
 	// New way to store the respond
-	req.setRstatus(200);
 	req.setRStrStatus("200");
 	req.setRline("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
@@ -95,7 +94,6 @@ std::string	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string 
 	int		size = lengthSize(body.length());
 	char	sRespondLength[size];
 	sprintf(sRespondLength, "%lu", body.length());
-	req.setRstatus (200);
 	req.setRStrStatus ("200");
 	req.setRline ("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
@@ -134,7 +132,6 @@ std::string WebServer::methodPost(Client &client)
 
 	// CGI output !!!!!!!!
 	
-	client.request.setRstatus (201);
 	client.request.setRStrStatus ("201");
 	client.request.setRline ("created");
 	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder

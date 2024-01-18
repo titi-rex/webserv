@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_error.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 14:38:37 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 15:17:19 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ static void	prepareResponse(Request& req, std::string status, std::string body)
 	sprintf(sContentLength, "%lu", body.length());
 	getDate(date);
 
-	req.setRstatus(std::atoi(status.c_str()));
 	req.setRStrStatus(status);
 	// req.setRheaders("Server", v_host->serverNames[0]); // Place holder
 	req.setRheaders("Date", date);

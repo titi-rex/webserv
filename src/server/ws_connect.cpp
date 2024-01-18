@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:06:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:38:30 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	WebServer::handle_epoll_error(int event_id, uint32_t event_mask)
 
 	throw std::runtime_error("615: epollerr or hang up");
 }
-
 
 void	WebServer::handle_epollin(int event_id)
 {
@@ -58,7 +57,6 @@ void	WebServer::handle_epollin(int event_id)
 	}
 }
 
-
 void	WebServer::handle_epollout(int event_id)
 {
 	logDEBUG << "epollout";
@@ -80,7 +78,6 @@ void	WebServer::handle_epollout(int event_id)
 			deleteClient(cl->getFd());	//throw fatal
 	}
 }
-
 
 void	WebServer::process_rq(Client &cl)
 {
@@ -112,22 +109,20 @@ void	WebServer::process_rq(Client &cl)
 void	WebServer::process_rq_error(Client &cl)
 {
 	logDEBUG << "error proceed";
-	
 	try
 	{
+		if (_httpStatus.count(cl.request.getRStrStatus()) == 0)
+			throw std::runtime_error(cl.request.getRStrStatus() + ": fatal");
 		getError(cl.request.getRStrStatus(), cl.request);
-		// cl.request.response = ERROR_500_MSG;
 		cl.cstatus = PROCEEDED;
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
 	}
 	catch(const std::exception& e)
 	{
 		logERROR << "ERROR FATAL, ABANDON CLIENT";
-		logERROR << strerror(errno);
 		deleteClient(cl.getFd());
 	}
 }
-
 
 void	WebServer::error_epoll(std::string& status, int event_id)
 {
@@ -191,7 +186,7 @@ void	WebServer::run(void)
 			{	
 				logWARNING << "epoll catch" << e.what();
 				logWARNING << strerror(errno);
-				
+
 				std::string	status(e.what());
 				status.erase(3, status.size());
 				error_epoll(status, revents[i].data.fd);
@@ -216,12 +211,7 @@ void	WebServer::run(void)
 
 				std::string	status(e.what());
 				status.erase(3, status.size());
-				int	err = std::atoi(e.what()); // check if err is in httpstatus
-				if (err == 0)
-					err = 699;
-				logWARNING << "cerror code : " << err;
 				it->second->request.setRStrStatus(status);
-				it->second->request.setRstatus(err);
 	
 				process_rq_error(*it->second);
 			}
