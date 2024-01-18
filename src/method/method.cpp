@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
 /*   Updated: 2024/01/18 13:53:16 by lboudjem         ###   ########.fr       */
@@ -112,6 +112,16 @@ std::string WebServer::methodPost(Client &client)
 	std::string							ext = client.request.getExt();
 	std::string							script_path;
 	
+	logERROR << client.getStatusStr();
+	std::clog << "req"<< client.request << std::endl;
+	if (client.cstatus != GATHERED)
+	{
+		client.request.makeResponse();
+		client.cstatus = PROCEEDED;
+		return (client.request.response);
+	}
+	
+	// si ya pas de fichier !!!!!
     MapStrStr_t::iterator it2 = cgi.find(ext);
     if (it2 != cgi.end())
 	{	
@@ -127,8 +137,8 @@ std::string WebServer::methodPost(Client &client)
 	client.request.setRstatus (201);
 	client.request.setRStrStatus ("201");
 	client.request.setRline ("created");
-	client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
-	client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
+	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
+	// client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
 	// client.request.setRbody(body);
 
 	client.request.makeResponse();

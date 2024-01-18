@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_init.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 13:46:45 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:51:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	WebServer::_SocketServerList_init(void)
 {
 	for (size_t i = 0; i < _virtualHost.size(); ++i)
 	{
-	std::clog << "v_host " <<  _virtualHost[i] << std::endl;
+	
 		uint32_t	haddr = Socket::hstrtoint(_virtualHost[i].getHostPort().first);
 		uint16_t	hport = _virtualHost[i].getHostPort().second;
 		
@@ -51,18 +51,15 @@ void	WebServer::_SocketServerList_init(void)
 		_SocketServersList[key].listen(BACKLOG);
 		_SocketServersList[key].v_hosts.push_front(&_virtualHost[i]);
 		
-	std::clog << "added: " << _SocketServersList[key] << std::endl << std::endl;
-		_highSocket = key;
+		logINFO << "added: " << _SocketServersList[key];
 	}
-// std::clog << "sokList: " << _SocketServersList << std::endl;
-std::clog << "hightsocket: " << _highSocket << std::endl;
 }
 
 
 /**
  * @brief wrapper for epoll_ctl
  * @throw fatal
- * @param fd target to monitor
+ * @param fd target to monitor, if fd < 0, event.data.fd = fd and then fd = -fd
  */
 void	WebServer::modEpollList(int fd, int op, uint32_t events)
 {
@@ -70,6 +67,8 @@ void	WebServer::modEpollList(int fd, int op, uint32_t events)
 
 	e.events = events;
 	e.data.fd = fd;
+	if (fd < 0)
+		fd = -fd;
 	if (epoll_ctl(_efd, op, fd, &e) == 0)
 		return ;
 	
@@ -101,7 +100,6 @@ void	WebServer::_epoll_init(void)
 	for (MapFdSockServ_t::iterator it = _SocketServersList.begin(); it != _SocketServersList.end(); ++it)
 	{
 		modEpollList(it->first, EPOLL_CTL_ADD, EPOLLIN);		
-		std::clog << "fd : " << it->first << " for " << _SocketServersList[it->first].getName() << " add to epoll list" << std::endl;
 	}
 }
 
@@ -114,9 +112,17 @@ void	WebServer::addClient(int socketServerFd)
 	Client	cl;
 
 	cl.accept(socketServerFd);//can throw (FATAL)
-	modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);//can thow FATAL
-	_ClientList[cl.getFd()] = cl;
-	std::clog << "added: " << cl << std::endl;
+	try
+	{
+		modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);//can thow FATAL
+		_ClientList[cl.getFd()] = cl;
+		logINFO << "added: " << cl;
+	}
+	catch(const std::exception& e)
+	{
+		wrap_close(cl.getFd());
+		throw std::runtime_error(e.what());
+	}
 }
 
 /**
@@ -131,5 +137,5 @@ void	WebServer::deleteClient(int client_fd)
 	close(_ClientList[client_fd].getFd());	// close socket fd
 	_ClientList.erase(client_fd);			// delete client from list
 	_readyToProceedList.erase(client_fd);	//delete from ready list
-	std::clog << "deleted: " << cl << std::endl;
+	logINFO << "deleted: " << cl;
 }

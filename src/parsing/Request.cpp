@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
 /*   Updated: 2024/01/18 13:55:14 by lboudjem         ###   ########.fr       */
@@ -65,6 +65,7 @@ const std::string	Request::getMethodName(void) const
 void	Request::setPathtranslated( std::string path ) { this->_pathTranslated = path; };
 void	Request::setRline( std::string line ) { this->_rline = line; };
 void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
+void	Request::setPstatus(e_parsingStatus newStatus) {_pstatus = newStatus;};
 void	Request::setRstatus( short int status ) { this->rstatus = status; };
 void	Request::setRStrStatus( std::string status ) { this->_rStrStatus = status; };
 void	Request::setRbody( std::string body ) { this->_rbody = body; };
@@ -336,9 +337,9 @@ bool	Request::_parseCgiHeaders(void)
 	size_t		start = 0;
 	size_t		end = -1;
 
-	while (_raw.find("\r\n") != std::string::npos)
-	{	
-		if (std::strncmp(_raw.c_str(), "\r\n", 2) == 0)
+	while (_raw.find("\r\n") != std::string::npos || _raw.find("\n") != std::string::npos)
+	{
+		if (std::strncmp(_raw.c_str(), "\r\n", 2) == 0 || _raw.find(':') == std::string::npos)
 		{
 			_raw.erase(0, 2);
 			if (_rheaders.find("content-length") == _rheaders.end())
@@ -380,19 +381,26 @@ bool	Request::_parseCgiHeaders(void)
 bool	Request::addCgi(std::string	buff)
 {
 	_raw += buff;
+	std::clog << "in readcgi: pstatus: " << _pstatus << std::endl;
+	std::clog << "in read: raw:" << _raw << std::endl;
 	switch (_pstatus)
 	{
 		case CGIHD:
 		{
+			std::clog << "CGIHEADER" << std::endl;
 			if (_parseCgiHeaders())
 				return (false);
 			__attribute__((fallthrough));
 		}
 		case CGICL:
 		{
+			std::clog << "CGI CORPASSAGE" << std::endl;
+
 			if (_pstatus == CGICL)
 			{	
-				if (_parseBodyByLength(_body))
+			std::clog << "CGI CORP BY LENGTH" << std::endl;
+				
+				if (_parseBodyByLength(_rbody))
 					return (true);
 				break ;
 			}
@@ -400,7 +408,9 @@ bool	Request::addCgi(std::string	buff)
 		}
 		case CGIEOF:
 		{
-			_body += buff;
+			std::clog << "CGI CORP BY EOF" << std::endl;
+
+			_rbody += buff;
 			break;
 		}
 		case RL:
@@ -410,7 +420,7 @@ bool	Request::addCgi(std::string	buff)
 		case DONE:
 			throw std::runtime_error("698: request parsing loop (cgi)");
 	}
-	return (true);
+	return (false);
 }
 
 void	Request::clear(void)
@@ -426,13 +436,21 @@ void	Request::clear(void)
 
 std::ostream& operator<<(std::ostream& os, const Request& req)
 {
+	os << "===REQUEST SIDE===" << std::endl;
 	os << "RL: " << req.getMethodName() << " " << req.getUri() << " HTTP/1.1" << std::endl;
 	os << "query:" << req.getQuery() << std::endl;
 	os << "pathInfo:" << req.getPathInfo() << std::endl;
 	os << "extentsion:" << req.getExt() << std::endl;
-	os << "Headers :" << std::endl;
+	os << "Headers: " ;
 	os << req.getHeaders();
-	os << "Body :" << std::endl;
+	os << "Body: " ;
 	os << "{" << req.getBody() << "}" << std::endl;
+	os << "===RESPONSE SIDE===" << std::endl;
+	os << "_rStrStatus: " << req._rStrStatus << std::endl;
+	os << "_rline: " << req._rline << std::endl;
+	os << "_rheaders: " << req._rheaders << std::endl;
+	os << "_rbody: " << "{" << req._rbody << "}" << std::endl;
+	os << "response: " << req.response << std::endl;
+	
 	return (os);
 };

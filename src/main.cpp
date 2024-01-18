@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 12:43:22 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 20:02:29 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	main(int ac, char **av)
 {
 	if (ac != 2)
 	{
-		std::cerr << "Error: configuration file required\nUsage: ./webserv [configuration file]" << std::endl;
+		logERROR << "Error: configuration file required\nUsage: ./webserv [configuration file]";
 		return (1);
 	}
 	sig_init(sig_handler);
@@ -56,10 +56,9 @@ int	main(int ac, char **av)
 	}
 	catch (std::exception & e)
 	{
-		std::cerr << e.what() << std::endl;
-		std::cerr << "errno value: " << errno << std::endl;
-		std::cerr << strerror(errno) << std::endl;
-		
+		logERROR << e.what();
+		logERROR << "errno value: " << errno;
+		logERROR << strerror(errno);
 	}
 	return (0);
 }

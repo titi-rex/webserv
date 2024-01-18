@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/16 21:15:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/17 21:52:30 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ class Request
 	public	:
 		// a remettre en privé un jour
 		std::string							_rline;
-		MapStrStr_t	_rheaders;
+		MapStrStr_t							_rheaders;
 		std::string							_rbody;
 		std::string							_pathTranslated;
 		
@@ -121,7 +121,6 @@ class Request
 		bool	addCgi(std::string	buff);
 		void	clear(void);
 
-		int								getRid(void) const;
 		e_method 						getMid(void) const;
 		e_parsingStatus					getPstatus(void) const;
 		const std::string				getMethodName(void) const;
@@ -139,6 +138,7 @@ class Request
 		void	setPathtranslated( std::string path );
 		void	setRline( std::string line );
 		void	setRheaders( std::string key, std::string value );
+		void	setPstatus(e_parsingStatus newStatus);
 		void	setRstatus( short int status );
 		void	setRStrStatus( std::string status );
 		void	setRbody( std::string body );

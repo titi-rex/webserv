@@ -11,6 +11,7 @@
 612: add to epollout fail
 613: del from epoll fail
 614: epoll_wait
+615: epollHangup error
 
 620: input error
 621: output error

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:03:24 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:44:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,12 @@ class WebServer
 		MapStrStr_t			_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
 		VecVHost_t			_virtualHost;		// vector contenant tout les virtual hosts du server
 		MapFdSockServ_t		_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
-		int					_highSocket;
 		MapFdClient_t		_ClientList;		// map contenant les client du server
 		MapFdClientPtr_t	_readyToProceedList;// list les client dont les request sont prete a etre proceder (fini de read)
 
 		MapStrStr_t			_envCGI;		// variables d'environnement a envoyer aux CGI
 		MapStrStr_t			_httpStatus;	//map http status <-> response line 
+		MapFdClientPtr_t	_fdCgi;			//map liant fd lecture d'une cgi a son client
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -107,11 +107,10 @@ class WebServer
 		void				modEpollList(int fd, int op, uint32_t events);
 		void				deleteClient(int client_fd);
 
-		void				handle_epollerr(int event_id);
-		void				handle_epollhup(int event_id);
+		void				handle_epoll_error(int event_id, uint32_t event_mask);
 		void				handle_epollin(int event_id);
 		void				handle_epollout(int event_id);
-
+		void				error_epoll(std::string& status, int event_id);
 
 		void				process_rq(Client &cl);
 		void				process_rq_error(Client &cl);
