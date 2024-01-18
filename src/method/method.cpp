@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:08:47 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 16:11:19 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ void WebServer::methodDelete(Client &client)
 	// 405 Method Not Allowed : la méthode DELETE pas autorisée pour la ressource spécifiée
 	
 
-	if (std::remove(pagePath.c_str()) != 0) {
+	if (std::remove(client.request._pathTranslated.c_str()) != 0) {
 		std::cout << "ERROR DELETE" << std::endl;
 		// return;
 	}
