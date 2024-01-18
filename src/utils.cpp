@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 14:07:31 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:52:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ std::string	getFile(std::string& path)
 	std::string		ret;
 
 	if (f.fail())
-		throw std::runtime_error("error: open file error");
+		throw std::runtime_error("699: open file error");
 	std::getline(f, ret, '\0');
 	f.close();
 	return (ret);

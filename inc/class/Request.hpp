@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:30:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:45:05 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,8 @@ class Request
 		bool				_parseCgiHeaders(void);
 		bool				_parseBodyByLength(std::string &body);
 		bool				_parseBodyByChunk(std::string &body);
-		
-		
+
+
 	public	:
 		// a remettre en privé un jour
 		//

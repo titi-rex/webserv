@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:38:30 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:49:56 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,6 @@ void	WebServer::error_epoll(std::string& status, int event_id)
  */
 void	WebServer::run(void)
 {
-// wait for event
 	struct epoll_event	revents[MAX_EVENTS];
 	std::memset(revents, 0, sizeof(revents));
 	while (g_status)
@@ -168,11 +167,9 @@ void	WebServer::run(void)
 		int n_event = epoll_wait(_efd, revents, MAX_EVENTS, TIMEOUT);
 		if (n_event == -1)
 			throw std::runtime_error("614: epoll_wait failed");
-
 	// process event
 		for (int i = 0; i < n_event; ++i)
 		{
-			logDEBUG << "event id: " << i;
 			try 
 			{
 				if (revents[i].events & EPOLLERR || revents[i].events & EPOLLHUP)
@@ -185,14 +182,11 @@ void	WebServer::run(void)
 			catch (std::exception & e) 
 			{	
 				logWARNING << "epoll catch" << e.what();
-				logWARNING << strerror(errno);
-
 				std::string	status(e.what());
 				status.erase(3, status.size());
 				error_epoll(status, revents[i].data.fd);
 			}
 		}
-
 		// change and use a list to client* for client to procced
 		for (MapFdClientPtr_t::iterator it = _readyToProceedList.begin() ; it != _readyToProceedList.end(); ++it)
 		{
@@ -205,14 +199,10 @@ void	WebServer::run(void)
 			}
 			catch(const std::exception& e)
 			{
-				logWARNING << "process catch";
-				logWARNING << e.what();
-				logWARNING << strerror(errno);
-
+				logWARNING << "process catch" << e.what();
 				std::string	status(e.what());
 				status.erase(3, status.size());
 				it->second->request.setRStrStatus(status);
-	
 				process_rq_error(*it->second);
 			}
 		}
