@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 14:58:42 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:06:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,7 @@ void	WebServer::handle_epollin(int event_id)
 	logDEBUG << "epollin ";
 
 	if (_SocketServersList.count(event_id))
-	{
 		addClient(event_id);	//throw FATAL 
-		addClient(event_id);	//throw FATAL 
-	}
 	else if (_fdCgi.count(event_id))
 	{
 		logDEBUG << "reading cgi.." << event_id;
