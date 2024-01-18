@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 11:36:54 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:19:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	WebServer::handle_epollin(int event_id)
 			logDEBUG << "end read rq";
 		// std::cout << cl->request << std::endl;
 
-			modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLOUT);	//thow FATAL
+			// modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLOUT);	//thow FATAL
 			_readyToProceedList[cl->getFd()] = cl;				//add to ready list
 		}
 		else
@@ -130,7 +130,9 @@ void	WebServer::process_rq(Client &cl)
 		cl.cstatus = CGIWAIT;
 	else
 		cl.cstatus = PROCEEDED;
-	
+	if (cl.cstatus == PROCEEDED)
+		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
+
 	// std::clog << "response : " << std::endl << cl.request.response << std::endl;
 }
 
@@ -143,6 +145,7 @@ void	WebServer::process_rq_error(Client &cl)
 		getError(cl.request.getRStrStatus(), cl.request);
 		// cl.request.response = ERROR_500_MSG;
 		cl.cstatus = PROCEEDED;
+		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
 	}
 	catch(const std::exception& e)
 	{
@@ -161,7 +164,7 @@ void	WebServer::process_rq_error(Client &cl)
  */
 void	WebServer::run(void)
 {
-	int	deb = 10;
+	int	deb = 100;
 // wait for event
 	struct epoll_event	revents[MAX_EVENTS];
 	std::memset(revents, 0, sizeof(revents));

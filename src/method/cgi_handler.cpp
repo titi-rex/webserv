@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/18 11:39:17 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:08:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,11 +144,19 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
     } 
     else if (pid > 0) 
     {
-        // close(client.getFd_cgi()[1]);
-        
-        waitpid(pid, NULL, 0);
+		// sleep(5);
 		
-
+		// waitpid(pid, NULL, 0);
+        // close(client.getFd_cgi()[1]);
+		
+        // int	status;
+        // if (waitpid(pid, &status, 0) == -1)
+		// 	std::clog << "waitpid error" << std::endl;
+        // // close(client.getFd_cgi()[1]);
+		// if (WIFEXITED(status))
+		// 	std::clog << "exit status:" << WEXITSTATUS(status) << std::endl;	
+		// else
+		// 	std::clog <<"child has not exit" << std::endl;
             
         // char buffer[BUFFER_SIZE];
         // ssize_t read_bytes;
@@ -159,7 +167,6 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
         //     std::cout << "buffer = " << buffer << std::endl;
 
         // close(pipe_fd[0]);
-        // close(client.getFd_cgi()[0]);
     }
     else
         perror("Error : fork");

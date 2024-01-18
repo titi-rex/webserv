@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 21:55:01 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:16:24 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ std::string WebServer::methodPost(Client &client)
 	if (client.cstatus != GATHERED)
 	{
 		client.request.makeResponse();
+		client.cstatus = PROCEEDED;
 		return (client.request.response);
 	}
 	
