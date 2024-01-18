@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/18 15:21:43 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 16:08:57 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,6 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 		// logDEBUG << "REDIRECTION DETECTED";
 
 		// Fonction only if the parsing take the return with the error number and a string
-		req.setRstatus(std::atoi(redirection.first.c_str()));
 		req.setRStrStatus(redirection.first);
 		req.setRheaders("Location", redirection.second);
 		req.setRbody("");

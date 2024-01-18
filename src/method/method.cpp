@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:53:31 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 16:08:47 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 	getDate(date);
 
 	// New way to store the respond
-	req.setRstatus(200);
 	req.setRStrStatus("200");
 	req.setRline("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
@@ -95,7 +94,6 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 	int		size = lengthSize(body.length());
 	char	sRespondLength[size];
 	sprintf(sRespondLength, "%lu", body.length());
-	req.setRstatus (200);
 	req.setRStrStatus ("200");
 	req.setRline ("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
@@ -133,7 +131,6 @@ void WebServer::methodPost(Client &client)
 
 	// CGI output !!!!!!!!
 	
-	client.request.setRstatus (201);
 	client.request.setRStrStatus ("201");
 	client.request.setRline ("created");
 	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
@@ -141,6 +138,11 @@ void WebServer::methodPost(Client &client)
 	// client.request.setRbody(body);
 
 	client.request.makeResponse();
+}
+
+bool doesFileExist(const std::string& pagePath) {
+    struct stat buffer;
+    return (stat(pagePath.c_str(), &buffer) == 0);
 }
 
 
@@ -155,7 +157,10 @@ void WebServer::methodDelete(Client &client)
 	// 405 Method Not Allowed : la méthode DELETE pas autorisée pour la ressource spécifiée
 	
 
-	
+	if (std::remove(pagePath.c_str()) != 0) {
+		std::cout << "ERROR DELETE" << std::endl;
+		// return;
+	}
 	// client.request.setRstatus (200);
 	// client.request.setRStrStatus ("200");
 	// client.request.setRline ("OK");

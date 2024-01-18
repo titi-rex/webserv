@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:52:49 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 16:08:19 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <sys/epoll.h>
 # include <errno.h>
 # include <signal.h>
+# include <sys/stat.h>
 # include "Request.hpp"
 
 typedef unsigned int long	uintptr_t;
