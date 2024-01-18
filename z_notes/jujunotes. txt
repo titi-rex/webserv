@@ -1,2 +1,1 @@
-dirlisting: .. doit fonctionner
-dirlisting: doit pouvoir entrer dans le dossier
+apres findLocation regarder si l'extention est un CGI et s'il est supporte sinon mettre un bool a false. dans Request
