@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:05:04 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:17:21 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ std::string	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
 			throw std::runtime_error("501 Method not Implemented");
 	};
 	return (NULL);
+		return;
 }
 
 // std::string	get(Request rq, VirtualHost v_host)
@@ -150,17 +151,8 @@ bool doesFileExist(const std::string& pagePath) {
 
 std::string WebServer::methodDelete(Client &client, std::string	pagePath)
 {
-	// 200 OK : suppression de la ressource effectuée avec succès.
-	// 204 No Content : suppression effectuée avec succès, mais le serveur 
-	// ne renvoie pas de corps de réponse
-	// 202 Accepted : la requête a été acceptée pour traitement, mais 
-	// le traitement n'est pas nécessairement terminé
-	// 404 Not Found : la ressource à supprimer n'a pas été trouvée sur le serveur.
-	// 405 Method Not Allowed : la méthode DELETE pas autorisée pour la ressource spécifiée
-	
-
 	if (std::remove(pagePath.c_str()) != 0) {
-		std::cout << "ERROR DELETE" << std::endl;
+		throw std::runtime_error("500: Remove return error");
 		// return;
 	}
 	// client.request.setRstatus (200);
