@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:11:19 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 17:01:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,24 +50,35 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 // pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
 // pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
 
-void	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
+void	WebServer::Method(Client &cl)
 {
-	// std::cout << "req.getUri(): " << req.getUri() << std::endl;
 
-	if (req.getUri() != "/" && isDirListReq(req))
+	// chercher si le dir listing est au bon endroit !
+	if (cl.request.getUri() != "/" && isDirListReq(cl.request))
 	{
-		dirList(req, v_host);
+		dirList(cl.request, cl.host);
 		return ;
 	}
 	
-	std::string	pagePath = findLocation(req, v_host);
-	// std::cout << "PAGE PATH: " << pagePath << std::endl;
+	// etape 1 : chercher la ressource cible (target)
+	std::string	pagePath = findLocation(cl.request, cl.host);
+	
+	//etape 2: execute la cgi si besoin !
+	if (cl.cstatus != CGIWAIT && cl.request.getNeedCgi())
+	{
+		std::clog << "GO GO GO CGI" << std::endl;
+		cl.cstatus = CGIWAIT;
+		fillEnvCGI(cl);
+		execute_cgi(cl.host->getCgi().at(cl.request.getExt()), cl);
+		return ;
+	}
 
-	switch (req.getMid())
+	// on selectionne la method qui va bien et on la fait
+	switch (cl.request.getMid())
 	{
 		case GET:
 			// std::cout << "GET JUJU" << std::endl;
-			methodGet(req, v_host, pagePath);
+			methodGet(cl.request, cl.host, pagePath);
 			break ;
 		case POST:
 			// std::cout << "POST JUJU" << std::endl;
@@ -79,11 +90,12 @@ void	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
 			break ;
 		case HEAD:
 			// std::cout << "HEAD JUJU" << std::endl;
-			methodHead(req, v_host, pagePath);
+			methodHead(cl.request, cl.host, pagePath);
 			break ;
 		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
 	};
+	cl.cstatus = PROCEEDED;
 }
 
 void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path )
@@ -105,27 +117,27 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 
 void WebServer::methodPost(Client &client)
 {
-	MapStrStr_t	cgi = client.host->getCgi();
-	std::string							ext = client.request.getExt();
-	std::string							script_path;
+	MapStrStr_t		cgi = client.host->getCgi();
+	std::string		ext = client.request.getExt();
+	std::string		script_path;
 	
 	logERROR << client.getStatusStr();
 	std::clog << "req"<< client.request << std::endl;
-	if (client.cstatus != GATHERED)
-	{
-		client.request.makeResponse();
-		client.cstatus = PROCEEDED;
-		return ;
-	}
-	
-	// si ya pas de fichier !!!!!
-    MapStrStr_t::iterator it2 = cgi.find(ext);
-    if (it2 != cgi.end())
-	{	
-        script_path = it2->second;
-		fillEnvCGI(client);
-		execute_cgi(script_path, client);
-	}
+	// if (client.cstatus != GATHERED)
+	// {
+	// 	client.request.makeResponse();
+	// 	client.cstatus = PROCEEDED;
+	// 	return ;
+	// }
+
+	// // si ya pas de fichier !!!!!
+    // MapStrStr_t::iterator it2 = cgi.find(ext);
+    // if (it2 != cgi.end())
+	// {	
+    //     script_path = it2->second;
+	// 	fillEnvCGI(client);
+	// 	execute_cgi(script_path, client);
+	// }
     // else
     //     script_path.clear(); // ERROR
 

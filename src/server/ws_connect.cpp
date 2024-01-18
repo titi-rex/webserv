@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:12:14 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:48:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,7 @@ void	WebServer::process_rq(Client &cl)
 	}
 
 // prepare response based on request, there should be GET/HEAD/POST
-	Method(cl, cl.request, cl.host);
-	if (cl.request.getMid() == POST && cl.cstatus == GATHERED)
-		cl.cstatus = CGIWAIT;
-	else
-		cl.cstatus = PROCEEDED;
+	Method(cl);
 	if (cl.cstatus == PROCEEDED)
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
 

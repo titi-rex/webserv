@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/18 14:56:34 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 17:02:56 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
 
 void WebServer::execute_cgi(const std::string& script_path, Client& client) 
 {
-	// char**      envp;
+	// char**	envp;
 
     std::clog <<  "EXEC CGI with path : " << script_path << std::endl;
     // convertToEnvp(_envCGI, envp);
@@ -142,7 +142,7 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 
         char* const argc[] = {const_cast<char*>(script_path.c_str()), NULL};
 
-        
+
         execve(argc[0], argc, NULL);
 
         perror("error : execve");
@@ -151,7 +151,7 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
     else if (pid > 0) 
     {
 	
-        close(client.getFd_cgi()[1]); // attention ?
+		close(client.getFd_cgi()[1]); // attention ?
 		return ;
 
     }
