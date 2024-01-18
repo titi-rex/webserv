@@ -99,15 +99,21 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
     int envpSize = map.size() + 1; 
     
     envp = new char*[envpSize];
-
     // std::cout << std::endl;
     // std::cout << "*------- CGI ENVIROMMENT -------*" << std::endl;
     // std::cout << std::endl;
     for (MapStrStr_t::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         std::string keyValue = it->first + "=" + it->second;
-        envp[i] = strdup(keyValue.c_str());
+        const char* keyValueChar = keyValue.c_str();
+        
+        size_t len = 0;
+        while (keyValueChar[len] != '\0')
+            ++len;
+        envp[i] = new char[len + 1];
         // std::cout << "env[i] = " << envp[i] << std::endl;
+        for (size_t j = 0; j <= len; ++j)
+            envp[i][j] = keyValueChar[j];
         ++i;
     }
 

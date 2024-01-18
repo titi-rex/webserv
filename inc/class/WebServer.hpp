@@ -130,6 +130,7 @@ class WebServer
 		std::string			GET_error(int code);	//obsolete
 		void				getError(std::string status, Request& req);	// GET special pour error
 		std::string			methodPost(Client &client);
+		std::string			methodDelete(Client &client);
 
 };
 

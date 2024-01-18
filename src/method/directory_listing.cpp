@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/17 15:29:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 14:06:29 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,22 +73,31 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 	{
 		// Folder  .. doesn't have an uri
 		std::string	str = ptr_dir->d_name;
+		DIR 		*tmp = opendir((directory + str).c_str());
+		
 		if (str == ".")
-			ss << "<dt><a href=\"http://localhost:8080" << pointDir << "\">" << ptr_dir->d_name << "</a></dt>\n";
+		{
+			ss << "<dt><a href=\"http://localhost:8080" << pointDir << "\">";
+			ss << "<img src=\"https://i.pinimg.com/736x/6e/8d/fe/6e8dfe5444398a4d024637809a492929.jpg\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
+			ss << str << "</a></dt>\n";
+		}
 		else if (str == "..")
 		{
-			ss << "<dt><a href=\"http://localhost:8080" << pointPointDir << "\">" << ptr_dir->d_name << "</a></dt>\n";
+			ss << "<dt><a href=\"http://localhost:8080" << pointPointDir << "\">";
+			ss << "<img src=\"https://i.pinimg.com/736x/6e/8d/fe/6e8dfe5444398a4d024637809a492929.jpg\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
+			ss << str << "</a></dt>\n";
 		}
 		else if (str.substr(str.length() - 5, 5) == ".html")
 		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, directory, v_host) << "\">";
-			ss << ptr_dir->d_name << "</a></dt>\n";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "\">";
+			ss << str << "</a></dt>\n";
 		}
-		else
+		else if (tmp != NULL)
 		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(ptr_dir->d_name, directory, v_host) << "/\">";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "/\">";
 			ss << "<img src=\"https://i.pinimg.com/736x/6e/8d/fe/6e8dfe5444398a4d024637809a492929.jpg\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
-			ss << ptr_dir->d_name << "</a></dt>\n";
+			ss << str << "</a></dt>\n";
+			closedir(tmp);
 		}
 	}
 	
