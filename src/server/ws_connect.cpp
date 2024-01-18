@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:52:51 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:58:42 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,10 @@ void	WebServer::handle_epollin(int event_id)
 	logDEBUG << "epollin ";
 
 	if (_SocketServersList.count(event_id))
+	{
 		addClient(event_id);	//throw FATAL 
+		addClient(event_id);	//throw FATAL 
+	}
 	else if (_fdCgi.count(event_id))
 	{
 		logDEBUG << "reading cgi.." << event_id;
@@ -87,7 +90,6 @@ void	WebServer::process_rq(Client &cl)
 	logDEBUG << "request proceed";
 	cl.host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl.request);
 
-	
 // special instruction : execute shutdown
 	if (cl.request.getUri() == "/shutdown")
 	{
@@ -97,9 +99,6 @@ void	WebServer::process_rq(Client &cl)
 		cl.request.response = methodGet(cl.request, cl.host, shutPage);
 		cl.sendRequest();
 	}
-
-	// logDEBUG << "host: " << cl.host;
-
 
 // prepare response based on request, there should be GET/HEAD/POST
 	cl.request.response = Method(cl, cl.request, cl.host);
@@ -133,6 +132,33 @@ void	WebServer::process_rq_error(Client &cl)
 }
 
 
+void	WebServer::error_epoll(std::string& status, int event_id)
+{
+	if (_fdCgi.count(event_id))
+	{
+		logERROR << "PIPE ERROR FATAL, ABANDON PIPE";
+		Client*	cl =  _fdCgi[event_id];
+		close(event_id);
+		cl->cstatus = ERROR;
+		cl->request.setRStrStatus("500");
+	}
+	else if (_SocketServersList.count(event_id))
+	{
+		logERROR << "couldn't accept new client";
+	}
+	else if (_httpStatus.count(status)) 	
+	{
+		_ClientList[event_id].cstatus = ERROR;
+		modEpollList(event_id, EPOLL_CTL_MOD, EPOLLOUT);
+		_readyToProceedList[event_id] = &_ClientList[event_id];
+	}
+	else
+	{
+		logERROR << "ERROR FATAL, ABANDON CLIENT";
+		deleteClient(event_id);
+	}
+}
+
 
 /**
  * @brief main function
@@ -141,17 +167,15 @@ void	WebServer::process_rq_error(Client &cl)
  */
 void	WebServer::run(void)
 {
-	int	deb = 100;
 // wait for event
 	struct epoll_event	revents[MAX_EVENTS];
 	std::memset(revents, 0, sizeof(revents));
-	while (g_status && --deb > 0)
+	while (g_status)
 	{
 		logINFO << "Waiting for event..";
 		int n_event = epoll_wait(_efd, revents, MAX_EVENTS, TIMEOUT);
 		if (n_event == -1)
 			throw std::runtime_error("614: epoll_wait failed");
-
 
 	// process event
 		for (int i = 0; i < n_event; ++i)
@@ -168,48 +192,12 @@ void	WebServer::run(void)
 			}
 			catch (std::exception & e) 
 			{	
-				logWARNING << "epoll catch";
-				
-				logWARNING << e.what();
+				logWARNING << "epoll catch" << e.what();
 				logWARNING << strerror(errno);
 				
-				int	err = std::atoi(e.what());
-				if (err == 0)
-					err = 699;
-				
-				if (err >= 600) 	
-				{
-					if (_ClientList.count(revents[i].data.fd))
-					{
-						logERROR << "ERROR FATAL, ABANDON CLIENT";
-						deleteClient(revents[i].data.fd);
-					}
-					else if (_fdCgi.count(revents[i].data.fd))
-					{
-						logERROR << "PIPE ERROR FATAL, ABANDON PIPE";
-						Client*	cl =  _fdCgi[revents[i].data.fd];
-						close(revents[i].data.fd);
-						cl->cstatus = ERROR;
-						cl->request.setRStrStatus("500");
-					}
-				}
-				else
-				{
-					if (_ClientList.count(revents[i].data.fd))
-					{
-						_ClientList[revents[i].data.fd].cstatus = ERROR;
-						modEpollList(revents[i].data.fd, EPOLL_CTL_MOD, EPOLLOUT);
-						_readyToProceedList[revents[i].data.fd] = &_ClientList[revents[i].data.fd];
-					}
-					else if (_fdCgi.count(revents[i].data.fd))
-					{
-						logERROR << "PIPE ERROR FATAL, ABANDON PIPE";
-						Client*	cl =  _fdCgi[revents[i].data.fd];
-						close(revents[i].data.fd);
-						cl->cstatus = ERROR;
-						cl->request.setRStrStatus("500");
-					}
-				}
+				std::string	status(e.what());
+				status.erase(3, status.size());
+				error_epoll(status, revents[i].data.fd);
 			}
 		}
 
@@ -225,16 +213,17 @@ void	WebServer::run(void)
 			}
 			catch(const std::exception& e)
 			{
-
 				logWARNING << "process catch";
 				logWARNING << e.what();
 				logWARNING << strerror(errno);
 
-				int	err = std::atoi(e.what());
+				std::string	status(e.what());
+				status.erase(3, status.size());
+				int	err = std::atoi(e.what()); // check if err is in httpstatus
 				if (err == 0)
 					err = 699;
 				logWARNING << "cerror code : " << err;
-				it->second->request.setRStrStatus(e.what());
+				it->second->request.setRStrStatus(status);
 				it->second->request.setRstatus(err);
 	
 				process_rq_error(*it->second);

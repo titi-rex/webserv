@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/18 13:41:58 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:56:34 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +124,8 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
     pipe(client.getFd_cgi());
 	client.request.setPstatus(CGIHD);
 	modEpollList(client.getFd_cgi()[0], EPOLL_CTL_ADD, EPOLLIN);
-	_fdCgi[client.getFd_cgi()[0]] = &client;
-        // close(client.getFd_cgi()[1]);
-        
+	_fdCgi[client.getFd_cgi()[0]] = &client;						//add fd cgi a un map reliant le fd au client 
+
 
     pid_t pid = fork();
     if (pid == 0) 
@@ -145,29 +144,10 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
     } 
     else if (pid > 0) 
     {
-		// sleep(5);
-		
-		// waitpid(pid, NULL, 0);
-        // close(client.getFd_cgi()[1]);
-		
-        // int	status;
-        // if (waitpid(pid, &status, 0) == -1)
-		// 	std::clog << "waitpid error" << std::endl;
-        // // close(client.getFd_cgi()[1]);
-		// if (WIFEXITED(status))
-		// 	std::clog << "exit status:" << WEXITSTATUS(status) << std::endl;	
-		// else
-		// 	std::clog <<"child has not exit" << std::endl;
-            
-        // char buffer[BUFFER_SIZE];
-        // ssize_t read_bytes;
+	
+        close(client.getFd_cgi()[1]); // attention ?
+		return ;
 
-        // while ((read_bytes = read(pipe_fd[0], buffer, sizeof(buffer))) > 0)
-        //     std::cout << "buffer = " << buffer << std::endl;
-        // while ((read_bytes = read(client.getFd_cgi()[0], buffer, sizeof(buffer))) > 0)
-        //     std::cout << "buffer = " << buffer << std::endl;
-
-        // close(pipe_fd[0]);
     }
     else
         perror("Error : fork");

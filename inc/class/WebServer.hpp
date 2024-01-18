@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:46:36 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:44:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ class WebServer
 		void				handle_epoll_error(int event_id, uint32_t event_mask);
 		void				handle_epollin(int event_id);
 		void				handle_epollout(int event_id);
-
+		void				error_epoll(std::string& status, int event_id);
 
 		void				process_rq(Client &cl);
 		void				process_rq_error(Client &cl);

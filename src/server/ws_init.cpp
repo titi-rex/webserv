@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:46:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:51:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,17 @@ void	WebServer::addClient(int socketServerFd)
 	Client	cl;
 
 	cl.accept(socketServerFd);//can throw (FATAL)
-	modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);//can thow FATAL
-	_ClientList[cl.getFd()] = cl;
-	logINFO << "added: " << cl;
+	try
+	{
+		modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);//can thow FATAL
+		_ClientList[cl.getFd()] = cl;
+		logINFO << "added: " << cl;
+	}
+	catch(const std::exception& e)
+	{
+		wrap_close(cl.getFd());
+		throw std::runtime_error(e.what());
+	}
 }
 
 /**
