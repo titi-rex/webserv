@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 17:01:59 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 17:04:05 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	WebServer::Method(Client &cl)
 		return ;
 	}
 
-	// on selectionne la method qui va bien et on la fait
+	// etape 3: on selectionne la method qui va bien et on la fait
 	switch (cl.request.getMid())
 	{
 		case GET:
