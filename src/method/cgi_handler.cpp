@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/18 11:29:03 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 12:39:10 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,9 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
     int envpSize = map.size() + 1; 
     
     envp = new char*[envpSize];
+    // std::cout << std::endl;
+    // std::cout << "*------- CGI ENVIROMMENT -------*" << std::endl;
+    // std::cout << std::endl;
     for (MapStrStr_t::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         std::string keyValue = it->first + "=" + it->second;
@@ -108,6 +111,7 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
         while (keyValueChar[len] != '\0')
             ++len;
         envp[i] = new char[len + 1];
+        // std::cout << "env[i] = " << envp[i] << std::endl;
         for (size_t j = 0; j <= len; ++j)
             envp[i][j] = keyValueChar[j];
         ++i;
@@ -115,27 +119,6 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
 
     envp[i] = NULL;
 }
-
-// void convertToEnvp(const MapStrStr_t& map, char**& envp)
-// {
-//     int i = 0;
-//     int envpSize = map.size() + 1; 
-    
-//     envp = new char*[envpSize];
-
-//     // std::cout << std::endl;
-//     // std::cout << "*------- CGI ENVIROMMENT -------*" << std::endl;
-//     // std::cout << std::endl;
-//     for (MapStrStr_t::const_iterator it = map.begin(); it != map.end(); ++it)
-//     {
-//         std::string keyValue = it->first + "=" + it->second;
-//         envp[i] = strdup(keyValue.c_str());
-//         // std::cout << "env[i] = " << envp[i] << std::endl;
-//         ++i;
-//     }
-
-//     envp[i] = NULL;
-// }
 
 void WebServer::execute_cgi(const std::string& script_path, Client& client) 
 {

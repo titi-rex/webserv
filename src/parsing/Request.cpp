@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 14:11:57 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:55:14 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ bool	Request::_parseRequestLine(void)
  */
 bool	Request::_findBodySize(void)
 {
-	if (_mId == HEAD || _mId == GET)
+	if (_mId == HEAD || _mId == GET || _mId == DELETE)
 		return (true);
 
 	MapStrStr_t::iterator itCl = _headers.find("content-length");
