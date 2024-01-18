@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 20:52:16 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:46:40 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ WebServer&	WebServer::operator=(const WebServer& src)
 	_virtualHost = src._virtualHost;
 	_errorPage = src._errorPage;
 	_SocketServersList = src._SocketServersList;
-	_highSocket = src._highSocket;
 	_ClientList = src._ClientList;
 	_readyToProceedList = src._readyToProceedList;
 	_envCGI = src._envCGI;	

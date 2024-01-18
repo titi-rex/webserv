@@ -11,7 +11,7 @@ parsing : indiquer n ligne qund erreur
 	+ location { qui chhuine
 
 
-
+execute cgi doit erter dans bon dossier !! 
 
 bug :
 

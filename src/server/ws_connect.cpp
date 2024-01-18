@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:19:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:52:51 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,7 @@ void	WebServer::handle_epoll_error(int event_id, uint32_t event_mask)
 	else
 		logWARNING << "unexpected close of fd";
 
-	throw std::runtime_error("615: epollerr");
-	// if (event_id > _highSocket)
-	// 	deleteClient(event_id);
-	// else if (event_id < 0)
-	// {
-	// 	close(-event_id);
-		
-	// }
+	throw std::runtime_error("615: epollerr or hang up");
 }
 
 
@@ -37,47 +30,31 @@ void	WebServer::handle_epollin(int event_id)
 {
 	logDEBUG << "epollin ";
 
-	if (event_id <= _highSocket && event_id > 0)
+	if (_SocketServersList.count(event_id))
 		addClient(event_id);	//throw FATAL 
-
-	else if (event_id > 0)
+	else if (_fdCgi.count(event_id))
 	{
-		Client*	cl = &_ClientList[event_id];
-		
-		if(cl->readRequest())	//throw ERROR or FATAL
-		{
-			logDEBUG << "end read rq";
-		// std::cout << cl->request << std::endl;
-
-			// modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLOUT);	//thow FATAL
-			_readyToProceedList[cl->getFd()] = cl;				//add to ready list
-		}
-		else
-			logDEBUG << "read rq continue";
-	}
-	else
-	{
-		event_id = -event_id;
-		
 		logDEBUG << "reading cgi.." << event_id;
 
-		Client*	cl = NULL;
-
-		// find client from cgi fd, should use a cgi_fd to client map insteed
-		for (MapFdClient_t::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
-		{
-			if (it->second.getFd_cgi()[0] == event_id)
-			{
-				cl = &it->second;
-				break ;
-			}
-		}
+		Client*	cl = _fdCgi[event_id];
 		if (cl->readCgi())	//read cgi output, if end, deregister cgi from epoll
 		{
 			logDEBUG << "all cgi has been read";
 			modEpollList(event_id,	EPOLL_CTL_DEL, 0);
 			close(event_id);
+			_fdCgi.erase(event_id);
 		}
+	}
+	else
+	{
+		Client*	cl = &_ClientList[event_id];
+		if(cl->readRequest())	//throw ERROR or FATAL
+		{
+			logDEBUG << "end read rq";
+			_readyToProceedList[cl->getFd()] = cl;	//add to ready list
+		}
+		else
+			logDEBUG << "read rq continue";
 	}
 }
 
@@ -189,9 +166,8 @@ void	WebServer::run(void)
 				else if (revents[i].events & EPOLLOUT)
 					handle_epollout(revents[i].data.fd);
 			}
-			catch (std::exception & e)// 450: truc pas bien 
+			catch (std::exception & e) 
 			{	
-				usleep(500);
 				logWARNING << "epoll catch";
 				
 				logWARNING << e.what();
@@ -200,38 +176,39 @@ void	WebServer::run(void)
 				int	err = std::atoi(e.what());
 				if (err == 0)
 					err = 699;
-				logWARNING << "cerror code : " << err;
 				
-				if (err >= 600) //temp delete client
+				if (err >= 600) 	
 				{
-					if (revents[i].data.fd > 0)
+					if (_ClientList.count(revents[i].data.fd))
 					{
 						logERROR << "ERROR FATAL, ABANDON CLIENT";
 						deleteClient(revents[i].data.fd);
 					}
-					else
+					else if (_fdCgi.count(revents[i].data.fd))
 					{
 						logERROR << "PIPE ERROR FATAL, ABANDON PIPE";
-						Client*	cl = NULL;
-
-						for (MapFdClient_t::iterator it = _ClientList.begin(); it != _ClientList.end(); ++it)
-						{
-							if (it->second.getFd_cgi()[0] == -revents[i].data.fd)
-							{
-								cl = &it->second;
-								break ;
-							}
-						}
-						close(-revents[i].data.fd);
+						Client*	cl =  _fdCgi[revents[i].data.fd];
+						close(revents[i].data.fd);
 						cl->cstatus = ERROR;
 						cl->request.setRStrStatus("500");
 					}
 				}
 				else
 				{
-					_ClientList[revents[i].data.fd].cstatus = ERROR;
-					modEpollList(revents[i].data.fd, EPOLL_CTL_MOD, EPOLLOUT);
-					_readyToProceedList[revents[i].data.fd] = &_ClientList[revents[i].data.fd];
+					if (_ClientList.count(revents[i].data.fd))
+					{
+						_ClientList[revents[i].data.fd].cstatus = ERROR;
+						modEpollList(revents[i].data.fd, EPOLL_CTL_MOD, EPOLLOUT);
+						_readyToProceedList[revents[i].data.fd] = &_ClientList[revents[i].data.fd];
+					}
+					else if (_fdCgi.count(revents[i].data.fd))
+					{
+						logERROR << "PIPE ERROR FATAL, ABANDON PIPE";
+						Client*	cl =  _fdCgi[revents[i].data.fd];
+						close(revents[i].data.fd);
+						cl->cstatus = ERROR;
+						cl->request.setRStrStatus("500");
+					}
 				}
 			}
 		}
@@ -248,7 +225,7 @@ void	WebServer::run(void)
 			}
 			catch(const std::exception& e)
 			{
-				usleep(500);
+
 				logWARNING << "process catch";
 				logWARNING << e.what();
 				logWARNING << strerror(errno);
@@ -259,7 +236,7 @@ void	WebServer::run(void)
 				logWARNING << "cerror code : " << err;
 				it->second->request.setRStrStatus(e.what());
 				it->second->request.setRstatus(err);
-				
+	
 				process_rq_error(*it->second);
 			}
 		}

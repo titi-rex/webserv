@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/18 13:08:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:41:58 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,8 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 	
     pipe(client.getFd_cgi());
 	client.request.setPstatus(CGIHD);
-	modEpollList(-client.getFd_cgi()[0], EPOLL_CTL_ADD, EPOLLIN);
+	modEpollList(client.getFd_cgi()[0], EPOLL_CTL_ADD, EPOLLIN);
+	_fdCgi[client.getFd_cgi()[0]] = &client;
         // close(client.getFd_cgi()[1]);
         
 

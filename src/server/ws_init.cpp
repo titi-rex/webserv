@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 21:24:57 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:46:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	WebServer::_SocketServerList_init(void)
 		_SocketServersList[key].v_hosts.push_front(&_virtualHost[i]);
 		
 		logINFO << "added: " << _SocketServersList[key];
-		_highSocket = key;
 	}
 }
 
