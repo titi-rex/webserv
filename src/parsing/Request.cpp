@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 13:55:14 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:30:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ Request&	Request::operator=(const Request& src)
 	_pathTranslated = src._pathTranslated;
 	_bodySizeExpected = src._bodySizeExpected;
 	response = src.response;
-	rstatus = src.rstatus;
 	_rStrStatus = src._rStrStatus;
 	return (*this);
 };
@@ -66,7 +65,6 @@ void	Request::setPathtranslated( std::string path ) { this->_pathTranslated = pa
 void	Request::setRline( std::string line ) { this->_rline = line; };
 void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
 void	Request::setPstatus(e_parsingStatus newStatus) {_pstatus = newStatus;};
-void	Request::setRstatus( short int status ) { this->rstatus = status; };
 void	Request::setRStrStatus( std::string status ) { this->_rStrStatus = status; };
 void	Request::setRbody( std::string body ) { this->_rbody = body; };
 void	Request::setResponse( std::string response ) { this->response = response; };
@@ -88,11 +86,6 @@ void	Request::makeResponse (void)
 
 	// std::clog << this->_body << std::endl;
 }
-
-bool	Request::isChunked(void) const
-{
-	return (_pstatus == BODYCHUNK);
-};
 
 bool	Request::_is_method_known(std::string & test)
 {
@@ -427,11 +420,22 @@ void	Request::clear(void)
 {
 	_mId = UNKNOW;
 	_uri.clear();
+	_query.clear();
+	_pathInfo.clear();
+	_ext.clear();
 	_body.clear();
 	_headers.clear();
+	_pstatus = RL;
+	_raw.clear();
+	_size = 0;
+	_lenChunk = 0;
+	_rline.clear();
+	_pathTranslated.clear();
 	_rbody.clear();
 	_rheaders.clear();
-	rstatus = 0;
+	_bodySizeExpected = 0;
+	response.clear();
+	_rStrStatus.clear();
 }
 
 std::ostream& operator<<(std::ostream& os, const Request& req)
