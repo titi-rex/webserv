@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/18 16:08:57 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 16:56:01 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,12 +190,16 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	// logDEBUG << "Find extension:";
 	std::size_t	found = pagePath.rfind('.');
 	std::string	extension;
-
+	
 	if (found != 0)
 	{
-		extension = pagePath.substr(found, pagePath.length() - found);
+		extension = pagePath.substr(found + 1, pagePath.length() - found);
 		req.setExt(extension);
+		if (v_host->getCgi().count(extension))
+			req.setNeedCgi(true);
 	}
+
+	
 	// std::clog << "extension: " << extension << std::endl;
 
 	// logDEBUG << "End of findLocation:";

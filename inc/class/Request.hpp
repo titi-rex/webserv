@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:12:07 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:28:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ class Request
 		std::string			_ext;
 		std::string			_body;
 		MapStrStr_t			_headers;
+		bool				_needCgi;
 
 		//tmp variable for parsing
 		e_parsingStatus		_pstatus;
@@ -95,7 +96,6 @@ class Request
 		bool				_parseCgiHeaders(void);
 		bool				_parseBodyByLength(std::string &body);
 		bool				_parseBodyByChunk(std::string &body);
-
 
 	public	:
 		// a remettre en privé un jour
@@ -115,7 +115,8 @@ class Request
 		~Request(void);
 
 
-		e_method 			getMid(void) const;
+		e_method			getMid(void) const;
+		bool				getNeedCgi(void) const;
 		e_parsingStatus		getPstatus(void) const;
 		const std::string	getMethodName(void) const;
 		const std::string&	getUri(void) const;
@@ -126,20 +127,21 @@ class Request
 		const std::string&	getRStrStatus(void) const;
 		const MapStrStr_t&	getHeaders(void) const;
 
-		void	setPathtranslated( std::string path );
-		void	setRline( std::string line );
-		void	setRheaders( std::string key, std::string value );
-		void	setPstatus(e_parsingStatus newStatus);
-		void	setRstatus( short int status );
-		void	setRStrStatus( std::string status );
-		void	setRbody( std::string body );
-		void	setResponse( std::string response );
-		void	setExt( std::string extension );
-		void	makeResponse ( void );
+		void				setPathtranslated( std::string path );
+		void				setRline( std::string line );
+		void				setRheaders( std::string key, std::string value );
+		void				setPstatus(e_parsingStatus newStatus);
+		void				setRStrStatus( std::string status );
+		void				setRbody( std::string body );
+		void				setResponse( std::string response );
+		void				setExt( std::string extension );
+		void				setNeedCgi(bool yes);
 
-		bool	build(std::string raw = "");
-		bool	addCgi(std::string	buff);
-		void	clear(void);
+
+		bool				build(std::string raw = "");
+		bool				addCgi(std::string	buff);
+		void				makeResponse(void);
+		void				clear(void);
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);

@@ -4,8 +4,9 @@ to do :
 
 faire un fonction log
 
-
-cgi parsing : si cgi renvoit pas header que body -> read rien 
+check cgi env plus clean
+ccgi = chekc retour child status 
++ gerer timeout
 
 parsing : indiquer n ligne qund erreur 
 	+ location { qui chhuine

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:09:16 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/18 16:31:57 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(void) : _mId(UNKNOW), _pstatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
+Request::Request(void) : _mId(UNKNOW), _needCgi(false), _pstatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
 
 Request::Request(const Request& src) {*this = src;};
 
@@ -27,6 +27,7 @@ Request&	Request::operator=(const Request& src)
 	_ext = src._ext;
 	_body = src._body;
 	_headers = src._headers;
+	_needCgi = src._needCgi;
 	_pstatus = src._pstatus;
 	_rline = src._rline;
 	_rheaders = src._rheaders;
@@ -40,7 +41,7 @@ Request&	Request::operator=(const Request& src)
 
 Request::~Request(void) {};
 
-
+bool				Request::getNeedCgi(void) const {return (this->_needCgi);};
 e_method 			Request::getMid(void) const {return (this->_mId);};
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
 const std::string&	Request::getBody(void) const { return (this->_body); };
@@ -61,6 +62,7 @@ const std::string	Request::getMethodName(void) const
 	}	
 }
 
+void	Request::setNeedCgi(bool yes) { this->_needCgi = yes; };
 void	Request::setPathtranslated( std::string path ) { this->_pathTranslated = path; };
 void	Request::setRline( std::string line ) { this->_rline = line; };
 void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
