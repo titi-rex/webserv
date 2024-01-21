@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/16 21:59:17 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/21 19:06:33 by jmoutous         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ DEFAULT_CONFIG_PATH	=	conf/juju.conf
 
 #	==============================	SOURCES	==============================	#
 DIR_SRCS_METHOD	=	method/
-LST_SRCS_METHOD	=	cgi_handler.cpp directory_listing.cpp location_processing.cpp method.cpp ws_error.cpp
+LST_SRCS_METHOD	=	cgi_handler.cpp directory_listing.cpp location_processing.cpp method.cpp ws_error.cpp image.cpp
 SRCS_METHOD		=	${addprefix ${DIR_SRCS_METHOD}, ${LST_SRCS_METHOD}}
 
 DIR_SRCS_PARSE	=	parsing/

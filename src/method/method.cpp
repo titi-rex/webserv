@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:36:11 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/21 19:07:12 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,12 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 
 void	WebServer::Method(Client &cl, Request & req, vHostPtr & v_host)
 {
+	if (cl.request.getUri().compare(0, 5, "/img/") == 0 && cl.request.getUri().length() > 5)
+	{
+		imageGet(cl);
+		return ;
+	}
+
 	if (req.getUri() != "/" && isDirListReq(req))
 	{
 		dirList(req, v_host);
