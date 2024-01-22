@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/22 18:44:42 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 18:53:55 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 
 
 	std::stringstream ss;
-	std::string	pointDir = directory.substr(v_host->getRoot().length() + 1, directory.length() - v_host->getRoot().length() + 1);
-	std::string pointPointDir = goBack(pointDir);
+	std::string	curentFolder = directory.substr(v_host->getRoot().length() + 1, directory.length() - v_host->getRoot().length() + 1);
+	std::string pointPointDir = goBack(curentFolder);
 
 	ss << "HTTP/1.1 200 OK\r\n\r\n";
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << directory << "</title>\n</head>\n";
@@ -79,6 +79,9 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 			continue ;
 		else if (str == "..")
 		{
+			if (pointPointDir == curentFolder)
+				continue ;
+
 			ss << "<dt><a href=\"http://localhost:8080" << pointPointDir << "\">";
 			ss << "<img src=\"https://cdn3.iconfinder.com/data/icons/3d-printing-icon-set/512/Open.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
 			ss << "Parent Directory</a></dt>\n";
