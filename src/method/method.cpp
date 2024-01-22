@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 18:28:45 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 20:11:29 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ void	WebServer::Method(Client &cl)
 	if (cl.request.getUri() != "/" && isDirListReq(cl.request))
 	{
 		dirList(cl.request, cl.host);
+		std::clog << "dirlist asked, rq is :" << std::endl << cl.request;
+		cl.cstatus = PROCEEDED;
 		return ;
 	}
 	
@@ -69,7 +71,7 @@ void	WebServer::Method(Client &cl)
 	std::string	pagePath = findLocation(cl.request, cl.host);
 	
 	//etape 2: execute la cgi si besoin !
-	if (cl.cstatus != CGIWAIT && cl.request.getNeedCgi())
+	if (cl.cstatus == GATHERED && cl.request.getNeedCgi())
 	{
 		std::clog << "GO GO GO CGI" << std::endl;
 		cl.cstatus = CGIWAIT;

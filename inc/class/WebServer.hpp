@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 18:28:01 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 20:11:22 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@ class WebServer
 		void				process_rq(Client &cl);
 		void				process_rq_error(Client &cl);
 
+		void				_closeAllFd(bool log);
+		void				_initHttpStatus(void);
 		// CGI
 		void				fillElement(std::string key , std::string val);
 		void				fillValueFromHeader(MapStrStr_t header, std::string key);

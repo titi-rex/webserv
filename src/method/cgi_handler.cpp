@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/18 17:06:08 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 19:25:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,46 +122,36 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
 
 void WebServer::execute_cgi(const std::string& script_path, Client& client) 
 {
-	char**      envp;
+	char**	envp;
 
-    std::clog <<  "EXEC CGI with path : " << script_path << std::endl;
-    convertToEnvp(_envCGI, envp);
-	
-    pipe(client.getFd_cgi());
+	std::clog <<  "EXEC CGI with path :"<< script_path << ":" << std::endl;
+
+	convertToEnvp(_envCGI, envp);
+	pipe(client.getFd_cgi());
 	client.request.setPstatus(CGIHD);
 	modEpollList(client.getFd_cgi()[0], EPOLL_CTL_ADD, EPOLLIN);
-	_fdCgi[client.getFd_cgi()[0]] = &client;						//add fd cgi a un map reliant le fd au client 
+	_fdCgi[client.getFd_cgi()[0]] = &client;	//add fd cgi a un map reliant le fd au client 
 
+	pid_t pid = fork();
+	if (pid == 0) 
+	{
+		dup2(client.getFd_cgi()[1], STDOUT_FILENO);
+		_closeAllFd(false);
+		
+		char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.request.getPathInfo().c_str()), NULL};
 
-    pid_t pid = fork();
-    if (pid == 0) 
-    {
+		execve(argc[0], argc, envp);
 
-        dup2(client.getFd_cgi()[1], STDOUT_FILENO);
-		this->~WebServer();
+		perror("error : execve");
+		exit(EXIT_FAILURE);
+	} 
+	else if (pid < 0) 
+		perror("Error : fork");
 
-        char* const argc[] = {const_cast<char*>(script_path.c_str()), NULL};
-
-        
-        execve(argc[0], argc, envp);
-
-        perror("error : execve");
-        exit(EXIT_FAILURE);
-    } 
-    else if (pid > 0) 
-    {
-	
-		close(client.getFd_cgi()[1]); // attention ?
-		return ;
-
-    }
-    else
-        perror("Error : fork");
-
-    for (int i = 0; envp[i] != NULL; ++i)
-        delete[] envp[i];
-
-    delete[] envp;
+	close(client.getFd_cgi()[1]);
+	for (int i = 0; envp[i] != NULL; ++i)
+		delete[] envp[i];
+	delete[] envp;
 }
 
 
