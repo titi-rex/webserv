@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:48:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 19:07:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@ class WebServer
 		void				process_rq(Client &cl);
 		void				process_rq_error(Client &cl);
 
+		void				_closeAllFd(bool log);
+		void				_initHttpStatus(void);
 		// CGI
 		void				fillElement(std::string key , std::string val);
 		void				fillValueFromHeader(MapStrStr_t header, std::string key);

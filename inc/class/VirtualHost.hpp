@@ -28,7 +28,7 @@ class	VirtualHost
 		std::string				dirCgi;			//repertoire des cgi (default/data/cgi-bin)
 		PairStrUint16_t			host_port; 		// host:port ou le virtualhost doit ecouter, par default 0.0.0.0:80
 		VecStr_t				serverNames;	//list des nom auquels le virtual host doit repondre
-		MapStrStr_t				cgi;			// s1 nom executable, s2 path exacte de l'executable
+		MapStrStr_t				cgi;			// s1 nom exension, s2 path exacte de l'executable(doit etre depuis dirCgi mais pas encore fait)
 		MapStrLoc_t				locations;		//list des locations enregistrer dans le virtual host
 	
 	public:
