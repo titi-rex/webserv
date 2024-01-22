@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 20:07:46 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 20:09:26 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,6 @@ void	WebServer::process_rq(Client &cl)
 
 // prepare response based on request, there should be GET/HEAD/POST
 	Method(cl);
-
-// modifications qui font buger mon directory listing
-	if (cl.request.getMid() == POST && cl.cstatus == GATHERED)
-		cl.cstatus = CGIWAIT;
-	else
-		cl.cstatus = PROCEEDED;
-// fin des modifications qui font bugger directory listing
 
 	if (cl.cstatus == PROCEEDED)
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
