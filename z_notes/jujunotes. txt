@@ -1,5 +1,6 @@
-throw error with or without message?
 get:
 	1 Location
 	2 cgi
 	3 method
+
+	segfault if access denied

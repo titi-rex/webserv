@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/21 19:06:52 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 18:28:01 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ class WebServer
 
 
 
-		void	Method(Client &cl, Request & req, vHostPtr & v_host);	
+		void	Method(Client &cl);	
 		void	methodGet( Request & req, vHostPtr & v_host, std::string & path );
 		void	methodHead( Request & req, vHostPtr & v_host, std::string & path) ;
 		void	getError(std::string status, Request& req);	// GET special pour error
