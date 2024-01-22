@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 15:17:19 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 21:35:24 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ std::string	getPageByDir(std::string dir, std::string code)
 std::string	getDefaultPage(std::string status)
 {
 	std::string	target = "./data/default_page/" + status + ".html";
-	std::cout << target << std::endl;
+	std::clog << target << std::endl;
 	if (check_access(target))
 	{
 		body = getfile(target);
@@ -78,99 +78,34 @@ static void	prepareResponse(Request& req, std::string status, std::string body)
 
 void	WebServer::getError(std::string status, Request& req)
 {
-	// logDEBUG << "getError with status: ";
-	// logDEBUG << status;
-
 	std::string	pageDir;
-	std::string	body;
-	std::string	RLine;
-	
-	try {
-		if (_httpStatus.count(status.substr(0, 3)))
-		{
-			RLine = _httpStatus.at(status.substr(0, 3));
-			req.setRline(RLine);
-			std::cout << "RLine: " << RLine << std::endl;
-		}
-		else
-		{
-			std::cout << "yapa: " <<  status.substr(0,3) << std::endl;
-		}
-			
-	}
-	catch (std::exception & e) {
-		std::cout << "errRLine : " << RLine << std::endl;
 
-	}
-
+	req.setRline(_httpStatus[req._rStrStatus]);
 	// Use for redirection
-	if (status.compare(0, 1, "3") == 0)
-	{
-		// logDEBUG << "Redirection";
-
+	if (status.at(0) == '3')
 		req.makeResponse();
-		return ;
-	}
-
-	// Use the error_page part of the config file to display a page in case of an error
-	if (!_errorPage.empty()) try 
+	else try 
 	{
-		// logDEBUG << "_errorPage";
-
-		MapStrStr_t::iterator	it;
-
-		it = getErrorPage().find(status);
-
-		if (it != getErrorPage().end())
-		{
-			pageDir = "." + it->second;
-
-			if (check_access(pageDir))
-			{
-				body = getFile(pageDir);
-
-				prepareResponse(req, status, body);
-				req.makeResponse();
-				return ;
-			}
-		}
+		if (_errorPage.count(status))
+			pageDir = _errorPage[status];
+		else
+			pageDir = _dirErrorPage + status + ".html";	
+		req.setRbody(getFile(pageDir));	//throw open file (fatal)
+		req.makeResponse();
 	}
 	catch (std::exception & e)
 	{
-		std::clog << e.what() << ", for custom page location" << std::endl;
+		std::clog << e.what() << ", for page: " << pageDir << std::endl;
+		throw std::runtime_error("699: get_error: couldn't get default page");
 	}
-
-	// Use the dirErrorPage part of the config file to display a page in case of an error
-	if (!_dirErrorPage.empty()) try 
-	{
-		// logDEBUG << "_dirErrorPage";
-
-		pageDir = _dirErrorPage + status;
-		if (pageDir.compare(0, 1, ".") != 0)
-			pageDir = "." + pageDir;
-
-		if (access(pageDir.c_str(),  F_OK | R_OK))
-		{
-			body = getFile(pageDir);
-
-			prepareResponse(req, status, body);
-			req.makeResponse();
-			return ;
-		}
-	}
-	catch (std::exception & e)
-	{
-		std::clog << e.what() << ", for custom dir" << std::endl;
-	}
-
-	// Default simple error_page
-	body = "<html><head><title>ERROR " + status + " " + RLine + "</title></head><body><h1>ERROR " + status + " " + RLine + "</h1><hr>webserv</body></html>";
-	prepareResponse(req, status, body);
-	req.makeResponse();
-
-	// logDEBUG << "End getError";
 }
 
+
+	// Use the error_page part of the config file to display a page in case of an error
+	// Use the dirErrorPage part of the config file to display a page in case of an error
+
+	// req.setRbody("<html><head><title>ERROR 500</title></head><body><h1>ERROR  500</h1><hr>webserv</body></html>");
+// 
 /*
 <html>
 <head><title>404 Not Found</title></head>

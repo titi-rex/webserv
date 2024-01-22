@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:31:57 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 21:46:00 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,17 @@ void	Request::setPathtranslated( std::string path ) { this->_pathTranslated = pa
 void	Request::setRline( std::string line ) { this->_rline = line; };
 void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
 void	Request::setPstatus(e_parsingStatus newStatus) {_pstatus = newStatus;};
-void	Request::setRStrStatus( std::string status ) { this->_rStrStatus = status; };
 void	Request::setRbody( std::string body ) { this->_rbody = body; };
 void	Request::setResponse( std::string response ) { this->response = response; };
 void	Request::setExt( std::string extension ) { this->_ext = extension; };
+
+void	Request::setRStrStatus(const std::string& status, const MapStrStr_t* statusList, const std::string& defaultStatus)
+{
+	if (statusList == NULL || statusList->count(status))
+		this->_rStrStatus = status;
+	else
+		this->_rStrStatus = defaultStatus;
+};
 
 void	Request::makeResponse (void)
 {
@@ -80,14 +87,20 @@ void	Request::makeResponse (void)
 
 	this->response = "HTTP/1.1 " + this->_rStrStatus + " " + this->_rline + "\n"; // Place holder for the status description
 
+	if (_rheaders.count("transfer-encoding") == 0 && _rheaders.count("content-length") == 0)	
+	{
+		std::stringstream	sstr;
+		sstr << _rbody.size();
+		_rheaders["content-length"] = sstr.str();
+	}
 	for (iter = this->_rheaders.begin(); iter != this->_rheaders.end(); ++iter)
 		this->response += iter->first + ": " + iter->second + "\n";
 
-	this->response += "\r\n\r\n";
+	this->response += "\r\n";
 	this->response += this->_rbody;
 	this->response += "\r\n\r\n";
 
-	// std::clog << this->_body << std::endl;
+	// std::clog << *this<< std::endl;
 }
 
 bool	Request::_is_method_known(std::string & test)

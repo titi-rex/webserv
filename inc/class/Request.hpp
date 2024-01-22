@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:28:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:32:21 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,12 +131,11 @@ class Request
 		void				setRline( std::string line );
 		void				setRheaders( std::string key, std::string value );
 		void				setPstatus(e_parsingStatus newStatus);
-		void				setRStrStatus( std::string status );
 		void				setRbody( std::string body );
 		void				setResponse( std::string response );
 		void				setExt( std::string extension );
 		void				setNeedCgi(bool yes);
-
+		void				setRStrStatus(const std::string& status, const MapStrStr_t* statusList = NULL, const std::string& defaultStatus = "500");
 
 		bool				build(std::string raw = "");
 		bool				addCgi(std::string	buff);

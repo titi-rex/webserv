@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 19:07:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:23:10 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,14 @@ class WebServer
 		WebServer(std::string path);
 		~WebServer(void);
 
-		void				setVirtualHost(VecVHost_t vHost);
-		void				setErrorPage(std::string key, std::string value); 
-		void				setDirErrorPage(std::string dirErrorPage);
+		void				setVirtualHost(const VecVHost_t& vHost);
+		void				setErrorPage(const std::string& key, const std::string& value); 
+		void				setDirErrorPage(const std::string& dirErrorPage);
 		void				setBodySizeLimit(size_t bodySizeLimit);
 		
 		VecVHost_t			getVirtualHost(void) const;
-		MapStrStr_t&		getErrorPage(void);
-		MapStrStr_t&		getHttpStatus(void);
+		const MapStrStr_t&	getErrorPage(void) const;
+		const MapStrStr_t&	getHttpStatus(void) const;
 		std::string			getDirErrorPage(void) const;
 		size_t				getBodySizeLimit(void) const;
 

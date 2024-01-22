@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 19:33:40 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 19:45:56 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void WebServer::methodPost(Client &client)
 	std::string		ext = client.request.getExt();
 	std::string		script_path;
 	
-	logERROR << client.getStatusStr();
+	logINFO<< client.getStatusStr();
 	std::clog << "req"<< client.request << std::endl;
 	// if (client.cstatus != GATHERED)
 	// {

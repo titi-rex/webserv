@@ -6,13 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 19:10:37 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:11:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 
-WebServer::WebServer(void) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_pages") 
+WebServer::WebServer(void) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_page") 
 {
 	_initHttpStatus();
 };
@@ -44,15 +44,22 @@ WebServer::~WebServer(void)
 };
 
 
-void	WebServer::setVirtualHost(VecVHost_t vHost) { 
+void	WebServer::setVirtualHost(const VecVHost_t& vHost) { 
 	this->_virtualHost = vHost; 
 };
 
-void	WebServer::setErrorPage(std::string key, std::string value) { 
+void	WebServer::setErrorPage(const std::string& key, const std::string& value) { 
 	this->_errorPage[key] = value;
 };
 
-void	WebServer::setDirErrorPage(std::string dirErrorPage) {
+void	WebServer::setDirErrorPage(const std::string& dirErrorPage) 
+{
+	if (dirErrorPage.at(dirErrorPage.size() - 1) != '/')
+		throw std::runtime_error("Error: dirErrorPage: missing terminating \'/\' :" + dirErrorPage);
+	if (access(dirErrorPage.c_str(), F_OK))
+		throw std::runtime_error("Error: dirErrorPage:" + dirErrorPage + ", doesn't exist");
+	if (access(dirErrorPage.c_str(), R_OK))
+		throw std::runtime_error("Error: no read permission for dirErrorPage: " + dirErrorPage);
 	this->_dirErrorPage = dirErrorPage; 
 };
 
@@ -64,11 +71,11 @@ VecVHost_t	WebServer::getVirtualHost(void) const {
 	return (this->_virtualHost); 
 };
 
-MapStrStr_t&	WebServer::getErrorPage(void) { 
+const MapStrStr_t&	WebServer::getErrorPage(void) const { 
 	return (this->_errorPage); 
 };
 
-MapStrStr_t&	WebServer::getHttpStatus(void) { 
+const MapStrStr_t&	WebServer::getHttpStatus(void) const { 
 	return (this->_httpStatus); 
 };
 

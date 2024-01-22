@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/22 19:25:38 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 21:43:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,7 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 		dup2(client.getFd_cgi()[1], STDOUT_FILENO);
 		_closeAllFd(false);
 		
+		// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
 		char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.request.getPathInfo().c_str()), NULL};
 
 		execve(argc[0], argc, envp);
@@ -145,7 +146,7 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 		perror("error : execve");
 		exit(EXIT_FAILURE);
 	} 
-	else if (pid < 0) 
+	else if (pid < 0)
 		perror("Error : fork");
 
 	close(client.getFd_cgi()[1]);

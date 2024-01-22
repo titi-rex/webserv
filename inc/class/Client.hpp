@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 20:30:28 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:26:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Client : public Socket
 		int		_fd_cgi[2];
 		size_t	_sizeLimit;
 
-	void	_checkRequestSize(Request& rq);
+		void	_checkRequestSize(Request& rq);
 
 
 	public	:
@@ -68,6 +68,7 @@ class Client : public Socket
 		void	proceedRequest(void);
 		void	sendRequest(void);
 		void	reset(void);
+		
 		
 		const std::string	getStatusStr(void) const;
 		int		getServerEndPoint(void) const;
