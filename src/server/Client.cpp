@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 21:45:10 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:16:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ bool	Client::readRequest(void)
 	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC);
 	if (n_rec == -1)
 		throw std::runtime_error("620: recv");
+	else if (n_rec == 0)
+		throw std::runtime_error("400: vicious empty data send");
 	buf[n_rec] = 0;
 	_checkRequestSize(request);
 	if (request.build(buf))// throw ERROR or FATAL

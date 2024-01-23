@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/23 11:20:34 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/23 13:54:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,6 @@ bool isDirListReq(Request & req)
 {
 	std::string		uri = req.getUri();
 	char			lastChar = uri.at(uri.length() - 1);
-	
 	if (lastChar == '/')
 		return (true);
 	return false;

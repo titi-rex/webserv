@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 19:45:56 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:15:14 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 
 void	WebServer::Method(Client &cl)
 {
-
 	// chercher si le dir listing est au bon endroit !
 	if (cl.request.getUri() != "/" && isDirListReq(cl.request))
 	{
@@ -74,7 +73,6 @@ void	WebServer::Method(Client &cl)
 		execute_cgi(cl.host->getCgi().at(cl.request.getExt()), cl);
 		return ;
 	}
-
 	// etape 3: on selectionne la method qui va bien et on la fait
 	switch (cl.request.getMid())
 	{

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 21:48:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 13:52:42 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 	else if (_httpStatus.count(status)) 	
 	{
 		_ClientList[event_id].cstatus = ERROR;
+		_ClientList[event_id].request.setRStrStatus(status);
 		modEpollList(event_id, EPOLL_CTL_MOD, EPOLLOUT);
 		_readyToProceedList[event_id] = &_ClientList[event_id];
 	}
@@ -119,6 +120,7 @@ void	WebServer::process_rq(Client &cl)
 		methodGet(cl.request, cl.host, shutPage);
 		cl.sendRequest();
 	}
+	
 // end special instruction
 
 	Method(cl);
@@ -138,6 +140,7 @@ void	WebServer::process_rq_error(Client &cl)
 	catch(const std::exception& e)
 	{
 		logERROR << "ERROR FATAL, ABANDON CLIENT";
+		std::clog << e.what() << std::endl;
 		try
 		{
 			modEpollList(cl.getFd(), EPOLL_CTL_DEL, 0);	// throw fatal
