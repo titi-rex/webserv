@@ -4,3 +4,5 @@ get:
 	3 method
 
 	segfault if access denied
+
+prepareResponse a retirer
