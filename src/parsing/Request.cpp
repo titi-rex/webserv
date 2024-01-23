@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:31:57 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 14:32:25 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,8 @@ void	Request::makeResponse (void)
 	for (iter = this->_rheaders.begin(); iter != this->_rheaders.end(); ++iter)
 		this->response += iter->first + ": " + iter->second + "\n";
 
-	this->response += "\r\n\r\n";
+	this->response += "\r\n";
 	this->response += this->_rbody;
-	this->response += "\r\n\r\n";
 
 	// std::clog << this->_body << std::endl;
 }
