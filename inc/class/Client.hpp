@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:15:35 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:20:48 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,19 +39,19 @@ typedef enum
 
 # define CLIENT_ENUM_CASE(NAME, ...) case NAME: return #NAME;
 
-class Client : public Socket
+class Client : public Socket, public Request
 {
 	private	:
 		int		_serverEndPoint;
 		int		_fd_cgi[2];
 		size_t	_sizeLimit;
 
-		void	_checkRequestSize(Request& rq);
+		void	_checkRequestSize(void);
 
 
 	public	:
 		vHostPtr		host;
-		Request			request;
+		// Request			request;
 		e_clientStatus	clientStatus;
 		bool			keepConnection;
 
@@ -65,7 +65,6 @@ class Client : public Socket
 		void	accept(int sock_fd);
 		bool	readRequest(void);
 		bool	readCgi(void);
-		void	proceedRequest(void);
 		void	sendRequest(void);
 		void	reset(void);
 		

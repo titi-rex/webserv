@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:16:42 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:20:44 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), c
 	_name = "cnameless";
 };
 
-Client::Client(const Client& src) : Socket(src)
+Client::Client(const Client& src) : Socket(src), Request(src)
 {
 	*this = src;
 };
@@ -36,11 +36,11 @@ Client&	Client::operator=(const Client& src)
 	if (this == &src)
 		return (*this);
 	this->Socket::operator=(src);
+	this->Request::operator=(src);
 	_serverEndPoint = src._serverEndPoint;
 	_fd_cgi[0] = src._fd_cgi[0];
 	_fd_cgi[1] = src._fd_cgi[1];
 	_sizeLimit = src._sizeLimit;
-	request = src.request;
 	clientStatus = src.clientStatus;
 	keepConnection = src.keepConnection;
 	return (*this);
@@ -77,16 +77,16 @@ void	Client::accept(int socketServerFd)
 	clientStatus = ACCEPTED;
 }
 
-void	Client::_checkRequestSize(Request& rq)
+void	Client::_checkRequestSize(void)
 {
-	if (rq.getPstatus() == BODYCHUNK)
+	if (getPstatus() == BODYCHUNK)
 	{
-		if (rq.getBody().size() > _sizeLimit)
+		if (getBody().size() > _sizeLimit)
 			throw std::runtime_error("413: Request Entity Too Large");
 	}
-	else if (rq.getPstatus() == BODYCLENGTH)
+	else if (getPstatus() == BODYCLENGTH)
 	{	
-		if (rq._bodySizeExpected > _sizeLimit)
+		if (_bodySizeExpected > _sizeLimit)
 			throw std::runtime_error("413: Request Entity Too Large");
 	}
 }
@@ -104,8 +104,8 @@ bool	Client::readRequest(void)
 	else if (n_rec == 0)
 		throw std::runtime_error("400: vicious empty data send");
 	buf[n_rec] = 0;
-	_checkRequestSize(request);
-	if (request.build(buf))// throw ERROR or FATAL
+	_checkRequestSize();
+	if (build(buf))// throw ERROR or FATAL
 	{
 		clientStatus = GATHERED;
 		return (true);
@@ -127,7 +127,7 @@ bool	Client::readCgi(void)
 	if (n_rec < BUFFER_SIZE || buf[n_rec] == '\0')
 		end = true;
 	buf[n_rec] = 0;
-	if (request.addCgi(buf) || end)//throw ERROR or FATAL
+	if (addCgi(buf) || end)//throw ERROR or FATAL
 	{
 		clientStatus = CGIOK;
 		return (true);
@@ -136,23 +136,16 @@ bool	Client::readCgi(void)
 }
 
 
-void	Client::proceedRequest(void)
-{
-	std::cout << "method happen here" << std::endl;
-}
-
-
-
 void	Client::sendRequest(void)
 {
-	if (send(_fd, request.response.c_str() , request.response.size(), MSG_DONTWAIT) == -1)
+	if (send(_fd, response.c_str() , response.size(), MSG_DONTWAIT) == -1)
 		throw std::runtime_error("621: send");
 	clientStatus = SENT;
 }
 
 void	Client::reset(void)
 {
-	this->request.clear();
+	clear();
 	clientStatus = ACCEPTED;
 }
 

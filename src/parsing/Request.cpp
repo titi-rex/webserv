@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:12:32 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:31:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ Request&	Request::operator=(const Request& src)
 	_headers = src._headers;
 	_needCgi = src._needCgi;
 	_parsingStatus = src._parsingStatus;
+	_raw = src._raw;
+	_size = src._size;
+	_lenChunk = src._lenChunk;
 	_rline = src._rline;
 	_rheaders = src._rheaders;
 	_rbody = src._rbody;

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:11:52 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:21:50 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 		Client*	cl =  _fdCgi[event_id];
 		close(event_id);
 		cl->clientStatus = ERROR;
-		cl->request.setRStrStatus("500");
+		cl->setRStrStatus("500");
 	}
 	else if (_SocketServersList.count(event_id))
 	{
@@ -96,7 +96,7 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 	else if (_httpStatus.count(status)) 	
 	{
 		_ClientList[event_id].clientStatus = ERROR;
-		_ClientList[event_id].request.setRStrStatus(status);
+		_ClientList[event_id].setRStrStatus(status);
 		modEpollList(event_id, EPOLL_CTL_MOD, EPOLLOUT);
 		_readyToProceedList[event_id] = &_ClientList[event_id];
 	}
@@ -110,14 +110,14 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 void	WebServer::process_rq(Client &cl)
 {
 	logDEBUG << "request proceed";
-	cl.host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl.request);
+	cl.host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl);
 
 // special instruction : execute shutdown
-	if (cl.request.getUri() == "/shutdown")
+	if (cl.getUri() == "/shutdown")
 	{
 		std::string	shutPage = "data/default_page/index.html";
 		g_status = 0;
-		methodGet(cl.request, cl.host, shutPage);
+		methodGet(cl, cl.host, shutPage);
 		cl.sendRequest();
 	}
 // end special instruction
@@ -132,7 +132,7 @@ void	WebServer::process_rq_error(Client &cl)
 	logDEBUG << "error proceed";
 	try
 	{
-		getError(cl.request.getRStrStatus(), cl.request);	//throw fatal 
+		getError(cl.getRStrStatus(), cl);	//throw fatal 
 		cl.clientStatus = PROCEEDED;
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
 	}
@@ -208,7 +208,7 @@ void	WebServer::run(void)
 				logWARNING << "process catch" << e.what();
 				std::string	status(e.what());
 				status.erase(3, status.size());
-				it->second->request.setRStrStatus(status, &_httpStatus);
+				it->second->setRStrStatus(status, &_httpStatus);
 				process_rq_error(*it->second);
 			}
 		}
