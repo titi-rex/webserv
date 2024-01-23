@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 20:32:21 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:06:56 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ class Request
 
 	public	:
 		// a remettre en privé un jour
-		//
 		std::string			_rline;
 		std::string			_rStrStatus;
 		std::string			_pathTranslated;
@@ -145,6 +144,4 @@ class Request
 
 std::ostream& operator<<(std::ostream& os, const Request& req);
 
-
 #endif
-

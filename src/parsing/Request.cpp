@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 21:46:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 13:53:44 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	Request::makeResponse (void)
 	// std::clog << *this<< std::endl;
 }
 
-bool	Request::_is_method_known(std::string & test)
+bool	Request::_is_method_known(std::string& test)
 {
 	std::string	ref[METHOD_COUNT] = {"GET", "POST", "DELETE", "HEAD"};
 	
@@ -118,7 +118,7 @@ bool	Request::_is_method_known(std::string & test)
 	return (false);
 }
 
-std::string	Request::_extractRange(size_t& start, size_t& end, const char *set)
+std::string	Request::_extractRange(size_t& start, size_t& end, const char* set)
 {
 	start = end + 1;
 	end = _raw.find_first_of(set, start);	
@@ -237,7 +237,7 @@ bool	Request::_parseHeaders(void)
 /**
  * @brief return true if all body data has been gathered, else flase
  */
-bool	Request::_parseBodyByLength(std::string &body)
+bool	Request::_parseBodyByLength(std::string& body)
 {
 	body += _raw;
 	_raw.clear();
@@ -255,7 +255,7 @@ bool	Request::_parseBodyByLength(std::string &body)
 /**
  * @brief return true if all body data has benn gathered (0 lengh chunk found), ese false
  */
-bool	Request::_parseBodyByChunk(std::string &body)
+bool	Request::_parseBodyByChunk(std::string& body)
 {
 	std::string	tmp;
 	size_t		start = 0;
@@ -470,7 +470,7 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 	os << "_rline: " << req._rline << std::endl;
 	os << "_rheaders: " << req._rheaders << std::endl;
 	os << "_rbody: " << "{" << req._rbody << "}" << std::endl;
-	os << "response: " << req.response << std::endl;
+	// os << "response: " << req.response << std::endl;
 	
 	return (os);
 };
