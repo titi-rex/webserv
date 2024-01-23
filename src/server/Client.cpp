@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:11:35 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:16:42 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,7 @@ Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), c
 
 Client::Client(const Client& src) : Socket(src)
 {
-	this->setFd_cgi(src.getFd_cgi());
-	_serverEndPoint = src._serverEndPoint;
-	request = src.request;
-	clientStatus = src.clientStatus;
-	keepConnection = src.keepConnection;
-	
+	*this = src;
 };
 
 Client&	Client::operator=(const Client& src) 
@@ -41,8 +36,10 @@ Client&	Client::operator=(const Client& src)
 	if (this == &src)
 		return (*this);
 	this->Socket::operator=(src);
-	this->setFd_cgi(src.getFd_cgi());
 	_serverEndPoint = src._serverEndPoint;
+	_fd_cgi[0] = src._fd_cgi[0];
+	_fd_cgi[1] = src._fd_cgi[1];
+	_sizeLimit = src._sizeLimit;
 	request = src.request;
 	clientStatus = src.clientStatus;
 	keepConnection = src.keepConnection;
