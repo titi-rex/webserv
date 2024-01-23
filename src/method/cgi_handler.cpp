@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/22 21:43:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 14:19:43 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,14 +135,16 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 	pid_t pid = fork();
 	if (pid == 0) 
 	{
-		dup2(client.getFd_cgi()[1], STDOUT_FILENO);
-		_closeAllFd(false);
-		
-		// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
-		char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.request.getPathInfo().c_str()), NULL};
+		if (chdir(client.host->getDirCgi().c_str()) == 0)
+		{
+			dup2(client.getFd_cgi()[1], STDOUT_FILENO);
+			_closeAllFd(false);
 
-		execve(argc[0], argc, envp);
-
+			// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
+			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.request.getPathInfo().c_str()), NULL};
+			std::cerr << "pathcript:" << argc[0] << std::endl;
+			execve(argc[0], argc, envp);
+		}
 		perror("error : execve");
 		exit(EXIT_FAILURE);
 	} 

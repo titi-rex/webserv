@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:17:30 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/18 13:13:43 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 14:32:01 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ int main(void)
 	std::cout.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 	try 
 	{
-		
-		std::cout << "Hello World !" << std::endl;
+		std::cout << "<html><body>Hello World !</body></html>" << std::endl;
 	}
 	catch (std::exception & e)
 	{

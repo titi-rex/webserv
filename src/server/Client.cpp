@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 12:16:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 13:57:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ void	Client::_checkRequestSize(Request& rq)
 	{
 		if (rq.getBody().size() > _sizeLimit)
 			throw std::runtime_error("413: Request Entity Too Large");
-		
 	}
 	else if (rq.getPstatus() == BODYCLENGTH)
 	{	
