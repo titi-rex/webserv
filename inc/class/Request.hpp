@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 12:06:56 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:12:32 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ class Request
 		bool				_needCgi;
 
 		//tmp variable for parsing
-		e_parsingStatus		_pstatus;
+		e_parsingStatus		_parsingStatus;
 		std::string			_raw;
 		size_t				_size;
 		size_t				_lenChunk;

@@ -6,13 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 14:33:12 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:12:32 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(void) : _mId(UNKNOW), _needCgi(false), _pstatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
+Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
 
 Request::Request(const Request& src) {*this = src;};
 
@@ -28,7 +28,7 @@ Request&	Request::operator=(const Request& src)
 	_body = src._body;
 	_headers = src._headers;
 	_needCgi = src._needCgi;
-	_pstatus = src._pstatus;
+	_parsingStatus = src._parsingStatus;
 	_rline = src._rline;
 	_rheaders = src._rheaders;
 	_rbody = src._rbody;
@@ -48,7 +48,7 @@ const std::string&	Request::getBody(void) const { return (this->_body); };
 const std::string&	Request::getQuery(void) const { return (this->_query); };
 const std::string&	Request::getPathInfo(void) const { return (this->_pathInfo); };
 const std::string&	Request::getExt(void) const { return (this->_ext); };
-e_parsingStatus		Request::getPstatus(void) const {return (this->_pstatus);};
+e_parsingStatus		Request::getPstatus(void) const {return (this->_parsingStatus);};
 const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
 const MapStrStr_t&	Request::getHeaders(void) const { return (this->_headers); };
 
@@ -66,7 +66,7 @@ void	Request::setNeedCgi(bool yes) { this->_needCgi = yes; };
 void	Request::setPathtranslated( std::string path ) { this->_pathTranslated = path; };
 void	Request::setRline( std::string line ) { this->_rline = line; };
 void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
-void	Request::setPstatus(e_parsingStatus newStatus) {_pstatus = newStatus;};
+void	Request::setPstatus(e_parsingStatus newStatus) {_parsingStatus = newStatus;};
 void	Request::setRbody( std::string body ) { this->_rbody = body; };
 void	Request::setResponse( std::string response ) { this->response = response; };
 void	Request::setExt( std::string extension ) { this->_ext = extension; };
@@ -162,7 +162,7 @@ bool	Request::_parseRequestLine(void)
 	if (tmp.compare("HTTP/1.1") == false)
 		throw std::runtime_error("505: Wrong HTTP version");
 	_raw.erase(0, end + 1);
-	_pstatus = HEADERS;
+	_parsingStatus = HEADERS;
 	return (false);
 }
 
@@ -209,7 +209,7 @@ bool	Request::_parseHeaders(void)
 			_raw.erase(0, 2);
 			if (_headers.count("host") == 0)
 				throw std::runtime_error("400: No Host Header");
-			_findBodySize() ? _pstatus = BODYCLENGTH : _pstatus = BODYCHUNK;
+			_findBodySize() ? _parsingStatus = BODYCLENGTH : _parsingStatus = BODYCHUNK;
 			return (false);
 		}
 		end = -1;
@@ -245,7 +245,7 @@ bool	Request::_parseBodyByLength(std::string& body)
 		throw std::runtime_error("400: More data than expected");
 	if (body.size() == _bodySizeExpected)
 	{
-		_pstatus = DONE;
+		_parsingStatus = DONE;
 		return (true);
 	}
 	return (false);
@@ -272,7 +272,7 @@ bool	Request::_parseBodyByChunk(std::string& body)
 				throw std::runtime_error("400: Chunk length overflow");
 			if (_lenChunk == 0)
 			{
-				_pstatus = DONE;
+				_parsingStatus = DONE;
 				return (true) ;
 			}
 			_raw.erase(start, end + 1);
@@ -300,7 +300,7 @@ bool	Request::_parseBodyByChunk(std::string& body)
 bool	Request::build(std::string	raw)
 {
 	_raw += raw;
-	switch (_pstatus)
+	switch (_parsingStatus)
 	{
 		case RL:
 		{
@@ -316,7 +316,7 @@ bool	Request::build(std::string	raw)
 		}
 		case BODYCLENGTH:
 		{
-			if (_pstatus == BODYCLENGTH)
+			if (_parsingStatus == BODYCLENGTH)
 			{	
 				if (_parseBodyByLength(_body))
 					return (true);
@@ -351,10 +351,10 @@ bool	Request::_parseCgiHeaders(void)
 		{
 			_raw.erase(0, 2);
 			if (_rheaders.find("content-length") == _rheaders.end())
-				_pstatus = CGIEOF;
+				_parsingStatus = CGIEOF;
 			else
 			{
-				_pstatus = CGICL;
+				_parsingStatus = CGICL;
 				_bodySizeExpected = std::strtoul(_rheaders["content-length"].c_str(), NULL, 10);
 				if (_bodySizeExpected == ULONG_MAX)
 					throw std::runtime_error("413: Request Entity Too Large");
@@ -389,9 +389,9 @@ bool	Request::_parseCgiHeaders(void)
 bool	Request::addCgi(std::string	buff)
 {
 	_raw += buff;
-	std::clog << "in readcgi: pstatus: " << _pstatus << std::endl;
+	std::clog << "in readcgi: pstatus: " << _parsingStatus << std::endl;
 	std::clog << "in read: raw:" << _raw << std::endl;
-	switch (_pstatus)
+	switch (_parsingStatus)
 	{
 		case CGIHD:
 		{
@@ -404,7 +404,7 @@ bool	Request::addCgi(std::string	buff)
 		{
 			std::clog << "CGI CORPASSAGE" << std::endl;
 
-			if (_pstatus == CGICL)
+			if (_parsingStatus == CGICL)
 			{	
 			std::clog << "CGI CORP BY LENGTH" << std::endl;
 				
@@ -440,7 +440,7 @@ void	Request::clear(void)
 	_ext.clear();
 	_body.clear();
 	_headers.clear();
-	_pstatus = RL;
+	_parsingStatus = RL;
 	_raw.clear();
 	_size = 0;
 	_lenChunk = 0;

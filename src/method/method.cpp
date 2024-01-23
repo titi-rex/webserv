@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 12:15:14 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:11:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	WebServer::Method(Client &cl)
 	{
 		dirList(cl.request, cl.host);
 		std::clog << "dirlist asked, rq is :" << std::endl << cl.request;
-		cl.cstatus = PROCEEDED;
+		cl.clientStatus = PROCEEDED;
 		return ;
 	}
 	
@@ -65,10 +65,10 @@ void	WebServer::Method(Client &cl)
 	std::string	pagePath = findLocation(cl.request, cl.host);
 	
 	//etape 2: execute la cgi si besoin !
-	if (cl.cstatus == GATHERED && cl.request.getNeedCgi())
+	if (cl.clientStatus == GATHERED && cl.request.getNeedCgi())
 	{
 		std::clog << "GO GO GO CGI" << std::endl;
-		cl.cstatus = CGIWAIT;
+		cl.clientStatus = CGIWAIT;
 		fillEnvCGI(cl);
 		execute_cgi(cl.host->getCgi().at(cl.request.getExt()), cl);
 		return ;
@@ -93,7 +93,7 @@ void	WebServer::Method(Client &cl)
 		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
 	};
-	cl.cstatus = PROCEEDED;
+	cl.clientStatus = PROCEEDED;
 }
 
 void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path )
@@ -121,10 +121,10 @@ void WebServer::methodPost(Client &client)
 	
 	logINFO<< client.getStatusStr();
 	std::clog << "req"<< client.request << std::endl;
-	// if (client.cstatus != GATHERED)
+	// if (client.clientStatus != GATHERED)
 	// {
 	// 	client.request.makeResponse();
-	// 	client.cstatus = PROCEEDED;
+	// 	client.clientStatus = PROCEEDED;
 	// 	return ;
 	// }
 

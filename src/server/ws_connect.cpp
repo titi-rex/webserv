@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 13:52:42 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:11:52 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	WebServer::handle_epollout(int event_id)
 	Client*	cl = &_ClientList[event_id];
 
 	logDEBUG << cl->getStatusStr();
-	if (cl->cstatus == PROCEEDED)
+	if (cl->clientStatus == PROCEEDED)
 	{
 		cl->sendRequest();	//throw FATAL
 		if (cl->keepConnection)	//keep client
@@ -86,7 +86,7 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 		logERROR << "PIPE ERROR FATAL, ABANDON PIPE";
 		Client*	cl =  _fdCgi[event_id];
 		close(event_id);
-		cl->cstatus = ERROR;
+		cl->clientStatus = ERROR;
 		cl->request.setRStrStatus("500");
 	}
 	else if (_SocketServersList.count(event_id))
@@ -95,7 +95,7 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 	}
 	else if (_httpStatus.count(status)) 	
 	{
-		_ClientList[event_id].cstatus = ERROR;
+		_ClientList[event_id].clientStatus = ERROR;
 		_ClientList[event_id].request.setRStrStatus(status);
 		modEpollList(event_id, EPOLL_CTL_MOD, EPOLLOUT);
 		_readyToProceedList[event_id] = &_ClientList[event_id];
@@ -120,11 +120,10 @@ void	WebServer::process_rq(Client &cl)
 		methodGet(cl.request, cl.host, shutPage);
 		cl.sendRequest();
 	}
-	
 // end special instruction
 
 	Method(cl);
-	if (cl.cstatus == PROCEEDED)
+	if (cl.clientStatus == PROCEEDED)
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
 }
 
@@ -134,7 +133,7 @@ void	WebServer::process_rq_error(Client &cl)
 	try
 	{
 		getError(cl.request.getRStrStatus(), cl.request);	//throw fatal 
-		cl.cstatus = PROCEEDED;
+		cl.clientStatus = PROCEEDED;
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
 	}
 	catch(const std::exception& e)
@@ -199,9 +198,9 @@ void	WebServer::run(void)
 			{
 				if (it->second == NULL)
 					continue;
-				else if (it->second->cstatus == GATHERED || it->second->cstatus == CGIOK)
+				else if (it->second->clientStatus == GATHERED || it->second->clientStatus == CGIOK)
 					process_rq(*it->second);
-				else if (it->second->cstatus == ERROR)
+				else if (it->second->clientStatus == ERROR)
 					process_rq_error(*it->second);
 			}
 			catch(const std::exception& e)

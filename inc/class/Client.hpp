@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 20:26:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:12:48 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 typedef enum
 {
 	CLIENT_ENUM(CLIENT_ENUM_TYPE)
-} e_client_status;
+} e_clientStatus;
 
 # define CLIENT_ENUM_CASE(NAME, ...) case NAME: return #NAME;
 
@@ -52,7 +52,7 @@ class Client : public Socket
 	public	:
 		vHostPtr		host;
 		Request			request;
-		e_client_status	cstatus;
+		e_clientStatus	clientStatus;
 		bool			keepConnection;
 
 		Client(void);

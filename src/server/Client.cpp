@@ -6,20 +6,20 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 13:57:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:11:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), cstatus(CREATED), keepConnection(false)
+Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), clientStatus(CREATED), keepConnection(false)
 {
 	_fd_cgi[0] = -1;
 	_fd_cgi[1] = -1;
 	_name = "cnameless";
 };
 
-Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), cstatus(CREATED), keepConnection(false)
+Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), clientStatus(CREATED), keepConnection(false)
 {
 	_fd_cgi[0] = -1;
 	_fd_cgi[1] = -1;
@@ -31,7 +31,7 @@ Client::Client(const Client& src) : Socket(src)
 	this->setFd_cgi(src.getFd_cgi());
 	_serverEndPoint = src._serverEndPoint;
 	request = src.request;
-	cstatus = src.cstatus;
+	clientStatus = src.clientStatus;
 	keepConnection = src.keepConnection;
 	
 };
@@ -44,7 +44,7 @@ Client&	Client::operator=(const Client& src)
 	this->setFd_cgi(src.getFd_cgi());
 	_serverEndPoint = src._serverEndPoint;
 	request = src.request;
-	cstatus = src.cstatus;
+	clientStatus = src.clientStatus;
 	keepConnection = src.keepConnection;
 	return (*this);
 };
@@ -53,7 +53,7 @@ Client::~Client(void) {};
 
 const std::string	Client::getStatusStr(void) const
 {
-	switch (this->cstatus)
+	switch (this->clientStatus)
 	{
 		CLIENT_ENUM(CLIENT_ENUM_CASE)
 		default:
@@ -77,7 +77,7 @@ void	Client::accept(int socketServerFd)
 	_serverEndPoint = socketServerFd;
 	this->Socket::accept(socketServerFd);
 	this->setName();
-	cstatus = ACCEPTED;
+	clientStatus = ACCEPTED;
 }
 
 void	Client::_checkRequestSize(Request& rq)
@@ -110,7 +110,7 @@ bool	Client::readRequest(void)
 	_checkRequestSize(request);
 	if (request.build(buf))// throw ERROR or FATAL
 	{
-		cstatus = GATHERED;
+		clientStatus = GATHERED;
 		return (true);
 	}
 	return (false);
@@ -132,7 +132,7 @@ bool	Client::readCgi(void)
 	buf[n_rec] = 0;
 	if (request.addCgi(buf) || end)//throw ERROR or FATAL
 	{
-		cstatus = CGIOK;
+		clientStatus = CGIOK;
 		return (true);
 	}
 	return (false);
@@ -150,13 +150,13 @@ void	Client::sendRequest(void)
 {
 	if (send(_fd, request.response.c_str() , request.response.size(), MSG_DONTWAIT) == -1)
 		throw std::runtime_error("621: send");
-	cstatus = SENT;
+	clientStatus = SENT;
 }
 
 void	Client::reset(void)
 {
 	this->request.clear();
-	cstatus = ACCEPTED;
+	clientStatus = ACCEPTED;
 }
 
 

@@ -117,7 +117,7 @@ try
 
 	- check for EPOLERR ou MARGARINE
 	- if EVENT IS EPOLLIN :
-		- if fd is SockServ -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
+		- if fd is SockServ -> addclient && add fdclient to EPOLLIN && set clientStatus to accepted 
 		- if fd is SockCli -> read MAXBYTES && set CSTATUS to reading
 			-if EndOfRequest -> add fd client to EPOLLOUT && set CSTATUS to gathered 
 		- if fd is CGI -> ??
@@ -166,7 +166,7 @@ catch
 2) for i in max event :
 	- check for EPOLERR ou MARGARINE
 	- if EVENT IS EPOLLIN :
-		- if fd is SockServ -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
+		- if fd is SockServ -> addclient && add fdclient to EPOLLIN && set clientStatus to accepted 
 		- if fd is SockCli -> set CSTATUS to reading
 		- if fd is CGI -> ??
 	- if EVENT is EPOLLOUT
@@ -222,7 +222,7 @@ timeout = -1 (no timeout)
 2) for i in maxmasterevent 
 	- check for EPOLERR ou MARGARINE
 	- wait on epoll child (get event)
-		- if epoll child == SoscketServer -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
+		- if epoll child == SoscketServer -> addclient && add fdclient to EPOLLIN && set clientStatus to accepted 
 		- if epoll child == SocketClient 
 			- if EPOLLIN-> read MAXBYTES && set CSTATUS to reading
 				-if EndOfRequest -> add fd client to EPOLLOUT && set CSTATUS to gathered 
@@ -249,7 +249,7 @@ timeout = -1 (no timeout)
 2) for i in maxmasterevent 
 	- check for EPOLERR ou MARGARINE
 	- wait on epoll child (get event)
-		- if epoll child == SoscketServer -> addclient && add fdclient to EPOLLIN && set cstatus to accepted 
+		- if epoll child == SoscketServer -> addclient && add fdclient to EPOLLIN && set clientStatus to accepted 
 		- if epoll child == SocketClient 
 			- if EPOLLIN-> set CSTATUS to reading
 			- if EPOLLOUT && CSTATUS is PROCEEDED -> sent response
