@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/23 12:15:26 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 13:54:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,12 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 			ss << str << "</a></dt>\n";
 			closedir(tmp);
 		}
-	}
+		else
+		{
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "/\">";
+			ss << "<dt><img src=\"https://cdn-icons-png.freepik.com/128/6301/6301689.png?ga=GA1.1.1058183076.1697891450&semt=ais\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
+			ss << str << "</a></dt>\n";
+		}	}
 	
 	ss << "</dl>\n</body>\n</html>\r\n\r\n";
 
