@@ -2,7 +2,7 @@
 
 to do :
 
-faire un fonction log
+better fonction log
 
 check cgi env plus clean
 ccgi = chekc retour child status 
@@ -12,7 +12,9 @@ parsing : indiquer n ligne qund erreur
 	+ location { qui chhuine
 	+!!! cgi depuis dir CGI
 
-execute cgi doit erter dans bon dossier !! 
+
+
+
 
 bug :
 

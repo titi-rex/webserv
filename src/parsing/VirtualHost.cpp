@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/17 12:40:45 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 14:10:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,10 +175,11 @@ void	VirtualHost::setCgi(VecStr_t& sLine, bool oneCgi)
 			throw std::runtime_error("Server: path_cgi supplied but value is missing");
 		if (sLine[2].at(0) == '/')
 			sLine[2].erase(0,1);
-		cgi[sLine[1]] = this->dirCgi + sLine[2];
-		if (access(cgi[sLine[1]].c_str(), F_OK))
+		cgi[sLine[1]] = sLine[2];
+		std::string	tmp = this->dirCgi + cgi[sLine[1]];
+		if (access(tmp.c_str(), F_OK))
 			throw std::runtime_error("Server: cgi " + cgi[sLine[1]] + " doesn't exist");
-		if (access(cgi[sLine[1]].c_str(), X_OK))
+		if (access(tmp.c_str(), X_OK))
 			throw std::runtime_error("Server: can't execute cgi: " + cgi[sLine[1]]);
 	}
 	else
@@ -188,12 +189,13 @@ void	VirtualHost::setCgi(VecStr_t& sLine, bool oneCgi)
 		for (size_t j = 1; j < sLine.size(); ++j)
 		{
 			if (cgi.count(sLine[j]) == 0)
-				cgi[sLine[j]] = this->dirCgi + sLine[j];
+				cgi[sLine[j]] = sLine[j];
 			else
 				continue;
-			if (access(cgi[sLine[j]].c_str(), F_OK))
+			std::string	tmp = this->dirCgi + cgi[sLine[j]];
+			if (access(tmp.c_str(), F_OK))
 				throw std::runtime_error("Server: cgi " + cgi[sLine[j]] + " doesn't exist");
-			if (access(cgi[sLine[j]].c_str(), X_OK))
+			if (access(tmp.c_str(), X_OK))
 				throw std::runtime_error("Server: can't execute cgi: " + cgi[sLine[j]]);
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 13:53:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 14:33:12 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ void	Request::makeResponse (void)
 
 	this->response += "\r\n";
 	this->response += this->_rbody;
-	this->response += "\r\n\r\n";
 
 	// std::clog << *this<< std::endl;
 }
