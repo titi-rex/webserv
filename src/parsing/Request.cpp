@@ -6,13 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:31:35 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:32:46 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
+Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL),  _bodySizeExpected(0), _size(0), _lenChunk(ULONG_MAX){};
 
 Request::Request(const Request& src) {*this = src;};
 
@@ -44,16 +44,25 @@ Request&	Request::operator=(const Request& src)
 
 Request::~Request(void) {};
 
-bool				Request::getNeedCgi(void) const {return (this->_needCgi);};
 e_method 			Request::getMid(void) const {return (this->_mId);};
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
-const std::string&	Request::getBody(void) const { return (this->_body); };
 const std::string&	Request::getQuery(void) const { return (this->_query); };
 const std::string&	Request::getPathInfo(void) const { return (this->_pathInfo); };
 const std::string&	Request::getExt(void) const { return (this->_ext); };
-e_parsingStatus		Request::getPstatus(void) const {return (this->_parsingStatus);};
-const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
+const std::string&	Request::getBody(void) const { return (this->_body); };
 const MapStrStr_t&	Request::getHeaders(void) const { return (this->_headers); };
+const std::string&	Request::getPathTranslated(void) const {return (this->_pathTranslated);};
+bool				Request::getNeedCgi(void) const {return (this->_needCgi);};
+
+e_parsingStatus		Request::getPstatus(void) const {return (this->_parsingStatus);};
+size_t				Request::getBodySizeExpected(void) const {return (this->_bodySizeExpected);};
+
+const std::string&	Request::getRline(void) const {return (this->_rline);};
+const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
+const std::string&	Request::getRbody(void) const { return (this->_rbody); };
+const MapStrStr_t&	Request::getRheaders(void) const { return (this->_rheaders); };
+
+const std::string&	Request::getResponse(void) const { return (this->response); };
 
 const std::string	Request::getMethodName(void) const
 {
@@ -65,14 +74,17 @@ const std::string	Request::getMethodName(void) const
 	}	
 }
 
-void	Request::setNeedCgi(bool yes) { this->_needCgi = yes; };
-void	Request::setPathtranslated( std::string path ) { this->_pathTranslated = path; };
-void	Request::setRline( std::string line ) { this->_rline = line; };
-void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
-void	Request::setPstatus(e_parsingStatus newStatus) {_parsingStatus = newStatus;};
-void	Request::setRbody( std::string body ) { this->_rbody = body; };
-void	Request::setResponse( std::string response ) { this->response = response; };
-void	Request::setExt( std::string extension ) { this->_ext = extension; };
+void	Request::setPathtranslated(const std::string& path ) { this->_pathTranslated = path; };
+void	Request::setExt(const std::string& extension ) { this->_ext = extension; };
+void	Request::setNeedCgi(const bool yes) { this->_needCgi = yes; };
+
+void	Request::setPstatus(const e_parsingStatus newStatus) {_parsingStatus = newStatus;};
+
+void	Request::setRline(const std::string& line ) { this->_rline = line; };
+void	Request::setRbody(const std::string& body ) { this->_rbody = body; };
+void	Request::setRheaders(const std::string& key, const std::string& value ) { this->_rheaders[key] = value; };
+
+void	Request::setResponse(const std::string& response ) { this->response = response; };
 
 void	Request::setRStrStatus(const std::string& status, const MapStrStr_t* statusList, const std::string& defaultStatus)
 {
@@ -300,7 +312,7 @@ bool	Request::_parseBodyByChunk(std::string& body)
  * @brief return true if request is complete, else false
  * take raw input with minimal size (BUFFER_SIZE) 
  */
-bool	Request::build(std::string	raw)
+bool	Request::build(const std::string& raw)
 {
 	_raw += raw;
 	switch (_parsingStatus)
@@ -341,7 +353,6 @@ bool	Request::build(std::string	raw)
 	} 
 	return (false);
 }
-
 
 bool	Request::_parseCgiHeaders(void)
 {
@@ -387,30 +398,22 @@ bool	Request::_parseCgiHeaders(void)
 
 /**
  * @brief parse CGI response, work like Request::build 
- * 
  */
-bool	Request::addCgi(std::string	buff)
+bool	Request::addCgi(const std::string& buff)
 {
 	_raw += buff;
-	std::clog << "in readcgi: pstatus: " << _parsingStatus << std::endl;
-	std::clog << "in read: raw:" << _raw << std::endl;
 	switch (_parsingStatus)
 	{
 		case CGIHD:
 		{
-			std::clog << "CGIHEADER" << std::endl;
 			if (_parseCgiHeaders())
 				return (false);
 			__attribute__((fallthrough));
 		}
 		case CGICL:
 		{
-			std::clog << "CGI CORPASSAGE" << std::endl;
-
 			if (_parsingStatus == CGICL)
-			{	
-			std::clog << "CGI CORP BY LENGTH" << std::endl;
-				
+			{
 				if (_parseBodyByLength(_rbody))
 					return (true);
 				break ;
@@ -419,8 +422,6 @@ bool	Request::addCgi(std::string	buff)
 		}
 		case CGIEOF:
 		{
-			std::clog << "CGI CORP BY EOF" << std::endl;
-
 			_rbody += buff;
 			break;
 		}
@@ -443,17 +444,17 @@ void	Request::clear(void)
 	_ext.clear();
 	_body.clear();
 	_headers.clear();
+	_pathTranslated.clear();
 	_parsingStatus = RL;
+	_bodySizeExpected = 0;
 	_raw.clear();
 	_size = 0;
 	_lenChunk = 0;
 	_rline.clear();
-	_pathTranslated.clear();
+	_rStrStatus.clear();
 	_rbody.clear();
 	_rheaders.clear();
-	_bodySizeExpected = 0;
 	response.clear();
-	_rStrStatus.clear();
 }
 
 std::ostream& operator<<(std::ostream& os, const Request& req)
@@ -468,10 +469,10 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 	os << "Body: " ;
 	os << "{" << req.getBody() << "}" << std::endl;
 	os << "===RESPONSE SIDE===" << std::endl;
-	os << "_rStrStatus: " << req._rStrStatus << std::endl;
-	os << "_rline: " << req._rline << std::endl;
-	os << "_rheaders: " << req._rheaders << std::endl;
-	os << "_rbody: " << "{" << req._rbody << "}" << std::endl;
+	os << "_rStrStatus: " << req.getRStrStatus() << std::endl;
+	os << "_rline: " << req.getRline() << std::endl;
+	os << "_rheaders: " << req.getRheaders() << std::endl;
+	os << "_rbody: " << "{" << req.getRbody() << "}" << std::endl;
 	// os << "response: " << req.response << std::endl;
 	
 	return (os);

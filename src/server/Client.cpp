@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:20:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:23:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,34 +77,23 @@ void	Client::accept(int socketServerFd)
 	clientStatus = ACCEPTED;
 }
 
-void	Client::_checkRequestSize(void)
-{
-	if (getPstatus() == BODYCHUNK)
-	{
-		if (getBody().size() > _sizeLimit)
-			throw std::runtime_error("413: Request Entity Too Large");
-	}
-	else if (getPstatus() == BODYCLENGTH)
-	{	
-		if (_bodySizeExpected > _sizeLimit)
-			throw std::runtime_error("413: Request Entity Too Large");
-	}
-}
-
 bool	Client::readRequest(void)
 {
-	std::clog << "client reading request" << std::endl;
+	logDEBUG << "client reading request";
 	
-	char	buf[BUFFER_SIZE + 1] = {0};
+	char	buf[BUFFER_SIZE + 1];
 	int		n_rec = 0;
 	
+	std::memset(buf, 0, BUFFER_SIZE + 1);
 	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC);
 	if (n_rec == -1)
 		throw std::runtime_error("620: recv");
 	else if (n_rec == 0)
 		throw std::runtime_error("400: vicious empty data send");
-	buf[n_rec] = 0;
-	_checkRequestSize();
+	if (getPstatus() == BODYCHUNK && getBody().size() > _sizeLimit)
+		throw std::runtime_error("413: Request Entity Too Large");
+	else if (getPstatus() == BODYCLENGTH && getBodySizeExpected() > _sizeLimit)
+		throw std::runtime_error("413: Request Entity Too Large");
 	if (build(buf))// throw ERROR or FATAL
 	{
 		clientStatus = GATHERED;
@@ -115,15 +104,18 @@ bool	Client::readRequest(void)
 
 bool	Client::readCgi(void)
 {
-	std::clog << "client reading Cgi" << std::endl;
+	logDEBUG << "client reading Cgi";
 	
-	char	buf[BUFFER_SIZE + 1] = {0};
+	char	buf[BUFFER_SIZE + 1];
 	int		n_rec = 0;
 	bool	end = false;
-	
+
+	std::memset(buf, 0, BUFFER_SIZE + 1);
 	n_rec = read(_fd_cgi[0], &buf, BUFFER_SIZE);
 	if (n_rec == -1)
 		throw std::runtime_error("699: read cgi");
+	else if (n_rec == 0)
+		throw std::runtime_error("500: cgi send vicious empty data");
 	if (n_rec < BUFFER_SIZE || buf[n_rec] == '\0')
 		end = true;
 	buf[n_rec] = 0;

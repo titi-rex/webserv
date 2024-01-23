@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:20:48 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:23:43 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include "Socket.hpp"
 # include "Request.hpp"
 # include "VirtualHost.hpp"
+# include "utils.hpp"
 
 # define BUFFER_SIZE 2048
 
@@ -46,12 +47,8 @@ class Client : public Socket, public Request
 		int		_fd_cgi[2];
 		size_t	_sizeLimit;
 
-		void	_checkRequestSize(void);
-
-
 	public	:
 		vHostPtr		host;
-		// Request			request;
 		e_clientStatus	clientStatus;
 		bool			keepConnection;
 

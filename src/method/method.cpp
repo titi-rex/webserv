@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:21:11 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:07:40 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ bool doesFileExist(const std::string& pagePath) {
 
 void WebServer::methodDelete(Client &client)
 {
-	if (std::remove(client._pathTranslated.c_str()) != 0)
+	if (std::remove(client.getPathTranslated().c_str()) != 0)
 		throw std::runtime_error("500: Remove return error");
 	client.setRStrStatus ("200");
 	client.setRline ("OK");

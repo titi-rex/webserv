@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/23 20:21:11 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:06:01 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void    WebServer::fillEnvCGI(const Client& client)
     else
         fillElement("REQUEST_METHOD", "POST");
     fillElement("PATH_INFO", client.getPathInfo());
-    fillElement("PATH_TRANSLATED", client._pathTranslated);
+    fillElement("PATH_TRANSLATED", client.getPathTranslated());
     fillElement("QUERY_STRING", client.getQuery());
     fillElement("REMOTE_HOST", "");
     fillElement("REMOTE_ADDR", uint32tostr(client.getSin().sin_addr.s_addr)); // dans _sin dans socket (client herite de socket)

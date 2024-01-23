@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 11:32:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:08:08 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	WebServer::getError(std::string status, Request& req)
 {
 	std::string	pageDir;
 
-	req.setRline(_httpStatus[req._rStrStatus]);
+	req.setRline(_httpStatus[req.getRStrStatus()]);
 	// Use for redirection
 	if (status.at(0) == '3')
 		req.makeResponse();
