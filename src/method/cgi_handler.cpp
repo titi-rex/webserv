@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/23 21:06:01 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 11:08:08 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,5 +156,3 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 		delete[] envp[i];
 	delete[] envp;
 }
-
-
