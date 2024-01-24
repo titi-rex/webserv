@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 12:58:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:04:04 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,8 @@ class Request
 		const MapStrStr_t&	getHeaders(void) const;
 		const std::string&	getPathTranslated(void) const ;
 		bool				getNeedCgi(void) const;
+		
+		std::string			getSpecifiedHeader(const std::string& key) const;
 
 		e_parsingStatus		getPstatus(void) const;
 		size_t	getBodySizeExpected(void) const;

@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:29:53 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/24 16:07:18 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,23 +101,23 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 	req.makeResponse();
 }
 
-void WebServer::methodPost(Client &client, std::string & path)
-{
-	MapStrStr_t		cgi = client.host->getCgi();
-	std::string		ext = client.getExt();
-	std::string		body = getFile(path);
+// void WebServer::methodPost(Client &client, std::string & path)
+// {
+// 	MapStrStr_t		cgi = client.host->getCgi();
+// 	std::string		ext = client.getExt();
+// 	std::string		body = getFile(path);
 	
-	client.setRStrStatus ("200");
-	client.setRline ("OK");
-	client.setRheaders("server", client.host->getServerNames().at(0));
+// 	client.setRStrStatus ("200");
+// 	client.setRline ("OK");
+// 	client.setRheaders("server", client.host->getServerNames().at(0));
 	
-    std::stringstream contentLengthStream;
-    contentLengthStream << body.size();
-    client.setRheaders("content-length", contentLengthStream.str());
-	client.setRbody(body);
+//     std::stringstream contentLengthStream;
+//     contentLengthStream << body.size();
+//     client.setRheaders("content-length", contentLengthStream.str());
+// 	client.setRbody(body);
 
-	client.makeResponse();
-}
+// 	client.makeResponse();
+// }
 
 bool doesFileExist(const std::string& pagePath) {
     struct stat buffer;
@@ -143,15 +143,32 @@ void WebServer::methodDelete(Client &client, std::string &path) {
 }
 
 
-const int BUFFER_SIZE = 1024;
+void WebServer::methodPost(Client &client, std::string &path) {
+    MapStrStr_t 	cgi = client.host->getCgi();
+    std::string 	ext = client.getExt();
+	std::string		body = getFile(path);
+		
+    std::string contentType = client.getSpecifiedHeader("content-type");
+    size_t boundaryPos = contentType.find("boundary=");
+	
+    if (boundaryPos != std::string::npos) {
+        std::string boundary = contentType.substr(boundaryPos + 9);
 
-void handleFileUpload(const std::string& content, const std::string& filename) {
-    std::ofstream outfile(filename.c_str(), std::ios::binary);
-    if (outfile) {
-        outfile.write(content.c_str(), content.size());
-        outfile.close();
-        std::cout << "File '" << filename << "' uploaded successfully." << std::endl;
-    } else {
-        std::cerr << "Error opening file '" << filename << "' for writing." << std::endl;
+        size_t posFirst = body.find(boundary);
+        if (posFirst != std::string::npos) {
+            size_t posSecond = body.find(boundary, firstBoundaryPos + boundary.size());
+        }
     }
+
+
+    client.setRStrStatus("200");
+    client.setRline("OK");
+    client.setRheaders("server", client.host->getServerNames().at(0));
+
+    std::stringstream contentLengthStream;
+    contentLengthStream << body.size();
+    client.setRheaders("content-length", contentLengthStream.str());
+    client.setRbody(body);
+
+    client.makeResponse();
 }
