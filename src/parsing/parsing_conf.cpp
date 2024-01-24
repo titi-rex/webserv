@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/24 11:17:53 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:21:04 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ Location WebServer::parseLocation(VecStr_t fileVec, VecStr_t sLine, uintptr_t *i
 			newLoc.setAllowMethod(sLine);
 		else if (sLine[0] ==  "autoindex")
 			newLoc.setAutoIndex(sLine[1]);
+		else if (sLine[0] ==  "upload_dir")
+			newLoc.setUploadDir(sLine[1]);
 		else
 			throw std::runtime_error("Location: Unrecognised line in configuration file : " + fileVec[*i]);
 		++(*i);
@@ -162,6 +164,7 @@ void WebServer::displayLocations(const VirtualHost& vHost)
 		std::clog << "Location root: " << (location.getRoot().empty() ? "empty" : location.getRoot()) << std::endl;
 		std::clog << "Location return: " << (location.getRedirection().first.empty() ? "empty" : (location.getRedirection().first + " " + location.getRedirection().second)) << std::endl;
 		std::clog << "Location index: " << location.getIndex() << std::endl;
+		std::clog << "Location UploadDir: " << (location.getUpload() ? location.getUploadDir() : "non authorized") << std::endl;
 		std::clog << "Location methods: ";
 		for (size_t j = 0; j < location.getAllowMethod().size(); ++j)
 			std::clog << location.getAllowMethod()[j] << " ";

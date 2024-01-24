@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/17 11:46:04 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 13:25:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
 
-Location::Location(void) : isPath(true), autoIndex(false), index("index.html")
+Location::Location(void) : isPath(true), autoIndex(false), upload(false), index("index.html")
 {
 	allowMethod.push_back("GET");
 }
@@ -37,9 +37,11 @@ Location&	Location::operator=(const Location& src)
 		return (*this);
 	this->isPath = src.isPath;
 	this->autoIndex = src.autoIndex;
+	this->upload = src.upload;
 	this->uri_or_ext = src.uri_or_ext;
 	this->root = src.root;
 	this->index = src.index;
+	this->uploadDir = src.uploadDir;
 	this->allowMethod = src.allowMethod;
 	this->redirection = src.redirection;
 	return (*this);
@@ -53,6 +55,10 @@ bool Location::getAutoIndex() const{
 	return(this->autoIndex);
 };
 
+bool Location::getUpload() const{
+	return(this->upload);
+};
+
 const std::string&	Location::getUriOrExt() const{
 	return(this->uri_or_ext);
 };
@@ -63,6 +69,10 @@ const std::string&	Location::getRoot() const{
 
 const std::string& Location::getIndex() const{
 	return(this->index);
+};
+
+const std::string& Location::getUploadDir() const{
+	return(this->uploadDir);
 };
 
 const VecStr_t& Location::getAllowMethod() const{
@@ -102,6 +112,14 @@ void	Location::setRoot(std::string root)
 
 void	Location::setIndex(std::string index){
 	this->index = index;
+};
+
+void	Location::setUploadDir(std::string dir)
+{
+	if (access(dir.c_str(), F_OK | R_OK))
+		throw std::runtime_error("Location: can't access upload_dir");
+	this->uploadDir = dir;
+	upload = true;
 };
 
 void	Location::setAllowMethod(VecStr_t& sLine)
