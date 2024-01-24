@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:43:15 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 00:04:37 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,23 +103,6 @@ void	WebServer::methodGet( Client & cl, std::string & pagePath )
 	cl.makeResponse();
 }
 
-// void WebServer::methodPost(Client &client, std::string & path)
-// {
-// 	MapStrStr_t		cgi = client.host->getCgi();
-// 	std::string		ext = client.getExt();
-// 	std::string		body = getFile(path);
-	
-// 	client.setRStrStatus ("200");
-// 	client.setRline ("OK");
-// 	client.setRheaders("server", client.host->getServerNames().at(0));
-	
-//     std::stringstream contentLengthStream;
-//     contentLengthStream << body.size();
-//     client.setRheaders("content-length", contentLengthStream.str());
-// 	client.setRbody(body);
-
-// 	client.makeResponse();
-// }
 
 bool doesFileExist(const std::string& pagePath) {
     struct stat buffer;
@@ -144,6 +127,29 @@ void WebServer::methodDelete(Client &client, std::string &path) {
     client.makeResponse();
 }
 
+bool createFile(const std::string& fileName, const std::string& content, const std::string& uploadDir) // A CHANGER !!! throw les bonnes erreur 
+{
+    std::string filePath = uploadDir + "/" + fileName;
+    std::ofstream of(filePath.c_str());
+
+    if (!of) {
+        std::cerr << "Erreur : Impossible de créer le fichier " << filePath << std::endl;
+        return (false);
+    }
+
+    of << content;
+    of.close();
+
+    if (!of) 
+	{
+        std::cerr << "Erreur : Échec lorsde l'écriture dans le fichier " << filePath << std::endl;
+		return (false);
+	}
+	else
+		return (true);
+	return (false);
+}
+
 void WebServer::methodPost(Client &client, std::string &path) {
     MapStrStr_t 	cgi = client.host->getCgi();
     std::string 	ext = client.getExt();
@@ -152,23 +158,49 @@ void WebServer::methodPost(Client &client, std::string &path) {
     std::string contentType = client.getSpecifiedHeader("content-type");
     size_t boundaryPos = contentType.find("boundary=");
 	
-    if (boundaryPos != std::string::npos) {
+    if (boundaryPos != std::string::npos) 
+	{
         std::string boundary = contentType.substr(boundaryPos + 9);
-
         size_t posFirst = body.find(boundary);
-        if (posFirst != std::string::npos) {
+		
+        if (posFirst != std::string::npos) 
+		{
             size_t posSecond = body.find(boundary, posFirst + boundary.size());
-		}
+            if (posSecond != std::string::npos) 
+			{
+                std::string fileData = body.substr(posFirst + boundary.size(),
+                                                   posSecond - posFirst - boundary.size());
 
+                size_t filenameStart = fileData.find("filename=\"");
+                if (filenameStart != std::string::npos) 
+				{
+                    filenameStart += 10;
+                    size_t filenameEnd = fileData.find("\"", filenameStart);
+                    if (filenameEnd != std::string::npos) {
+                        std::string filename = fileData.substr(filenameStart, filenameEnd - filenameStart);
+						// if (createFile(filename, fileData, client.host->getLocations().getUploadDir())) // A CHANGER !!!! pas le bon uploadDir
+						// {
+						// 	client.setRStrStatus("201");
+    					// 	client.setRline("Created");
+						// } 
+                    }
+                }
+            }
+		}
 	}
-    client.setRStrStatus("200");
-    client.setRline("OK");
-    client.setRheaders("server", client.host->getServerNames().at(0));
+	else
+	{
+		client.setRStrStatus("200");
+		client.setRline("OK");
+	}
+	
 
     std::stringstream contentLengthStream;
     contentLengthStream << body.size();
+    client.setRheaders("server", client.host->getServerNames().at(0));
     client.setRheaders("content-length", contentLengthStream.str());
     client.setRbody(body);
 
     client.makeResponse();
 }
+
