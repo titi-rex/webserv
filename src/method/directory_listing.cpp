@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/24 14:21:35 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 14:46:32 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,40 +72,39 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 			continue ;
 		else if (str == "..")
 		{
-			if (pointPointDir == curentFolder)
-				continue ;
-
 			ss << "<dt><a href=\"http://localhost:8080" << pointPointDir << "\">";
-			ss << "<img src=\"https://cdn3.iconfinder.com/data/icons/3d-printing-icon-set/512/Open.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
+			ss << "<img src=\"http://localhost:8080/img/parent_directory.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
 			ss << "Parent Directory</a></dt>\n";
 		}
 		else if (str.substr(str.length() - 5, 5) == ".html")
 		{
 			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "\">";
-			ss << "<img src=\"https://cdn-icons-png.flaticon.com/512/4248/4248142.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
+			ss << "<img src=\"http://localhost:8080/img/html.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
 			ss << str << "</a></dt>\n";
 		}
 		else if (str.substr(str.length() - 4, 4) == ".php")
 		{
-			ss << "<dt><img src=\"https://cdn-icons-png.freepik.com/128/4248/4248336.png?ga=GA1.1.1058183076.1697891450&semt=ais\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
-			ss << str << "</dt>\n";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "\">";
+			ss << "<img src=\"http://localhost:8080/img/php.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
+			ss << str << "</a></dt>\n";
 		}
 		else if (str.substr(str.length() - 3, 3) == ".py")
 		{
-			ss << "<dt><img src=\"https://cdn-icons-png.freepik.com/128/2570/2570575.png?ga=GA1.1.1058183076.1697891450&semt=ais\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
-			ss << str << "</dt>\n";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "\">";
+			ss << "<img src=\"http://localhost:8080/img/py.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
+			ss << str << "</a></dt>\n";
 		}
 		else if (tmp != NULL)
 		{
 			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "/\">";
-			ss << "<img src=\"https://i.pinimg.com/736x/6e/8d/fe/6e8dfe5444398a4d024637809a492929.jpg\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
+			ss << "<img src=\"http://localhost:8080/img/folder.jpg\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
 			ss << str << "</a></dt>\n";
 			closedir(tmp);
 		}
 		else
 		{
 			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "/\">";
-			ss << "<dt><img src=\"https://cdn-icons-png.freepik.com/128/6301/6301689.png?ga=GA1.1.1058183076.1697891450&semt=ais\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
+			ss << "<dt><img src=\"http://localhost:8080/img/unknow.png\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
 			ss << str << "</a></dt>\n";
 		}	}
 	
