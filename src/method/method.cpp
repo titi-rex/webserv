@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:29:18 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:29:53 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,27 @@
 #include <cstdlib>
 #include <sstream>
 #include <ctime>
-#include <cstdio>
 
 void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path)
 {
 	std::ifstream	requestedPage(path.c_str());
+	std::string	page;
+	char	date[80];
 
 	if(requestedPage.fail())
 		throw std::runtime_error("404");
 
-	std::string	page;
 
 	getline(requestedPage, page, '\0');
-
-	int		contentLength = page.length();
-	int		size = lengthSize(contentLength);
-	char	sContentLength[size];
-	char	date[80];
-	
-	sprintf(sContentLength, "%d", contentLength);
 	getDate(date);
 
-	// New way to store the respond
 	req.setRStrStatus("200");
 	req.setRline("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
 	req.setRheaders("Date", date);
-	req.setRheaders("Content-length", sContentLength);
 	req.setRheaders("Connection", "keep-alive");
+
+	req.findSetType(req, path, getContentType());
 
 	req.makeResponse();
 }
@@ -77,7 +70,6 @@ void	WebServer::Method(Client &cl)
 	switch (cl.getMid())
 	{
 		case GET:
-			// std::cout << "GET JUJU" << std::endl;
 			methodGet(cl, cl.host, pagePath);
 			break ;
 		case POST:
@@ -87,7 +79,6 @@ void	WebServer::Method(Client &cl)
 			methodDelete(cl, pagePath);
 			break ;
 		case HEAD:
-			// std::cout << "HEAD JUJU" << std::endl;
 			methodHead(cl, cl.host, pagePath);
 			break ;
 		case UNKNOW:
@@ -100,16 +91,13 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 {
 	std::string		body = getFile(path);
 
-	// New way to store the response
-	int		size = lengthSize(body.length());
-	char	sRespondLength[size];
-	sprintf(sRespondLength, "%lu", body.length());
 	req.setRStrStatus ("200");
 	req.setRline ("OK");
-	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
-	req.setRheaders("Content-length", sRespondLength);
+	req.setRheaders("Server", v_host->getServerNames().at(0));
 	req.setRbody(body);
 
+	req.findSetType(req, path, getContentType());
+	
 	req.makeResponse();
 }
 

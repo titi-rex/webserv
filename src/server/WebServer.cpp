@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 14:11:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:02:42 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 WebServer::WebServer(void) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_page") 
 {
 	_initHttpStatus();
+	_initContentTypeMap();
 };
 
 WebServer::WebServer(const WebServer& src) 
@@ -79,6 +80,10 @@ const MapStrStr_t&	WebServer::getHttpStatus(void) const {
 	return (this->_httpStatus); 
 };
 
+const MapStrStr_t&	WebServer::getContentType(void) const { 
+	return (this->_contentType); 
+};
+
 std::string	WebServer::getDirErrorPage(void) const { 
 	return (this->_dirErrorPage); 
 };
@@ -89,44 +94,35 @@ size_t	WebServer::getBodySizeLimit(void) const {
 
 WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_pages")
 {
-	_initHttpStatus();
 	
 	VecStr_t 	fileVec;
 	uintptr_t	i = 0;
-	
+
+	_initHttpStatus();
+	_initContentTypeMap();
 	std::ifstream file(path.c_str());
-    if (!file.is_open()) 
+	if (!file.is_open()) 
 		throw std::runtime_error("Error : could not open configuration file");
-	
 	std::string line;
-    while (std::getline(file, line)) 
+	while (std::getline(file, line)) 
 	{
 		fileVec.push_back(line);
-    }
-	
+	}
 	while (i < fileVec.size())
-   	{
+	{
 		if (this->parseConf(fileVec[i]) == 1)
 			this->findServ(fileVec, &i);
 		++i;
-		
-   	}
-	file.close();
-
-	// this->debugServ();
-	// exit(1);
-	try
-	{
-		_SocketServerList_init();
-		_epoll_init();
 	}
-	catch(const std::exception& e)
-	{
-		throw std::runtime_error(e.what());
-	}	
+	file.close();
+	this->debugServ();
+	if (_virtualHost.empty())
+		throw std::runtime_error("Error: no server supplied");
+	_SocketServerList_init();
+	_epoll_init();
 };
-	
-void	WebServer::addVirtualHost(const VirtualHost& vHost) 
+
+void	WebServer::addVirtualHost(const VirtualHost& vHost)
 {
 	_virtualHost.push_back(vHost);
 }
@@ -146,7 +142,6 @@ void	WebServer::_closeAllFd(bool log)
 		wrap_close(it->first);
 		if (log)
 			logINFO << "closed: " << it->second;
-
 	}
 	close(_efd);
 }
@@ -221,4 +216,31 @@ void	WebServer::_initHttpStatus(void)
 	_httpStatus["509"] = "Bandwidth Limit Exceeded";
 	_httpStatus["510"] = "Not Extended";
 	_httpStatus["511"] = "Network Authentication Required";	
+};
+
+void		WebServer::_initContentTypeMap( void )
+{
+	logDEBUG << "_initContentTypeMap started";
+
+	std::ifstream	file("./data/MIME");
+	std::string		line;
+
+	while (std::getline(file, line, '\n'))
+	{
+		std::size_t	found = line.find(' ');
+		std::string	extention;
+		std::string	type;
+
+		if (found != 0)
+		{
+			extention = line.substr(0, found);
+			type = line.substr(found + 1, line.length() - found - 1);
+
+			_contentType[extention] = type;
+
+			// std::clog << "extention: *" << extention << "*";
+			// std::clog << "\n_contentType[extention]: *" << _contentType[extention] << "*\n" << std::endl;
+		}
+	}
+	logDEBUG << "_initContentTypeMap finished";
 };

@@ -1,42 +1,48 @@
 
 
-to do :
+PARSING: ERROR:
+
+pas de ; a la fin -> no warning ? peutetre pas important 
+
+ } : reste ligne ignorer (pas d'erreur) si espace et sans espace si meme ligne que server
+ { : reste ligne ignorer (pas d'erreur)
+
+listen : host with letter insteed of number is allowed (f.f.f.f or ffdg)
+
+
+
+
+
+
+
+
+
+
+
+
+
+bodysizelimit == 0 ? 
+
+
+
+
+
+
+
+
+to not do :
 
 better fonction log
 
 check cgi env plus clean
 ccgi = chekc retour child status 
+
+
 + gerer timeout
 
 parsing : indiquer n ligne qund erreur 
-	+ location { qui chhuine
-	+!!! cgi depuis dir CGI
-
-
-
-
-
-bug :
-
-
-
-debug
-GREEN 
-
-
-
-INFO
-WHITE/LIGHT BLUE
-ITALIC
-
-WARNING
-ORANGE
-
-
-ERROR
-RED
-BOLD
-
+	+ location { qui chouine
+	
 
 
 

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/16 21:59:17 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/01/24 13:24:57 by jmoutous         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ LST_SRCS_SERVER	=	Client.cpp Socket.cpp SocketServer.cpp WebServer.cpp ws_connec
 SRCS_SERVER		=	${addprefix ${DIR_SRCS_SERVER}, ${LST_SRCS_SERVER}}
 
 DIR_SRCS		=	src/
-LST_SRCS		=	exceptions.cpp main.cpp signal.cpp utils.cpp \
+LST_SRCS		=	main.cpp signal.cpp utils.cpp \
 					${SRCS_PARSE} ${SRCS_SERVER} ${SRCS_METHOD} 
 SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
@@ -71,7 +71,7 @@ HDR_CLASS		=	${addprefix ${DIR_HDR_CLASS}, ${LST_HDR_CLASS}}
 
 
 DIR_HEADER	=	inc/
-LST_HDR		=	exceptions.hpp utils.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
+LST_HDR		=	utils.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
 				${HDR_CLASS}
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 IFLAGS		=	-I${DIR_HEADER} -I${DIR_HEADER}${DIR_HDR_CLASS}

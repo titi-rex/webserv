@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.hpp                                        :+:      :+:    :+:   */
+/*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2023/12/12 20:02:42 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 15:13:42 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef enum {
 #define FERROR "\001\033[0;31m\002"
 #define END "\001\033[0m\002"
 
-#define LOGLEVEL 0
+#define LOGLEVEL 1
 
 template <typename T>
 e_logLevel	operator<<(e_logLevel lvl, T log)

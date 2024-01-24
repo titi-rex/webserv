@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/18 16:56:01 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:22:20 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,8 @@ static void	checkAllowedMethod(VecStr_t methodAllowed, std::string methodAsked)
 
 	VecStr_t::iterator	i;
 
-	// std::cout << "\nmethodAsked: " << methodAsked;
-
 	for (i = methodAllowed.begin(); i != methodAllowed.end(); ++i)
 	{
-		// std::cout << "\n*i (methodAllowed): " << *i << std::endl;
-
 		if (*i == methodAsked)
 			return;
 	}
@@ -49,8 +45,6 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 
 	const char *file = pagePath.c_str();
 
-	// std::clog << "pagePath" << pagePath << std::endl;
-
 	// Check if the page asked exist
 	if (access(file, F_OK) != 0)
 	{
@@ -60,12 +54,9 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 		if (access(file, F_OK) != 0)
 			throw std::runtime_error("404");
 	}
-	// std::clog << "file exist" << std::endl;
-
 	// Check if the page asked is readable
 	if (access(file, R_OK) != 0)
 		throw std::runtime_error("423");
-	// std::clog << "file is accessible" << std::endl;
 
 	// Check if the file is a folder
 	DIR	*temp = opendir(file);
@@ -73,7 +64,6 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 	if (temp != NULL)
 	{
 		closedir(temp);
-		// std::clog << "file is a folder" << std::endl;
 		throw std::runtime_error("404");
 	}
 	
@@ -104,10 +94,6 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	std::string									pagePath = req.getUri();
 	std::string									location = "";
 
-	// logDEBUG << "findLocation()";
-	// logDEBUG << "Before pagepath";
-	// logDEBUG << pagePath;
-
 	// If the request is empty, sent the index of the server
 	if (pagePath == "/")
 	{
@@ -116,15 +102,10 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	}
 
 	// Find if there are an location equal to the request
-	// std::clog << "\n========== location exact ==========" << std::endl;
 	for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
 	{
-		// std::clog << "\nlocation :" << location << std::endl;
-		// std::clog << "*" << pagePath << "* in *" << i->first << "*: " << (i->first.find(pagePath) == std::string::npos) << std::endl;
-
 		if (i->first.find(pagePath) != std::string::npos)
 		{
-			// if (i->first.length() > location.length())
 			location = i->first;
 			break ;
 		}
@@ -133,13 +114,8 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	if (location == "")
 	{
 		// Find if the closest location from the request
-		// std::clog << "\n========== location prefix ==========" << std::endl;
 		for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
 		{
-			// std::clog << "\npagePath :" << pagePath << std::endl;
-			// std::clog << "\nlocation :" << location << std::endl;
-			// std::clog << "i->first" << i->first << std::endl;
-
 			if (isPrefix(pagePath, i->first))
 			{
 				if (i->first.length() > location.length())
@@ -147,15 +123,12 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 			}
 		}
 	}
-	// std::clog << "Chosen location:" << location << std::endl;
 
 	// Check if there is a redirection
 	PairStrStr_t	redirection = v_host->getLocations().at(location).getRedirection();
 
 	if (redirection.first != "")
 	{
-		// logDEBUG << "REDIRECTION DETECTED";
-
 		// Fonction only if the parsing take the return with the error number and a string
 		req.setRStrStatus(redirection.first);
 		req.setRheaders("Location", redirection.second);
@@ -165,10 +138,6 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	}
 
 	// Delete prefix
-	// logDEBUG << "Pre prefix deletion";
-	// std::clog << "pagePath: " << pagePath << std::endl;
-	// std::clog << "location: " << location << std::endl;
-	
 	pagePath = pagePath.substr(location.length(), pagePath.length() - location.length());
 	if (pagePath.compare(0, 1, "/") != 0 && pagePath.length() != 0)
 		pagePath = "/" + pagePath;
@@ -176,8 +145,6 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 		pagePath = "." + v_host->getLocations().at(location).getRoot() + pagePath;
 	else
 		pagePath = "." + v_host->getRoot() + pagePath;
-	// logDEBUG << "Post prefix deletion";
-	// std::clog << "After deleting prefix pagePath: " << pagePath << std::endl;
 
 	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
 	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());
@@ -187,7 +154,6 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	req.setPathtranslated(pagePath);
 	
 	// Recuperer l'extention -> req.setExt()
-	// logDEBUG << "Find extension:";
 	std::size_t	found = pagePath.rfind('.');
 	std::string	extension;
 	
@@ -199,11 +165,5 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 			req.setNeedCgi(true);
 	}
 
-	
-	// std::clog << "extension: " << extension << std::endl;
-
-	// logDEBUG << "End of findLocation:";
-	// logDEBUG << "pagePath";
-	// logDEBUG << pagePath;
 	return (pagePath);
 }
