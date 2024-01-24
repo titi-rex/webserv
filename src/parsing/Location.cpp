@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/24 16:09:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 19:22:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	Location::isLegit() const
 	if (_key.empty() || (root.empty() && redirection.first.empty()))
 		throw std::runtime_error("Location: key / root or return are empty");
 }
-
 
 Location&	Location::operator=(const Location& src) 
 {
@@ -124,15 +123,12 @@ void	Location::setIndex(const VecStr_t& sLine)
 
 void	Location::setUploadDir(const VecStr_t& sLine)
 {
-	std::clog << "UPLOAD" << std::endl;
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: upload_dir supplied but value is missing");
 	if (access(sLine[1].c_str(), F_OK | R_OK))
-		throw std::runtime_error("Location: can't access upload_dir");
+		throw std::runtime_error("Location: upload_dir \'" + sLine[1] + "\' not accessible");
 	this->uploadDir = sLine[1];
-	std::clog << "UPLOADED :" << uploadDir << std::endl;
 	upload = true;
-	std::clog << "UPLOADED : st is" << upload << std::endl;
 };
 
 void	Location::setAllowMethod(const VecStr_t& sLine)

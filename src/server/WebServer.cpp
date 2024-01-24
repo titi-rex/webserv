@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:02:42 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 19:22:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,19 +49,23 @@ void	WebServer::setVirtualHost(const VecVHost_t& vHost) {
 	this->_virtualHost = vHost; 
 };
 
-void	WebServer::setErrorPage(const std::string& key, const std::string& value) { 
+void	WebServer::setErrorPage(const std::string& key, const std::string& value) 
+{
+	if (access(value.c_str(), F_OK | R_OK))
+		throw std::runtime_error("Webserver: error_page \'" + value + "\' not accessible");
 	this->_errorPage[key] = value;
 };
 
 void	WebServer::setDirErrorPage(const std::string& dirErrorPage) 
 {
-	if (dirErrorPage.at(dirErrorPage.size() - 1) != '/')
-		throw std::runtime_error("Error: dirErrorPage: missing terminating \'/\' :" + dirErrorPage);
-	if (access(dirErrorPage.c_str(), F_OK))
-		throw std::runtime_error("Error: dirErrorPage:" + dirErrorPage + ", doesn't exist");
-	if (access(dirErrorPage.c_str(), R_OK))
-		throw std::runtime_error("Error: no read permission for dirErrorPage: " + dirErrorPage);
 	this->_dirErrorPage = dirErrorPage; 
+	if (dirErrorPage.at(dirErrorPage.size() - 1) != '/')
+	{
+		logWARNING << ("dirErrorPage: missing terminating \'/\', automatically added");
+		this->_dirErrorPage += "/";
+	}
+	if (access(dirErrorPage.c_str(), F_OK | R_OK))
+		throw std::runtime_error("Webserver: dirErrorPage \'" + dirErrorPage + "\' not accessible");
 };
 
 void	WebServer::setBodySizeLimit(size_t bodySizeLimit) { 
@@ -117,7 +121,7 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErr
 	file.close();
 	this->debugServ();
 	if (_virtualHost.empty())
-		throw std::runtime_error("Error: no server supplied");
+		throw std::runtime_error("Webserver: no server supplied");
 	_SocketServerList_init();
 	_epoll_init();
 };

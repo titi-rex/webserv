@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/24 15:46:11 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 19:26:58 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,8 @@ void	VirtualHost::setDirCgi(VecStr_t& sLine)
 		throw std::runtime_error("Server: dir_cgi supplied but value is missing");
 	if (sLine.at(1).at(sLine.at(1).size() - 1) != '/')
 		throw std::runtime_error("Error: dir_cgi: missing terminating \'/\' :" + sLine.at(1));
-	if (access(sLine.at(1).c_str(), F_OK))
-		throw std::runtime_error("Error: dir_cgi:" + sLine.at(1) + ", doesn't exist");
-	if (access(sLine.at(1).c_str(), R_OK))
-		throw std::runtime_error("Error: no read permission for dir_cgi: " + sLine.at(1));
+	if (access(sLine.at(1).c_str(), F_OK | R_OK))
+		throw std::runtime_error("Server: dir_cgi \'" + sLine.at(1) + "\' not accessible");
 	this->dirCgi = sLine.at(1);
 };
 
@@ -183,10 +181,8 @@ void	VirtualHost::setCgi(VecStr_t& sLine, bool oneCgi)
 			sLine[2].erase(0,1);
 		cgi[sLine[1]] = sLine[2];
 		std::string	tmp = this->dirCgi + cgi[sLine[1]];
-		if (access(tmp.c_str(), F_OK))
-			throw std::runtime_error("Server: cgi " + cgi[sLine[1]] + " doesn't exist");
-		if (access(tmp.c_str(), X_OK))
-			throw std::runtime_error("Server: can't execute cgi: " + cgi[sLine[1]]);
+		if (access(tmp.c_str(), F_OK | X_OK))
+			throw std::runtime_error("Server: cgi \'" + cgi[sLine[1]] + "\' not accessible");
 	}
 	else
 	{
@@ -199,10 +195,8 @@ void	VirtualHost::setCgi(VecStr_t& sLine, bool oneCgi)
 			else
 				continue;
 			std::string	tmp = this->dirCgi + cgi[sLine[j]];
-			if (access(tmp.c_str(), F_OK))
-				throw std::runtime_error("Server: cgi " + cgi[sLine[j]] + " doesn't exist");
-			if (access(tmp.c_str(), X_OK))
-				throw std::runtime_error("Server: can't execute cgi: " + cgi[sLine[j]]);
+			if (access(tmp.c_str(), F_OK | X_OK))
+				throw std::runtime_error("Server: cgi \'" + cgi[sLine[j]] + "\' not accessible");
 		}
 	}
 };

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/24 16:10:45 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 19:07:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,8 +165,6 @@ void WebServer::displayLocations(const VirtualHost& vHost)
 		std::clog << "Location root: " << (location.getRoot().empty() ? "empty" : location.getRoot()) << std::endl;
 		std::clog << "Location return: " << (location.getRedirection().first.empty() ? "empty" : (location.getRedirection().first + " " + location.getRedirection().second)) << std::endl;
 		std::clog << "Location index: " << location.getIndex() << std::endl;
-		std::clog << "Location UploadDir: " << location.getUpload()  << std::endl;
-		std::clog << "Location UploadDir: " << location.getUploadDir()<< std::endl;
 		std::clog << "Location UploadDir: " << (location.getUpload() ? location.getUploadDir() : "non authorized") << std::endl;
 		std::clog << "Location methods: ";
 		for (size_t j = 0; j < location.getAllowMethod().size(); ++j)
