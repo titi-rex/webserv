@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:36:11 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/18 17:00:09 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,8 +125,8 @@ void WebServer::methodPost(Client &client)
 	
 	client.request.setRStrStatus ("201");
 	client.request.setRline ("created");
-	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
-	// client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
+	client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
+	client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
 	// client.request.setRbody(body);
 
 	client.request.makeResponse();
