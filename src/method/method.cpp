@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:06:08 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 13:09:00 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <cstdlib>
 #include <sstream>
 #include <ctime>
-#include <cstdio>
 
 void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path)
 {
