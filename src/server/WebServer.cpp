@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 14:11:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 12:44:18 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 WebServer::WebServer(void) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_page") 
 {
 	_initHttpStatus();
+	_initContentTypeMap();
 };
 
 WebServer::WebServer(const WebServer& src) 
@@ -79,6 +80,10 @@ const MapStrStr_t&	WebServer::getHttpStatus(void) const {
 	return (this->_httpStatus); 
 };
 
+const MapStrStr_t&	WebServer::getContentType(void) const { 
+	return (this->_contentType); 
+};
+
 std::string	WebServer::getDirErrorPage(void) const { 
 	return (this->_dirErrorPage); 
 };
@@ -90,6 +95,7 @@ size_t	WebServer::getBodySizeLimit(void) const {
 WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_pages")
 {
 	_initHttpStatus();
+	_initContentTypeMap();
 	
 	VecStr_t 	fileVec;
 	uintptr_t	i = 0;
@@ -221,4 +227,31 @@ void	WebServer::_initHttpStatus(void)
 	_httpStatus["509"] = "Bandwidth Limit Exceeded";
 	_httpStatus["510"] = "Not Extended";
 	_httpStatus["511"] = "Network Authentication Required";	
+};
+
+void		WebServer::_initContentTypeMap( void )
+{
+	logDEBUG << "_initContentTypeMap started";
+
+	std::ifstream	file("./data/MIME");
+	std::string		line;
+
+	while (std::getline(file, line, '\n'))
+	{
+		std::size_t	found = line.find(' ');
+		std::string	extention;
+		std::string	type;
+
+		if (found != 0)
+		{
+			extention = line.substr(0, found);
+			type = line.substr(found + 1, line.length() - found - 1);
+
+			_contentType[extention] = type;
+
+			// std::clog << "extention: *" << extention << "*";
+			// std::clog << "\n_contentType[extention]: *" << _contentType[extention] << "*\n" << std::endl;
+		}
+	}
+	logDEBUG << "_initContentTypeMap finished";
 };

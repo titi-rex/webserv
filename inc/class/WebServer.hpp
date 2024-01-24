@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 20:23:10 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 12:44:03 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ class WebServer
 
 		MapStrStr_t			_envCGI;		// variables d'environnement a envoyer aux CGI
 		MapStrStr_t			_httpStatus;	//map http status <-> response line 
+		MapStrStr_t			_contentType;
 		MapFdClientPtr_t	_fdCgi;			//map liant fd lecture d'une cgi a son client
 
 		WebServer(void);
@@ -74,8 +75,7 @@ class WebServer
 
 		bool		_is_server_named(vHostPtr v_host, const std::string& name);
 		vHostPtr	_selectServer(SocketServer& sk, Request& rq);
-
-
+		void		_initContentTypeMap( void );
 
 
 	public	:
@@ -90,6 +90,7 @@ class WebServer
 		VecVHost_t			getVirtualHost(void) const;
 		const MapStrStr_t&	getErrorPage(void) const;
 		const MapStrStr_t&	getHttpStatus(void) const;
+		const MapStrStr_t&	getContentType(void) const;
 		std::string			getDirErrorPage(void) const;
 		size_t				getBodySizeLimit(void) const;
 
