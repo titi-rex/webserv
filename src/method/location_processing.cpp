@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/24 13:22:20 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 13:56:45 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 	}
 	// Check if the page asked is readable
 	if (access(file, R_OK) != 0)
-		throw std::runtime_error("423");
+		throw std::runtime_error("403");
 
 	// Check if the file is a folder
 	DIR	*temp = opendir(file);

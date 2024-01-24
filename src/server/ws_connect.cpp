@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 20:21:50 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:54:46 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void	WebServer::process_rq(Client &cl)
 	{
 		std::string	shutPage = "data/default_page/index.html";
 		g_status = 0;
-		methodGet(cl, cl.host, shutPage);
+		methodGet(cl, shutPage);
 		cl.sendRequest();
 	}
 // end special instruction

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:29:57 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:53:00 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,8 +129,8 @@ class WebServer
 
 
 		void	Method(Client &cl);	
-		void	methodGet( Request & req, vHostPtr & v_host, std::string & path );
-		void	methodHead( Request & req, vHostPtr & v_host, std::string & path) ;
+		void	methodGet( Client & cl, std::string & path );
+		void	methodHead( Client &client, std::string & path) ;
 		void	getError(std::string status, Request& req);	// GET special pour error
 		void	methodPost(Client &client, std::string & path);
 		void	methodDelete(Client &client, std::string & path);

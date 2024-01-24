@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:07:18 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/24 16:09:13 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 #include <sstream>
 #include <ctime>
 
-void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path)
+void	WebServer::methodHead( Client & cl, std::string & pagePath)
 {
-	std::ifstream	requestedPage(path.c_str());
+	std::ifstream	requestedPage(pagePath.c_str());
 	std::string	page;
 	char	date[80];
 
@@ -28,15 +28,15 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 	getline(requestedPage, page, '\0');
 	getDate(date);
 
-	req.setRStrStatus("200");
-	req.setRline("OK");
-	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
-	req.setRheaders("Date", date);
-	req.setRheaders("Connection", "keep-alive");
+	cl.setRStrStatus("200");
+	cl.setRline("OK");
+	cl.setRheaders("Server", cl.host->getServerNames().at(0)); // Place holder
+	cl.setRheaders("Date", date);
+	cl.setRheaders("Connection", "keep-alive");
 
-	req.findSetType(req, path, getContentType());
+	cl.findSetType(cl, pagePath, getContentType());
 
-	req.makeResponse();
+	cl.makeResponse();
 }
 
 // WARNING ! mID est un enum mtn, qui peut prendre la valeur UNKNOW, 
@@ -70,7 +70,7 @@ void	WebServer::Method(Client &cl)
 	switch (cl.getMid())
 	{
 		case GET:
-			methodGet(cl, cl.host, pagePath);
+			methodGet(cl, pagePath);
 			break ;
 		case POST:
 			methodPost(cl, pagePath);
@@ -79,7 +79,7 @@ void	WebServer::Method(Client &cl)
 			methodDelete(cl, pagePath);
 			break ;
 		case HEAD:
-			methodHead(cl, cl.host, pagePath);
+			methodHead(cl,pagePath);
 			break ;
 		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
@@ -87,18 +87,20 @@ void	WebServer::Method(Client &cl)
 	cl.clientStatus = PROCEEDED;
 }
 
-void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path )
+void	WebServer::methodGet( Client & cl, std::string & pagePath )
 {
-	std::string		body = getFile(path);
+	if (cl.clientStatus != CGIOK)
+	{
+		std::string		body = getFile(pagePath);
+		cl.setRbody(body);
+		cl.findSetType(cl, pagePath, getContentType());
+	}
 
-	req.setRStrStatus ("200");
-	req.setRline ("OK");
-	req.setRheaders("Server", v_host->getServerNames().at(0));
-	req.setRbody(body);
-
-	req.findSetType(req, path, getContentType());
+	cl.setRStrStatus ("200");
+	cl.setRline ("OK");
+	cl.setRheaders("Server", cl.host->getServerNames().at(0));
 	
-	req.makeResponse();
+	cl.makeResponse();
 }
 
 // void WebServer::methodPost(Client &client, std::string & path)
@@ -156,11 +158,10 @@ void WebServer::methodPost(Client &client, std::string &path) {
 
         size_t posFirst = body.find(boundary);
         if (posFirst != std::string::npos) {
-            size_t posSecond = body.find(boundary, firstBoundaryPos + boundary.size());
-        }
-    }
+            size_t posSecond = body.find(boundary, posFirst + boundary.size());
+		}
 
-
+	}
     client.setRStrStatus("200");
     client.setRline("OK");
     client.setRheaders("server", client.host->getServerNames().at(0));
