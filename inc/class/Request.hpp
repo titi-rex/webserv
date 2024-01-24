@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:12:07 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:32:36 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,14 +79,23 @@ class Request
 		std::string			_ext;
 		std::string			_body;
 		MapStrStr_t			_headers;
+		std::string			_pathTranslated;
+		bool				_needCgi;
 
 		//tmp variable for parsing
-		e_parsingStatus		_pstatus;
+		e_parsingStatus		_parsingStatus;
+		size_t				_bodySizeExpected;
 		std::string			_raw;
 		size_t				_size;
 		size_t				_lenChunk;
 
-		//parsing request/cgi
+		// reponse variable
+		std::string			_rline;
+		std::string			_rStrStatus;
+		std::string			_rbody;
+		MapStrStr_t			_rheaders;
+
+
 		bool				_findBodySize(void);
 		std::string			_extractRange(size_t& start, size_t& end, const char *set);
 		bool				_is_method_known(std::string& test);
@@ -96,17 +105,7 @@ class Request
 		bool				_parseBodyByLength(std::string &body);
 		bool				_parseBodyByChunk(std::string &body);
 
-
 	public	:
-		// a remettre en privé un jour
-		//
-		std::string			_rline;
-		std::string			_rStrStatus;
-		std::string			_pathTranslated;
-		std::string			_rbody;
-		MapStrStr_t			_rheaders;
-		size_t				_bodySizeExpected;
-
 		std::string			response;
 
 		Request(void);
@@ -115,35 +114,48 @@ class Request
 		~Request(void);
 
 
-		e_method 			getMid(void) const;
-		e_parsingStatus		getPstatus(void) const;
+		e_method			getMid(void) const;
 		const std::string	getMethodName(void) const;
 		const std::string&	getUri(void) const;
-		const std::string&	getBody(void) const;
 		const std::string&	getQuery(void) const;
 		const std::string&	getPathInfo(void) const;
 		const std::string&	getExt(void) const;
-		const std::string&	getRStrStatus(void) const;
+		const std::string&	getBody(void) const;
 		const MapStrStr_t&	getHeaders(void) const;
+		const std::string&	getPathTranslated(void) const ;
+		bool				getNeedCgi(void) const;
 
-		void	setPathtranslated( std::string path );
-		void	setRline( std::string line );
-		void	setRheaders( std::string key, std::string value );
-		void	setPstatus(e_parsingStatus newStatus);
-		void	setRstatus( short int status );
-		void	setRStrStatus( std::string status );
-		void	setRbody( std::string body );
-		void	setResponse( std::string response );
-		void	setExt( std::string extension );
-		void	makeResponse ( void );
+		e_parsingStatus		getPstatus(void) const;
+		size_t	getBodySizeExpected(void) const;
 
-		bool	build(std::string raw = "");
-		bool	addCgi(std::string	buff);
-		void	clear(void);
+		const std::string&	getRline(void) const;
+		const std::string&	getRStrStatus(void) const;
+		const std::string&	getRbody(void) const;
+		const MapStrStr_t&	getRheaders(void) const;
+
+		const std::string&	getResponse(void) const;
+
+
+		void				setPathtranslated(const std::string& path);
+		void				setExt(const std::string& extension);
+		void				setNeedCgi(const bool yes);
+
+		void				setPstatus(const e_parsingStatus newStatus);
+
+		void				setRline(const std::string& line);
+		void				setRStrStatus(const std::string& status, const MapStrStr_t* statusList = NULL, const std::string& defaultStatus = "500");
+		void				setRbody(const std::string& body);
+		void				setRheaders(const std::string& key, const std::string& value);
+
+		void				setResponse(const std::string& response);
+
+
+		bool				build(const std::string& raw = "");
+		bool				addCgi(const std::string& buff);
+		void				makeResponse(void);
+		void				clear(void);
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);
 
-
 #endif
-

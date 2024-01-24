@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi_handler.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/18 16:58:17 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:06:01 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,19 @@ void    WebServer::fillEnvCGI(const Client& client)
     // requete
     fillElement("SERVER_PROTOCOL", "HTTP/1.1");
     fillElement("SERVER_PORT", uint16tostr(client.host->getHostPort().second));
-    if (client.request.getMid() == 0)
+    if (client.getMid() == 0)
         fillElement("REQUEST_METHOD", "GET");
     else
         fillElement("REQUEST_METHOD", "POST");
-    fillElement("PATH_INFO", client.request.getPathInfo());
-    fillElement("PATH_TRANSLATED", client.request._pathTranslated);
-    fillElement("QUERY_STRING", client.request.getQuery());
+    fillElement("PATH_INFO", client.getPathInfo());
+    fillElement("PATH_TRANSLATED", client.getPathTranslated());
+    fillElement("QUERY_STRING", client.getQuery());
     fillElement("REMOTE_HOST", "");
     fillElement("REMOTE_ADDR", uint32tostr(client.getSin().sin_addr.s_addr)); // dans _sin dans socket (client herite de socket)
     fillElement("AUTH_TYPE", "null");
-    fillValueFromCGI(client.host->getCgi(), "SCRIPT_NAME", client.request.getExt());
-    fillValueFromHeader(client.request.getHeaders(), "content-type");
-    fillValueFromHeader(client.request.getHeaders(), "content-length");
+    fillValueFromCGI(client.host->getCgi(), "SCRIPT_NAME", client.getExt());
+    fillValueFromHeader(client.getHeaders(), "content-type");
+    fillValueFromHeader(client.getHeaders(), "content-length");
 
     // client
     // HTTP_ACCEPT
@@ -122,46 +122,39 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
 
 void WebServer::execute_cgi(const std::string& script_path, Client& client) 
 {
-	char**      envp;
+	char**	envp;
 
-    std::clog <<  "EXEC CGI with path : " << script_path << std::endl;
-    convertToEnvp(_envCGI, envp);
-	
-    pipe(client.getFd_cgi());
-	client.request.setPstatus(CGIHD);
+	std::clog <<  "EXEC CGI with path :"<< script_path << ":" << std::endl;
+
+	convertToEnvp(_envCGI, envp);
+	pipe(client.getFd_cgi());
+	client.setPstatus(CGIHD);
 	modEpollList(client.getFd_cgi()[0], EPOLL_CTL_ADD, EPOLLIN);
-	_fdCgi[client.getFd_cgi()[0]] = &client;						//add fd cgi a un map reliant le fd au client 
+	_fdCgi[client.getFd_cgi()[0]] = &client;	//add fd cgi a un map reliant le fd au client 
 
+	pid_t pid = fork();
+	if (pid == 0) 
+	{
+		if (chdir(client.host->getDirCgi().c_str()) == 0)
+		{
+			dup2(client.getFd_cgi()[1], STDOUT_FILENO);
+			_closeAllFd(false);
 
-    pid_t pid = fork();
-    if (pid == 0) 
-    {
+			// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
+			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathInfo().c_str()), NULL};
+			std::cerr << "pathcript:" << argc[0] << std::endl;
+			execve(argc[0], argc, envp);
+		}
+		perror("error : execve");
+		exit(EXIT_FAILURE);
+	} 
+	else if (pid < 0)
+		perror("Error : fork");
 
-        dup2(client.getFd_cgi()[1], STDOUT_FILENO);
-		this->~WebServer();
-
-        char* const argc[] = {const_cast<char*>(script_path.c_str()), NULL};
-
-        
-        execve(argc[0], argc, envp);
-
-        perror("error : execve");
-        exit(EXIT_FAILURE);
-    } 
-    else if (pid > 0) 
-    {
-	
-        close(client.getFd_cgi()[1]); // attention ?
-		return ;
-
-    }
-    else
-        perror("Error : fork");
-
-    for (int i = 0; envp[i] != NULL; ++i)
-        delete[] envp[i];
-
-    delete[] envp;
+	close(client.getFd_cgi()[1]);
+	for (int i = 0; envp[i] != NULL; ++i)
+		delete[] envp[i];
+	delete[] envp;
 }
 
 

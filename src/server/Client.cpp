@@ -6,34 +6,29 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 20:55:27 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:23:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), cstatus(CREATED), keepConnection(false)
+Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), clientStatus(CREATED), keepConnection(false)
 {
 	_fd_cgi[0] = -1;
 	_fd_cgi[1] = -1;
 	_name = "cnameless";
 };
 
-Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), cstatus(CREATED), keepConnection(false)
+Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), clientStatus(CREATED), keepConnection(false)
 {
 	_fd_cgi[0] = -1;
 	_fd_cgi[1] = -1;
 	_name = "cnameless";
 };
 
-Client::Client(const Client& src) : Socket(src)
+Client::Client(const Client& src) : Socket(src), Request(src)
 {
-	this->setFd_cgi(src.getFd_cgi());
-	_serverEndPoint = src._serverEndPoint;
-	request = src.request;
-	cstatus = src.cstatus;
-	keepConnection = src.keepConnection;
-	
+	*this = src;
 };
 
 Client&	Client::operator=(const Client& src) 
@@ -41,10 +36,12 @@ Client&	Client::operator=(const Client& src)
 	if (this == &src)
 		return (*this);
 	this->Socket::operator=(src);
-	this->setFd_cgi(src.getFd_cgi());
+	this->Request::operator=(src);
 	_serverEndPoint = src._serverEndPoint;
-	request = src.request;
-	cstatus = src.cstatus;
+	_fd_cgi[0] = src._fd_cgi[0];
+	_fd_cgi[1] = src._fd_cgi[1];
+	_sizeLimit = src._sizeLimit;
+	clientStatus = src.clientStatus;
 	keepConnection = src.keepConnection;
 	return (*this);
 };
@@ -53,7 +50,7 @@ Client::~Client(void) {};
 
 const std::string	Client::getStatusStr(void) const
 {
-	switch (this->cstatus)
+	switch (this->clientStatus)
 	{
 		CLIENT_ENUM(CLIENT_ENUM_CASE)
 		default:
@@ -77,39 +74,29 @@ void	Client::accept(int socketServerFd)
 	_serverEndPoint = socketServerFd;
 	this->Socket::accept(socketServerFd);
 	this->setName();
-	cstatus = ACCEPTED;
-}
-
-void	Client::_checkRequestSize(Request& rq)
-{
-	if (rq.getPstatus() == BODYCHUNK)
-	{
-		if (rq.getBody().size() > _sizeLimit)
-			throw std::runtime_error("413: Request Entity Too Large");
-		
-	}
-	else if (rq.getPstatus() == BODYCLENGTH)
-	{	
-		if (rq._bodySizeExpected > _sizeLimit)
-			throw std::runtime_error("413: Request Entity Too Large");
-	}
+	clientStatus = ACCEPTED;
 }
 
 bool	Client::readRequest(void)
 {
-	std::clog << "client reading request" << std::endl;
+	logDEBUG << "client reading request";
 	
-	char	buf[BUFFER_SIZE + 1] = {0};
+	char	buf[BUFFER_SIZE + 1];
 	int		n_rec = 0;
 	
+	std::memset(buf, 0, BUFFER_SIZE + 1);
 	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC);
 	if (n_rec == -1)
 		throw std::runtime_error("620: recv");
-	buf[n_rec] = 0;
-	_checkRequestSize(request);
-	if (request.build(buf))// throw ERROR or FATAL
+	else if (n_rec == 0)
+		throw std::runtime_error("400: vicious empty data send");
+	if (getPstatus() == BODYCHUNK && getBody().size() > _sizeLimit)
+		throw std::runtime_error("413: Request Entity Too Large");
+	else if (getPstatus() == BODYCLENGTH && getBodySizeExpected() > _sizeLimit)
+		throw std::runtime_error("413: Request Entity Too Large");
+	if (build(buf))// throw ERROR or FATAL
 	{
-		cstatus = GATHERED;
+		clientStatus = GATHERED;
 		return (true);
 	}
 	return (false);
@@ -117,45 +104,41 @@ bool	Client::readRequest(void)
 
 bool	Client::readCgi(void)
 {
-	std::clog << "client reading Cgi" << std::endl;
+	logDEBUG << "client reading Cgi";
 	
-	char	buf[BUFFER_SIZE + 1] = {0};
+	char	buf[BUFFER_SIZE + 1];
 	int		n_rec = 0;
 	bool	end = false;
-	
+
+	std::memset(buf, 0, BUFFER_SIZE + 1);
 	n_rec = read(_fd_cgi[0], &buf, BUFFER_SIZE);
 	if (n_rec == -1)
 		throw std::runtime_error("699: read cgi");
+	else if (n_rec == 0)
+		throw std::runtime_error("500: cgi send vicious empty data");
 	if (n_rec < BUFFER_SIZE || buf[n_rec] == '\0')
 		end = true;
 	buf[n_rec] = 0;
-	if (request.addCgi(buf) || end)//throw ERROR or FATAL
+	if (addCgi(buf) || end)//throw ERROR or FATAL
 	{
-		cstatus = CGIOK;
+		clientStatus = CGIOK;
 		return (true);
 	}
 	return (false);
 }
 
 
-void	Client::proceedRequest(void)
-{
-	std::cout << "method happen here" << std::endl;
-}
-
-
-
 void	Client::sendRequest(void)
 {
-	if (send(_fd, request.response.c_str() , request.response.length(), MSG_DONTWAIT) == -1)
+	if (send(_fd, response.c_str() , response.size(), MSG_DONTWAIT) == -1)
 		throw std::runtime_error("621: send");
-	cstatus = SENT;
+	clientStatus = SENT;
 }
 
 void	Client::reset(void)
 {
-	this->request.clear();
-	cstatus = ACCEPTED;
+	clear();
+	clientStatus = ACCEPTED;
 }
 
 

@@ -31,13 +31,13 @@ def	print_response(r):
 
 def print_request(r):
     print("Request url")
-    print(r.request.url, "\n")
+    print(r.url, "\n")
     print("Request method")
-    print(r.request.method, "\n")
+    print(r.method, "\n")
     print("Request headers")
-    print(r.request.headers, "\n")
+    print(r.headers, "\n")
     print("Request body")
-    print(r.request.body, "\n")
+    print(r.body, "\n")
 
 
 def	try_get(url, headers, expected):

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/18 15:46:13 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/23 13:54:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,20 +76,29 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 		DIR 		*tmp = opendir((directory + str).c_str());
 		
 		if (str == ".")
-		{
-			ss << "<dt><a href=\"http://localhost:8080" << pointDir << "\">";
-			ss << "<img src=\"https://i.pinimg.com/736x/6e/8d/fe/6e8dfe5444398a4d024637809a492929.jpg\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
-			ss << str << "</a></dt>\n";
-		}
+			continue ;
 		else if (str == "..")
 		{
 			ss << "<dt><a href=\"http://localhost:8080" << pointPointDir << "\">";
-			ss << "<img src=\"https://i.pinimg.com/736x/6e/8d/fe/6e8dfe5444398a4d024637809a492929.jpg\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
-			ss << str << "</a></dt>\n";
+			ss << "<img src=\"https://cdn3.iconfinder.com/data/icons/3d-printing-icon-set/512/Open.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
+			ss << "Parent Directory</a></dt>\n";
 		}
 		else if (str.substr(str.length() - 5, 5) == ".html")
 		{
 			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "\">";
+			ss << "<img src=\"https://cdn-icons-png.flaticon.com/512/4248/4248142.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
+			ss << str << "</a></dt>\n";
+		}
+		else if (str.substr(str.length() - 4, 4) == ".php")
+		{
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "\">";
+			ss << "<img src=\"https://cdn-icons-png.freepik.com/128/4248/4248336.png?ga=GA1.1.1058183076.1697891450&semt=ais\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
+			ss << str << "</a></dt>\n";
+		}
+		else if (str.substr(str.length() - 3, 3) == ".py")
+		{
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "\">";
+			ss << "<img src=\"https://cdn-icons-png.freepik.com/128/2570/2570575.png?ga=GA1.1.1058183076.1697891450&semt=ais\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
 			ss << str << "</a></dt>\n";
 		}
 		else if (tmp != NULL)
@@ -99,7 +108,12 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 			ss << str << "</a></dt>\n";
 			closedir(tmp);
 		}
-	}
+		else
+		{
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(str, directory, v_host) << "/\">";
+			ss << "<dt><img src=\"https://cdn-icons-png.freepik.com/128/6301/6301689.png?ga=GA1.1.1058183076.1697891450&semt=ais\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
+			ss << str << "</a></dt>\n";
+		}	}
 	
 	ss << "</dl>\n</body>\n</html>\r\n\r\n";
 
@@ -126,7 +140,6 @@ bool isDirListReq(Request & req)
 {
 	std::string		uri = req.getUri();
 	char			lastChar = uri.at(uri.length() - 1);
-	
 	if (lastChar == '/')
 		return (true);
 	return false;

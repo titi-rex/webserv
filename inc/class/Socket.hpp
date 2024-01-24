@@ -28,7 +28,6 @@ class Socket
 		std::string			_name;
 
 	public	:
-
 		Socket(void);
 		Socket(const Socket& src);
 		Socket&	operator=(const Socket& src);
@@ -36,8 +35,8 @@ class Socket
 
 		Socket(int family, uint32_t haddr, uint16_t hport, int flags = SOCK_STREAM, int protocol = 0);
 
-		void	setFd(int fd);
-		void	setSin(int family, uint32_t addr, uint16_t port);
+		void			setFd(int fd);
+		void			setSin(int family, uint32_t addr, uint16_t port);
 		virtual void	setName(void);
 		
 		int							getFd(void) const;
@@ -45,7 +44,6 @@ class Socket
 		const struct sockaddr_in&	getSin(void) const;
 
 		bool	operator==(Socket& ref);
-
 
 		void	bind(void);
 		void	connect(void);
@@ -59,6 +57,6 @@ class Socket
 };
 
 std::ostream&	operator<<(std::ostream& os, const Socket& Socket);
-std::ostream&	operator<<(std::ostream &os, const struct sockaddr_in& sock);
+std::ostream&	operator<<(std::ostream& os, const struct sockaddr_in& sock);
 
 #endif

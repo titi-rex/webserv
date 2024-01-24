@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:08:19 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 20:23:10 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,14 @@ class WebServer
 		WebServer(std::string path);
 		~WebServer(void);
 
-		void				setVirtualHost(VecVHost_t vHost);
-		void				setErrorPage(std::string key, std::string value); 
-		void				setDirErrorPage(std::string dirErrorPage);
+		void				setVirtualHost(const VecVHost_t& vHost);
+		void				setErrorPage(const std::string& key, const std::string& value); 
+		void				setDirErrorPage(const std::string& dirErrorPage);
 		void				setBodySizeLimit(size_t bodySizeLimit);
 		
 		VecVHost_t			getVirtualHost(void) const;
-		MapStrStr_t&		getErrorPage(void);
-		MapStrStr_t&		getHttpStatus(void);
+		const MapStrStr_t&	getErrorPage(void) const;
+		const MapStrStr_t&	getHttpStatus(void) const;
 		std::string			getDirErrorPage(void) const;
 		size_t				getBodySizeLimit(void) const;
 
@@ -116,6 +116,8 @@ class WebServer
 		void				process_rq(Client &cl);
 		void				process_rq_error(Client &cl);
 
+		void				_closeAllFd(bool log);
+		void				_initHttpStatus(void);
 		// CGI
 		void				fillElement(std::string key , std::string val);
 		void				fillValueFromHeader(MapStrStr_t header, std::string key);
@@ -126,7 +128,7 @@ class WebServer
 
 
 
-		void	Method(Client &cl, Request & req, vHostPtr & v_host);	
+		void	Method(Client &cl);	
 		void	methodGet( Request & req, vHostPtr & v_host, std::string & path );
 		void	methodHead( Request & req, vHostPtr & v_host, std::string & path) ;
 		void	getError(std::string status, Request& req);	// GET special pour error

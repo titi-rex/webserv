@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/18 16:09:16 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/23 21:32:46 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(void) : _mId(UNKNOW), _pstatus(RL), _size(0), _lenChunk(ULONG_MAX), _bodySizeExpected(0) {};
+Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL),  _bodySizeExpected(0), _size(0), _lenChunk(ULONG_MAX){};
 
 Request::Request(const Request& src) {*this = src;};
 
@@ -27,7 +27,11 @@ Request&	Request::operator=(const Request& src)
 	_ext = src._ext;
 	_body = src._body;
 	_headers = src._headers;
-	_pstatus = src._pstatus;
+	_needCgi = src._needCgi;
+	_parsingStatus = src._parsingStatus;
+	_raw = src._raw;
+	_size = src._size;
+	_lenChunk = src._lenChunk;
 	_rline = src._rline;
 	_rheaders = src._rheaders;
 	_rbody = src._rbody;
@@ -40,16 +44,25 @@ Request&	Request::operator=(const Request& src)
 
 Request::~Request(void) {};
 
-
 e_method 			Request::getMid(void) const {return (this->_mId);};
 const std::string& 	Request::getUri(void) const { return (this->_uri); };
-const std::string&	Request::getBody(void) const { return (this->_body); };
 const std::string&	Request::getQuery(void) const { return (this->_query); };
 const std::string&	Request::getPathInfo(void) const { return (this->_pathInfo); };
 const std::string&	Request::getExt(void) const { return (this->_ext); };
-e_parsingStatus		Request::getPstatus(void) const {return (this->_pstatus);};
-const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
+const std::string&	Request::getBody(void) const { return (this->_body); };
 const MapStrStr_t&	Request::getHeaders(void) const { return (this->_headers); };
+const std::string&	Request::getPathTranslated(void) const {return (this->_pathTranslated);};
+bool				Request::getNeedCgi(void) const {return (this->_needCgi);};
+
+e_parsingStatus		Request::getPstatus(void) const {return (this->_parsingStatus);};
+size_t				Request::getBodySizeExpected(void) const {return (this->_bodySizeExpected);};
+
+const std::string&	Request::getRline(void) const {return (this->_rline);};
+const std::string&	Request::getRStrStatus(void) const {return (this->_rStrStatus);};
+const std::string&	Request::getRbody(void) const { return (this->_rbody); };
+const MapStrStr_t&	Request::getRheaders(void) const { return (this->_rheaders); };
+
+const std::string&	Request::getResponse(void) const { return (this->response); };
 
 const std::string	Request::getMethodName(void) const
 {
@@ -61,14 +74,25 @@ const std::string	Request::getMethodName(void) const
 	}	
 }
 
-void	Request::setPathtranslated( std::string path ) { this->_pathTranslated = path; };
-void	Request::setRline( std::string line ) { this->_rline = line; };
-void	Request::setRheaders( std::string key, std::string value ) { this->_rheaders[key] = value; };
-void	Request::setPstatus(e_parsingStatus newStatus) {_pstatus = newStatus;};
-void	Request::setRStrStatus( std::string status ) { this->_rStrStatus = status; };
-void	Request::setRbody( std::string body ) { this->_rbody = body; };
-void	Request::setResponse( std::string response ) { this->response = response; };
-void	Request::setExt( std::string extension ) { this->_ext = extension; };
+void	Request::setPathtranslated(const std::string& path ) { this->_pathTranslated = path; };
+void	Request::setExt(const std::string& extension ) { this->_ext = extension; };
+void	Request::setNeedCgi(const bool yes) { this->_needCgi = yes; };
+
+void	Request::setPstatus(const e_parsingStatus newStatus) {_parsingStatus = newStatus;};
+
+void	Request::setRline(const std::string& line ) { this->_rline = line; };
+void	Request::setRbody(const std::string& body ) { this->_rbody = body; };
+void	Request::setRheaders(const std::string& key, const std::string& value ) { this->_rheaders[key] = value; };
+
+void	Request::setResponse(const std::string& response ) { this->response = response; };
+
+void	Request::setRStrStatus(const std::string& status, const MapStrStr_t* statusList, const std::string& defaultStatus)
+{
+	if (statusList == NULL || statusList->count(status))
+		this->_rStrStatus = status;
+	else
+		this->_rStrStatus = defaultStatus;
+};
 
 void	Request::makeResponse (void)
 {
@@ -78,17 +102,22 @@ void	Request::makeResponse (void)
 
 	this->response = "HTTP/1.1 " + this->_rStrStatus + " " + this->_rline + "\n"; // Place holder for the status description
 
+	if (_rheaders.count("transfer-encoding") == 0 && _rheaders.count("content-length") == 0)	
+	{
+		std::stringstream	sstr;
+		sstr << _rbody.size();
+		_rheaders["content-length"] = sstr.str();
+	}
 	for (iter = this->_rheaders.begin(); iter != this->_rheaders.end(); ++iter)
 		this->response += iter->first + ": " + iter->second + "\n";
 
-	this->response += "\r\n\r\n";
+	this->response += "\r\n";
 	this->response += this->_rbody;
-	this->response += "\r\n\r\n";
 
-	// std::clog << this->_body << std::endl;
+	// std::clog << *this<< std::endl;
 }
 
-bool	Request::_is_method_known(std::string & test)
+bool	Request::_is_method_known(std::string& test)
 {
 	std::string	ref[METHOD_COUNT] = {"GET", "POST", "DELETE", "HEAD"};
 	
@@ -103,7 +132,7 @@ bool	Request::_is_method_known(std::string & test)
 	return (false);
 }
 
-std::string	Request::_extractRange(size_t& start, size_t& end, const char *set)
+std::string	Request::_extractRange(size_t& start, size_t& end, const char* set)
 {
 	start = end + 1;
 	end = _raw.find_first_of(set, start);	
@@ -148,7 +177,7 @@ bool	Request::_parseRequestLine(void)
 	if (tmp.compare("HTTP/1.1") == false)
 		throw std::runtime_error("505: Wrong HTTP version");
 	_raw.erase(0, end + 1);
-	_pstatus = HEADERS;
+	_parsingStatus = HEADERS;
 	return (false);
 }
 
@@ -195,7 +224,7 @@ bool	Request::_parseHeaders(void)
 			_raw.erase(0, 2);
 			if (_headers.count("host") == 0)
 				throw std::runtime_error("400: No Host Header");
-			_findBodySize() ? _pstatus = BODYCLENGTH : _pstatus = BODYCHUNK;
+			_findBodySize() ? _parsingStatus = BODYCLENGTH : _parsingStatus = BODYCHUNK;
 			return (false);
 		}
 		end = -1;
@@ -222,7 +251,7 @@ bool	Request::_parseHeaders(void)
 /**
  * @brief return true if all body data has been gathered, else flase
  */
-bool	Request::_parseBodyByLength(std::string &body)
+bool	Request::_parseBodyByLength(std::string& body)
 {
 	body += _raw;
 	_raw.clear();
@@ -231,7 +260,7 @@ bool	Request::_parseBodyByLength(std::string &body)
 		throw std::runtime_error("400: More data than expected");
 	if (body.size() == _bodySizeExpected)
 	{
-		_pstatus = DONE;
+		_parsingStatus = DONE;
 		return (true);
 	}
 	return (false);
@@ -240,7 +269,7 @@ bool	Request::_parseBodyByLength(std::string &body)
 /**
  * @brief return true if all body data has benn gathered (0 lengh chunk found), ese false
  */
-bool	Request::_parseBodyByChunk(std::string &body)
+bool	Request::_parseBodyByChunk(std::string& body)
 {
 	std::string	tmp;
 	size_t		start = 0;
@@ -258,7 +287,7 @@ bool	Request::_parseBodyByChunk(std::string &body)
 				throw std::runtime_error("400: Chunk length overflow");
 			if (_lenChunk == 0)
 			{
-				_pstatus = DONE;
+				_parsingStatus = DONE;
 				return (true) ;
 			}
 			_raw.erase(start, end + 1);
@@ -283,10 +312,10 @@ bool	Request::_parseBodyByChunk(std::string &body)
  * @brief return true if request is complete, else false
  * take raw input with minimal size (BUFFER_SIZE) 
  */
-bool	Request::build(std::string	raw)
+bool	Request::build(const std::string& raw)
 {
 	_raw += raw;
-	switch (_pstatus)
+	switch (_parsingStatus)
 	{
 		case RL:
 		{
@@ -302,7 +331,7 @@ bool	Request::build(std::string	raw)
 		}
 		case BODYCLENGTH:
 		{
-			if (_pstatus == BODYCLENGTH)
+			if (_parsingStatus == BODYCLENGTH)
 			{	
 				if (_parseBodyByLength(_body))
 					return (true);
@@ -325,7 +354,6 @@ bool	Request::build(std::string	raw)
 	return (false);
 }
 
-
 bool	Request::_parseCgiHeaders(void)
 {
 	size_t		start = 0;
@@ -337,10 +365,10 @@ bool	Request::_parseCgiHeaders(void)
 		{
 			_raw.erase(0, 2);
 			if (_rheaders.find("content-length") == _rheaders.end())
-				_pstatus = CGIEOF;
+				_parsingStatus = CGIEOF;
 			else
 			{
-				_pstatus = CGICL;
+				_parsingStatus = CGICL;
 				_bodySizeExpected = std::strtoul(_rheaders["content-length"].c_str(), NULL, 10);
 				if (_bodySizeExpected == ULONG_MAX)
 					throw std::runtime_error("413: Request Entity Too Large");
@@ -370,30 +398,22 @@ bool	Request::_parseCgiHeaders(void)
 
 /**
  * @brief parse CGI response, work like Request::build 
- * 
  */
-bool	Request::addCgi(std::string	buff)
+bool	Request::addCgi(const std::string& buff)
 {
 	_raw += buff;
-	std::clog << "in readcgi: pstatus: " << _pstatus << std::endl;
-	std::clog << "in read: raw:" << _raw << std::endl;
-	switch (_pstatus)
+	switch (_parsingStatus)
 	{
 		case CGIHD:
 		{
-			std::clog << "CGIHEADER" << std::endl;
 			if (_parseCgiHeaders())
 				return (false);
 			__attribute__((fallthrough));
 		}
 		case CGICL:
 		{
-			std::clog << "CGI CORPASSAGE" << std::endl;
-
-			if (_pstatus == CGICL)
-			{	
-			std::clog << "CGI CORP BY LENGTH" << std::endl;
-				
+			if (_parsingStatus == CGICL)
+			{
 				if (_parseBodyByLength(_rbody))
 					return (true);
 				break ;
@@ -402,8 +422,6 @@ bool	Request::addCgi(std::string	buff)
 		}
 		case CGIEOF:
 		{
-			std::clog << "CGI CORP BY EOF" << std::endl;
-
 			_rbody += buff;
 			break;
 		}
@@ -426,17 +444,17 @@ void	Request::clear(void)
 	_ext.clear();
 	_body.clear();
 	_headers.clear();
-	_pstatus = RL;
+	_pathTranslated.clear();
+	_parsingStatus = RL;
+	_bodySizeExpected = 0;
 	_raw.clear();
 	_size = 0;
 	_lenChunk = 0;
 	_rline.clear();
-	_pathTranslated.clear();
+	_rStrStatus.clear();
 	_rbody.clear();
 	_rheaders.clear();
-	_bodySizeExpected = 0;
 	response.clear();
-	_rStrStatus.clear();
 }
 
 std::ostream& operator<<(std::ostream& os, const Request& req)
@@ -451,11 +469,11 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 	os << "Body: " ;
 	os << "{" << req.getBody() << "}" << std::endl;
 	os << "===RESPONSE SIDE===" << std::endl;
-	os << "_rStrStatus: " << req._rStrStatus << std::endl;
-	os << "_rline: " << req._rline << std::endl;
-	os << "_rheaders: " << req._rheaders << std::endl;
-	os << "_rbody: " << "{" << req._rbody << "}" << std::endl;
-	os << "response: " << req.response << std::endl;
+	os << "_rStrStatus: " << req.getRStrStatus() << std::endl;
+	os << "_rline: " << req.getRline() << std::endl;
+	os << "_rheaders: " << req.getRheaders() << std::endl;
+	os << "_rbody: " << "{" << req.getRbody() << "}" << std::endl;
+	// os << "response: " << req.response << std::endl;
 	
 	return (os);
 };
