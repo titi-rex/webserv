@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 14:33:12 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 12:45:46 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,21 @@ void	Request::setRStrStatus(const std::string& status, const MapStrStr_t* status
 	else
 		this->_rStrStatus = defaultStatus;
 };
+
+void	Request::findSetType(Request & req, std::string & path, MapStrStr_t	mapContentType)
+{
+	std::size_t	found = path.rfind('.');
+	if (found != 0)
+	{
+		std::string	extension = path.substr(found + 1, path.length() - found);
+		if (mapContentType.count(extension))
+		{
+			std::string	contentType = mapContentType[extension];
+			req.setRheaders("Content-type", contentType);
+		}
+	}
+}
+
 
 void	Request::makeResponse (void)
 {

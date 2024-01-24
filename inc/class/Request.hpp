@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 12:06:56 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 12:45:28 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,7 @@ class Request
 
 		bool				build(std::string raw = "");
 		bool				addCgi(std::string	buff);
+		void				findSetType(Request & req, std::string & path, MapStrStr_t	mapContentType);
 		void				makeResponse(void);
 		void				clear(void);
 };

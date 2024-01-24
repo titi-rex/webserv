@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 12:15:14 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 12:47:05 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 	req.setRline("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
 	req.setRheaders("Date", date);
-	req.setRheaders("Content-length", sContentLength);
+	req.setRheaders("content-length", sContentLength);
 	req.setRheaders("Connection", "keep-alive");
+
+	req.findSetType(req, path, getContentType());
 
 	req.makeResponse();
 }
@@ -107,7 +109,7 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 	req.setRStrStatus ("200");
 	req.setRline ("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
-	req.setRheaders("Content-length", sRespondLength);
+	req.setRheaders("content-length", sRespondLength);
 	req.setRbody(body);
 
 	req.makeResponse();
