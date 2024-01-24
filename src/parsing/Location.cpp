@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/24 13:25:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 16:09:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Location::Location(const Location& src)
 
 void	Location::isLegit() const
 {
-	if (uri_or_ext.empty() || (root.empty() && redirection.first.empty()))
+	if (_key.empty() || (root.empty() && redirection.first.empty()))
 		throw std::runtime_error("Location: key / root or return are empty");
 }
 
@@ -38,7 +38,7 @@ Location&	Location::operator=(const Location& src)
 	this->isPath = src.isPath;
 	this->autoIndex = src.autoIndex;
 	this->upload = src.upload;
-	this->uri_or_ext = src.uri_or_ext;
+	this->_key = src._key;
 	this->root = src.root;
 	this->index = src.index;
 	this->uploadDir = src.uploadDir;
@@ -60,7 +60,7 @@ bool Location::getUpload() const{
 };
 
 const std::string&	Location::getUriOrExt() const{
-	return(this->uri_or_ext);
+	return(this->_key);
 };
 
 const std::string&	Location::getRoot() const{
@@ -87,46 +87,58 @@ void	Location::setIsPath(bool path){
 	this->isPath = path;
 };	
 
-void	Location::setAutoIndex(std::string autoIndex){
-	if (autoIndex == "on")
+void	Location::setAutoIndex(const VecStr_t& sLine)
+{
+	if (sLine.size() < 2)
+		throw std::runtime_error("Location: autoindex supplied but value is missing");
+	if (sLine[1] == "on")
 		this->autoIndex = true;
-	else if (autoIndex == "off")
+	else if (sLine[1] == "off")
 		this->autoIndex = false;
 	else
 		throw std::runtime_error("Location: Invalid Autoindex");
 };
 
-void	Location::setUriOrExt(std::string uri_or_ext)
+void	Location::setUriOrExt(const std::string& key)
 {
-	if (uri_or_ext.at(0) != '/' && uri_or_ext.at(0) != '.')
-		std::runtime_error("Location: uri_or_ext is neither a path or a file extension");
-	this->uri_or_ext = uri_or_ext;
+	if (key.at(0) != '/' && key.at(0) != '.')
+		throw std::runtime_error("Location: key is neither a path or a file extension");
+	this->_key = key;
 };
 
-void	Location::setRoot(std::string root)
-{
-	if (root.at(0) != '/' && root.at(0) != '.')
-		std::runtime_error("Location: root is not a path");
-	this->root = root;
-};
-
-void	Location::setIndex(std::string index){
-	this->index = index;
-};
-
-void	Location::setUploadDir(std::string dir)
-{
-	if (access(dir.c_str(), F_OK | R_OK))
-		throw std::runtime_error("Location: can't access upload_dir");
-	this->uploadDir = dir;
-	upload = true;
-};
-
-void	Location::setAllowMethod(VecStr_t& sLine)
+void	Location::setRoot(const VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
-		throw std::runtime_error("Server: allow_method supplied but value is missing");
+		throw std::runtime_error("Location: root supplied but value is missing");
+	if (sLine[1].at(0) != '/' && sLine[1].at(0) != '.')
+		std::runtime_error("Location: root is not a path");
+	this->root = sLine[1];
+};
 
+void	Location::setIndex(const VecStr_t& sLine)
+{
+	if (sLine.size() < 2)
+		throw std::runtime_error("Location: index supplied but value is missing");
+	this->index = sLine.at(1);
+};
+
+void	Location::setUploadDir(const VecStr_t& sLine)
+{
+	std::clog << "UPLOAD" << std::endl;
+	if (sLine.size() < 2)
+		throw std::runtime_error("Location: upload_dir supplied but value is missing");
+	if (access(sLine[1].c_str(), F_OK | R_OK))
+		throw std::runtime_error("Location: can't access upload_dir");
+	this->uploadDir = sLine[1];
+	std::clog << "UPLOADED :" << uploadDir << std::endl;
+	upload = true;
+	std::clog << "UPLOADED : st is" << upload << std::endl;
+};
+
+void	Location::setAllowMethod(const VecStr_t& sLine)
+{
+	if (sLine.size() < 2)
+		throw std::runtime_error("Location: allow_method supplied but value is missing");
 	for (size_t j = 1; j < sLine.size(); ++j)
 	{
 		if (std::find(this->allowMethod.begin(), this->allowMethod.end(), sLine[j]) == this->allowMethod.end())
@@ -134,8 +146,10 @@ void	Location::setAllowMethod(VecStr_t& sLine)
 	}
 };
 
-void	Location::setRedirection(VecStr_t& sLine)
+void	Location::setRedirection(const VecStr_t& sLine)
 {
+	if (sLine.size() < 2)
+		throw std::runtime_error("Location: return supplied but value is missing");
 	this->redirection.first = sLine.at(1);
 	try 
 	{
@@ -143,6 +157,6 @@ void	Location::setRedirection(VecStr_t& sLine)
 	}
 	catch (std::exception & e)
 	{
-		std::clog << "Location: return with no new location" << std::endl; 
+		logWARNING << "Location: return with no new location"; 
 	}
 };

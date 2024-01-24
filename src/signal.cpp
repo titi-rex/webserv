@@ -6,19 +6,20 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:59:01 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/17 20:03:59 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 15:34:04 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
 #include <iostream>
+#include <signal.h>
+#include "log.hpp"
 
 extern sig_atomic_t	g_status;
 
 void	sig_handler(int sig)
 {
 	(void)sig;
-	std::clog << "\001\033[2K\002Signal caugth!" << std::endl;
+	logWARNING << "Signal caugth!";
 	g_status = 0;
 }
 

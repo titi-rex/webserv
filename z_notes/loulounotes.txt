@@ -125,6 +125,7 @@ exemple d'une réponse HTTP suite à une requête POST :
 
 
 
+
 POST /upload-endpoint HTTP/1.1
 Host: example.com
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryABC123
@@ -148,3 +149,4 @@ Dans cet exemple :
     Les données du formulaire sont encapsulées entre les délimitations (------WebKitFormBoundaryABC123). Chaque partie du formulaire (fichier, paramètre) commence par une déclaration de disposition (Content-Disposition).
     La première partie concerne le fichier, avec le nom de formulaire file et le nom de fichier example.txt.
     La deuxième partie concerne un autre paramètre, avec le nom de formulaire autre_parametre.
+

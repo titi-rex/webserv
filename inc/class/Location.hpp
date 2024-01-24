@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 20:27:47 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:24:22 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 15:12:41 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <algorithm>
 # include <unistd.h>
 # include "container.hpp"
+# include "log.hpp"
 
 
 class	Location
@@ -26,7 +27,7 @@ class	Location
 		bool				isPath;			//if false its an extension ! vrai par default
 		bool				autoIndex;		//directory listing, indique si le vhost doit repondre avec un index si la requet est un repertoire, si non renvoyer une erreur true par default
 		bool				upload;			//indiaue si la location autoriseles upload
-		std::string			uri_or_ext;		//valeur depuis laquelle la location est utilise (key)
+		std::string			_key;		//valeur depuis laquelle la location est utilise (key)
 		std::string			root;			//repertoire ou chercher la cible de la requete, si empty utiliser celle du virtual host
 		std::string			index;			//fichier par default a chercher si la requet est un repertoire, si empty utiliser celle du virtual host
 		std::string			uploadDir;		//repertoire ou les upload doivent etre fait
@@ -50,13 +51,13 @@ class	Location
 		const PairStrStr_t&	getRedirection() const;
 		
 		void				setIsPath(bool path);	
-		void				setAutoIndex(std::string autoIndex);
-		void				setUriOrExt(std::string uri_or_ext);
-		void				setRoot(std::string root);
-		void				setIndex(std::string index);
-		void				setUploadDir(std::string dir);
-		void				setAllowMethod(VecStr_t& allowMethod);
-		void				setRedirection(VecStr_t& sLine);
+		void				setAutoIndex(const VecStr_t& sLine);
+		void				setUriOrExt(const std::string& key);
+		void				setRoot(const VecStr_t& sLine);
+		void				setIndex(const VecStr_t& sLine);
+		void				setUploadDir(const VecStr_t& sLine);
+		void				setAllowMethod(const VecStr_t& sLine);
+		void				setRedirection(const VecStr_t& sLine);
 
 		void				isLegit() const;
 };
