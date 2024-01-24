@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:54:14 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 14:22:18 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,13 @@ void	WebServer::methodHead( Client & cl, std::string & pagePath)
 
 void	WebServer::Method(Client &cl)
 {
+	if (cl.request.getUri().compare(0, 5, "/img/") == 0 && cl.request.getUri().length() > 5)
+	{
+		imageGet(cl);
+		cl.cstatus = PROCEEDED;
+		return ;
+	}
+
 	// chercher si le dir listing est au bon endroit !
 	if (cl.getUri() != "/" && isDirListReq(cl))
 	{
