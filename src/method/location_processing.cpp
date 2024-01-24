@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/24 13:56:45 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 15:24:35 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	// If the request is empty, sent the index of the server
 	if (pagePath == "/")
 	{
-		pagePath = "." + v_host->getRoot() + v_host->getIndex();
+		pagePath = v_host->getRoot() + v_host->getIndex();
 		return (pagePath);
 	}
 
@@ -142,9 +142,9 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	if (pagePath.compare(0, 1, "/") != 0 && pagePath.length() != 0)
 		pagePath = "/" + pagePath;
 	if (v_host->getLocations().at(location).getRoot() != "")
-		pagePath = "." + v_host->getLocations().at(location).getRoot() + pagePath;
+		pagePath = v_host->getLocations().at(location).getRoot() + pagePath;
 	else
-		pagePath = "." + v_host->getRoot() + pagePath;
+		pagePath = v_host->getRoot() + pagePath;
 
 	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
 	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());

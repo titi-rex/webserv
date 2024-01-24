@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:17:36 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 15:26:06 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,6 @@ std::string	getRL(std::string status)
 std::string	getPageByDir(std::string dir, std::string code)
 {
 	std::string	target = dir + code + ".html";
-
-	if (target.compare(0, 1, ".") != 0)
-		target = "." + target;
 
 	if (access(target.c_str(),  F_OK | R_OK))
 		throw std::runtime_error("error: access by dir");
