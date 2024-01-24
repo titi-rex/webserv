@@ -6,11 +6,12 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 14:22:34 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:11:15 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
+#include "utils.hpp"
 
 Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL),  _bodySizeExpected(0), _size(0), _lenChunk(ULONG_MAX){};
 
@@ -111,11 +112,9 @@ void	Request::findSetType(Request & req, std::string & path, MapStrStr_t	mapCont
 
 void	Request::makeResponse (void)
 {
-	// std::clog << "\nmakeResponse()" << std::endl;
-
 	MapStrStr_t::iterator	iter;
 
-	this->response = "HTTP/1.1 " + this->_rStrStatus + " " + this->_rline + "\n"; // Place holder for the status description
+	this->response = "HTTP/1.1 " + this->_rStrStatus + " " + this->_rline + "\n";
 
 	if (_rheaders.count("transfer-encoding") == 0 && _rheaders.count("content-length") == 0)	
 	{
@@ -123,13 +122,16 @@ void	Request::makeResponse (void)
 		sstr << _rbody.size();
 		_rheaders["content-length"] = sstr.str();
 	}
+
+	char	date[80];
+	getDate(date);
+	_rheaders["Date"] = date;
+
 	for (iter = this->_rheaders.begin(); iter != this->_rheaders.end(); ++iter)
 		this->response += iter->first + ": " + iter->second + "\n";
 
 	this->response += "\r\n";
 	this->response += this->_rbody;
-
-	// std::clog << *this<< std::endl;
 }
 
 bool	Request::_is_method_known(std::string& test)

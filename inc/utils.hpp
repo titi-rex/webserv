@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 15:13:42 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 16:09:47 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ e_logLevel	operator<<(e_logLevel lvl, T log)
 	}
 	return (lvl);
 }
-
 
 void	sig_init(void (*handler) (int sig));
 void	sig_handler(int sig);

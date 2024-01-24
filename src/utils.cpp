@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/22 21:27:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 16:09:49 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,11 @@ std::string&	trim(std::string& str, const char* set)
 
 void getDate( char * date )
 {
-	time_t rawtime;
-	struct tm *info;
+	time_t 		rawtime;
+	struct tm	*info;
 
 	time( &rawtime );
-
 	info = localtime( &rawtime );
-
 	strftime(date, 80,"%a, %d %b %Y %H:%M:%S", info);
 }
 

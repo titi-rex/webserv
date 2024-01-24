@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 14:24:25 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:05:54 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,15 @@ void	WebServer::methodHead( Client & cl, std::string & pagePath)
 {
 	std::ifstream	requestedPage(pagePath.c_str());
 	std::string	page;
-	char	date[80];
 
 	if(requestedPage.fail())
 		throw std::runtime_error("404");
 
-
 	getline(requestedPage, page, '\0');
-	getDate(date);
 
 	cl.setRStrStatus("200");
 	cl.setRline("OK");
 	cl.setRheaders("Server", cl.host->getServerNames().at(0)); // Place holder
-	cl.setRheaders("Date", date);
 	cl.setRheaders("Connection", "keep-alive");
 
 	cl.findSetType(cl, pagePath, getContentType());
@@ -39,12 +35,9 @@ void	WebServer::methodHead( Client & cl, std::string & pagePath)
 	cl.makeResponse();
 }
 
-// WARNING ! mID est un enum mtn, qui peut prendre la valeur UNKNOW, 
-// pense a le rajouter dans le switch (just de maniere phantome on l'utilisera plsu tard)
-// pareil regarde dans Request.hpp les valeur de l'enum pour les utiliser a la place de 0, 1, 2 etc. dans ton switch ca sera + pratique
-
 void	WebServer::Method(Client &cl)
 {
+	// Function use to send images
 	if (cl.getUri().compare(0, 5, "/img/") == 0 && cl.getUri().length() > 5)
 	{
 		imageGet(cl);
