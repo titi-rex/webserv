@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 12:59:50 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 13:02:42 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,12 @@ size_t	WebServer::getBodySizeLimit(void) const {
 
 WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_pages")
 {
-	_initContentTypeMap();
 	
 	VecStr_t 	fileVec;
 	uintptr_t	i = 0;
 
 	_initHttpStatus();
+	_initContentTypeMap();
 	std::ifstream file(path.c_str());
 	if (!file.is_open()) 
 		throw std::runtime_error("Error : could not open configuration file");
