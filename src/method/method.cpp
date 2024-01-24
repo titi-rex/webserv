@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 11:29:42 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:29:18 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ void	WebServer::Method(Client &cl)
 			methodGet(cl, cl.host, pagePath);
 			break ;
 		case POST:
-			methodPost(cl);
+			methodPost(cl, pagePath);
 			break ;
 		case DELETE:
-			methodDelete(cl);
+			methodDelete(cl, pagePath);
 			break ;
 		case HEAD:
 			// std::cout << "HEAD JUJU" << std::endl;
@@ -113,39 +113,20 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 	req.makeResponse();
 }
 
-void WebServer::methodPost(Client &client)
+void WebServer::methodPost(Client &client, std::string & path)
 {
 	MapStrStr_t		cgi = client.host->getCgi();
 	std::string		ext = client.getExt();
-	std::string		script_path;
+	std::string		body = getFile(path);
 	
-	logINFO<< client.getStatusStr();
-	std::clog << "req"<< client << std::endl;
-	// if (client.clientStatus != GATHERED)
-	// {
-	// 	client.makeResponse();
-	// 	client.clientStatus = PROCEEDED;
-	// 	return ;
-	// }
-
-	// // si ya pas de fichier !!!!!
-    // MapStrStr_t::iterator it2 = cgi.find(ext);
-    // if (it2 != cgi.end())
-	// {	
-    //     script_path = it2->second;
-	// 	fillEnvCGI(client);
-	// 	execute_cgi(script_path, client);
-	// }
-    // else
-    //     script_path.clear(); // ERROR
-
-	// CGI output !!!!!!!!
+	client.setRStrStatus ("200");
+	client.setRline ("OK");
+	client.setRheaders("server", client.host->getServerNames().at(0));
 	
-	client.setRStrStatus ("201");
-	client.setRline ("created");
-	// client.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
-	// client.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
-	// client.setRbody(body);
+    std::stringstream contentLengthStream;
+    contentLengthStream << body.size();
+    client.setRheaders("content-length", contentLengthStream.str());
+	client.setRbody(body);
 
 	client.makeResponse();
 }
@@ -155,14 +136,34 @@ bool doesFileExist(const std::string& pagePath) {
     return (stat(pagePath.c_str(), &buffer) == 0);
 }
 
+void WebServer::methodDelete(Client &client, std::string &path) {
+    std::string body = getFile(path);
 
-void WebServer::methodDelete(Client &client)
-{
-	if (std::remove(client.getPathTranslated().c_str()) != 0)
-		throw std::runtime_error("500: Remove return error");
-	client.setRStrStatus ("200");
-	client.setRline ("OK");
-	// client.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
-	// client.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
-	client.makeResponse();
+    if (std::remove(client.getPathTranslated().c_str()) != 0) 
+        throw std::runtime_error("500: Remove return error");
+
+    client.setRStrStatus("200");
+    client.setRline("OK");
+    client.setRheaders("server", client.host->getServerNames().at(0));
+
+    std::stringstream contentLengthStream;
+    contentLengthStream << body.size();
+    client.setRheaders("content-length", contentLengthStream.str());
+
+    client.setRbody(body);
+    client.makeResponse();
+}
+
+
+const int BUFFER_SIZE = 1024;
+
+void handleFileUpload(const std::string& content, const std::string& filename) {
+    std::ofstream outfile(filename.c_str(), std::ios::binary);
+    if (outfile) {
+        outfile.write(content.c_str(), content.size());
+        outfile.close();
+        std::cout << "File '" << filename << "' uploaded successfully." << std::endl;
+    } else {
+        std::cerr << "Error opening file '" << filename << "' for writing." << std::endl;
+    }
 }

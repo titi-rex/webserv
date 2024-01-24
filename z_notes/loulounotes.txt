@@ -120,3 +120,31 @@ exemple d'une réponse HTTP suite à une requête POST :
 
  3.   Corps de la réponse (Body) :
         Contient les données retournées par le serveur. Le format dépend de ce qui est attendu pour votre application. Il pourrait s'agir de texte brut, de JSON, d'XML, etc.
+
+
+
+
+
+POST /upload-endpoint HTTP/1.1
+Host: example.com
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryABC123
+
+------WebKitFormBoundaryABC123
+Content-Disposition: form-data; name="file"; filename="example.txt"
+Content-Type: text/plain
+
+Contenu du fichier ici.
+Cela pourrait être du texte, une image, un fichier binaire, etc.
+------WebKitFormBoundaryABC123
+Content-Disposition: form-data; name="autre_parametre"
+
+Valeur du paramètre ici.
+------WebKitFormBoundaryABC123--
+
+Dans cet exemple :
+
+    La requête utilise la méthode POST (POST /upload-endpoint HTTP/1.1).
+    L'en-tête Content-Type est défini sur multipart/form-data avec une limite (boundary=----WebKitFormBoundaryABC123).
+    Les données du formulaire sont encapsulées entre les délimitations (------WebKitFormBoundaryABC123). Chaque partie du formulaire (fichier, paramètre) commence par une déclaration de disposition (Content-Disposition).
+    La première partie concerne le fichier, avec le nom de formulaire file et le nom de fichier example.txt.
+    La deuxième partie concerne un autre paramètre, avec le nom de formulaire autre_parametre.
