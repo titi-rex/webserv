@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 12:58:57 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:05:25 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,17 @@ const std::string	Request::getMethodName(void) const
 		default:
 			return ("UNKNOW");
 	}	
+}
+
+std::string Request::getSpecifiedHeader(const std::string& key) const {
+	const MapStrStr_t& headers = getHeaders();
+
+	MapStrStr_t::const_iterator it = headers.find(key);
+
+	if (it != headers.end())
+		return it->second;
+	else
+		return "";
 }
 
 void	Request::setPathtranslated(const std::string& path ) { this->_pathTranslated = path; };
