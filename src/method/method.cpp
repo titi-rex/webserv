@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 12:58:45 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 13:06:08 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,14 @@
 void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path)
 {
 	std::ifstream	requestedPage(path.c_str());
+	std::string	page;
+	char	date[80];
 
 	if(requestedPage.fail())
 		throw std::runtime_error("404");
 
-	std::string	page;
 
 	getline(requestedPage, page, '\0');
-
-	int		contentLength = page.length();
-	int		size = lengthSize(contentLength);
-	char	sContentLength[size];
-	char	date[80];
-	
-	sprintf(sContentLength, "%d", contentLength);
 	getDate(date);
 
 	// New way to store the respond
@@ -40,7 +34,6 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 	req.setRline("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
 	req.setRheaders("Date", date);
-	req.setRheaders("content-length", sContentLength);
 	req.setRheaders("Connection", "keep-alive");
 
 	req.findSetType(req, path, getContentType());
@@ -103,13 +96,9 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 	std::string		body = getFile(path);
 
 	// New way to store the response
-	int		size = lengthSize(body.length());
-	char	sRespondLength[size];
-	sprintf(sRespondLength, "%lu", body.length());
 	req.setRStrStatus ("200");
 	req.setRline ("OK");
 	req.setRheaders("Server", v_host->getServerNames().at(0)); // Place holder
-	req.setRheaders("content-length", sRespondLength);
 	req.setRbody(body);
 
 	req.findSetType(req, path, getContentType());

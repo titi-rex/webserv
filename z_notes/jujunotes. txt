@@ -1,1 +1,0 @@
-sprintf(sContentLength, "%d", contentLength); ne pas utiliser sprintf()
