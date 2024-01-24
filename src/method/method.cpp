@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 13:29:53 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/24 14:31:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,8 +142,6 @@ void WebServer::methodDelete(Client &client, std::string &path) {
     client.makeResponse();
 }
 
-
-const int BUFFER_SIZE = 1024;
 
 void handleFileUpload(const std::string& content, const std::string& filename) {
     std::ofstream outfile(filename.c_str(), std::ios::binary);

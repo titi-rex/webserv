@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/24 13:21:04 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 15:04:05 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,17 @@ Location WebServer::parseLocation(VecStr_t fileVec, VecStr_t sLine, uintptr_t *i
 			continue;
 		}
 		else if (sLine[0] == "root")
-			newLoc.setRoot(sLine[1]);
+			newLoc.setRoot(sLine);
 		else if (sLine[0] ==  "return")
 			newLoc.setRedirection(sLine);
 		else if (sLine[0] ==  "index")
-			newLoc.setIndex(sLine[1]);
+			newLoc.setIndex(sLine);
 		else if (sLine[0] ==  "allow_methods")
 			newLoc.setAllowMethod(sLine);
 		else if (sLine[0] ==  "autoindex")
-			newLoc.setAutoIndex(sLine[1]);
+			newLoc.setAutoIndex(sLine);
 		else if (sLine[0] ==  "upload_dir")
-			newLoc.setUploadDir(sLine[1]);
+			newLoc.setUploadDir(sLine);
 		else
 			throw std::runtime_error("Location: Unrecognised line in configuration file : " + fileVec[*i]);
 		++(*i);

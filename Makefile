@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/01/24 13:24:57 by jmoutous         ###   ########lyon.fr    #
+#    Updated: 2024/01/24 15:14:19 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -71,7 +71,7 @@ HDR_CLASS		=	${addprefix ${DIR_HDR_CLASS}, ${LST_HDR_CLASS}}
 
 
 DIR_HEADER	=	inc/
-LST_HDR		=	utils.hpp map_operator.hpp deque_operator.hpp vector_operator.hpp \
+LST_HDR		=	utils.hpp container.hpp log.hpp \
 				${HDR_CLASS}
 HEADER		=	${addprefix ${DIR_HEADER}, ${LST_HDR}}
 IFLAGS		=	-I${DIR_HEADER} -I${DIR_HEADER}${DIR_HDR_CLASS}
