@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 12:47:05 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 12:52:51 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,8 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 	req.setRheaders("content-length", sRespondLength);
 	req.setRbody(body);
 
+	req.findSetType(req, path, getContentType());
+	
 	req.makeResponse();
 }
 
