@@ -1,4 +1,1 @@
-get:
-	1 Location
-	2 cgi
-	3 method
+sprintf(sContentLength, "%d", contentLength); ne pas utiliser sprintf()
