@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 15:12:45 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 15:13:40 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 15:35:40 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef enum {
 #define FINFO  "\001\033[0;37m\002"
 #define FWARNING "\001\033[0;33m\002"
 #define FERROR "\001\033[0;31m\002"
+#define FERASE "\001\033[2K\002"
 #define END "\001\033[0m\002"
 
 #define LOGLEVEL 1
@@ -50,7 +51,7 @@ e_logLevel	operator<<(e_logLevel lvl, T log)
 		case logWARNING:
 		{
 			if (logWARNING >= LOGLEVEL)
-				std::clog << FWARNING << std::setw(12) << "[WARNING] : " << log << END << std::endl;
+				std::clog << FERASE << FWARNING << std::setw(12) << "[WARNING] : " << log << END << std::endl;
 			break;
 		}
 		case logERROR:

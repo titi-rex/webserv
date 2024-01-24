@@ -41,7 +41,6 @@ ccgi = chekc retour child status
 + gerer timeout
 
 parsing : indiquer n ligne qund erreur 
-	+ location { qui chouine
 	
 
 

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/24 11:40:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 15:46:11 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ void	VirtualHost::setBodySize(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: body_size_limit supplied but value is missing");
+	if (sLine.at(1).find_first_not_of("0123456789") != std::string::npos)
+		throw std::runtime_error("Server: body_size_limit value incorrect");
 	this->bodySize = std::strtoul(sLine.at(1).c_str(), NULL, 10);	
 };
 
@@ -97,9 +99,14 @@ void	VirtualHost::setDirCgi(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: dir_cgi supplied but value is missing");
+	if (sLine.at(1).at(sLine.at(1).size() - 1) != '/')
+		throw std::runtime_error("Error: dir_cgi: missing terminating \'/\' :" + sLine.at(1));
+	if (access(sLine.at(1).c_str(), F_OK))
+		throw std::runtime_error("Error: dir_cgi:" + sLine.at(1) + ", doesn't exist");
+	if (access(sLine.at(1).c_str(), R_OK))
+		throw std::runtime_error("Error: no read permission for dir_cgi: " + sLine.at(1));
 	this->dirCgi = sLine.at(1);
 };
-
 
 bool verifieSyntaxe(const std::string& s) 
 {

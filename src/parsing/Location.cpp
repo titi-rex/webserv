@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/24 15:15:50 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 16:09:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	Location::setAutoIndex(const VecStr_t& sLine)
 void	Location::setUriOrExt(const std::string& key)
 {
 	if (key.at(0) != '/' && key.at(0) != '.')
-		std::runtime_error("Location: key is neither a path or a file extension");
+		throw std::runtime_error("Location: key is neither a path or a file extension");
 	this->_key = key;
 };
 
@@ -119,17 +119,20 @@ void	Location::setIndex(const VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: index supplied but value is missing");
-	this->index = sLine[1];
+	this->index = sLine.at(1);
 };
 
 void	Location::setUploadDir(const VecStr_t& sLine)
 {
+	std::clog << "UPLOAD" << std::endl;
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: upload_dir supplied but value is missing");
 	if (access(sLine[1].c_str(), F_OK | R_OK))
 		throw std::runtime_error("Location: can't access upload_dir");
 	this->uploadDir = sLine[1];
+	std::clog << "UPLOADED :" << uploadDir << std::endl;
 	upload = true;
+	std::clog << "UPLOADED : st is" << upload << std::endl;
 };
 
 void	Location::setAllowMethod(const VecStr_t& sLine)
