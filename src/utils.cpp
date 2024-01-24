@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:09:49 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:27:24 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void getDate( char * date )
 
 	time( &rawtime );
 	info = localtime( &rawtime );
-	strftime(date, 80,"%a, %d %b %Y %H:%M:%S", info);
+	strftime(date, 30,"%a, %d %b %Y %H:%M:%S", info);
 }
 
 int	lengthSize( int contentLength )

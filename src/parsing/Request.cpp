@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:11:15 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:27:12 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void	Request::makeResponse (void)
 		_rheaders["content-length"] = sstr.str();
 	}
 
-	char	date[80];
+	char	date[30];
 	getDate(date);
 	_rheaders["Date"] = date;
 
