@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_error.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 21:08:08 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:17:36 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	WebServer::getError(std::string status, Request& req)
 		req.makeResponse();
 	else try 
 	{
-		if (_errorPage.count(status))
+		if (_errorPage.count(status) && check_access(_errorPage[status]))
 			pageDir = _errorPage[status];
 		else
 			pageDir = _dirErrorPage + status + ".html";	
