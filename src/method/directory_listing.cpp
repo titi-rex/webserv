@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/23 13:54:37 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:21:07 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@ static std::string	uriPage(std::string fileName, std::string directory, vHostPtr
 {
 	std::string	uriPage = directory + fileName;
 
-	// std::cout << "uriPage: " << uriPage << std::endl;
-	// std::cout << "v_host->getRoot(): " << v_host->getRoot() << std::endl;
-
 	// Remove the '.' in front of the directory if present
 	if (uriPage[0] == '.')
 		uriPage = uriPage.substr(1, uriPage.length() - 1);
@@ -29,8 +26,6 @@ static std::string	uriPage(std::string fileName, std::string directory, vHostPtr
 	if (uriPage.compare(0, v_host->getRoot().length(), v_host->getRoot()) == 0)
 		uriPage = uriPage.substr(v_host->getRoot().length(), uriPage.length() - v_host->getRoot().length());
 
-	// std::cout << "Final uriPage: " << uriPage << std::endl;
-	
 	return (uriPage);
 }
 
@@ -52,8 +47,6 @@ static std::string	goBack(std::string folder)
 
 static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 {
-	// std::cout << "makeDirList" << std::endl;
-
 	struct dirent*	ptr_dir = NULL;
 	DIR				*dir = opendir(directory.c_str());
 	if (!dir)
@@ -117,8 +110,6 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 	
 	ss << "</dl>\n</body>\n</html>\r\n\r\n";
 
-	// std::cout << ss.str() << std::endl;
-
 	closedir(dir);
 	return (ss.str());
 }
@@ -152,18 +143,10 @@ void	dirList(Request & req, vHostPtr & v_host)
 
 	for ( i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
 	{
-			// std::cout << "i->first: " << i->first << std::endl;
-			// std::cout << "directory: " << directory << std::endl;
-
 		if (i->first + "/" == directory)
 		{
 			directory = "." + v_host->getRoot() + directory;
-
 			std::string	dirIndex = directory + "index.html";
-
-			// std::cout << "before processing directory: " << directory << std::endl;
-			// std::cout << "Access(): " << access(dirIndex.c_str(), R_OK) << std::endl;
-			// std::cout << "Autoindex: " << v_host->locations[i->first].getAutoIndex() << std::endl;
 
 			if (access(dirIndex.c_str(), R_OK) == 0)
 			{

@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 12:44:03 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 13:25:30 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ typedef unsigned int long	uintptr_t;
 # include "Request.hpp"
 
 # include "utils.hpp"
-# include "exceptions.hpp"
 # include "container.hpp"
 
 
