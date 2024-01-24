@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 16:10:00 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/24 14:28:34 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:42:39 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void	WebServer::imageGet( Client & cl )
 {
-	logDEBUG << "imageGet()";
-
 	std::string		imagePath = "data" + cl.getUri();
 	std::ifstream	requestedImage(imagePath.c_str(), std::ios::binary);
 
@@ -51,6 +49,4 @@ void	WebServer::imageGet( Client & cl )
 
 	cl.findSetType(cl, imagePath, getContentType());
 	cl.makeResponse();
-
-	logDEBUG << "imageGet() ended OK";
 }

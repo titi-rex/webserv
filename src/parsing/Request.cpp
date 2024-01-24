@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:35:30 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:43:13 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,6 @@ void	Request::findSetType(Request & req, std::string & path, MapStrStr_t	mapCont
 		}
 	}
 }
-
 
 void	Request::makeResponse (void)
 {
@@ -334,7 +333,6 @@ bool	Request::_parseBodyByChunk(std::string& body)
 	}
 	return (false);
 }
-
 
 /**
  * @brief return true if request is complete, else false

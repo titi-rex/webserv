@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:35:21 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 16:43:15 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,6 @@ void WebServer::methodDelete(Client &client, std::string &path) {
     client.setRbody(body);
     client.makeResponse();
 }
-
 
 void WebServer::methodPost(Client &client, std::string &path) {
     MapStrStr_t 	cgi = client.host->getCgi();
