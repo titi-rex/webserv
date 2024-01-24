@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 12:52:51 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/24 12:58:45 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,32 +55,32 @@ void	WebServer::methodHead( Request & req, vHostPtr & v_host, std::string & path
 void	WebServer::Method(Client &cl)
 {
 	// chercher si le dir listing est au bon endroit !
-	if (cl.request.getUri() != "/" && isDirListReq(cl.request))
+	if (cl.getUri() != "/" && isDirListReq(cl))
 	{
-		dirList(cl.request, cl.host);
-		std::clog << "dirlist asked, rq is :" << std::endl << cl.request;
-		cl.cstatus = PROCEEDED;
+		dirList(cl, cl.host);
+		std::clog << "dirlist asked, rq is :" << std::endl << cl;
+		cl.clientStatus = PROCEEDED;
 		return ;
 	}
 	
 	// etape 1 : chercher la ressource cible (target)
-	std::string	pagePath = findLocation(cl.request, cl.host);
+	std::string	pagePath = findLocation(cl, cl.host);
 	
 	//etape 2: execute la cgi si besoin !
-	if (cl.cstatus == GATHERED && cl.request.getNeedCgi())
+	if (cl.clientStatus == GATHERED && cl.getNeedCgi())
 	{
 		std::clog << "GO GO GO CGI" << std::endl;
-		cl.cstatus = CGIWAIT;
+		cl.clientStatus = CGIWAIT;
 		fillEnvCGI(cl);
-		execute_cgi(cl.host->getCgi().at(cl.request.getExt()), cl);
+		execute_cgi(cl.host->getCgi().at(cl.getExt()), cl);
 		return ;
 	}
 	// etape 3: on selectionne la method qui va bien et on la fait
-	switch (cl.request.getMid())
+	switch (cl.getMid())
 	{
 		case GET:
 			// std::cout << "GET JUJU" << std::endl;
-			methodGet(cl.request, cl.host, pagePath);
+			methodGet(cl, cl.host, pagePath);
 			break ;
 		case POST:
 			methodPost(cl);
@@ -90,12 +90,12 @@ void	WebServer::Method(Client &cl)
 			break ;
 		case HEAD:
 			// std::cout << "HEAD JUJU" << std::endl;
-			methodHead(cl.request, cl.host, pagePath);
+			methodHead(cl, cl.host, pagePath);
 			break ;
 		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
 	};
-	cl.cstatus = PROCEEDED;
+	cl.clientStatus = PROCEEDED;
 }
 
 void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path )
@@ -120,15 +120,15 @@ void	WebServer::methodGet( Request & req, vHostPtr & v_host, std::string & path 
 void WebServer::methodPost(Client &client)
 {
 	MapStrStr_t		cgi = client.host->getCgi();
-	std::string		ext = client.request.getExt();
+	std::string		ext = client.getExt();
 	std::string		script_path;
 	
 	logINFO<< client.getStatusStr();
-	std::clog << "req"<< client.request << std::endl;
-	// if (client.cstatus != GATHERED)
+	std::clog << "req"<< client << std::endl;
+	// if (client.clientStatus != GATHERED)
 	// {
-	// 	client.request.makeResponse();
-	// 	client.cstatus = PROCEEDED;
+	// 	client.makeResponse();
+	// 	client.clientStatus = PROCEEDED;
 	// 	return ;
 	// }
 
@@ -145,13 +145,13 @@ void WebServer::methodPost(Client &client)
 
 	// CGI output !!!!!!!!
 	
-	client.request.setRStrStatus ("201");
-	client.request.setRline ("created");
-	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
-	// client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
-	// client.request.setRbody(body);
+	client.setRStrStatus ("201");
+	client.setRline ("created");
+	// client.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
+	// client.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
+	// client.setRbody(body);
 
-	client.request.makeResponse();
+	client.makeResponse();
 }
 
 bool doesFileExist(const std::string& pagePath) {
@@ -162,11 +162,11 @@ bool doesFileExist(const std::string& pagePath) {
 
 void WebServer::methodDelete(Client &client)
 {
-	if (std::remove(client.request._pathTranslated.c_str()) != 0)
+	if (std::remove(client.getPathTranslated().c_str()) != 0)
 		throw std::runtime_error("500: Remove return error");
-	client.request.setRStrStatus ("200");
-	client.request.setRline ("OK");
-	// client.request.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
-	// client.request.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
-	client.request.makeResponse();
+	client.setRStrStatus ("200");
+	client.setRline ("OK");
+	// client.setRheaders("Server", _envCGI["SERVER_NAME"]); // Place holder
+	// client.setRheaders("Content-length", _envCGI["CONTENT-LENGTH"]);
+	client.makeResponse();
 }

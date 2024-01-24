@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/23 14:10:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/24 11:40:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,37 +103,36 @@ void	VirtualHost::setDirCgi(VecStr_t& sLine)
 
 bool verifieSyntaxe(const std::string& s) 
 {
-    std::istringstream ss(s);
-    int num;
+	std::istringstream	ss(s);
+	int					num;
 
-    for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
-        if (!(ss >> num)) 
-            return false;
-        if (i < 3 && ss.get() != '.')
-            return false;
-        if (num < 0 || num > 255) 
-            return false;
-    }
-    return (ss.eof());
+		if (!(ss >> num)) 
+			return false;
+		if (i < 3 && ss.get() != '.')
+			return false;
+		if (num < 0 || num > 255) 
+			return false;
+	}
+	return (ss.eof());
 }
 
 uint16_t isIntValid(const std::string& s) 
 {
-    for (size_t i = 0; i < s.size(); ++i)
-        if (s[i] < '0' || s[i] > '9') 
-            throw std::runtime_error("Error : invalid port value");
+	for (size_t i = 0; i < s.size(); ++i)
+		if (s[i] < '0' || s[i] > '9') 
+			throw std::runtime_error("Error : invalid port value");
 
-    std::istringstream ss(s);
-    int num;
-    ss >> num;
+	std::istringstream	ss(s);
+	int					num;
+	ss >> num;
 
-    if (!ss.fail() && ss.eof() && num >= std::numeric_limits<uint16_t>::min() && num <= std::numeric_limits<uint16_t>::max())
-        return (num);
+	if (!ss.fail() && ss.eof() && num >= std::numeric_limits<uint16_t>::min() && num <= std::numeric_limits<uint16_t>::max())
+		return (num);
 	else
-        throw std::runtime_error("Error : invalid port");
+		throw std::runtime_error("Error : invalid port: out of limits");
 }
-
 
 void	VirtualHost::setHostPort(VecStr_t& sLine)
 {
