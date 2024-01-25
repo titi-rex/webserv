@@ -6,14 +6,14 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 12:45:27 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:05:02 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 #include "utils.hpp"
 
-Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL),  _bodySizeExpected(0), _size(0), _lenChunk(ULONG_MAX){};
+Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL), _size(0), _lenChunk(ULONG_MAX), _isChunk(false), _bodySizeExpected(0) {};
 
 Request::Request(const Request& src) {*this = src;};
 
@@ -233,6 +233,7 @@ bool	Request::_findBodySize(void)
 	if (itTe->second != "chunked")
 		throw std::runtime_error("500: Unknow encoding");
 	_bodySizeExpected = 0;
+	_isChunk = true;
 	return (false);
 }
 

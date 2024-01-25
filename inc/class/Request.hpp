@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:04:04 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 13:20:29 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,10 @@ class Request
 
 		//tmp variable for parsing
 		e_parsingStatus		_parsingStatus;
-		size_t				_bodySizeExpected;
 		std::string			_raw;
 		size_t				_size;
 		size_t				_lenChunk;
+
 
 		// reponse variable
 		std::string			_rline;
@@ -104,6 +104,10 @@ class Request
 		bool				_parseCgiHeaders(void);
 		bool				_parseBodyByLength(std::string &body);
 		bool				_parseBodyByChunk(std::string &body);
+
+		protected:
+		bool				_isChunk;
+		size_t				_bodySizeExpected;
 
 	public	:
 		std::string			response;
