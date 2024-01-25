@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/25 14:26:06 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 15:52:21 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,20 +104,43 @@ bool verifieSyntaxe(const std::string& s)
 	for (int i = 0; i < 4; ++i)
 	{
 		if (!(ss >> num)) 
-			return false;
+			return (false);
 		if (i < 3 && ss.get() != '.')
-			return false;
+			return (false);
 		if (num < 0 || num > 255) 
-			return false;
+			return (false);
 	}
 	return (ss.eof());
 }
 
+void	legitHost(const std::string& s)
+{
+	size_t	i = 0;
+	size_t	count = 0;
+
+	if (s.find_first_not_of(".0123456789") != std::string::npos)
+		throw std::runtime_error("VirtualHost: invalid host: " + s);
+	while (i < s.size())
+	{
+		size_t	j = 0;
+		while ((i + j + 1) < s.size() and std::isdigit(s.at(i + j)) and j < 3)
+			++j;
+		i += j;
+		if (count < 3 && s.at(i) == '.')
+			++i;
+		else if (s.at(i) == '\0')
+			return ;
+		else
+			throw std::runtime_error("VirtualHost: invalid host: " + s);
+		++count;
+		++i;
+	}
+}
+
 uint16_t isIntValid(const std::string& s) 
 {
-	for (size_t i = 0; i < s.size(); ++i)
-		if (s[i] < '0' || s[i] > '9') 
-			throw std::runtime_error("Error : invalid port value");
+	if (s.find_first_not_of("0123456789") != std::string::npos)
+			throw std::runtime_error("Error : invalid port: incorrect value: " + s);
 
 	std::istringstream	ss(s);
 	int					num;
@@ -126,13 +149,13 @@ uint16_t isIntValid(const std::string& s)
 	if (!ss.fail() && ss.eof() && num >= std::numeric_limits<uint16_t>::min() && num <= std::numeric_limits<uint16_t>::max())
 		return (num);
 	else
-		throw std::runtime_error("Error : invalid port: out of limits");
+		throw std::runtime_error("Error : invalid port: out of limits: " + s);
 }
 
 void	VirtualHost::setHostPort(VecStr_t& sLine)
 {
 	size_t		tmp;
-	std::string sPort;
+	std::string	sPort;
 
 	if (sLine.size() < 2)
 		throw std::runtime_error("VirtualHost: host supplied but value is missing");
@@ -150,7 +173,8 @@ void	VirtualHost::setHostPort(VecStr_t& sLine)
 		sPort = sLine[1].substr(tmp + 1, sLine[1].size() - tmp - 1);
 		if (sPort != "*")
 			this->host_port.second  = isIntValid(sPort);
-	}	
+	}
+	legitHost(this->host_port.first);
 };
 
 void	VirtualHost::setServerNames(VecStr_t& sLine)

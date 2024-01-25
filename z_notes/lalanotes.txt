@@ -7,7 +7,7 @@ pas de ; a la fin -> no warning ? peutetre pas important
  } : reste ligne ignorer (pas d'erreur) si espace et sans espace si meme ligne que server
  { : reste ligne ignorer (pas d'erreur)
 
-listen : host with letter insteed of number is allowed (f.f.f.f or ffdg)
+
 
 
 
