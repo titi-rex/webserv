@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:06:11 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:17:34 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,13 @@ bool	Client::readRequest(void)
 	else if (n_rec != 0)
 	{
 		end = build(buf);// throw ERROR or FATAL
-		if (_isChunk == true && getBody().size() > _sizeLimit)
-			throw std::runtime_error("413: Request Actual Body Too Large");
-		else if (_isChunk == false && getBodySizeExpected() > _sizeLimit)
-			throw std::runtime_error("413: Request Body Length Too Large");
+		// if (_isChunk == true && getBody().size() > _sizeLimit)
+		// 	throw std::runtime_error("413: Request Actual Body Too Large");
+		// else if (_isChunk == false && getBodySizeExpected() > _sizeLimit)
+		// 	throw std::runtime_error("413: Request Body Length Too Large");
 	}
+	else
+		end = true;
 	if (end)
 		clientStatus = GATHERED;
 	return (end);

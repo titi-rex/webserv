@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 13:23:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:22:06 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	WebServer::process_rq(Client &cl)
 	logDEBUG << "request proceed";
 	cl.host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl);
 
-	std::clog << (Request)cl << std::endl;
+	// std::clog << (Request)cl << std::endl;
 	// std::clog << "size body: " << cl.getBody().size() << std::endl;
 // special instruction : execute shutdown
 	if (cl.getUri() == "/shutdown")

@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:00:45 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:20:23 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void WebServer::methodDelete(Client &client, std::string &path) {
 
 bool WebServer::createFile(const std::string& fileName, const std::string& content, const std::string uploadDir) // A CHANGER !!! throw les bonnes erreur 
 {
-    std::string filePath = uploadDir + "/" + fileName;
+    std::string filePath = uploadDir + fileName;
     std::ofstream of(filePath.c_str());
 
     if (!of) {
@@ -153,53 +153,52 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 void WebServer::methodPost(Client &client, std::string &path) {
     MapStrStr_t 	cgi = client.host->getCgi();
     std::string 	ext = client.getExt();
-	std::cout << "OUIIIIIIIN ????" << std::endl;
 	std::string		body = getFile(path);
 		
     std::string contentType = client.getSpecifiedHeader("content-type");
     size_t boundaryPos = contentType.find("boundary=");
 	
-    // if (boundaryPos != std::string::npos) 
-	// {
-    //     std::string boundary = contentType.substr(boundaryPos + 9);
-    //     size_t posFirst = body.find(boundary);
+    if (boundaryPos != std::string::npos) 
+	{
+        std::string boundary = contentType.substr(boundaryPos + 9);
+        size_t posFirst = body.find(boundary);
 		
-    //     if (posFirst != std::string::npos) 
-	// 	{
-    //         size_t posSecond = body.find(boundary, posFirst + boundary.size());
-    //         if (posSecond != std::string::npos) 
-	// 		{
-    //             std::string fileData = body.substr(posFirst + boundary.size(),
-    //                                                posSecond - posFirst - boundary.size());
+        if (posFirst != std::string::npos) 
+		{
+            size_t posSecond = body.find(boundary, posFirst + boundary.size());
+            if (posSecond != std::string::npos) 
+			{
+                std::string fileData = body.substr(posFirst + boundary.size(),
+                                                   posSecond - posFirst - boundary.size());
 
-    //             size_t filenameStart = fileData.find("filename=\"");
-    //             if (filenameStart != std::string::npos) 
-	// 			{
-    //                 filenameStart += 10;
-    //                 size_t filenameEnd = fileData.find("\"", filenameStart);
-    //                 if (filenameEnd != std::string::npos) {
-    //                     std::string filename = fileData.substr(filenameStart, filenameEnd - filenameStart);
-	// 					if (createFile(filename, fileData, *client.upDirPtr)) 
-	// 					{
-	// 						client.setRStrStatus("201");
-    // 						client.setRline("Created");
-	// 					} 
-    //                 }
-    //             }
-    //         }
-	// 	}
-	// }
-	// else
-	// {
-	// 	client.setRStrStatus("200");
-	// 	client.setRline("OK");
-	// }
+                size_t filenameStart = fileData.find("filename=\"");
+                if (filenameStart != std::string::npos) 
+				{
+                    filenameStart += 10;
+                    size_t filenameEnd = fileData.find("\"", filenameStart);
+                    if (filenameEnd != std::string::npos) {
+                        std::string filename = fileData.substr(filenameStart, filenameEnd - filenameStart);
+						if (createFile(filename, fileData, *client.upDirPtr)) 
+						{
+							client.setRStrStatus("201");
+    						client.setRline("Created");
+						} 
+                    }
+                }
+            }
+		}
+	}
+	else
+	{
+		client.setRStrStatus("200");
+		client.setRline("OK");
+   		client.setRbody(body);
+	}
 
     std::stringstream contentLengthStream;
     contentLengthStream << body.size();
     client.setRheaders("server", client.host->getServerNames().at(0));
     client.setRheaders("content-length", contentLengthStream.str());
-    client.setRbody(body);
 
     client.makeResponse();
 }
