@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/24 15:50:38 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 15:39:15 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ static std::string	uriPage(std::string fileName, std::string directory, vHostPtr
 {
 	std::string	uriPage = directory + fileName;
 
-	// Remove the root's path from the directory
+	// Remove the root's path from the directory, keeping the '/' in front of the uriPage
 	if (uriPage.compare(0, v_host->getRoot().length(), v_host->getRoot()) == 0)
-		uriPage = uriPage.substr(v_host->getRoot().length(), uriPage.length() - v_host->getRoot().length());
+		uriPage = uriPage.substr(v_host->getRoot().length() - 1, uriPage.length() - v_host->getRoot().length() + 1);
 
 	std::clog << "uriPage: " << uriPage << '\n' << std::endl;
 
@@ -52,7 +52,7 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 	std::stringstream ss;
 	std::string pointPointDir = uriPage("", goBack(directory), v_host);
 
-	std::clog << "directory: " << directory << "\n" << std::endl;
+	std::clog << "\n=============directory: " << directory << "\n" << std::endl;
 
 	ss << "HTTP/1.1 200 OK\r\n\r\n";
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << directory << "</title>\n</head>\n";
@@ -142,7 +142,11 @@ void	dirList(Request & req, vHostPtr & v_host)
 	{
 		if (i->first + "/" == directory)
 		{
-			directory = v_host->getRoot() + directory;
+			// Check if the directory begin with '/' in order to make a directory name without two consecitive '/'
+			if (directory.at(directory.length() - 1) == '/' && v_host->getRoot().at(v_host->getRoot().length() - 1) == '/')
+				directory = v_host->getRoot() + directory.substr(1, directory.length() - 1);
+			else
+				directory = v_host->getRoot() + directory;
 			std::string	dirIndex = directory + "index.html";
 
 			if (access(dirIndex.c_str(), R_OK) == 0)
