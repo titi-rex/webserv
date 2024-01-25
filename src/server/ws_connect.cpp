@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 13:23:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:20:07 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void	WebServer::process_rq(Client &cl)
 // special instruction : execute shutdown
 	if (cl.getUri() == "/shutdown")
 	{
-		std::string	shutPage = "data/default_page/index.html";
+		std::string	shutPage = "data/example_page/shutdown.html";
 		g_status = 0;
 		methodGet(cl, shutPage);
 		cl.sendRequest();

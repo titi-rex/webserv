@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/24 15:24:35 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 14:00:59 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,17 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 	// If the request is empty, sent the index of the server
 	if (pagePath == "/")
 	{
-		pagePath = v_host->getRoot() + v_host->getIndex();
+		std::string	locationRoot = v_host->getLocations().at("/").getRoot();
+		std::string	locationIndex = v_host->getLocations().at("/").getIndex();
+
+		if (!locationIndex.empty())
+			pagePath = locationRoot + "/" + locationIndex;
+		else
+			pagePath = v_host->getRoot() + v_host->getIndex();
+		
 		return (pagePath);
 	}
+
 
 	// Find if there are an location equal to the request
 	for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
