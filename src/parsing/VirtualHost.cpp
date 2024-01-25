@@ -6,13 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/24 19:26:58 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 13:44:43 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "VirtualHost.hpp"
 
-VirtualHost::VirtualHost(void) : bodySize(1024), root("/data"), index("index.html"), dirCgi("/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
+VirtualHost::VirtualHost(void) : root("/data"), index("index.html"), dirCgi("/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
 
 VirtualHost::~VirtualHost(void) {}
 
@@ -25,7 +25,6 @@ VirtualHost&	VirtualHost::operator=(const VirtualHost& src)
 {
 	if (this == &src)
 		return (*this);
-	this->bodySize = src.bodySize;
 	this->root = src.root;
 	this->index = src.index;
 	this->dirCgi = src.dirCgi;
@@ -34,10 +33,6 @@ VirtualHost&	VirtualHost::operator=(const VirtualHost& src)
 	this->cgi = src.cgi;
 	this->locations = src.locations;
 	return (*this);
-};
-
-size_t VirtualHost::getBodySize() const{
-	return(this->bodySize);
 };
 
 const std::string&	VirtualHost::getRoot() const{
@@ -66,16 +61,6 @@ const MapStrStr_t&	VirtualHost::getCgi() const{
 
 const MapStrLoc_t&	VirtualHost::getLocations() const{
 	return(this->locations);
-};
-
-
-void	VirtualHost::setBodySize(VecStr_t& sLine)
-{
-	if (sLine.size() < 2)
-		throw std::runtime_error("Server: body_size_limit supplied but value is missing");
-	if (sLine.at(1).find_first_not_of("0123456789") != std::string::npos)
-		throw std::runtime_error("Server: body_size_limit value incorrect");
-	this->bodySize = std::strtoul(sLine.at(1).c_str(), NULL, 10);	
 };
 
 void	VirtualHost::setRoot(VecStr_t& sLine)

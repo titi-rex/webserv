@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 19:22:45 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 13:46:18 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,16 @@ void	WebServer::setDirErrorPage(const std::string& dirErrorPage)
 		throw std::runtime_error("Webserver: dirErrorPage \'" + dirErrorPage + "\' not accessible");
 };
 
-void	WebServer::setBodySizeLimit(size_t bodySizeLimit) { 
+void	WebServer::setBodySizeLimit(size_t bodySizeLimit) 
+{
+	// if (sLine.size() < 2)
+	// 	throw std::runtime_error("Server: body_size_limit supplied but value is missing");
+	// if (sLine.at(1).find_first_not_of("0123456789*") != std::string::npos)
+	// 	throw std::runtime_error("Server: body_size_limit value incorrect");
+	// if (sLine.at(1) == "*")
+	// 	this->bodySize = -1;
+	// else
+	// 	this->bodySize = std::strtoul(sLine.at(1).c_str(), NULL, 10);	
 	this->_bodySizeLimit = bodySizeLimit;
 };
 

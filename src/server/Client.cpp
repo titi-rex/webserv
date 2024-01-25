@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 00:01:02 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/25 13:42:31 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void	Client::setFd_cgi(int fd_cgi[2]) {
 	this->_fd_cgi[1] = fd_cgi[1]; 
 };
 
-
 void	Client::accept(int socketServerFd)
 {
 	_serverEndPoint = socketServerFd;
@@ -80,26 +79,26 @@ void	Client::accept(int socketServerFd)
 bool	Client::readRequest(void)
 {
 	logDEBUG << "client reading request";
-	
+
 	char	buf[BUFFER_SIZE + 1];
 	int		n_rec = 0;
-	
+	bool	end = false;
+
 	std::memset(buf, 0, BUFFER_SIZE + 1);
 	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC);
 	if (n_rec == -1)
 		throw std::runtime_error("620: recv");
-	else if (n_rec == 0)
-		throw std::runtime_error("400: vicious empty data send");
-	if (getPstatus() == BODYCHUNK && getBody().size() > _sizeLimit)
-		throw std::runtime_error("413: Request Entity Too Large");
-	else if (getPstatus() == BODYCLENGTH && getBodySizeExpected() > _sizeLimit)
-		throw std::runtime_error("413: Request Entity Too Large");
-	if (build(buf))// throw ERROR or FATAL
+	else if (n_rec != 0)
 	{
-		clientStatus = GATHERED;
-		return (true);
+		end = build(buf);// throw ERROR or FATAL
+		if (_isChunk == true && getBody().size() > _sizeLimit)
+			throw std::runtime_error("413: Request Actual Body Too Large");
+		else if (_isChunk == false && getBodySizeExpected() > _sizeLimit)
+			throw std::runtime_error("413: Request Body Length Too Large");
 	}
-	return (false);
+	if (end)
+		clientStatus = GATHERED;
+	return (end);
 }
 
 bool	Client::readCgi(void)
@@ -115,7 +114,7 @@ bool	Client::readCgi(void)
 	if (n_rec == -1)
 		throw std::runtime_error("699: read cgi");
 	else if (n_rec == 0)
-		throw std::runtime_error("500: cgi send vicious empty data");
+		throw std::runtime_error("500: cgi send empty data");
 	if (n_rec < BUFFER_SIZE || buf[n_rec] == '\0')
 		end = true;
 	buf[n_rec] = 0;

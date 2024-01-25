@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:43:13 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 13:21:20 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 #include "utils.hpp"
 
-Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL),  _bodySizeExpected(0), _size(0), _lenChunk(ULONG_MAX){};
+Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL), _size(0), _lenChunk(ULONG_MAX), _isChunk(false), _bodySizeExpected(0) {};
 
 Request::Request(const Request& src) {*this = src;};
 
@@ -227,12 +227,13 @@ bool	Request::_findBodySize(void)
 	{
 		_bodySizeExpected = std::strtoul(itCl->second.c_str(), NULL, 10);
 		if (_bodySizeExpected == ULONG_MAX)
-			throw std::runtime_error("413: Request Entity Too Large");
+			throw std::runtime_error("413: sizeExpected Overflow");
 		return (true);
 	}
 	if (itTe->second != "chunked")
 		throw std::runtime_error("500: Unknow encoding");
 	_bodySizeExpected = 0;
+	_isChunk = true;
 	return (false);
 }
 
@@ -397,7 +398,7 @@ bool	Request::_parseCgiHeaders(void)
 				_parsingStatus = CGICL;
 				_bodySizeExpected = std::strtoul(_rheaders["content-length"].c_str(), NULL, 10);
 				if (_bodySizeExpected == ULONG_MAX)
-					throw std::runtime_error("413: Request Entity Too Large");
+					throw std::runtime_error("413: Request Entity Too Large, size expected: " + _rheaders["content-length"]);
 			}
 			return (false);
 		}
