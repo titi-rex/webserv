@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 12:42:17 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:36:36 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,9 @@ class WebServer
 		~WebServer(void);
 
 		void				setVirtualHost(const VecVHost_t& vHost);
-		void				setErrorPage(const std::string& key, const std::string& value); 
-		void				setDirErrorPage(const std::string& dirErrorPage);
-		void				setBodySizeLimit(size_t bodySizeLimit);
+		void				setErrorPage(const VecStr_t& sLine); 
+		void				setDirErrorPage(const VecStr_t& sLine);
+		void				setBodySizeLimit(const VecStr_t& sLine);
 		
 		VecVHost_t			getVirtualHost(void) const;
 		const MapStrStr_t&	getErrorPage(void) const;

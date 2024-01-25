@@ -6,37 +6,26 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/25 13:56:45 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:30:53 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
-#include "Request.hpp"
 
 int WebServer::parseConf(std::string &line)
 {
 	VecStr_t	splitedLine;
-	size_t		tmp;
-	
+
 	formatLine(line);
 	splitedLine = splitLine(line);
-	if (splitedLine.empty() || splitedLine[0] == "\n")
+	if (splitedLine.empty() || splitedLine.at(0) == "\n")
 		return (0);
-	else if (splitedLine[0] == "body_size_limit")
-	{
-		if (splitedLine[1] == "*")
-			setBodySizeLimit(-1);
-		else
-		{
-			std::stringstream stream(splitedLine[1]);
-			stream >> tmp;
-			setBodySizeLimit(tmp);
-		}
-	}
-	else if (splitedLine[0] == "dir_error_page")
-		setDirErrorPage(splitedLine[1]);
-	else if (splitedLine[0] == "error_page")
-		setErrorPage(splitedLine[1], splitedLine[2]);
+	else if (splitedLine.at(0) == "body_size_limit")
+		setBodySizeLimit(splitedLine);
+	else if (splitedLine.at(0) == "dir_error_page")
+		setDirErrorPage(splitedLine);
+	else if (splitedLine.at(0) == "error_page")
+		setErrorPage(splitedLine);
 	else if (line.find("server") != std::string::npos)
 		return (1);
 	else

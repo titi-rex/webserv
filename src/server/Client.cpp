@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:17:34 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:36:43 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ bool	Client::readRequest(void)
 
 	char	buf[BUFFER_SIZE + 1];
 	int		n_rec = 0;
-	bool	end = false;
+	bool	end = true;
 
 	std::memset(buf, 0, BUFFER_SIZE + 1);
 	n_rec = recv(_fd, &buf, BUFFER_SIZE, MSG_DONTWAIT | MSG_CMSG_CLOEXEC);
