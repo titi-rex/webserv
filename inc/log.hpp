@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   log.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 15:12:45 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 15:35:40 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 12:47:56 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef enum {
 #define FERASE "\001\033[2K\002"
 #define END "\001\033[0m\002"
 
-#define LOGLEVEL 1
+#define LOGLEVEL 0
 
 template <typename T>
 e_logLevel	operator<<(e_logLevel lvl, T log)

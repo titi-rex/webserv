@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 21:23:43 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 11:59:16 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 # include "Socket.hpp"
 # include "Request.hpp"
 # include "VirtualHost.hpp"
-# include "utils.hpp"
+
 
 # define BUFFER_SIZE 2048
 
@@ -48,9 +48,10 @@ class Client : public Socket, public Request
 		size_t	_sizeLimit;
 
 	public	:
-		vHostPtr		host;
-		e_clientStatus	clientStatus;
-		bool			keepConnection;
+		vHostPtr			host;
+		const std::string*	upDirPtr;
+		e_clientStatus		clientStatus;
+		bool				keepConnection;
 
 		Client(void);
 		Client(const Client& src);

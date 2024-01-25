@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:35:12 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 11:52:25 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 
 # include "VirtualHost.hpp"
 # include "Request.hpp"
+# include "Client.hpp"
 # include "log.hpp"
 
 
@@ -40,7 +41,7 @@ bool		check_access(std::string& path);
 
 bool	 	isDirListReq(Request & req);
 void		dirList(Request & req, vHostPtr & v_host);
-std::string	findLocation(Request & req, vHostPtr & v_host);
+std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl);
 
 int		wrap_tolower(int c);
 int		wrap_iscntrl(int c);

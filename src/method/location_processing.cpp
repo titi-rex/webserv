@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/24 15:24:35 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 11:58:50 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ static bool	isPrefix(std::string pagePath, std::string prefix)
 }
 
 // find dans location, celui le plus resamblant a l'uri
-std::string	findLocation(Request & req, vHostPtr & v_host)
+std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 {
 	MapStrLoc_t::const_iterator	i;
 	std::string									pagePath = req.getUri();
@@ -110,7 +110,8 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 			break ;
 		}
 	}
-	
+
+
 	if (location == "")
 	{
 		// Find if the closest location from the request
@@ -119,7 +120,10 @@ std::string	findLocation(Request & req, vHostPtr & v_host)
 			if (isPrefix(pagePath, i->first))
 			{
 				if (i->first.length() > location.length())
+				{
 					location = i->first;
+					cl.upDirPtr = &i->second.getUploadDir();
+				}
 			}
 		}
 	}

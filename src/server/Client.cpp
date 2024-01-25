@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 00:01:02 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/25 12:47:14 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,15 @@ bool	Client::readRequest(void)
 	if (n_rec == -1)
 		throw std::runtime_error("620: recv");
 	else if (n_rec == 0)
-		throw std::runtime_error("400: vicious empty data send");
-	if (getPstatus() == BODYCHUNK && getBody().size() > _sizeLimit)
-		throw std::runtime_error("413: Request Entity Too Large");
-	else if (getPstatus() == BODYCLENGTH && getBodySizeExpected() > _sizeLimit)
-		throw std::runtime_error("413: Request Entity Too Large");
+	{
+		clientStatus = GATHERED;
+		return (true);
+	}
+		// throw std::runtime_error("400: vicious empty data send");
+	// if (getPstatus() == BODYCHUNK && getBody().size() > _sizeLimit)
+	// 	throw std::runtime_error("413: Request Entity Too Large");
+	// else if (getPstatus() == BODYCLENGTH && getBodySizeExpected() > _sizeLimit)
+	// 	throw std::runtime_error("413: Request Entity Too Large");
 	if (build(buf))// throw ERROR or FATAL
 	{
 		clientStatus = GATHERED;

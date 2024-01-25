@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:43:13 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 12:45:27 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,8 +226,8 @@ bool	Request::_findBodySize(void)
 	if (itCl != _headers.end())
 	{
 		_bodySizeExpected = std::strtoul(itCl->second.c_str(), NULL, 10);
-		if (_bodySizeExpected == ULONG_MAX)
-			throw std::runtime_error("413: Request Entity Too Large");
+		// if (_bodySizeExpected == ULONG_MAX)
+		// 	throw std::runtime_error("413: Request Entity Too Large");
 		return (true);
 	}
 	if (itTe->second != "chunked")
@@ -396,8 +396,8 @@ bool	Request::_parseCgiHeaders(void)
 			{
 				_parsingStatus = CGICL;
 				_bodySizeExpected = std::strtoul(_rheaders["content-length"].c_str(), NULL, 10);
-				if (_bodySizeExpected == ULONG_MAX)
-					throw std::runtime_error("413: Request Entity Too Large");
+				// if (_bodySizeExpected == ULONG_MAX)
+				// 	throw std::runtime_error("413: Request Entity Too Large");
 			}
 			return (false);
 		}

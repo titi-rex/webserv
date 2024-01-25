@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 14:25:34 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 12:42:17 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,8 @@ class WebServer
 		void	methodPost(Client &client, std::string & path);
 		void	methodDelete(Client &client, std::string & path);
 		void	imageGet( Client & cl );
+		bool 	createFile(const std::string& fileName, const std::string& content, const std::string uploadDir);
+
 
 };
 
