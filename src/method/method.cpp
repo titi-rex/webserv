@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:20:23 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 16:50:49 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,35 +157,75 @@ void WebServer::methodPost(Client &client, std::string &path) {
 		
     std::string contentType = client.getSpecifiedHeader("content-type");
     size_t boundaryPos = contentType.find("boundary=");
-	
+
+	logWARNING << "start POST";
     if (boundaryPos != std::string::npos) 
 	{
+		std::cout << "OUINN0" << std::endl;
         std::string boundary = contentType.substr(boundaryPos + 9);
-        size_t posFirst = body.find(boundary);
+		std::cout << "BOUNDARY = " << boundary << std::endl; 
+		// std::cout << "BODY = " << client.getBody() << std::endl; 
+        size_t posFirst = client.getBody().find(boundary);
 		
         if (posFirst != std::string::npos) 
 		{
-            size_t posSecond = body.find(boundary, posFirst + boundary.size());
+			std::cout << "OUINN1" << std::endl;
+            size_t posSecond = client.getBody().find(boundary, posFirst + boundary.size());
             if (posSecond != std::string::npos) 
 			{
-                std::string fileData = body.substr(posFirst + boundary.size(),
+                std::string fileData = client.getBody().substr(posFirst + boundary.size(),
                                                    posSecond - posFirst - boundary.size());
+				// size_t	start = fileData.find('\n');
+				// size_t	end = fileData.find('\0');
+				// fileData = fileData.substr(start, end);
 
-                size_t filenameStart = fileData.find("filename=\"");
+				std::cout << "OUINN2 filedata = " << fileData << std::endl;
+                size_t filenameStart = fileData.find("filename=");
                 if (filenameStart != std::string::npos) 
 				{
+					std::cout << "OUINN3" << std::endl;
                     filenameStart += 10;
                     size_t filenameEnd = fileData.find("\"", filenameStart);
                     if (filenameEnd != std::string::npos) {
+						std::cout << "OUINN4" << std::endl;
                         std::string filename = fileData.substr(filenameStart, filenameEnd - filenameStart);
 						if (createFile(filename, fileData, *client.upDirPtr)) 
 						{
+							std::cout << "OUIN5" << std::endl;
 							client.setRStrStatus("201");
     						client.setRline("Created");
 						} 
                     }
                 }
             }
+			else
+			{
+				posSecond = client.getBody().find('\0');
+				std::cout << "THE END" << std::endl;
+				std::string fileData = client.getBody().substr(posFirst + boundary.size() + 1,
+                                                   posSecond - posFirst - boundary.size());
+				
+				// std::cout << "OUIN MOI OUIN OUIN MIMI: " <<  fileData << std::endl << std::endl << std::endl;
+				
+				while (fileData.find("\r\n") != std::string::npos)
+				{	
+					// std::clog << "line: " << fileData.substr(0, endline + 1) << std::endl;;
+					if (fileData.at(0) == '\r' && fileData.at(1) == '\n') //
+					{
+						std::clog << "break erase : " << (unsigned int)fileData.at(0)  << "/" << (unsigned int)fileData.at(1) << std::endl;
+						fileData.erase(0, 2);
+						break ;
+					}
+					size_t	endline = fileData.find("\r\n");
+					
+					
+					std::clog << "erase :" << fileData.substr(0, endline + 2) << ": for " << endline << " char" << std::endl;
+					fileData.erase(0, endline + 2);
+				}
+
+				
+				std::cout << "OUINN2 filedata = " << fileData << std::endl;
+			}
 		}
 	}
 	else
