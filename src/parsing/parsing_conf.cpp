@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/24 19:07:54 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 13:56:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,14 @@ int WebServer::parseConf(std::string &line)
 		return (0);
 	else if (splitedLine[0] == "body_size_limit")
 	{
-		std::stringstream stream(splitedLine[1]);
-		stream >> tmp;
-		setBodySizeLimit(tmp);
+		if (splitedLine[1] == "*")
+			setBodySizeLimit(-1);
+		else
+		{
+			std::stringstream stream(splitedLine[1]);
+			stream >> tmp;
+			setBodySizeLimit(tmp);
+		}
 	}
 	else if (splitedLine[0] == "dir_error_page")
 		setDirErrorPage(splitedLine[1]);
@@ -103,8 +108,6 @@ void WebServer::parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end)
 			newServ.setIndex(sLine);
 		else if (sLine[0] == "dir_cgi")
 			newServ.setDirCgi(sLine);
-		else if (sLine[0] == "body_size_limit")
-			newServ.setBodySize(sLine);
 		else if (sLine[0] == "path_cgi")
 			newServ.setCgi(sLine, true);
 		else if (sLine[0] == "cgi_available")
@@ -205,7 +208,6 @@ void	WebServer::debugServ()
 			std::clog << "Server names = " << _virtualHost[i].getServerNames()[l] << std::endl;
 		std::clog << "Server root = " << _virtualHost[i].getRoot() << std::endl;
 		std::clog << "Server index = " << _virtualHost[i].getIndex() << std::endl;
-		std::clog << "Server bodySize = " << _virtualHost[i].getBodySize() << std::endl;
 		displayCGI(_virtualHost[i]);
 		std::clog << std::endl;
 		std::clog << "*------------- LOCATIONS --------------*" << std::endl;

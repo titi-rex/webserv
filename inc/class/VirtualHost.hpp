@@ -22,7 +22,6 @@
 class	VirtualHost
 {
 	private:
-		size_t					bodySize;		//limite de taille pour les client body
 		std::string				root;			//repertoire par defaut ou chercher les cibles des request
 		std::string				index;			//fichier par default a chercher si la requete est un repertoire
 		std::string				dirCgi;			//repertoire des cgi (default/data/cgi-bin)
@@ -37,7 +36,8 @@ class	VirtualHost
 		VirtualHost();
 		~VirtualHost();
 
-		size_t					getBodySize() const;
+		VirtualHost(size_t sizeMax);
+
 		const std::string&		getRoot() const;
 		const std::string&		getIndex() const;
 		const std::string&		getDirCgi() const;
@@ -46,7 +46,6 @@ class	VirtualHost
 		const MapStrStr_t&		getCgi() const;
 		const MapStrLoc_t&		getLocations() const;
 
-		void					setBodySize(VecStr_t& sLine);
 		void					setRoot(VecStr_t& sLine);
 		void					setIndex(VecStr_t& sLine);
 		void					setDirCgi(VecStr_t& sLine);

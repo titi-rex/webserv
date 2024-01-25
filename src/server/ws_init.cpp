@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/23 13:51:35 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 13:09:56 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void	WebServer::_epoll_init(void)
  */
 void	WebServer::addClient(int socketServerFd)
 {
-	Client	cl;
+	Client	cl(_bodySizeLimit);
 
 	cl.accept(socketServerFd);//can throw (FATAL)
 	try

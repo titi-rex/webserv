@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 16:27:24 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/25 13:30:40 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ std::string	getFile(std::string& path)
 	std::string		ret;
 
 	if (f.fail())
-		throw std::runtime_error("699: open file error");
+		throw std::runtime_error("699: open file error: " + path);
 	std::getline(f, ret, '\0');	//ca throw ?
 	f.close();
 	return (ret);
