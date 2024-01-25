@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/25 14:04:44 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 16:51:55 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,6 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 		throw std::runtime_error("404");
 	}
 	
-	// Shutdown the server when visiting the page shutdown.html
-	if (pagePath.compare(pagePath.length() - 14, 15, "/shutdown.html") == 0)
-		g_status = 0;
-
 	logDEBUG << "end checkfile()";
 }
 

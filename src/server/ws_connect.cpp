@@ -6,7 +6,7 @@
 /*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:36:50 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/25 16:52:02 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,15 +114,6 @@ void	WebServer::process_rq(Client &cl)
 
 	// std::clog << (Request)cl << std::endl;
 	// std::clog << "size body: " << cl.getBody().size() << std::endl;
-// special instruction : execute shutdown
-	if (cl.getUri() == "/shutdown")
-	{
-		std::string	shutPage = "data/example_page/shutdown.html";
-		g_status = 0;
-		methodGet(cl, shutPage);
-		cl.sendRequest();
-	}
-// end special instruction
 
 	Method(cl);
 	if (cl.clientStatus == PROCEEDED)
