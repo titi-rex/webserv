@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/24 19:22:37 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:28:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,14 @@ void	Location::setRoot(const VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: root supplied but value is missing");
-	if (sLine[1].at(0) != '/' && sLine[1].at(0) != '.')
-		std::runtime_error("Location: root is not a path");
 	this->root = sLine[1];
+	if (this->root.at(this->root.size() - 1) != '/')
+	{
+		logWARNING << ("Location: root: missing terminating \'/\', automatically added");
+		this->root += "/";
+	}
+	if (access(this->root.c_str(), F_OK | R_OK))
+		throw std::runtime_error("Location: dir_cgi \'" + this->root + "\' not accessible");
 };
 
 void	Location::setIndex(const VecStr_t& sLine)
@@ -125,9 +130,14 @@ void	Location::setUploadDir(const VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: upload_dir supplied but value is missing");
-	if (access(sLine[1].c_str(), F_OK | R_OK))
-		throw std::runtime_error("Location: upload_dir \'" + sLine[1] + "\' not accessible");
 	this->uploadDir = sLine[1];
+	if (this->uploadDir.at(this->uploadDir.size() - 1) != '/')
+	{
+		logWARNING << ("Location: upload_dir: missing terminating \'/\', automatically added");
+		this->uploadDir += "/";
+	}
+	if (access(this->uploadDir.c_str(), F_OK | R_OK))
+		throw std::runtime_error("Location: upload_dir \'" + this->uploadDir + "\' not accessible");
 	upload = true;
 };
 

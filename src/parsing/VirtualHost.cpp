@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/25 13:44:43 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:26:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,16 +66,21 @@ const MapStrLoc_t&	VirtualHost::getLocations() const{
 void	VirtualHost::setRoot(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
-		throw std::runtime_error("Server: root supplied but value is missing");
-	if (sLine.at(1).at(0) != '/' && sLine.at(1).at(0) != '.')
-		std::runtime_error("Server: root is not a valid path");
+		throw std::runtime_error("VirtualHost: root supplied but value is missing");
 	this->root = sLine.at(1);
+	if (this->root.at(this->root.size() - 1) != '/')
+	{
+		logWARNING << ("VirtualHost: root: missing terminating \'/\', automatically added");
+		this->root += "/";
+	}
+	if (access(this->root.c_str(), F_OK | R_OK))
+		throw std::runtime_error("VirtualHost: dir_cgi \'" + this->root + "\' not accessible");
 };
 
 void	VirtualHost::setIndex(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
-		throw std::runtime_error("Server: index supplied but value is missing");
+		throw std::runtime_error("VirtualHost: index supplied but value is missing");
 	this->index = sLine.at(1);
 };
 
@@ -83,11 +88,11 @@ void	VirtualHost::setIndex(VecStr_t& sLine)
 void	VirtualHost::setDirCgi(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
-		throw std::runtime_error("Server: dir_cgi supplied but value is missing");
+		throw std::runtime_error("VirtualHost: dir_cgi supplied but value is missing");
 	if (sLine.at(1).at(sLine.at(1).size() - 1) != '/')
-		throw std::runtime_error("Error: dir_cgi: missing terminating \'/\' :" + sLine.at(1));
+		throw std::runtime_error("VirtualHost: dir_cgi: missing terminating \'/\' :" + sLine.at(1));
 	if (access(sLine.at(1).c_str(), F_OK | R_OK))
-		throw std::runtime_error("Server: dir_cgi \'" + sLine.at(1) + "\' not accessible");
+		throw std::runtime_error("VirtualHost: dir_cgi \'" + sLine.at(1) + "\' not accessible");
 	this->dirCgi = sLine.at(1);
 };
 
@@ -130,7 +135,7 @@ void	VirtualHost::setHostPort(VecStr_t& sLine)
 	std::string sPort;
 
 	if (sLine.size() < 2)
-		throw std::runtime_error("Server: host supplied but value is missing");
+		throw std::runtime_error("VirtualHost: host supplied but value is missing");
 	tmp = sLine[1].find(':');
 	if (tmp == std::string::npos)
 	{
