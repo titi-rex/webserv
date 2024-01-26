@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:36:36 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/26 19:41:21 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,14 +128,18 @@ class WebServer
 
 
 
-		void	Method(Client &cl);	
-		void	methodGet( Client & cl, std::string & path );
-		void	methodHead( Client &client, std::string & path) ;
-		void	getError(std::string status, Request& req);	// GET special pour error
-		void	methodPost(Client &client, std::string & path);
-		void	methodDelete(Client &client, std::string & path);
-		void	imageGet( Client & cl );
-		bool 	createFile(const std::string& fileName, const std::string& content, const std::string uploadDir);
+		void		Method(Client &cl);	
+		void		methodGet( Client & cl, std::string & path );
+		void		methodHead( Client &client, std::string & path) ;
+		void		getError(std::string status, Request& req);	// GET special pour error
+		void		methodPost(Client &client, std::string & path);
+		void		methodDelete(Client &client, std::string & path);
+		void		imageGet( Client & cl );
+		bool 		createFile(const std::string& fileName, const std::string& content, const std::string uploadDir);
+		bool		extractFileData(const std::string& part, std::string& filename, std::string& content);
+		void		processPostRequest(const std::string& requestBody, Client& client);
+		VecStr_t	splitByBoundary(const std::string& requestBody, const std::string& boundary);
+		std::string	extractBoundary(const std::string& requestBody);
 
 
 };
