@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/26 22:35:37 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/26 22:51:28 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,87 +154,19 @@ void WebServer::methodPost(Client &client, std::string &path) {
     MapStrStr_t 	cgi = client.host->getCgi();
     std::string 	ext = client.getExt();
 	std::string		body = getFile(path);
-	processPostRequest(client.getBody(), client);
+	if (processPostRequest(client.getBody(), client))
+	{
+		client.setRStrStatus("201");
+		client.setRline("created");
+	}
+	else
+	{
+		client.setRStrStatus("200");
+		client.setRline("OK");		
+   		client.setRbody(body);
+	}
 		
     // std::string contentType = client.getSpecifiedHeader("content-type");
-    // size_t boundaryPos = contentType.find("boundary=");
-
-	// logWARNING << "start POST";
-    // if (boundaryPos != std::string::npos) 
-	// {
-	// 	std::cout << "OUINN0" << std::endl;
-    //     std::string boundary = contentType.substr(boundaryPos + 9);
-	// 	std::cout << "BOUNDARY = " << boundary << std::endl; 
-	// 	// std::cout << "BODY = " << client.getBody() << std::endl; 
-    //     size_t posFirst = client.getBody().find(boundary);
-		
-    //     if (posFirst != std::string::npos) 
-	// 	{
-	// 		std::cout << "OUINN1" << std::endl;
-    //         size_t posSecond = client.getBody().find(boundary, posFirst + boundary.size());
-    //         if (posSecond != std::string::npos) 
-	// 		{
-    //             std::string fileData = client.getBody().substr(posFirst + boundary.size(),
-    //                                                posSecond - posFirst - boundary.size());
-	// 			// size_t	start = fileData.find('\n');
-	// 			// size_t	end = fileData.find('\0');
-	// 			// fileData = fileData.substr(start, end);
-
-	// 			std::cout << "OUINN2 filedata = " << fileData << std::endl;
-    //             size_t filenameStart = fileData.find("filename=");
-    //             if (filenameStart != std::string::npos) 
-	// 			{
-	// 				std::cout << "OUINN3" << std::endl;
-    //                 filenameStart += 10;
-    //                 size_t filenameEnd = fileData.find("\"", filenameStart);
-    //                 if (filenameEnd != std::string::npos) {
-	// 					std::cout << "OUINN4" << std::endl;
-    //                     std::string filename = fileData.substr(filenameStart, filenameEnd - filenameStart);
-	// 					if (createFile(filename, fileData, *client.upDirPtr)) 
-	// 					{
-	// 						std::cout << "OUIN5" << std::endl;
-	// 						client.setRStrStatus("201");
-    // 						client.setRline("Created");
-	// 					} 
-    //                 }
-    //             }
-    //         }
-	// 		else
-	// 		{
-	// 			posSecond = client.getBody().find('\0');
-	// 			std::cout << "THE END" << std::endl;
-	// 			std::string fileData = client.getBody().substr(posFirst + boundary.size() + 1,
-    //                                                posSecond - posFirst - boundary.size());
-				
-	// 			// std::cout << "OUIN MOI OUIN OUIN MIMI: " <<  fileData << std::endl << std::endl << std::endl;
-				
-	// 			while (fileData.find("\r\n") != std::string::npos)
-	// 			{	
-	// 				// std::clog << "line: " << fileData.substr(0, endline + 1) << std::endl;;
-	// 				if (fileData.at(0) == '\r' && fileData.at(1) == '\n') //
-	// 				{
-	// 					// std::cout << "break erase : " << (unsigned int)fileData.at(0)  << "/" << (unsigned int)fileData.at(1) << std::endl;
-	// 					fileData.erase(0, 2);
-	// 					break ;
-	// 				}
-	// 				size_t	endline = fileData.find("\r\n");
-					
-					
-	// 				// std::cout << "erase :" << fileData.substr(0, endline + 2) << ": for " << endline << " char" << std::endl;
-	// 				fileData.erase(0, endline + 2);
-	// 			}
-
-				
-	// 			std::cout << "OUINN2 filedata = " << fileData << std::endl;
-	// 		}
-	// 	}
-	// }
-	// else
-	// {
-	// 	client.setRStrStatus("200");
-	// 	client.setRline("OK");
-   	// 	client.setRbody(body);
-	// }
 
     std::stringstream contentLengthStream;
     contentLengthStream << body.size();
@@ -245,23 +177,23 @@ void WebServer::methodPost(Client &client, std::string &path) {
 }
 
 
-void WebServer::processPostRequest(const std::string& requestBody, Client& client) 
+bool WebServer::processPostRequest(const std::string& requestBody, Client& client) 
 {
 	std::string boundary = extractBoundary(requestBody);
 	if (boundary.empty()) {
 		std::cerr << "Boundary not found in request body." << std::endl;
-		return;
+		return (false);
 	}
 	VecStr_t parts = splitByBoundary(requestBody, boundary);
 	for (size_t i = 0; i < parts.size(); ++i) {
 		std::string filename, content;
 		if (extractFileData(parts[i], filename, content)) {
-			std::cout << "TEST0" << std::endl;
 			createFile(filename, content, "./z_notes/");
 			// createFile(filename, content, *client.upDirPtr);
-			std::cout << "TEST10" << std::endl;
+			return (true);
 		}
 	}
+	return (false);
 }
 
 std::string WebServer::extractBoundary(const std::string& requestBody) 
