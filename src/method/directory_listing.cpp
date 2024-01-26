@@ -6,13 +6,14 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/25 15:39:15 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/26 13:14:12 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 #include <dirent.h>
 #include <sys/stat.h>
+#include <list>
 
 static std::string	uriPage(std::string fileName, std::string directory, vHostPtr & v_host)
 {
@@ -22,7 +23,7 @@ static std::string	uriPage(std::string fileName, std::string directory, vHostPtr
 	if (uriPage.compare(0, v_host->getRoot().length(), v_host->getRoot()) == 0)
 		uriPage = uriPage.substr(v_host->getRoot().length() - 1, uriPage.length() - v_host->getRoot().length() + 1);
 
-	std::clog << "uriPage: " << uriPage << '\n' << std::endl;
+	// std::clog << "uriPage: " << uriPage << '\n' << std::endl;
 
 	return (uriPage);
 }
@@ -42,6 +43,29 @@ static std::string	goBack(std::string folder)
 	return (folder);
 }
 
+static std::string	getExtensionImage(std::string fileName)
+{
+	std::string	extension[5] = {"html", "php", "py", "jpg", "png"};
+	std::string	fileExtension;
+	std::size_t	found = fileName.rfind('.');
+	
+	if (found != 0)
+		fileExtension = fileName.substr(found + 1, fileName.length() - found);
+	else
+		return ( "" );
+
+	for ( int i = 0; i < 5; ++i )
+	{
+		if (fileExtension == extension[i])
+		{
+			std::string	extensionImage = "http://localhost:8080/img/" + extension[i] + ".png";
+			return (extensionImage);
+		}
+	}
+	
+	return ("");
+}
+
 static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 {
 	struct dirent*	ptr_dir = NULL;
@@ -52,8 +76,6 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 	std::stringstream ss;
 	std::string pointPointDir = uriPage("", goBack(directory), v_host);
 
-	std::clog << "\n=============directory: " << directory << "\n" << std::endl;
-
 	ss << "HTTP/1.1 200 OK\r\n\r\n";
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << directory << "</title>\n</head>\n";
 	ss << "<body>\n<h1>Index of " << directory << "</h1>\n<dl>\n";
@@ -63,6 +85,7 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 	{
 		// Folder  .. doesn't have an uri
 		std::string	fileName = ptr_dir->d_name;
+		std::string	extensionImage = getExtensionImage(fileName);
 		DIR 		*tmp = opendir((directory + fileName).c_str());
 		
 		if (fileName == ".")
@@ -73,22 +96,10 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 			ss << "<img src=\"http://localhost:8080/img/parent_directory.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
 			ss << "Parent Directory</a></dt>\n";
 		}
-		else if (fileName.substr(fileName.length() - 5, 5) == ".html")
+		else if (!extensionImage.empty())
 		{
 			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, v_host) << "\">";
-			ss << "<img src=\"http://localhost:8080/img/html.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
-			ss << fileName << "</a></dt>\n";
-		}
-		else if (fileName.substr(fileName.length() - 4, 4) == ".php")
-		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, v_host) << "\">";
-			ss << "<img src=\"http://localhost:8080/img/php.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
-			ss << fileName << "</a></dt>\n";
-		}
-		else if (fileName.substr(fileName.length() - 3, 3) == ".py")
-		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, v_host) << "\">";
-			ss << "<img src=\"http://localhost:8080/img/py.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
+			ss << "<img src=\"" << extensionImage << "\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
 		}
 		else if (tmp != NULL)
@@ -103,7 +114,8 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, v_host) << "/\">";
 			ss << "<dt><img src=\"http://localhost:8080/img/unknow.png\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
-		}	}
+		}
+	}
 	
 	ss << "</dl>\n</body>\n</html>\r\n\r\n";
 
