@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/26 13:14:12 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/26 13:33:50 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static std::string	getExtensionImage(std::string fileName)
 	if (found != 0)
 		fileExtension = fileName.substr(found + 1, fileName.length() - found);
 	else
-		return ( "" );
+		return ( "http://localhost:8080/img/unknow.png" );
 
 	for ( int i = 0; i < 5; ++i )
 	{
@@ -62,8 +62,8 @@ static std::string	getExtensionImage(std::string fileName)
 			return (extensionImage);
 		}
 	}
-	
-	return ("");
+
+	return ( "http://localhost:8080/img/unknow.png" );
 }
 
 static std::string	makeDirList(std::string directory, vHostPtr & v_host)
@@ -96,12 +96,6 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 			ss << "<img src=\"http://localhost:8080/img/parent_directory.png\" alt=\"Parent Directory\" width=\"20\" height=\"20\"> ";
 			ss << "Parent Directory</a></dt>\n";
 		}
-		else if (!extensionImage.empty())
-		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, v_host) << "\">";
-			ss << "<img src=\"" << extensionImage << "\" width=\"20\" height=\"20\"> ";
-			ss << fileName << "</a></dt>\n";
-		}
 		else if (tmp != NULL)
 		{
 			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, v_host) << "/\">";
@@ -111,8 +105,8 @@ static std::string	makeDirList(std::string directory, vHostPtr & v_host)
 		}
 		else
 		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, v_host) << "/\">";
-			ss << "<dt><img src=\"http://localhost:8080/img/unknow.png\" alt=\"Folder\" width=\"20\" height=\"20\"> ";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, v_host) << "\">";
+			ss << "<img src=\"" << extensionImage << "\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
 		}
 	}
