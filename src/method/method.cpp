@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/26 22:51:28 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/28 21:24:09 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,6 +233,6 @@ bool WebServer::extractFileData(const std::string& part, std::string& filename, 
 	if (dataStart == std::string::npos)
 		return (false);
 
-	content = part.substr(dataStart + 4); // "\r\n\r\n"
+	content = part.substr(dataStart + 4);
 	return (true);
 }
