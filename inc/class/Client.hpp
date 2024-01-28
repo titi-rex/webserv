@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 11:59:16 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/28 19:34:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ class Client : public Socket, public Request
 		int*	getFd_cgi(void) const;
 
 		void	setFd_cgi(int fd_cgi[2]);
+		void	setKeepAlive(void);
 };
 
 std::ostream&	operator<<(std::ostream& os, const Client& Client);

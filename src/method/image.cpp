@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   image.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 16:10:00 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/24 16:42:39 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/28 20:16:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	WebServer::imageGet( Client & cl )
 
 	// Creat and extract the image into a string
 	std::string	image(static_cast<size_t>(imageSize), '\0');
-    requestedImage.read(&image[0], imageSize);
+	requestedImage.read(&image[0], imageSize);
 	requestedImage.close();
 
 	// Convert the size to string

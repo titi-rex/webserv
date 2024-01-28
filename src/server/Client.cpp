@@ -3,27 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:36:43 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/28 20:19:01 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), clientStatus(CREATED), keepConnection(false)
+Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), clientStatus(CREATED), keepConnection(true)
 {
 	_fd_cgi[0] = -1;
 	_fd_cgi[1] = -1;
 	_name = "cnameless";
+	setRheaders("connection", "keep-alive");
 };
 
-Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), clientStatus(CREATED), keepConnection(false)
+Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), clientStatus(CREATED), keepConnection(true)
 {
 	_fd_cgi[0] = -1;
 	_fd_cgi[1] = -1;
 	_name = "cnameless";
+	setRheaders("connection", "keep-alive");
 };
 
 Client::Client(const Client& src) : Socket(src), Request(src)
@@ -128,6 +130,18 @@ bool	Client::readCgi(void)
 	return (false);
 }
 
+void	Client::setKeepAlive(void)
+{
+	if (getHeaders().count("connection"))
+	{
+		if (getHeaders().at("connection") == "keep-alive")
+			return ;
+	}
+	logDEBUG << "no keepalive found";
+	logDEBUG << getHeaders();
+	setRheaders("connection", "close");
+	keepConnection = false;
+}
 
 void	Client::sendRequest(void)
 {
