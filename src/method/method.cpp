@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 21:24:41 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/28 21:42:39 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,20 +130,19 @@ void WebServer::methodDelete(Client &client, std::string &path) {
 
 bool WebServer::createFile(const std::string& fileName, const std::string& content, const std::string uploadDir) // A CHANGER !!! throw les bonnes erreur 
 {
-	// std::cout << "TEST2" << std::endl;
     std::string filePath = uploadDir + fileName;
-	std::cout << "TEST3" << std::endl;
-    std::ofstream of(filePath.c_str());
+    std::ofstream of(filePath.c_str(), std::ios::out | std::ios::binary);
     if (!of) {
         std::cerr << "Erreur : Impossible de créer le fichier " << filePath << std::endl;
         return (false);
     }
-    of << content;
+	
+    of.write(content.c_str(), content.size());
     of.close();
-	std::cout << "TEST4" << std::endl;
+	
     if (!of) 
 	{
-        std::cerr << "Erreur : Échec lorsde l'écriture dans le fichier " << filePath << std::endl;
+        std::cerr << "Erreur : Échec lors de l'écriture dans le fichier " << filePath << std::endl;
 		return (false);
 	}
 	else
@@ -181,14 +180,16 @@ void WebServer::methodPost(Client &client, std::string &path) {
 bool WebServer::processPostRequest(const std::string& requestBody, Client& client) 
 {
 	std::string boundary = extractBoundary(requestBody);
-	if (boundary.empty()) {
+	if (boundary.empty()) 
+	{
 		std::cerr << "Boundary not found in request body." << std::endl;
 		return (false);
 	}
 	VecStr_t parts = splitByBoundary(requestBody, boundary);
 	for (size_t i = 0; i < parts.size(); ++i) {
 		std::string filename, content;
-		if (extractFileData(parts[i], filename, content)) {
+		if (extractFileData(parts[i], filename, content)) 
+		{
 			createFile(filename, content, "./z_notes/");
 			// createFile(filename, content, *client.upDirPtr);
 			return (true);
@@ -209,7 +210,9 @@ VecStr_t WebServer::splitByBoundary(const std::string& requestBody, const std::s
 {
 	VecStr_t parts;
 	size_t pos = requestBody.find(boundary);
-	while (pos != std::string::npos) {
+	
+	while (pos != std::string::npos) 
+	{
 		size_t nextPos = requestBody.find(boundary, pos + boundary.length());
 		if (nextPos == std::string::npos)
 			break;
@@ -234,6 +237,7 @@ bool WebServer::extractFileData(const std::string& part, std::string& filename, 
 	if (dataStart == std::string::npos)
 		return (false);
 
-	content = part.substr(dataStart + 4);
+	size_t dataEnd = part.size() - 2;
+    content = part.substr(dataStart + 4, dataEnd - dataStart - 4);
 	return (true);
 }
