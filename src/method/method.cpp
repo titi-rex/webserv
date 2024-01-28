@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 21:24:09 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/28 21:24:41 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void	WebServer::Method(Client &cl)
 		execute_cgi(cl.host->getCgi().at(cl.getExt()), cl);
 		return ;
 	}
+
 	// etape 3: on selectionne la method qui va bien et on la fait
 	switch (cl.getMid())
 	{

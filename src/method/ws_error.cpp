@@ -3,36 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ws_error.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/24 15:26:06 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/28 19:22:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 #include "utils.hpp"
-
-// trouver rl depuis map //lire fichier ??
-std::string	getRL(std::string status)
-{
-	std::string	rl = "HTTP/1.1 " + status + " OK\r\n";
-
-
-	return (rl);
-}
-
-std::string	getPageByDir(std::string dir, std::string code)
-{
-	std::string	target = dir + code + ".html";
-
-	if (access(target.c_str(),  F_OK | R_OK))
-		throw std::runtime_error("error: access by dir");
-	std::string body = getFile(target);
-
-	return (body);
-}
-
 
 void	WebServer::getError(std::string status, Request& req)
 {

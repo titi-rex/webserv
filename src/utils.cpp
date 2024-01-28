@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:06:51 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/28 19:24:53 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,19 +64,19 @@ int	wrap_iscntrl(int c)
 
 std::string&	ltrim(std::string& str, const char* set)
 {
-    str.erase(0, str.find_first_not_of(set));
-    return (str);
+	str.erase(0, str.find_first_not_of(set));
+	return (str);
 }
 
 std::string&	rtrim(std::string& str, const char* set)
 {
-    str.erase(str.find_last_not_of(set) + 1);
-    return (str);
+	str.erase(str.find_last_not_of(set) + 1);
+	return (str);
 }
 
 std::string&	trim(std::string& str, const char* set)
 {
-    return (ltrim(rtrim(str, set), set));
+	return (ltrim(rtrim(str, set), set));
 }
 
 void getDate( char * date )

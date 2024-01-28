@@ -52,7 +52,8 @@
 	"cstring": "cpp",
 	"ranges": "cpp",
 	"ctime": "cpp",
-	"iomanip": "cpp"
+	"iomanip": "cpp",
+	"list": "cpp"
 },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

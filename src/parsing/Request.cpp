@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:05:02 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/28 20:01:11 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,7 +299,6 @@ bool	Request::_parseBodyByLength(std::string& body)
  */
 bool	Request::_parseBodyByChunk(std::string& body)
 {
-	std::string	tmp;
 	size_t		start = 0;
 	size_t		end = -1;
 	size_t		check = 0;
@@ -309,7 +308,7 @@ bool	Request::_parseBodyByChunk(std::string& body)
 		end = -1;
 		if (_lenChunk == ULONG_MAX)
 		{
-			tmp = _extractRange(start, end, "\n");
+			std::string tmp = _extractRange(start, end, "\n");
 			_lenChunk = std::strtoul(tmp.c_str(), NULL, 16);
 			if (_lenChunk == ULONG_MAX)
 				throw std::runtime_error("400: Chunk length overflow");

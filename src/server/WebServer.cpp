@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 14:29:05 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/28 20:05:21 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErr
 		++i;
 	}
 	file.close();
-	this->debugServ();
+	// this->debugServ();
 	if (_virtualHost.empty())
 		throw std::runtime_error("WebServer: no server supplied");
 	_SocketServerList_init();

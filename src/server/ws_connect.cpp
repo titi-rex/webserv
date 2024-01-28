@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ws_connect.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 16:52:02 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/28 20:20:22 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,13 @@ void	WebServer::handle_epollin(int event_id)
 		if(cl->readRequest())	//throw ERROR or FATAL
 		{
 			logDEBUG << "end read rq";
+			if (cl->getPstatus() == RL)
+			{
+				logDEBUG << "empty request";
+				deleteClient(cl->getFd());
+				return ;
+			}
+			cl->setKeepAlive();
 			_readyToProceedList[cl->getFd()] = cl;	//add to ready list
 		}
 		else
@@ -69,12 +76,12 @@ void	WebServer::handle_epollout(int event_id)
 		cl->sendRequest();	//throw FATAL
 		if (cl->keepConnection)	//keep client
 		{
-			logDEBUG << "keep client";
+			logINFO << "keep:" << *cl;
 			cl->reset();
 			modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLIN);	//Throw FATAL
 			_readyToProceedList.erase(cl->getFd());
 		}
-		else	//delete client
+		else
 			deleteClient(cl->getFd());	//throw fatal
 	}
 }
@@ -112,9 +119,6 @@ void	WebServer::process_rq(Client &cl)
 	logDEBUG << "request proceed";
 	cl.host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl);
 
-	// std::clog << (Request)cl << std::endl;
-	// std::clog << "size body: " << cl.getBody().size() << std::endl;
-
 	Method(cl);
 	if (cl.clientStatus == PROCEEDED)
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
@@ -141,9 +145,9 @@ void	WebServer::process_rq_error(Client &cl)
 			_readyToProceedList[cl.getFd()] = NULL;
 			logINFO << "deleted: " << cl;
 		}
-		catch(const std::exception& e)
+		catch(const std::exception& ef)
 		{
-			std::cerr << e.what() << ", there is nothing left to do.." << std::endl;
+			std::cerr << ef.what() << ", there is nothing left to do.." << std::endl;
 		}
 	}
 }

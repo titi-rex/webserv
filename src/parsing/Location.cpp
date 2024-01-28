@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/25 14:28:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/28 19:22:46 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ void	Location::setRedirection(const VecStr_t& sLine)
 	{
 		this->redirection.second = sLine.at(2);	
 	}
-	catch (std::exception & e)
+	catch (const std::exception& e)
 	{
 		logWARNING << "Location: return with no new location"; 
 	}

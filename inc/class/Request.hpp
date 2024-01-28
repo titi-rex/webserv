@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 13:20:29 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/28 20:17:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,12 @@
 # include <string>
 # include <sstream>
 # include <iostream>
-# include <map>
 # include <stdexcept>
 # include <algorithm>
 # include <cstring>
 # include <cctype>
 # include <climits>
-
 # include "container.hpp"
-
 
 # define RL_MIN_LENGTH 14
 # define RL_MAX_LENGTH 2500
