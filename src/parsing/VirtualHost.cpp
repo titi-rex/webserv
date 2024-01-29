@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/25 15:52:21 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 13:49:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,6 +219,15 @@ void	VirtualHost::setLocations(Location& newLoc)
 {
 	this->locations.insert(std::pair<std::string, Location>(newLoc.getUriOrExt(), newLoc));
 };
+
+void	VirtualHost::secureUpload(void)
+{
+	for (MapStrLoc_t::const_iterator it = locations.begin(); it != locations.end(); ++it)
+	{
+		if (it->second.getUploadDir() == this->dirCgi)
+			throw std::runtime_error("Virtual Host: security breach, upload_dir same as dir-cgi for location: " + it->first);
+	}
+}
 
 /**
  * @brief format id/names/host

@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 16:10:00 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/29 11:37:50 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/29 14:05:10 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	WebServer::imageGet( Client & cl )
 	cl.setRheaders("Content-size", sImageSize);
 	cl.setRheaders("Connection", "close");
 	cl.setRbody(image);
+	cl.getBody().size();
 
 	cl.findSetType(cl, imagePath, getContentType());
 }
