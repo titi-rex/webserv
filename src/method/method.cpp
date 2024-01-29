@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 21:42:39 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/29 12:12:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	WebServer::Method(Client &cl)
 			methodDelete(cl, pagePath);
 			break ;
 		case HEAD:
-			methodHead(cl,pagePath);
+			methodHead(cl, pagePath);
 			break ;
 		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
@@ -105,44 +105,45 @@ void	WebServer::methodGet( Client & cl, std::string & pagePath )
 }
 
 
-bool doesFileExist(const std::string& pagePath) {
-    struct stat buffer;
-    return (stat(pagePath.c_str(), &buffer) == 0);
+bool doesFileExist(const std::string& pagePath) 
+{
+	struct stat buffer;
+	return (stat(pagePath.c_str(), &buffer) == 0);
 }
 
 void WebServer::methodDelete(Client &client, std::string &path) {
-    std::string body = getFile(path);
+	std::string body = getFile(path);
 
-    if (std::remove(client.getPathTranslated().c_str()) != 0) 
-        throw std::runtime_error("500: Remove return error");
+	if (std::remove(client.getPathTranslated().c_str()) != 0) 
+		throw std::runtime_error("500: Remove return error");
 
-    client.setRStrStatus("200");
-    client.setRline("OK");
-    client.setRheaders("server", client.host->getServerNames().at(0));
+	client.setRStrStatus("200");
+	client.setRline("OK");
+	client.setRheaders("server", client.host->getServerNames().at(0));
 
-    std::stringstream contentLengthStream;
-    contentLengthStream << body.size();
-    client.setRheaders("content-length", contentLengthStream.str());
+	std::stringstream contentLengthStream;
+	contentLengthStream << body.size();
+	client.setRheaders("content-length", contentLengthStream.str());
 
-    client.setRbody(body);
-    client.makeResponse();
+	client.setRbody(body);
+	client.makeResponse();
 }
 
 bool WebServer::createFile(const std::string& fileName, const std::string& content, const std::string uploadDir) // A CHANGER !!! throw les bonnes erreur 
 {
-    std::string filePath = uploadDir + fileName;
-    std::ofstream of(filePath.c_str(), std::ios::out | std::ios::binary);
-    if (!of) {
-        std::cerr << "Erreur : Impossible de créer le fichier " << filePath << std::endl;
-        return (false);
-    }
+	std::string filePath = uploadDir + fileName;
+	std::ofstream of(filePath.c_str(), std::ios::out | std::ios::binary);
+	if (!of) {
+		std::cerr << "Erreur : Impossible de créer le fichier " << filePath << std::endl;
+		return (false);
+	}
 	
-    of.write(content.c_str(), content.size());
-    of.close();
+	of.write(content.c_str(), content.size());
+	of.close();
 	
-    if (!of) 
+	if (!of) 
 	{
-        std::cerr << "Erreur : Échec lors de l'écriture dans le fichier " << filePath << std::endl;
+		std::cerr << "Erreur : Échec lors de l'écriture dans le fichier " << filePath << std::endl;
 		return (false);
 	}
 	else
@@ -151,8 +152,8 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 }
 
 void WebServer::methodPost(Client &client, std::string &path) {
-    MapStrStr_t 	cgi = client.host->getCgi();
-    std::string 	ext = client.getExt();
+	MapStrStr_t 	cgi = client.host->getCgi();
+	std::string 	ext = client.getExt();
 	std::string		body = getFile(path);
 	if (processPostRequest(client.getBody(), client))
 	{
@@ -163,17 +164,17 @@ void WebServer::methodPost(Client &client, std::string &path) {
 	{
 		client.setRStrStatus("200");
 		client.setRline("OK");		
-   		client.setRbody(body);
+		client.setRbody(body);
 	}
 		
-    // std::string contentType = client.getSpecifiedHeader("content-type");
+	// std::string contentType = client.getSpecifiedHeader("content-type");
 
-    std::stringstream contentLengthStream;
-    contentLengthStream << body.size();
-    client.setRheaders("server", client.host->getServerNames().at(0));
-    client.setRheaders("content-length", contentLengthStream.str());
+	std::stringstream contentLengthStream;
+	contentLengthStream << body.size();
+	client.setRheaders("server", client.host->getServerNames().at(0));
+	client.setRheaders("content-length", contentLengthStream.str());
 
-    client.makeResponse();
+	client.makeResponse();
 }
 
 
@@ -190,7 +191,7 @@ bool WebServer::processPostRequest(const std::string& requestBody, Client& clien
 		std::string filename, content;
 		if (extractFileData(parts[i], filename, content)) 
 		{
-			createFile(filename, content, "./z_notes/");
+			createFile(filename, content, *client.upDirPtr);
 			// createFile(filename, content, *client.upDirPtr);
 			return (true);
 		}
@@ -238,6 +239,6 @@ bool WebServer::extractFileData(const std::string& part, std::string& filename, 
 		return (false);
 
 	size_t dataEnd = part.size() - 2;
-    content = part.substr(dataStart + 4, dataEnd - dataStart - 4);
+	content = part.substr(dataStart + 4, dataEnd - dataStart - 4);
 	return (true);
 }

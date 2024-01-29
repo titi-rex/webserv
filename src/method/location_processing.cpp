@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/25 16:51:55 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/29 12:11:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,21 +90,6 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 	std::string									pagePath = req.getUri();
 	std::string									location = "";
 
-	// If the request is empty, sent the index of the server
-	if (pagePath == "/")
-	{
-		std::string	locationRoot = v_host->getLocations().at("/").getRoot();
-		std::string	locationIndex = v_host->getLocations().at("/").getIndex();
-
-		if (!locationIndex.empty())
-			pagePath = locationRoot + "/" + locationIndex;
-		else
-			pagePath = v_host->getRoot() + v_host->getIndex();
-		
-		return (pagePath);
-	}
-
-
 	// Find if there are an location equal to the request
 	for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
 	{
@@ -115,7 +100,6 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		}
 	}
 
-
 	if (location == "")
 	{
 		// Find if the closest location from the request
@@ -124,10 +108,7 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 			if (isPrefix(pagePath, i->first))
 			{
 				if (i->first.length() > location.length())
-				{
 					location = i->first;
-					cl.upDirPtr = &i->second.getUploadDir();
-				}
 			}
 		}
 	}
@@ -153,6 +134,8 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		pagePath = v_host->getLocations().at(location).getRoot() + pagePath;
 	else
 		pagePath = v_host->getRoot() + pagePath;
+
+	cl.upDirPtr = &v_host->getLocations().at(location).getUploadDir();
 
 	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
 	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());
