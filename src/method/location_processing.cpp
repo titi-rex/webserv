@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/29 15:05:57 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 22:16:26 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 		pagePath += ".html";
 		file = pagePath.c_str();
 		if (access(file, F_OK) != 0)
-			throw std::runtime_error("404");
+			throw std::runtime_error("404: file dont exist: " + pagePath);
 	}
 	// Check if the page asked is readable
 	if (access(file, R_OK) != 0)
-		throw std::runtime_error("403");
+		throw std::runtime_error("403: can't acces: " + pagePath);
 
 	// Check if the file is a folder
 	DIR	*temp = opendir(file);
@@ -61,7 +61,7 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 	if (temp != NULL)
 	{
 		closedir(temp);
-		throw std::runtime_error("404");
+		throw std::runtime_error("404: file dont exist: " + pagePath);
 	}
 }
 
@@ -108,8 +108,20 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		}
 	}
 
+	// if there is no location, search in vhost
+	if (location == "")
+	{
+		// if (access(pagePath.c_str(), F_OK | R_OK))
+		// if (pagePath.at(0) == '/')
+		// 	pagePath.erase(1);
+		pagePath = v_host->getRoot() + pagePath;
+		checkPageFile(pagePath, v_host->getIndex());
+		return (pagePath);
+	}
+
 	// check if method is allowed ?
 	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
+
 
 	// Check if there is a redirection
 	PairStrStr_t	redirection = v_host->getLocations().at(location).getRedirection();

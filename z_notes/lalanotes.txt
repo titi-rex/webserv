@@ -8,6 +8,8 @@ PARSING: ERROR:
  { : reste ligne ignorer (pas d'erreur)
 
 
+clean cgi + new
+default page
 
 
 

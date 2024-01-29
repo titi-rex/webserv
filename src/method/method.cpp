@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 15:05:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 21:58:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,15 @@ void	WebServer::Method(Client &cl)
 
 	// etape 1 : chercher la ressource cible (target)
 	std::string	pagePath = findLocation(cl, cl.host, cl);
-
-	if (isDirListReq(cl))
-	{
-		dirList(cl, cl.host);
-		std::clog << "dirlist asked, clq is :" << std::endl << cl;
-		std::clog << "rq " << std::endl << (Request) cl << std::flush;
-		cl.clientStatus = PROCEEDED;
-		return ;
-	}
+	logERROR << "pagepath" << pagePath;
+	// if (isDirListReq(cl))
+	// {
+	// 	dirList(cl, cl.host);
+	// 	std::clog << "dirlist asked, clq is :" << std::endl << cl;
+	// 	std::clog << "rq " << std::endl << (Request) cl << std::flush;
+	// 	cl.clientStatus = PROCEEDED;
+	// 	return ;
+	// }
 
 	//etape 2: execute la cgi si besoin !
 	if (cl.clientStatus == GATHERED && cl.getNeedCgi())
@@ -86,9 +86,10 @@ void	WebServer::methodGet( Client & cl, std::string & pagePath )
 	// Function use to send images
 	if (cl.getExt() == "png" || cl.getExt() == "jpg" || cl.getExt() == "jpeg")
 		imageGet(cl);
-
 	else if (cl.clientStatus != CGIOK)
 	{
+	logERROR << "yeadsad";
+		
 		std::string		body = getFile(pagePath);
 		cl.setRbody(body);
 		cl.findSetType(cl, pagePath, getContentType());
@@ -110,7 +111,7 @@ bool doesFileExist(const std::string& pagePath)
 void WebServer::methodDelete(Client &client, std::string &path) {
 	std::string body = getFile(path);
 
-	if (std::remove(client.getPathTranslated().c_str()) != 0) 
+	if (std::remove(client.getPathTranslated().c_str()) != 0)
 		throw std::runtime_error("500: Remove return error");
 
 	client.setRStrStatus("200");
