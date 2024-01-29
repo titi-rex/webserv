@@ -140,7 +140,7 @@ Cela pourrait être du texte, une image, un fichier binaire, etc.
 Content-Disposition: form-data; name="autre_parametre"
 
 Valeur du paramètre ici.
-------WebKitFormBoundaryABC123--
+
 
 Dans cet exemple :
 
