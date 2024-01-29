@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/25 14:30:53 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 13:50:12 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ void WebServer::parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end)
 		else
 			throw std::runtime_error("Server: Unrecognised line in configuration file : " + fileVec[i]);
 	}
+	newServ.secureUpload();
 	addVirtualHost(newServ);
 }
 

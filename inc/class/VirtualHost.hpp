@@ -53,6 +53,8 @@ class	VirtualHost
 		void					setServerNames(VecStr_t& sLine);
 		void					setCgi(VecStr_t& sLine, bool oneCgi);
 		void					setLocations(Location& newLoc);
+
+		void					secureUpload(void);
 };
 
 typedef VirtualHost* 				vHostPtr;
