@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 20:20:22 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:28:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,11 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 		_ClientList[event_id].setRStrStatus(status);
 		modEpollList(event_id, EPOLL_CTL_MOD, EPOLLOUT);
 		_readyToProceedList[event_id] = &_ClientList[event_id];
+		if (status == "413")
+		{
+			logDEBUG << "size: " << _ClientList[event_id].getBodySizeExpected();
+			logDEBUG << "limit: " << _ClientList[event_id]._sizeLimit;
+		}
 	}
 	else
 	{

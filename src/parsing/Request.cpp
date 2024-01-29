@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 20:01:11 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:15:51 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,8 +226,8 @@ bool	Request::_findBodySize(void)
 	if (itCl != _headers.end())
 	{
 		_bodySizeExpected = std::strtoul(itCl->second.c_str(), NULL, 10);
-		// if (_bodySizeExpected == ULONG_MAX)
-		// 	throw std::runtime_error("413: Request Entity Too Large");
+		if (_bodySizeExpected == ULONG_MAX)
+			throw std::runtime_error("413: size expected too large or overflow");
 		return (true);
 	}
 	if (itTe->second != "chunked")
@@ -396,8 +396,8 @@ bool	Request::_parseCgiHeaders(void)
 			{
 				_parsingStatus = CGICL;
 				_bodySizeExpected = std::strtoul(_rheaders["content-length"].c_str(), NULL, 10);
-				// if (_bodySizeExpected == ULONG_MAX)
-				// 	throw std::runtime_error("413: Request Entity Too Large");
+				if (_bodySizeExpected == ULONG_MAX)
+					throw std::runtime_error("413: cgi: size expected too large or overflow");
 			}
 			return (false);
 		}

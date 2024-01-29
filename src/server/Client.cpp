@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 20:19:01 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:26:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,10 @@ bool	Client::readRequest(void)
 	else if (n_rec != 0)
 	{
 		end = build(buf);// throw ERROR or FATAL
-		// if (_isChunk == true && getBody().size() > _sizeLimit)
-		// 	throw std::runtime_error("413: Request Actual Body Too Large");
-		// else if (_isChunk == false && getBodySizeExpected() > _sizeLimit)
-		// 	throw std::runtime_error("413: Request Body Length Too Large");
+		if (_isChunk == true && getBody().size() > _sizeLimit)
+			throw std::runtime_error("413: Request Actual Body Too Large");
+		else if (_isChunk == false && getBodySizeExpected() > _sizeLimit)
+			throw std::runtime_error("413: Request Body Length Too Large");
 	}
 	else
 		end = true;
@@ -135,10 +135,12 @@ void	Client::setKeepAlive(void)
 	if (getHeaders().count("connection"))
 	{
 		if (getHeaders().at("connection") == "keep-alive")
+		{
+			logDEBUG << "keep alive connection";
 			return ;
+		}
 	}
 	logDEBUG << "no keepalive found";
-	logDEBUG << getHeaders();
 	setRheaders("connection", "close");
 	keepConnection = false;
 }
