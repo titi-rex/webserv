@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 14:05:23 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/29 15:05:00 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,21 +38,22 @@ void	WebServer::methodHead( Client & cl, std::string & pagePath)
 void	WebServer::Method(Client &cl)
 {
 	// chercher si le dir listing est au bon endroit !
-	if (cl.getUri() != "/" && isDirListReq(cl))
+
+	// etape 1 : chercher la ressource cible (target)
+	std::string	pagePath = findLocation(cl, cl.host, cl);
+
+	if (isDirListReq(cl))
 	{
 		dirList(cl, cl.host);
-		std::clog << "dirlist asked, rq is :" << std::endl << cl;
+		std::clog << "dirlist asked, clq is :" << std::endl << cl;
+		std::clog << "rq " << std::endl << (Request) cl << std::flush;
 		cl.clientStatus = PROCEEDED;
 		return ;
 	}
-	
-	// etape 1 : chercher la ressource cible (target)
-	std::string	pagePath = findLocation(cl, cl.host, cl);
-	
+
 	//etape 2: execute la cgi si besoin !
 	if (cl.clientStatus == GATHERED && cl.getNeedCgi())
 	{
-		std::clog << "GO GO GO CGI" << std::endl;
 		cl.clientStatus = CGIWAIT;
 		fillEnvCGI(cl);
 		execute_cgi(cl.host->getCgi().at(cl.getExt()), cl);
@@ -96,7 +97,6 @@ void	WebServer::methodGet( Client & cl, std::string & pagePath )
 	cl.setRStrStatus ("200");
 	cl.setRline ("OK");
 	cl.setRheaders("Server", cl.host->getServerNames().at(0));
-	
 	cl.makeResponse();
 }
 

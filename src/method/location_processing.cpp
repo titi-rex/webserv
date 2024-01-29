@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/29 14:05:16 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/29 15:05:57 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,8 @@ static bool	isPrefix(std::string pagePath, std::string prefix)
 std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 {
 	MapStrLoc_t::const_iterator	i;
-	std::string									pagePath = req.getUri();
-	std::string									location = "";
+	std::string					pagePath = req.getUri();
+	std::string					location = "";
 
 	// Find if there are an location equal to the request
 	for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
@@ -108,6 +108,9 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		}
 	}
 
+	// check if method is allowed ?
+	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
+
 	// Check if there is a redirection
 	PairStrStr_t	redirection = v_host->getLocations().at(location).getRedirection();
 
@@ -117,7 +120,6 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		req.setRStrStatus(redirection.first);
 		req.setRheaders("Location", redirection.second);
 		req.setRbody("");
-
 		throw std::runtime_error(redirection.first);
 	}
 
@@ -130,19 +132,18 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 	else
 		pagePath = v_host->getRoot() + pagePath;
 
+
+	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());
+	req.setPathtranslated(pagePath);
+
+
+	// add updir to cl (for POST file)
 	cl.upDirPtr = &v_host->getLocations().at(location).getUploadDir();
 
-	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
-	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());
-
-
-
-	req.setPathtranslated(pagePath);
-	
 	// Recuperer l'extention -> req.setExt()
 	std::size_t	found = pagePath.rfind('.');
 	std::string	extension;
-	
+
 	if (found != 0)
 	{
 		extension = pagePath.substr(found + 1, pagePath.length() - found);

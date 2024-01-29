@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/26 13:33:50 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/29 15:04:43 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ static std::string	returnIndex(std::string dirIndex)
 
 bool isDirListReq(Request & req)
 {
-	std::string		uri = req.getUri();
+	std::string		uri = req.getPathTranslated();
 	char			lastChar = uri.at(uri.length() - 1);
 	if (lastChar == '/')
 		return (true);
@@ -157,12 +157,16 @@ void	dirList(Request & req, vHostPtr & v_host)
 
 			if (access(dirIndex.c_str(), R_OK) == 0)
 			{
-				req.setResponse(returnIndex(dirIndex));
+				std::string	tmp = returnIndex(dirIndex);
+				std::clog << "index : " << tmp << std::endl;
+				req.setResponse(tmp);
 				return ;
 			}
 			else if (v_host->getLocations().at(i->first).getAutoIndex() == true)
 			{
-				req.setResponse(makeDirList(directory, v_host));
+				std::string	tmp = makeDirList(directory, v_host);
+				std::clog << "dirList : " << tmp << std::endl;
+				req.setResponse(tmp);
 				return ;
 			}
 		}
