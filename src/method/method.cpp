@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 21:42:39 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/29 11:44:43 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,8 @@ void WebServer::methodPost(Client &client, std::string &path) {
 bool WebServer::processPostRequest(const std::string& requestBody, Client& client) 
 {
 	std::string boundary = extractBoundary(requestBody);
+	std::cout << "CONTENT = " << std::endl;
+	std::cout << requestBody << std::endl;
 	if (boundary.empty()) 
 	{
 		std::cerr << "Boundary not found in request body." << std::endl;
