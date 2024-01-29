@@ -6,12 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 11:15:51 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 13:35:27 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 #include "utils.hpp"
+#include <fstream>
 
 Request::Request(void) : _mId(UNKNOW), _needCgi(false), _parsingStatus(RL), _size(0), _lenChunk(ULONG_MAX), _isChunk(false), _bodySizeExpected(0) {};
 

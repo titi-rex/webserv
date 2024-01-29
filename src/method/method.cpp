@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 12:13:56 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 13:15:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,8 +181,8 @@ void WebServer::methodPost(Client &client, std::string &path) {
 bool WebServer::processPostRequest(const std::string& requestBody, Client& client) 
 {
 	std::string boundary = extractBoundary(requestBody);
-	std::cout << "CONTENT = " << std::endl;
-	std::cout << requestBody << std::endl;
+	// std::cout << "CONTENT = " << std::endl;
+	// std::cout << requestBody << std::endl;
 	if (boundary.empty()) 
 	{
 		std::cerr << "Boundary not found in request body." << std::endl;

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 11:18:28 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 13:39:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ class Client : public Socket, public Request
 	private	:
 		int		_serverEndPoint;
 		int		_fd_cgi[2];
+		size_t	_sizeLimit;
 
 	public	:
-		size_t	_sizeLimit;
 		vHostPtr			host;
 		const std::string*	upDirPtr;
 		e_clientStatus		clientStatus;
