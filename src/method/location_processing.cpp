@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/25 16:51:55 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:42:00 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,8 @@ static void	checkAllowedMethod(VecStr_t methodAllowed, std::string methodAsked)
 	throw std::runtime_error("405 Method Not Allowed");
 }
 
-// ERROR http://localhost:8080/example_page must sent 404 !!
 static void checkPageFile(std::string & pagePath, std::string indexPage)
 {
-	logDEBUG << "checkfile()";
-
 	// If the pagePath is a folder, use is index page if configured in the .conf file
 	if (pagePath.substr(pagePath.length() - 1, pagePath.length()) == "/")
 		pagePath += indexPage;
@@ -66,8 +63,6 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 		closedir(temp);
 		throw std::runtime_error("404");
 	}
-	
-	logDEBUG << "end checkfile()";
 }
 
 static bool	isPrefix(std::string pagePath, std::string prefix)

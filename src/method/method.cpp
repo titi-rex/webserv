@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 21:42:39 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/29 11:44:13 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,6 @@ void	WebServer::methodHead( Client & cl, std::string & pagePath)
 
 void	WebServer::Method(Client &cl)
 {
-	// Function use to send images
-	if (cl.getUri().compare(0, 5, "/img/") == 0 && cl.getUri().length() > 5)
-	{
-		imageGet(cl);
-		cl.clientStatus = PROCEEDED;
-		return ;
-	}
-
 	// chercher si le dir listing est au bon endroit !
 	if (cl.getUri() != "/" && isDirListReq(cl))
 	{
@@ -90,7 +82,11 @@ void	WebServer::Method(Client &cl)
 
 void	WebServer::methodGet( Client & cl, std::string & pagePath )
 {
-	if (cl.clientStatus != CGIOK)
+	// Function use to send images
+	if (cl.getExt() == "png" || cl.getExt() == "jpg" || cl.getExt() == "jpeg")
+		imageGet(cl);
+
+	else if (cl.clientStatus != CGIOK)
 	{
 		std::string		body = getFile(pagePath);
 		cl.setRbody(body);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   image.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 16:10:00 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/28 20:16:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:37:50 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,9 @@ void	WebServer::imageGet( Client & cl )
 	tmp << image.size();
 	sImageSize = tmp.str();
 
-	cl.setRStrStatus("200");
-	cl.setRline("OK");
 	cl.setRheaders("Content-size", sImageSize);
 	cl.setRheaders("Connection", "close");
 	cl.setRbody(image);
 
 	cl.findSetType(cl, imagePath, getContentType());
-	cl.makeResponse();
 }
