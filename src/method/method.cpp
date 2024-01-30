@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 20:18:11 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 20:28:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,11 @@ void	WebServer::methodHead(Client& cl)
 void	WebServer::Method(Client &cl)
 {
 	// etape 1 : chercher la ressource cible (target)
-	if (translatePath(cl, cl.host, cl) == true)
+	if (translatePath(cl) == true)
 	{
 		cl.clientStatus = PROCEEDED;
 		return ;
 	}
-
 
 	//etape 2: execute la cgi si besoin !
 	if (cl.clientStatus == GATHERED && cl.getNeedCgi())
@@ -72,7 +71,7 @@ void	WebServer::Method(Client &cl)
 			methodHead(cl);
 			break ;
 		case UNKNOW:
-			throw std::runtime_error("501 Method not Implemented");
+			throw std::runtime_error("501: Method not Implemented");
 	};
 	cl.clientStatus = PROCEEDED;
 }
@@ -84,8 +83,6 @@ void	WebServer::methodGet(Client & client)
 		imageGet(client);
 	else if (client.clientStatus != CGIOK)
 	{
-	logERROR << "yeadsad";
-		
 		std::string		body = getFile(client.getPathTranslated());
 		client.setRbody(body);
 		client.findSetType(client, client.getPathTranslated(), getContentType());
