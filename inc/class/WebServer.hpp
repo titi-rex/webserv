@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 14:19:10 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/30 15:04:19 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,13 +129,11 @@ class WebServer
 
 
 		void		Method(Client &cl);	
-		void		methodGet( Client & cl );
-		void		methodHead( Client &client)  ;
-		void		newmethodHead ( Client & cl );
+		void		methodGet( Client & cl, bool withBody );
 		void		getError(std::string status, Request& req);	// GET special pour error
 		void		methodPost(Client &client, std::string & path);
 		void		methodDelete(Client &client, std::string & path);
-		void		imageGet( Client & cl, bool withBody );
+		void		imageGet( Client & cl );
 		bool 		createFile(const std::string& fileName, const std::string& content, const std::string uploadDir);
 		bool		extractFileData(const std::string& part, std::string& filename, std::string& content);
 		bool		processPostRequest(const std::string& requestBody, Client& client);

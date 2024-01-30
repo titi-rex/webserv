@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 14:19:48 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/30 15:04:04 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,47 +14,6 @@
 #include <cstdlib>
 #include <sstream>
 #include <ctime>
-
-void	WebServer::newmethodHead ( Client & cl )
-{
-	if (cl.getExt() == "png" || cl.getExt() == "jpg" || cl.getExt() == "jpeg")
-		imageGet(cl, false);
-
-	else if (cl.clientStatus != CGIOK)
-	{
-		std::string		pagePath = cl.getPathTranslated();
-		std::string		body = getFile(pagePath);
-		cl.findSetType(cl, pagePath, getContentType());
-	}
-
-	cl.setRStrStatus ("200");
-	cl.setRline ("OK");
-	cl.setRheaders("server", cl.host->getServerNames().at(0));
-	
-	cl.makeResponse();
-}
-
-void	WebServer::methodHead( Client & cl )
-{
-	newmethodHead(cl);
-
-	// std::ifstream	requestedPage(pagePath.c_str());
-	// std::string	page;
-
-	// if(requestedPage.fail())
-	// 	throw std::runtime_error("404");
-
-	// getline(requestedPage, page, '\0');
-
-	// cl.setRStrStatus("200");
-	// cl.setRline("OK");
-	// cl.setRheaders("server", cl.host->getServerNames().at(0)); // Place holder
-	// cl.setRheaders("connection", "keep-alive");
-
-	// cl.findSetType(cl, pagePath, getContentType());
-
-	// cl.makeResponse();
-}
 
 void	WebServer::Method(Client &cl)
 {
@@ -84,7 +43,7 @@ void	WebServer::Method(Client &cl)
 	switch (cl.getMid())
 	{
 		case GET:
-			methodGet(cl);
+			methodGet(cl, true);
 			break ;
 		case POST:
 			methodPost(cl, pagePath);
@@ -93,7 +52,7 @@ void	WebServer::Method(Client &cl)
 			methodDelete(cl, pagePath);
 			break ;
 		case HEAD:
-			methodHead(cl);
+			methodGet(cl, false);
 			break ;
 		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
@@ -101,17 +60,21 @@ void	WebServer::Method(Client &cl)
 	cl.clientStatus = PROCEEDED;
 }
 
-void	WebServer::methodGet( Client & cl )
+void	WebServer::methodGet( Client & cl, bool withBody )
 {
 	// Function use to send images
 	if (cl.getExt() == "png" || cl.getExt() == "jpg" || cl.getExt() == "jpeg")
-		imageGet(cl, true);
+		imageGet(cl);
 
 	else if (cl.clientStatus != CGIOK)
 	{
 		std::string		pagePath = cl.getPathTranslated();
 		std::string		body = getFile(pagePath);
 		cl.setRbody(body);
+
+		std::stringstream	sstr;
+		sstr << body.size();
+		cl.setRheaders("content-length", sstr.str());
 		cl.findSetType(cl, pagePath, getContentType());
 	}
 
@@ -119,6 +82,9 @@ void	WebServer::methodGet( Client & cl )
 	cl.setRline ("OK");
 	cl.setRheaders("server", cl.host->getServerNames().at(0));
 	
+	if(!withBody)
+		cl.setRbody("");
+
 	cl.makeResponse();
 }
 
