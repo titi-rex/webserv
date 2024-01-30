@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/30 20:16:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 21:12:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static std::string	uriPage(std::string fileName, std::string directory, const st
 	// Remove the root's path from the directory, keeping the '/' in front of the uriPage
 	if (uriPage.compare(0, root.length(), root) == 0)
 		uriPage = uriPage.substr(root.length() - 1, uriPage.length() - root.length() + 1);
+	logERROR << "uri for: " << fileName << uriPage;
 	return (uriPage);
 }
 
@@ -60,6 +61,8 @@ static std::string	getExtensionImage(std::string fileName)
 	return ( "http://localhost:8080/img/unknow.png" );
 }
 
+
+
 static std::string	makeDirList(std::string directory, const std::string& root)
 {
 	struct dirent*		ptr_dir = NULL;
@@ -69,10 +72,16 @@ static std::string	makeDirList(std::string directory, const std::string& root)
 
 	std::stringstream	ss;
 	std::string			parentDir;
-	const std::string	cleanDirectory = "/" + directory.substr(root.size(), directory.size());
+	
+	const size_t		i = root.rfind("/", root.size() - 2);
+	const std::string	cleanDirectory = directory.substr(i, directory.size());
 
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << cleanDirectory << "</title>\n</head>\n";
 	ss << "<body>\n<h1>Index of " << cleanDirectory << "</h1>\n<dl>\n";
+
+	logERROR << "root: " << root;
+	logERROR << "directory: " << directory;
+	logERROR << "clean directory: " << cleanDirectory;
 
 	// Add the name of every file in the html page
 	while ((ptr_dir = readdir(dir)) != NULL)
@@ -86,20 +95,20 @@ static std::string	makeDirList(std::string directory, const std::string& root)
 			continue ;
 		else if (fileName == "..")
 		{
-			parentDir += "<dt><a href=\"http://localhost:8080" + uriPage("", goBack(directory), root) + "\">";
+			parentDir += "<dt><a href=\"http://localhost:8080" + uriPage("", goBack(cleanDirectory), root) + "\">";
 			parentDir += "<img src=\"http://localhost:8080/img/parent_directory.png\" alt=\"parent directory\" width=\"20\" height=\"20\"> ";
 			parentDir += "Parent Directory</a></dt>\n";
 		}
 		else if (tmp != NULL)
 		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, root) << "/\">";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, cleanDirectory, root) << "/\">";
 			ss << "<img src=\"http://localhost:8080/img/folder.jpg\" alt=\"folder\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
 			closedir(tmp);
 		}
 		else
 		{
-			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, directory, root) << "\">";
+			ss << "<dt><a href=\"http://localhost:8080" << uriPage(fileName, cleanDirectory, root) << "\">";
 			ss << "<img src=\"" << extensionImage << "\" alt=\"file\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
 		}

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/30 20:27:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 20:43:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,11 @@ static bool checkPageFile(const Location* loc, std::string & pagePath, std::stri
 		if (indexPage.empty() == true or access((pagePath + indexPage).c_str(), F_OK | R_OK))
 		{
 			if (loc == NULL or loc->getAutoIndex() == false)
-				throw std::runtime_error("403: no index and autoindex off at: " + pagePath);
+				throw std::runtime_error("403: no index and autoindex off at: " + pagePath + " for location: " + loc->getUriOrExt());
+			if (access(pagePath.c_str(), F_OK))
+				throw std::runtime_error("404: dir doesn't exist: " + pagePath);
+			if (access(pagePath.c_str(), R_OK))
+				throw std::runtime_error("403: can't access dir: " + pagePath);
 			return (true);
 		}
 		pagePath += indexPage;
