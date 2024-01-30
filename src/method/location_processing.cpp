@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/30 15:43:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 20:17:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,13 @@ static bool checkPageFile(const Location* loc, std::string & pagePath, std::stri
 		{
 			if (loc == NULL or loc->getAutoIndex() == false)
 				throw std::runtime_error("403: no index and autoindex off at: " + pagePath);
+			
 			return (true);
 		}
-		// If the pagePath is a folder, use is index page if configured in the .conf file
+		// If the pagePath is a folder, use his index page if configured in the .conf file
 		pagePath += indexPage;
 	}
-	
+
 	const char *file = pagePath.c_str();
 
 	// Check if the page asked exist
@@ -88,7 +89,7 @@ static bool	isPrefix(std::string pagePath, std::string prefix)
 	return (true);
 }
 
-const Location*	findLocation2(const std::string& target, vHostPtr v_host)
+const Location*	findLocation(const std::string& target, vHostPtr v_host)
 {
 	MapStrLoc_t::const_iterator	it;
 	std::string					tmp;
@@ -120,12 +121,15 @@ void	throw_redirection(Client& cl, const PairStrStr_t& redirection)
 	cl.setRheaders("location", redirection.second);
 	throw std::runtime_error(redirection.first);
 }
+
+
+
 // find dans location, celui le plus resamblant a l'uri
-bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
+bool	translatePath(Request & req, vHostPtr & v_host, Client& cl)
 {
 	std::string			pagePath = req.getUri();
 
-	const Location*		locPtr = findLocation2(pagePath, v_host);
+	const Location*		locPtr = findLocation(pagePath, v_host);
 
 	if (locPtr == NULL)
 	{
@@ -142,17 +146,21 @@ bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		checkAllowedMethod(locPtr->getAllowMethod(), req.getMethodName());
 		// Delete prefix
 		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
-
 		//add location root or v_host root if no root;
+		if (pagePath.empty() == false and pagePath.at(0) == '/')
+			pagePath.erase(0, 1);
 		if (locPtr->getRoot().empty() == false)
 			pagePath = locPtr->getRoot() + pagePath;
 		else
 			pagePath = v_host->getRoot() + pagePath;
-		// check if rq is dir/ or file
-		// if file -> check file
-		// if dir -> check index -> check autoindex -> trhow 403;
+
+		//check if file ok or dirlist
 		if (checkPageFile(locPtr, pagePath, locPtr->getIndex()))
+		{
+			req.setPathtranslated(pagePath);
+			dirList(cl, locPtr->getRoot());
 			return (true);
+		}
 		cl.upDirPtr = &locPtr->getUploadDir();
 	}	
 

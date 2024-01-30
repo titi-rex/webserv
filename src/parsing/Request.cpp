@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 13:09:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 19:50:44 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ void	Request::makeResponse (void)
 
 	char	date[30];
 	getDate(date);
-	_rheaders["Date"] = date;
+	_rheaders["date"] = date;
 
 	for (iter = this->_rheaders.begin(); iter != this->_rheaders.end(); ++iter)
 		this->response += iter->first + ": " + iter->second + "\n";
@@ -472,16 +472,19 @@ void	Request::clear(void)
 	_body.clear();
 	_headers.clear();
 	_pathTranslated.clear();
+	_needCgi = false;
 	_parsingStatus = RL;
 	_bodySizeExpected = 0;
 	_raw.clear();
 	_size = 0;
-	_lenChunk = 0;
+	_lenChunk = ULONG_MAX;
 	_rline.clear();
 	_rStrStatus.clear();
 	_rbody.clear();
 	_rheaders.clear();
 	response.clear();
+	_isChunk = false;
+	_bodySizeExpected = 0;
 }
 
 std::ostream& operator<<(std::ostream& os, const Request& req)

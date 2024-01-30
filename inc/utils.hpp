@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 13:24:00 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 20:18:00 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,8 @@ void	sig_handler(int sig);
 std::string	getFile(const std::string& path);
 bool		check_access(std::string& path);
 
-bool	 	isDirListReq(Request & req);
-void		dirList(Request & req, vHostPtr & v_host);
-bool		findLocation(Request & req, vHostPtr & v_host, Client& cl);
+void		dirList(Client& cl, const std::string& root);
+bool		translatePath(Request & req, vHostPtr & v_host, Client& cl);
 
 int		wrap_tolower(int c);
 int		wrap_iscntrl(int c);
