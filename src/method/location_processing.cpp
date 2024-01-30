@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/30 13:49:16 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 14:00:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,13 +104,18 @@ const Location*	findLocation2(const std::string& target, vHostPtr v_host)
 	return (NULL);
 }
 
+void	throw_redirection(Client& cl, const PairStrStr_t& redirection)
+{
+	cl.setRStrStatus(redirection.first);
+	cl.setRheaders("location", redirection.second);
+	throw std::runtime_error(redirection.first);
+}
 // find dans location, celui le plus resamblant a l'uri
 bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 {
-	std::string					pagePath = req.getUri();
+	std::string			pagePath = req.getUri();
 
-	const Location*				locPtr = findLocation2(pagePath, v_host);
-
+	const Location*		locPtr = findLocation2(pagePath, v_host);
 
 	if (locPtr == NULL)
 	{
@@ -121,27 +126,19 @@ bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 	}
 	else
 	{
-		// Check if there is a redirection
-		PairStrStr_t	redirection = locPtr->getRedirection();
-
-		if (redirection.first != "")
-		{
-			// Fonction only if the parsing take the return with the error number and a string
-			req.setRStrStatus(redirection.first);
-			req.setRheaders("Location", redirection.second);
-			req.setRbody("");
-			throw std::runtime_error(redirection.first);
-		}
+		if (locPtr->getRedirection().first.empty() == false)
+			throw_redirection(cl, locPtr->getRedirection());
 
 		// Delete prefix
 		checkAllowedMethod(locPtr->getAllowMethod(), req.getMethodName());
 		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
-		if (pagePath.compare(0, 1, "/") != 0 && pagePath.length() != 0)
-			pagePath = "/" + pagePath;
-		if (locPtr->getRoot() != "")
+
+		if (locPtr->getRoot().empty() == false)
 			pagePath = locPtr->getRoot() + pagePath;
 		else
 			pagePath = v_host->getRoot() + pagePath;
+			
+		//check here if dirlist ! check index -> check autoindex -> trhow 403;
 		checkPageFile(pagePath, locPtr->getIndex());
 		cl.upDirPtr = &locPtr->getUploadDir();
 	}	
