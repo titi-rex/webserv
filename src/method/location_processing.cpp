@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/29 22:16:26 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:49:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,79 +78,75 @@ static bool	isPrefix(std::string pagePath, std::string prefix)
 	return (true);
 }
 
-// find dans location, celui le plus resamblant a l'uri
-std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
+const Location*	findLocation2(const std::string& target, vHostPtr v_host)
 {
-	MapStrLoc_t::const_iterator	i;
-	std::string					pagePath = req.getUri();
-	std::string					location = "";
+	MapStrLoc_t::const_iterator	it;
+	std::string					tmp;
 
 	// Find if there are an location equal to the request
-	for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
+	for (it = v_host->getLocations().begin(); it != v_host->getLocations().end(); ++it)
 	{
-		if (i->first.find(pagePath) != std::string::npos)
-		{
-			location = i->first;
-			break ;
-		}
+		if (it->first == target)
+			return(&(it->second));
 	}
 
-	if (location == "")
+	// Find if the closest location from the request
+	for (it = v_host->getLocations().begin(); it != v_host->getLocations().end(); ++it)
 	{
-		// Find if the closest location from the request
-		for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
+		if (isPrefix(target, it->first))
 		{
-			if (isPrefix(pagePath, i->first))
-			{
-				if (i->first.length() > location.length())
-					location = i->first;
-			}
+			if (it->first.length() > tmp.length())
+				tmp = it->first;
 		}
 	}
+	if (tmp.empty() == false)
+		return (&v_host->getLocations().at(tmp));
+	return (NULL);
+}
 
-	// if there is no location, search in vhost
-	if (location == "")
+// find dans location, celui le plus resamblant a l'uri
+bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
+{
+	std::string					pagePath = req.getUri();
+
+	const Location*				locPtr = findLocation2(pagePath, v_host);
+
+
+	if (locPtr == NULL)
 	{
-		// if (access(pagePath.c_str(), F_OK | R_OK))
-		// if (pagePath.at(0) == '/')
-		// 	pagePath.erase(1);
 		pagePath = v_host->getRoot() + pagePath;
 		checkPageFile(pagePath, v_host->getIndex());
-		return (pagePath);
+		if (cl.getMid() == DELETE)
+			throw std::runtime_error("403: delete at server root");
 	}
-
-	// check if method is allowed ?
-	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
-
-
-	// Check if there is a redirection
-	PairStrStr_t	redirection = v_host->getLocations().at(location).getRedirection();
-
-	if (redirection.first != "")
-	{
-		// Fonction only if the parsing take the return with the error number and a string
-		req.setRStrStatus(redirection.first);
-		req.setRheaders("Location", redirection.second);
-		req.setRbody("");
-		throw std::runtime_error(redirection.first);
-	}
-
-	// Delete prefix
-	pagePath = pagePath.substr(location.length(), pagePath.length() - location.length());
-	if (pagePath.compare(0, 1, "/") != 0 && pagePath.length() != 0)
-		pagePath = "/" + pagePath;
-	if (v_host->getLocations().at(location).getRoot() != "")
-		pagePath = v_host->getLocations().at(location).getRoot() + pagePath;
 	else
-		pagePath = v_host->getRoot() + pagePath;
+	{
+		// Check if there is a redirection
+		PairStrStr_t	redirection = locPtr->getRedirection();
 
+		if (redirection.first != "")
+		{
+			// Fonction only if the parsing take the return with the error number and a string
+			req.setRStrStatus(redirection.first);
+			req.setRheaders("Location", redirection.second);
+			req.setRbody("");
+			throw std::runtime_error(redirection.first);
+		}
 
-	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());
+		// Delete prefix
+		checkAllowedMethod(locPtr->getAllowMethod(), req.getMethodName());
+		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
+		if (pagePath.compare(0, 1, "/") != 0 && pagePath.length() != 0)
+			pagePath = "/" + pagePath;
+		if (locPtr->getRoot() != "")
+			pagePath = locPtr->getRoot() + pagePath;
+		else
+			pagePath = v_host->getRoot() + pagePath;
+		checkPageFile(pagePath, locPtr->getIndex());
+		cl.upDirPtr = &locPtr->getUploadDir();
+	}	
+
 	req.setPathtranslated(pagePath);
-
-
-	// add updir to cl (for POST file)
-	cl.upDirPtr = &v_host->getLocations().at(location).getUploadDir();
 
 	// Recuperer l'extention -> req.setExt()
 	std::size_t	found = pagePath.rfind('.');
@@ -163,6 +159,5 @@ std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		if (v_host->getCgi().count(extension))
 			req.setNeedCgi(true);
 	}
-
-	return (pagePath);
+	return (true);
 }

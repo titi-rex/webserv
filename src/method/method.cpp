@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 21:58:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:23:07 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 #include <sstream>
 #include <ctime>
 
-void	WebServer::methodHead( Client & cl, std::string & pagePath)
+void	WebServer::methodHead(Client& cl)
 {
-	std::ifstream	requestedPage(pagePath.c_str());
+	std::ifstream	requestedPage(cl.getPathTranslated().c_str());
 	std::string	page;
 
 	if(requestedPage.fail())
@@ -30,7 +30,7 @@ void	WebServer::methodHead( Client & cl, std::string & pagePath)
 	cl.setRheaders("Server", cl.host->getServerNames().at(0)); // Place holder
 	cl.setRheaders("Connection", "keep-alive");
 
-	cl.findSetType(cl, pagePath, getContentType());
+	cl.findSetType(cl, cl.getPathTranslated(), getContentType());
 
 	cl.makeResponse();
 }
@@ -40,8 +40,8 @@ void	WebServer::Method(Client &cl)
 	// chercher si le dir listing est au bon endroit !
 
 	// etape 1 : chercher la ressource cible (target)
-	std::string	pagePath = findLocation(cl, cl.host, cl);
-	logERROR << "pagepath" << pagePath;
+	findLocation(cl, cl.host, cl);
+	logERROR << "pagepath" << cl.getPathTranslated();
 	// if (isDirListReq(cl))
 	// {
 	// 	dirList(cl, cl.host);
@@ -64,16 +64,16 @@ void	WebServer::Method(Client &cl)
 	switch (cl.getMid())
 	{
 		case GET:
-			methodGet(cl, pagePath);
+			methodGet(cl);
 			break ;
 		case POST:
-			methodPost(cl, pagePath);
+			methodPost(cl);
 			break ;
 		case DELETE:
-			methodDelete(cl, pagePath);
+			methodDelete(cl);
 			break ;
 		case HEAD:
-			methodHead(cl, pagePath);
+			methodHead(cl);
 			break ;
 		case UNKNOW:
 			throw std::runtime_error("501 Method not Implemented");
@@ -81,24 +81,24 @@ void	WebServer::Method(Client &cl)
 	cl.clientStatus = PROCEEDED;
 }
 
-void	WebServer::methodGet( Client & cl, std::string & pagePath )
+void	WebServer::methodGet(Client & client)
 {
 	// Function use to send images
-	if (cl.getExt() == "png" || cl.getExt() == "jpg" || cl.getExt() == "jpeg")
-		imageGet(cl);
-	else if (cl.clientStatus != CGIOK)
+	if (client.getExt() == "png" || client.getExt() == "jpg" || client.getExt() == "jpeg")
+		imageGet(client);
+	else if (client.clientStatus != CGIOK)
 	{
 	logERROR << "yeadsad";
 		
-		std::string		body = getFile(pagePath);
-		cl.setRbody(body);
-		cl.findSetType(cl, pagePath, getContentType());
+		std::string		body = getFile(client.getPathTranslated());
+		client.setRbody(body);
+		client.findSetType(client, client.getPathTranslated(), getContentType());
 	}
 
-	cl.setRStrStatus ("200");
-	cl.setRline ("OK");
-	cl.setRheaders("Server", cl.host->getServerNames().at(0));
-	cl.makeResponse();
+	client.setRStrStatus ("200");
+	client.setRline ("OK");
+	client.setRheaders("Server", client.host->getServerNames().at(0));
+	client.makeResponse();
 }
 
 
@@ -108,8 +108,8 @@ bool doesFileExist(const std::string& pagePath)
 	return (stat(pagePath.c_str(), &buffer) == 0);
 }
 
-void WebServer::methodDelete(Client &client, std::string &path) {
-	std::string body = getFile(path);
+void WebServer::methodDelete(Client &client) {
+	std::string body = getFile(client.getPathTranslated());
 
 	if (std::remove(client.getPathTranslated().c_str()) != 0)
 		throw std::runtime_error("500: Remove return error");
@@ -148,10 +148,10 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 	return (false);
 }
 
-void WebServer::methodPost(Client &client, std::string &path) {
+void WebServer::methodPost(Client &client) {
 	MapStrStr_t 	cgi = client.host->getCgi();
 	std::string 	ext = client.getExt();
-	std::string		body = getFile(path);
+	std::string		body = getFile(client.getPathTranslated());
 	if (processPostRequest(client.getBody(), client))
 	{
 		client.setRStrStatus("201");

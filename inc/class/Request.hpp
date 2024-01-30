@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 13:34:04 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:09:46 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ class Request
 		std::string			getSpecifiedHeader(const std::string& key) const;
 
 		e_parsingStatus		getPstatus(void) const;
-		size_t	getBodySizeExpected(void) const;
+		size_t				getBodySizeExpected(void) const;
 
 		const std::string&	getRline(void) const;
 		const std::string&	getRStrStatus(void) const;
@@ -155,7 +155,7 @@ class Request
 
 		bool				build(const std::string& raw = "");
 		bool				addCgi(const std::string& buff);
-		void				findSetType(Request & req, std::string & path, MapStrStr_t	mapContentType);
+		void				findSetType(Request & req, const std::string& path, MapStrStr_t	mapContentType);
 		void				makeResponse(void);
 		void				clear(void);
 };

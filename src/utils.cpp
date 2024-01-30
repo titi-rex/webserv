@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 19:24:53 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:10:01 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 /**
  * @brief return the full content of a file
  */
-std::string	getFile(std::string& path)
+std::string	getFile(const std::string& path)
 {
 	std::ifstream	f(path.c_str());	//can throw ?
 	std::string		ret;

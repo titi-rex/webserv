@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 13:35:27 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:09:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	Request::setRStrStatus(const std::string& status, const MapStrStr_t* status
 		this->_rStrStatus = defaultStatus;
 };
 
-void	Request::findSetType(Request & req, std::string & path, MapStrStr_t	mapContentType)
+void	Request::findSetType(Request & req, const std::string& path, MapStrStr_t mapContentType)
 {
 	std::size_t	found = path.rfind('.');
 	if (found != 0)

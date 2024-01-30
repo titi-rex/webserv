@@ -7,7 +7,7 @@ PARSING: ERROR:
  } : reste ligne ignorer (pas d'erreur) si espace et sans espace si meme ligne que server
  { : reste ligne ignorer (pas d'erreur)
 
-
+no allow delete if no location
 clean cgi + new
 default page
 

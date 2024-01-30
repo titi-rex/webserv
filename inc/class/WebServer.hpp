@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/26 22:49:57 by louisa           ###   ########.fr       */
+/*   Updated: 2024/01/30 13:23:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ class WebServer
 
 		bool		_is_server_named(vHostPtr v_host, const std::string& name);
 		vHostPtr	_selectServer(SocketServer& sk, Request& rq);
-		void		_initContentTypeMap( void );
+		void		_initContentTypeMap(void );
 
 
 	public	:
@@ -128,13 +128,14 @@ class WebServer
 
 
 
-		void		Method(Client &cl);	
-		void		methodGet( Client & cl, std::string & path );
-		void		methodHead( Client &client, std::string & path) ;
+		void		Method(Client& cl);	
+		void		methodGet(Client& client);
+		void		methodHead(Client& client) ;
+		void		methodPost(Client& client);
+		void		methodDelete(Client& client);
 		void		getError(std::string status, Request& req);	// GET special pour error
-		void		methodPost(Client &client, std::string & path);
-		void		methodDelete(Client &client, std::string & path);
-		void		imageGet( Client & cl );
+		void		imageGet(Client & cl );
+
 		bool 		createFile(const std::string& fileName, const std::string& content, const std::string uploadDir);
 		bool		extractFileData(const std::string& part, std::string& filename, std::string& content);
 		bool		processPostRequest(const std::string& requestBody, Client& client);
