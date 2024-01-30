@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 14:07:35 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/30 14:19:48 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	WebServer::Method(Client &cl)
 	switch (cl.getMid())
 	{
 		case GET:
-			methodGet(cl, pagePath);
+			methodGet(cl);
 			break ;
 		case POST:
 			methodPost(cl, pagePath);
@@ -101,7 +101,7 @@ void	WebServer::Method(Client &cl)
 	cl.clientStatus = PROCEEDED;
 }
 
-void	WebServer::methodGet( Client & cl, std::string & pagePath )
+void	WebServer::methodGet( Client & cl )
 {
 	// Function use to send images
 	if (cl.getExt() == "png" || cl.getExt() == "jpg" || cl.getExt() == "jpeg")
@@ -109,6 +109,7 @@ void	WebServer::methodGet( Client & cl, std::string & pagePath )
 
 	else if (cl.clientStatus != CGIOK)
 	{
+		std::string		pagePath = cl.getPathTranslated();
 		std::string		body = getFile(pagePath);
 		cl.setRbody(body);
 		cl.findSetType(cl, pagePath, getContentType());
