@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/29 14:05:16 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/30 20:27:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,18 @@ static void	checkAllowedMethod(VecStr_t methodAllowed, std::string methodAsked)
 	throw std::runtime_error("405 Method Not Allowed");
 }
 
-static void checkPageFile(std::string & pagePath, std::string indexPage)
+static bool checkPageFile(const Location* loc, std::string & pagePath, std::string indexPage)
 {
-	// If the pagePath is a folder, use is index page if configured in the .conf file
-	if (pagePath.substr(pagePath.length() - 1, pagePath.length()) == "/")
+	if (pagePath.at(pagePath.size() - 1) == '/')
+	{
+		if (indexPage.empty() == true or access((pagePath + indexPage).c_str(), F_OK | R_OK))
+		{
+			if (loc == NULL or loc->getAutoIndex() == false)
+				throw std::runtime_error("403: no index and autoindex off at: " + pagePath);
+			return (true);
+		}
 		pagePath += indexPage;
+	}
 
 	const char *file = pagePath.c_str();
 
@@ -49,20 +56,20 @@ static void checkPageFile(std::string & pagePath, std::string indexPage)
 		pagePath += ".html";
 		file = pagePath.c_str();
 		if (access(file, F_OK) != 0)
-			throw std::runtime_error("404");
+			throw std::runtime_error("404: file doesn't exist: " + pagePath);
 	}
 	// Check if the page asked is readable
 	if (access(file, R_OK) != 0)
-		throw std::runtime_error("403");
+		throw std::runtime_error("403: can't acces: " + pagePath);
 
 	// Check if the file is a folder
 	DIR	*temp = opendir(file);
-
 	if (temp != NULL)
 	{
 		closedir(temp);
-		throw std::runtime_error("404");
+		throw std::runtime_error("404: file is a folder: " + pagePath);
 	}
+	return (false);
 }
 
 static bool	isPrefix(std::string pagePath, std::string prefix)
@@ -74,82 +81,94 @@ static bool	isPrefix(std::string pagePath, std::string prefix)
 		if (prefix[i] != pagePath[i])
 			return (false);
 	}
-
 	return (true);
 }
 
-// find dans location, celui le plus resamblant a l'uri
-std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl)
+const Location*	findLocation(const std::string& target, vHostPtr v_host)
 {
-	MapStrLoc_t::const_iterator	i;
-	std::string									pagePath = req.getUri();
-	std::string									location = "";
+	MapStrLoc_t::const_iterator	it;
+	std::string					tmp;
 
 	// Find if there are an location equal to the request
-	for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
+	for (it = v_host->getLocations().begin(); it != v_host->getLocations().end(); ++it)
 	{
-		if (i->first.find(pagePath) != std::string::npos)
+		if (it->first == target)
+			return(&(it->second));
+	}
+
+	// Find if the closest location from the request
+	for (it = v_host->getLocations().begin(); it != v_host->getLocations().end(); ++it)
+	{
+		if (isPrefix(target, it->first))
 		{
-			location = i->first;
-			break ;
+			if (it->first.length() > tmp.length())
+				tmp = it->first;
 		}
 	}
+	if (tmp.empty() == false)
+		return (&v_host->getLocations().at(tmp));
+	return (NULL);
+}
 
-	if (location == "")
+void	throw_redirection(Client& cl, const PairStrStr_t& redirection)
+{
+	cl.setRStrStatus(redirection.first);
+	cl.setRheaders("location", redirection.second);
+	throw std::runtime_error(redirection.first);
+}
+
+static void	findExt(Client& cl, const std::string& pagePath)
+{
+	size_t	found = pagePath.rfind('.');
+	if (found == std::string::npos)
+		return ;
+	std::string extension = pagePath.substr(found + 1, pagePath.length() - found);
+	cl.setExt(extension);
+	if (cl.host->getCgi().count(extension))
+		cl.setNeedCgi(true);
+}
+
+
+// find dans location, celui le plus resamblant a l'uri
+bool	translatePath(Client& cl)
+{
+	std::string			pagePath = cl.getUri();
+	const Location*		locPtr = findLocation(pagePath, cl.host);
+
+	if (locPtr == NULL)
 	{
-		// Find if the closest location from the request
-		for (i = v_host->getLocations().begin(); i != v_host->getLocations().end(); ++i)
-		{
-			if (isPrefix(pagePath, i->first))
-			{
-				if (i->first.length() > location.length())
-					location = i->first;
-			}
-		}
+		pagePath = cl.host->getRoot() + pagePath;
+		checkPageFile(NULL, pagePath, cl.host->getIndex());
+		if (cl.getMid() == DELETE)
+			throw std::runtime_error("403: delete at server root");
 	}
-
-	// Check if there is a redirection
-	PairStrStr_t	redirection = v_host->getLocations().at(location).getRedirection();
-
-	if (redirection.first != "")
-	{
-		// Fonction only if the parsing take the return with the error number and a string
-		req.setRStrStatus(redirection.first);
-		req.setRheaders("Location", redirection.second);
-		req.setRbody("");
-
-		throw std::runtime_error(redirection.first);
-	}
-
-	// Delete prefix
-	pagePath = pagePath.substr(location.length(), pagePath.length() - location.length());
-	if (pagePath.compare(0, 1, "/") != 0 && pagePath.length() != 0)
-		pagePath = "/" + pagePath;
-	if (v_host->getLocations().at(location).getRoot() != "")
-		pagePath = v_host->getLocations().at(location).getRoot() + pagePath;
 	else
-		pagePath = v_host->getRoot() + pagePath;
-
-	cl.upDirPtr = &v_host->getLocations().at(location).getUploadDir();
-
-	checkAllowedMethod(v_host->getLocations().at(location).getAllowMethod(), req.getMethodName());
-	checkPageFile(pagePath, v_host->getLocations().at(location).getIndex());
-
-
-
-	req.setPathtranslated(pagePath);
-	
-	// Recuperer l'extention -> req.setExt()
-	std::size_t	found = pagePath.rfind('.');
-	std::string	extension;
-	
-	if (found != 0)
 	{
-		extension = pagePath.substr(found + 1, pagePath.length() - found);
-		req.setExt(extension);
-		if (v_host->getCgi().count(extension))
-			req.setNeedCgi(true);
-	}
+		if (locPtr->getRedirection().first.empty() == false)
+			throw_redirection(cl, locPtr->getRedirection());
 
-	return (pagePath);
+		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName());
+		// Delete prefix
+		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
+
+		//add location root or cl.host root if no root;
+		if (pagePath.empty() == false and pagePath.at(0) == '/')
+			pagePath.erase(0, 1);
+		if (locPtr->getRoot().empty() == false)
+			pagePath = locPtr->getRoot() + pagePath;
+		else
+			pagePath = cl.host->getRoot() + pagePath;
+
+		//check if file ok or dirlist
+		if (checkPageFile(locPtr, pagePath, locPtr->getIndex()))
+		{
+			cl.setPathtranslated(pagePath);
+			dirList(cl, locPtr->getRoot());
+			return (true);
+		}
+		cl.upDirPtr = &locPtr->getUploadDir();
+	}
+	cl.setPathtranslated(pagePath);
+	findExt(cl, pagePath);
+	return (false);
 }

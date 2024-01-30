@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 15:04:04 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/01/30 20:34:25 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,16 @@
 
 void	WebServer::Method(Client &cl)
 {
-	// chercher si le dir listing est au bon endroit !
-	if (cl.getUri() != "/" && isDirListReq(cl))
+	// etape 1 : chercher la ressource cible (target)
+	if (translatePath(cl) == true)
 	{
-		dirList(cl, cl.host);
-		std::clog << "dirlist asked, rq is :" << std::endl << cl;
 		cl.clientStatus = PROCEEDED;
 		return ;
 	}
-	
-	// etape 1 : chercher la ressource cible (target)
-	std::string	pagePath = findLocation(cl, cl.host, cl);
-	
+
 	//etape 2: execute la cgi si besoin !
 	if (cl.clientStatus == GATHERED && cl.getNeedCgi())
 	{
-		std::clog << "GO GO GO CGI" << std::endl;
 		cl.clientStatus = CGIWAIT;
 		fillEnvCGI(cl);
 		execute_cgi(cl.host->getCgi().at(cl.getExt()), cl);
@@ -46,45 +40,40 @@ void	WebServer::Method(Client &cl)
 			methodGet(cl, true);
 			break ;
 		case POST:
-			methodPost(cl, pagePath);
+			methodPost(cl);
 			break ;
 		case DELETE:
-			methodDelete(cl, pagePath);
+			methodDelete(cl);
 			break ;
 		case HEAD:
 			methodGet(cl, false);
 			break ;
 		case UNKNOW:
-			throw std::runtime_error("501 Method not Implemented");
+			throw std::runtime_error("501: Method not Implemented");
 	};
 	cl.clientStatus = PROCEEDED;
 }
 
-void	WebServer::methodGet( Client & cl, bool withBody )
+void	WebServer::methodGet(Client& cl, bool withBody)
 {
 	// Function use to send images
 	if (cl.getExt() == "png" || cl.getExt() == "jpg" || cl.getExt() == "jpeg")
 		imageGet(cl);
-
 	else if (cl.clientStatus != CGIOK)
 	{
-		std::string		pagePath = cl.getPathTranslated();
-		std::string		body = getFile(pagePath);
+		std::string		body = getFile(cl.getPathTranslated());
 		cl.setRbody(body);
 
 		std::stringstream	sstr;
 		sstr << body.size();
 		cl.setRheaders("content-length", sstr.str());
-		cl.findSetType(cl, pagePath, getContentType());
+		cl.findSetType(cl, cl.getPathTranslated(), getContentType());
 	}
-
 	cl.setRStrStatus ("200");
 	cl.setRline ("OK");
 	cl.setRheaders("server", cl.host->getServerNames().at(0));
-	
 	if(!withBody)
 		cl.setRbody("");
-
 	cl.makeResponse();
 }
 
@@ -95,10 +84,10 @@ bool doesFileExist(const std::string& pagePath)
 	return (stat(pagePath.c_str(), &buffer) == 0);
 }
 
-void WebServer::methodDelete(Client &client, std::string &path) {
-	std::string body = getFile(path);
+void WebServer::methodDelete(Client &client) {
+	std::string body = getFile(client.getPathTranslated());
 
-	if (std::remove(client.getPathTranslated().c_str()) != 0) 
+	if (std::remove(client.getPathTranslated().c_str()) != 0)
 		throw std::runtime_error("500: Remove return error");
 
 	client.setRStrStatus("200");
@@ -135,10 +124,10 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 	return (false);
 }
 
-void WebServer::methodPost(Client &client, std::string &path) {
+void WebServer::methodPost(Client &client) {
 	MapStrStr_t 	cgi = client.host->getCgi();
 	std::string 	ext = client.getExt();
-	std::string		body = getFile(path);
+	std::string		body = getFile(client.getPathTranslated());
 	if (processPostRequest(client.getBody(), client))
 	{
 		client.setRStrStatus("201");

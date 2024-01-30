@@ -7,26 +7,17 @@ PARSING: ERROR:
  } : reste ligne ignorer (pas d'erreur) si espace et sans espace si meme ligne que server
  { : reste ligne ignorer (pas d'erreur)
 
+no allow delete if no location
+clean cgi + new
+default page
 
-
-
+changer valeur default location ! bloque dirList
 
 
 	std::fstream	logfile("rqbuild.log", std::ios_base::binary | std::ios_base::app);
 	
 	logfile.write(raw.c_str(), raw.size());
 	logfile.close();
-
-
-
-
-
-
-
-check if bodysizelimit ?
-bodysizelimit == 0 ? 
-
-
 
 
 
@@ -41,10 +32,6 @@ check cgi env plus clean
 ccgi = chekc retour child status 
 
 
-+ gerer timeout
-
-parsing : indiquer n ligne qund erreur 
-	
 
 
 

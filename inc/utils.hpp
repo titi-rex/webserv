@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 11:52:25 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/01/30 20:28:18 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,25 +33,24 @@
 
 
 
-void	sig_init(void (*handler) (int sig));
-void	sig_handler(int sig);
+void			sig_init(void (*handler) (int sig));
+void			sig_handler(int sig);
 
-std::string	getFile(std::string& path);
-bool		check_access(std::string& path);
+std::string		getFile(const std::string& path);
+bool			check_access(std::string& path);
 
-bool	 	isDirListReq(Request & req);
-void		dirList(Request & req, vHostPtr & v_host);
-std::string	findLocation(Request & req, vHostPtr & v_host, Client& cl);
+void			dirList(Client& cl, const std::string& root);
+bool			translatePath(Client& cl);
 
-int		wrap_tolower(int c);
-int		wrap_iscntrl(int c);
-void	wrap_close(int fd);
+int				wrap_tolower(int c);
+int				wrap_iscntrl(int c);
+void			wrap_close(int fd);
 
 std::string&	ltrim(std::string& str, const char* set);
 std::string&	rtrim(std::string& str, const char* set);
 std::string&	trim(std::string& str, const char* set);
 
-void	getDate( char * date );
-int		lengthSize( int contentLength );
+void			getDate( char * date );
+int				lengthSize( int contentLength );
 
 #endif
