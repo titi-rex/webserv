@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 13:23:07 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:38:51 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,17 @@ void	WebServer::Method(Client &cl)
 	// chercher si le dir listing est au bon endroit !
 
 	// etape 1 : chercher la ressource cible (target)
-	findLocation(cl, cl.host, cl);
-	logERROR << "pagepath" << cl.getPathTranslated();
+	if (findLocation(cl, cl.host, cl) == true)
+	{
+		logERROR << "pagepath" << cl.getPathTranslated();
+		dirList(cl, cl.host);
+		// std::clog << "dirlist asked, clq is :" << std::endl << cl;
+		// std::clog << "rq " << std::endl << (Request) cl << std::flush;
+		cl.clientStatus = PROCEEDED;
+		return ;
+	}
+	else
+		logERROR << "pagepath" << cl.getPathTranslated();
 	// if (isDirListReq(cl))
 	// {
 	// 	dirList(cl, cl.host);

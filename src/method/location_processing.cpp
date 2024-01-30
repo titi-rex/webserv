@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/30 14:49:22 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:43:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,21 @@ static void	checkAllowedMethod(VecStr_t methodAllowed, std::string methodAsked)
 	throw std::runtime_error("405 Method Not Allowed");
 }
 
-static void checkPageFile(const Location& loc, std::string & pagePath, std::string indexPage)
+static bool checkPageFile(const Location* loc, std::string & pagePath, std::string indexPage)
 {
-	// check if index eis empty
-	if (indexPage.empty() == true)
+	if (pagePath.at(pagePath.size() - 1) == '/')
 	{
-		if (loc.getAutoindex())
-	}
-	// If the pagePath is a folder, use is index page if configured in the .conf file
-	if (pagePath.substr(pagePath.length() - 1, pagePath.length()) == "/")
+		// check if index is empty && TODO: check if index exist
+		if (indexPage.empty() == true or access((pagePath + indexPage).c_str(), F_OK | R_OK))
+		{
+			if (loc == NULL or loc->getAutoIndex() == false)
+				throw std::runtime_error("403: no index and autoindex off at: " + pagePath);
+			return (true);
+		}
+		// If the pagePath is a folder, use is index page if configured in the .conf file
 		pagePath += indexPage;
-
+	}
+	
 	const char *file = pagePath.c_str();
 
 	// Check if the page asked exist
@@ -54,7 +58,7 @@ static void checkPageFile(const Location& loc, std::string & pagePath, std::stri
 		pagePath += ".html";
 		file = pagePath.c_str();
 		if (access(file, F_OK) != 0)
-			throw std::runtime_error("404: file dont exist: " + pagePath);
+			throw std::runtime_error("404: file doesn't exist: " + pagePath);
 	}
 	// Check if the page asked is readable
 	if (access(file, R_OK) != 0)
@@ -66,8 +70,9 @@ static void checkPageFile(const Location& loc, std::string & pagePath, std::stri
 	if (temp != NULL)
 	{
 		closedir(temp);
-		throw std::runtime_error("404: file dont exist: " + pagePath);
+		throw std::runtime_error("404: file doesn't exist: " + pagePath);
 	}
+	return (false);
 }
 
 static bool	isPrefix(std::string pagePath, std::string prefix)
@@ -125,7 +130,7 @@ bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 	if (locPtr == NULL)
 	{
 		pagePath = v_host->getRoot() + pagePath;
-		checkPageFile(pagePath, v_host->getIndex());
+		checkPageFile(NULL, pagePath, v_host->getIndex());
 		if (cl.getMid() == DELETE)
 			throw std::runtime_error("403: delete at server root");
 	}
@@ -143,9 +148,11 @@ bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 			pagePath = locPtr->getRoot() + pagePath;
 		else
 			pagePath = v_host->getRoot() + pagePath;
-			
-		//check here if dirlist ! check index -> check autoindex -> trhow 403;
-		checkPageFile(pagePath, locPtr->getIndex());
+		// check if rq is dir/ or file
+		// if file -> check file
+		// if dir -> check index -> check autoindex -> trhow 403;
+		if (checkPageFile(locPtr, pagePath, locPtr->getIndex()))
+			return (true);
 		cl.upDirPtr = &locPtr->getUploadDir();
 	}	
 
@@ -162,5 +169,5 @@ bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		if (v_host->getCgi().count(extension))
 			req.setNeedCgi(true);
 	}
-	return (true);
+	return (false);
 }
