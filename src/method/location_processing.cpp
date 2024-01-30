@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/30 14:00:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/30 14:49:22 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,13 @@ static void	checkAllowedMethod(VecStr_t methodAllowed, std::string methodAsked)
 	throw std::runtime_error("405 Method Not Allowed");
 }
 
-static void checkPageFile(std::string & pagePath, std::string indexPage)
+static void checkPageFile(const Location& loc, std::string & pagePath, std::string indexPage)
 {
+	// check if index eis empty
+	if (indexPage.empty() == true)
+	{
+		if (loc.getAutoindex())
+	}
 	// If the pagePath is a folder, use is index page if configured in the .conf file
 	if (pagePath.substr(pagePath.length() - 1, pagePath.length()) == "/")
 		pagePath += indexPage;
@@ -129,10 +134,11 @@ bool	findLocation(Request & req, vHostPtr & v_host, Client& cl)
 		if (locPtr->getRedirection().first.empty() == false)
 			throw_redirection(cl, locPtr->getRedirection());
 
-		// Delete prefix
 		checkAllowedMethod(locPtr->getAllowMethod(), req.getMethodName());
+		// Delete prefix
 		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
 
+		//add location root or v_host root if no root;
 		if (locPtr->getRoot().empty() == false)
 			pagePath = locPtr->getRoot() + pagePath;
 		else
