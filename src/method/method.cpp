@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 20:34:25 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/31 13:08:53 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,16 +125,18 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 }
 
 void WebServer::methodPost(Client &client) {
-	MapStrStr_t 	cgi = client.host->getCgi();
-	std::string 	ext = client.getExt();
 	std::string		body = getFile(client.getPathTranslated());
+
+	std::cout << "POST METHOD" << std::endl;
 	if (processPostRequest(client.getBody(), client))
 	{
+		std::cout << "PROCESS POST REQUEST TRUE" << std::endl;
 		client.setRStrStatus("201");
 		client.setRline("created");
 	}
 	else
 	{
+		std::cout << "PROCESS POST REQUEST FALSE" << std::endl;
 		client.setRStrStatus("200");
 		client.setRline("OK");		
 		client.setRbody(body);
@@ -157,17 +159,13 @@ bool WebServer::processPostRequest(const std::string& requestBody, Client& clien
 	// std::cout << "CONTENT = " << std::endl;
 	// std::cout << requestBody << std::endl;
 	if (boundary.empty()) 
-	{
-		std::cerr << "Boundary not found in request body." << std::endl;
 		return (false);
-	}
 	VecStr_t parts = splitByBoundary(requestBody, boundary);
 	for (size_t i = 0; i < parts.size(); ++i) {
 		std::string filename, content;
 		if (extractFileData(parts[i], filename, content)) 
 		{
 			createFile(filename, content, *client.upDirPtr);
-			// createFile(filename, content, *client.upDirPtr);
 			return (true);
 		}
 	}
