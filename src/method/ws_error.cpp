@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/28 19:22:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/31 19:34:17 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	WebServer::getError(std::string status, Request& req)
 	// Use for redirection
 	if (status.at(0) == '3')
 		req.makeResponse();
-	else try 
+	else
 	{
 		if (_errorPage.count(status) && check_access(_errorPage[status]))
 			pageDir = _errorPage[status];
@@ -29,10 +29,5 @@ void	WebServer::getError(std::string status, Request& req)
 			pageDir = _dirErrorPage + status + ".html";	
 		req.setRbody(getFile(pageDir));	//throw open file (fatal)
 		req.makeResponse();
-	}
-	catch (std::exception & e)
-	{
-		std::clog << e.what() << ", for page: " << pageDir << std::endl;
-		throw std::runtime_error("699: get_error: couldn't get default page");
 	}
 }
