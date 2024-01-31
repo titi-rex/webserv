@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/31 19:34:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/31 20:11:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,6 @@ void	WebServer::process_rq(Client &cl)
 	cl.host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl);
 
 	Method(cl);
-	logERROR << "after method" ;
 	if (cl.clientStatus == PROCEEDED)
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
 }

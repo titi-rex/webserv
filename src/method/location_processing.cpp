@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/31 19:28:53 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/31 20:26:53 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static bool checkPageFile(const Location* loc, std::string & pagePath, std::stri
 		if (indexPage.empty() == true or access((pagePath + indexPage).c_str(), F_OK | R_OK))
 		{
 			if (loc == NULL)
-				throw std::runtime_error("403: no index and autoindex off at: " + pagePath + " for server root ");
+				throw std::runtime_error("403: no index at server raw root for: " + pagePath);
 			if (loc->getAutoIndex() == false)
 				throw std::runtime_error("403: no index and autoindex off at: " + pagePath + " for location: " + loc->getUriOrExt());
 			if (access(pagePath.c_str(), F_OK))
@@ -141,21 +141,30 @@ bool	translatePath(Client& cl)
 	std::string			pagePath = cl.getUri();
 	const Location*		locPtr = findLocation(pagePath, cl.host);
 
+	// logWARNING << "pagePath: " << pagePath;
 	if (locPtr == NULL)
 	{
+		pagePath.erase(0, 1);
 		pagePath = cl.host->getRoot() + pagePath;
+		// logWARNING << ":witarootpagePath: " <<pagePath;
+
 		checkPageFile(NULL, pagePath, cl.host->getIndex());
 		if (cl.getMid() == DELETE)
 			throw std::runtime_error("403: delete at server root");
 	}
 	else
 	{
+		// logWARNING << "lockey: " << locPtr->getUriOrExt();
+		// logWARNING << "locroot: " << locPtr->getRoot();
 		if (locPtr->getRedirection().first.empty() == false)
 			throw_redirection(cl, locPtr->getRedirection());
+		// logWARNING << "noredirect ";
 
 		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName());
+		// logWARNING << "method OK";
 		// Delete prefix
 		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
+		// logWARNING << ":witoutprefixpagePath: " <<pagePath;
 
 		//add location root or cl.host root if no root;
 		if (pagePath.empty() == false and pagePath.at(0) == '/')
@@ -164,6 +173,7 @@ bool	translatePath(Client& cl)
 			pagePath = locPtr->getRoot() + pagePath;
 		else
 			pagePath = cl.host->getRoot() + pagePath;
+		// logWARNING << ":witarootpagePath: " <<pagePath;
 
 		//check if file ok or dirlist
 		if (checkPageFile(locPtr, pagePath, locPtr->getIndex()))
