@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/29 13:50:12 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:28:21 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,86 +26,13 @@ int WebServer::parseConf(std::string &line)
 		setDirErrorPage(splitedLine);
 	else if (splitedLine.at(0) == "error_page")
 		setErrorPage(splitedLine);
+	else if (splitedLine.at(0) == "dir_prefix")
+		setDirPrefix(splitedLine);
 	else if (line.find("server") != std::string::npos)
 		return (1);
 	else
 		throw std::runtime_error("Unrecognised line in configuration file");
 	return (0);
-}
-
-Location WebServer::parseLocation(VecStr_t fileVec, VecStr_t sLine, uintptr_t *i)
-{
-	Location	newLoc;
-	
-	if (sLine.size() < 2 || sLine[1].find_first_of("{}") != std::string::npos)
-		throw std::runtime_error("Location: no key supplied");
-	newLoc.setUriOrExt(sLine[1]);
-	++(*i);
-	while ((fileVec[*i].find("}") == std::string::npos))
-	{
-		formatLine(fileVec[*i]);
-		sLine = splitLine(fileVec[*i]);
-		if (sLine.empty() || sLine[0].empty() || sLine[0] == "{")
-		{
-			++(*i);
-			continue;
-		}
-		else if (sLine[0] == "root")
-			newLoc.setRoot(sLine);
-		else if (sLine[0] == "return")
-			newLoc.setRedirection(sLine);
-		else if (sLine[0] == "index")
-			newLoc.setIndex(sLine);
-		else if (sLine[0] == "allow_methods")
-			newLoc.setAllowMethod(sLine);
-		else if (sLine[0] == "autoindex")
-			newLoc.setAutoIndex(sLine);
-		else if (sLine[0] == "upload_dir")
-			newLoc.setUploadDir(sLine);
-		else
-			throw std::runtime_error("Location: Unrecognised line in configuration file : " + fileVec[*i]);
-		++(*i);
-	}
-	newLoc.isLegit();
-	return (newLoc);
-}
-
-void WebServer::parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end)
-{
-	VirtualHost	newServ;
-	VecStr_t	sLine;
-
-	for (uintptr_t i = start; i <= end; ++i) 
-	{
-		formatLine(fileVec[i]);
-		sLine = splitLine(fileVec[i]);
-		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{" || sLine[0] == "\n")
-			continue ;
-		else if (sLine[0] == "location")
-		{
-			Location newLoc;
-			newLoc = parseLocation(fileVec, sLine, &i);
-			newServ.setLocations(newLoc);
-		}
-		else if (sLine[0] == "listen")
-			newServ.setHostPort(sLine);
-		else if (sLine[0] == "server_name")
-			newServ.setServerNames(sLine);
-		else if (sLine[0] == "root")
-			newServ.setRoot(sLine);
-		else if (sLine[0] == "index")
-			newServ.setIndex(sLine);
-		else if (sLine[0] == "dir_cgi")
-			newServ.setDirCgi(sLine);
-		else if (sLine[0] == "path_cgi")
-			newServ.setCgi(sLine, true);
-		else if (sLine[0] == "cgi_available")
-			newServ.setCgi(sLine, false);
-		else
-			throw std::runtime_error("Server: Unrecognised line in configuration file : " + fileVec[i]);
-	}
-	newServ.secureUpload();
-	addVirtualHost(newServ);
 }
 
 void WebServer::findServ(VecStr_t fileVec, uintptr_t *i)
@@ -142,6 +69,82 @@ void WebServer::findServ(VecStr_t fileVec, uintptr_t *i)
 	}
 	throw std::runtime_error("Error : wrong synthax in configuration file");
 }
+
+void WebServer::parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end)
+{
+	VirtualHost	newServ(_dirPrefix);
+	VecStr_t	sLine;
+
+	for (uintptr_t i = start; i <= end; ++i) 
+	{
+		formatLine(fileVec[i]);
+		sLine = splitLine(fileVec[i]);
+		if (sLine.empty() || sLine[0] == "}" || sLine[0] == "{" || sLine[0] == "\n")
+			continue ;
+		else if (sLine[0] == "location")
+		{
+			Location newLoc(_dirPrefix);
+			newLoc = parseLocation(fileVec, sLine, &i);
+			newServ.setLocations(newLoc);
+		}
+		else if (sLine[0] == "listen")
+			newServ.setHostPort(sLine);
+		else if (sLine[0] == "server_name")
+			newServ.setServerNames(sLine);
+		else if (sLine[0] == "root")
+			newServ.setRoot(sLine);
+		else if (sLine[0] == "index")
+			newServ.setIndex(sLine);
+		else if (sLine[0] == "dir_cgi")
+			newServ.setDirCgi(sLine);
+		else if (sLine[0] == "path_cgi")
+			newServ.setCgi(sLine, true);
+		else if (sLine[0] == "cgi_available")
+			newServ.setCgi(sLine, false);
+		else
+			throw std::runtime_error("Server: Unrecognised line in configuration file : " + fileVec[i]);
+	}
+	newServ.secureUpload();
+	addVirtualHost(newServ);
+}
+
+Location WebServer::parseLocation(VecStr_t fileVec, VecStr_t sLine, uintptr_t *i)
+{
+	Location	newLoc(_dirPrefix);
+	
+	if (sLine.size() < 2 || sLine[1].find_first_of("{}") != std::string::npos)
+		throw std::runtime_error("Location: no key supplied");
+	newLoc.setUriOrExt(sLine[1]);
+	++(*i);
+	while ((fileVec[*i].find("}") == std::string::npos))
+	{
+		formatLine(fileVec[*i]);
+		sLine = splitLine(fileVec[*i]);
+		if (sLine.empty() || sLine[0].empty() || sLine[0] == "{")
+		{
+			++(*i);
+			continue;
+		}
+		else if (sLine[0] == "root")
+			newLoc.setRoot(sLine);
+		else if (sLine[0] == "return")
+			newLoc.setRedirection(sLine);
+		else if (sLine[0] == "index")
+			newLoc.setIndex(sLine);
+		else if (sLine[0] == "allow_methods")
+			newLoc.setAllowMethod(sLine);
+		else if (sLine[0] == "autoindex")
+			newLoc.setAutoIndex(sLine);
+		else if (sLine[0] == "upload_dir")
+			newLoc.setUploadDir(sLine);
+		else
+			throw std::runtime_error("Location: Unrecognised line in configuration file : " + fileVec[*i]);
+		++(*i);
+	}
+	newLoc.isLegit();
+	return (newLoc);
+}
+
 
 
 void WebServer::displayLocations(const VirtualHost& vHost)
@@ -182,6 +185,7 @@ void	WebServer::debugServ()
 {
 	std::clog << "*------------- DEBUG --------------*" << std::endl;
 	std::clog << "size body max = " << getBodySizeLimit() << std::endl;
+	std::clog << "directory prefix = " << (getDirPrefix().empty() ? "empty" : getDirPrefix()) << std::endl;
 	std::clog << "error page directory = " << getDirErrorPage() << std::endl;
 	std::clog << "error page value = ";
 	if (_errorPage.empty() == false)

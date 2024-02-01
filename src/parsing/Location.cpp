@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/29 13:42:32 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:25:42 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,16 @@ Location::Location(void) : isPath(true), autoIndex(false), upload(false), index(
 	allowMethod.push_back("GET");
 }
 
-Location::~Location(void) {}
-
-Location::Location(const Location& src) 
+Location::Location(const Location& src) : _dirPrefix(src._dirPrefix)
 {
 	*this = src;
 };
 
-void	Location::isLegit() const
+Location::~Location(void) {}
+
+Location::Location(const std::string& dirPrefix) : isPath(true), autoIndex(false), upload(false), _dirPrefix(dirPrefix), index("index.html")
 {
-	if (_key.empty() || (root.empty() && redirection.first.empty()))
-		throw std::runtime_error("Location: key / root or return are empty");
+	allowMethod.push_back("GET");
 }
 
 Location&	Location::operator=(const Location& src) 
@@ -46,43 +45,59 @@ Location&	Location::operator=(const Location& src)
 	return (*this);
 };
 
-bool Location::getIsPath() const{
+void	Location::isLegit() const
+{
+	if (_key.empty() || (root.empty() && redirection.first.empty()))
+		throw std::runtime_error("Location: key / root or return are empty");
+}
+
+bool Location::getIsPath() const
+{
 	return(this->isPath);
 };	
 
-bool Location::getAutoIndex() const{
+bool Location::getAutoIndex() const
+{
 	return(this->autoIndex);
 };
 
-bool Location::getUpload() const{
+bool Location::getUpload() const
+{
 	return(this->upload);
 };
 
-const std::string&	Location::getUriOrExt() const{
+const std::string&	Location::getUriOrExt() const
+{
 	return(this->_key);
 };
 
-const std::string&	Location::getRoot() const{
+const std::string&	Location::getRoot() const
+{
 	return(this->root);
 };
 
-const std::string& Location::getIndex() const{
+const std::string& Location::getIndex() const
+{
 	return(this->index);
 };
 
-const std::string& Location::getUploadDir() const{
+const std::string& Location::getUploadDir() const
+{
 	return(this->uploadDir);
 };
 
-const VecStr_t& Location::getAllowMethod() const{
+const VecStr_t& Location::getAllowMethod() const
+{
 	return(this->allowMethod);
 };
 
-const PairStrStr_t&	Location::getRedirection() const{
+const PairStrStr_t&	Location::getRedirection() const
+{
 	return(this->redirection);
 };
 
-void	Location::setIsPath(bool path){
+void	Location::setIsPath(bool path)
+{
 	this->isPath = path;
 };	
 
@@ -109,7 +124,7 @@ void	Location::setRoot(const VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: root supplied but value is missing");
-	this->root = sLine[1];
+	this->root = _dirPrefix + sLine[1];
 	if (this->root.at(this->root.size() - 1) != '/')
 	{
 		logWARNING << ("Location: root: missing terminating \'/\', automatically added");
@@ -130,7 +145,7 @@ void	Location::setUploadDir(const VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: upload_dir supplied but value is missing");
-	this->uploadDir = sLine[1];
+	this->uploadDir = _dirPrefix + sLine[1];
 	if (this->uploadDir.at(this->uploadDir.size() - 1) != '/')
 	{
 		logWARNING << ("Location: upload_dir: missing terminating \'/\', automatically added");

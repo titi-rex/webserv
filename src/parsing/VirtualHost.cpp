@@ -6,17 +6,15 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/01/29 13:49:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:11:11 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "VirtualHost.hpp"
 
-VirtualHost::VirtualHost(void) : root("/data"), index("index.html"), dirCgi("/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
+VirtualHost::VirtualHost(void) : root(_dirPrefix + "/data"), index("index.html"), dirCgi(_dirPrefix + "/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
 
-VirtualHost::~VirtualHost(void) {}
-
-VirtualHost::VirtualHost(const VirtualHost& src) 
+VirtualHost::VirtualHost(const VirtualHost& src) : _dirPrefix(src._dirPrefix)
 {
 	*this = src;
 };
@@ -35,31 +33,42 @@ VirtualHost&	VirtualHost::operator=(const VirtualHost& src)
 	return (*this);
 };
 
-const std::string&	VirtualHost::getRoot() const{
+VirtualHost::~VirtualHost(void) {}
+
+VirtualHost::VirtualHost(const std::string& dirPrefix) : _dirPrefix(dirPrefix), root(_dirPrefix + "/data"), index("index.html"), dirCgi(_dirPrefix + "/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
+
+const std::string&	VirtualHost::getRoot() const
+{
 	return(this->root);
 };
 
-const std::string&	VirtualHost::getIndex() const{
+const std::string&	VirtualHost::getIndex() const
+{
 	return(this->index);
 };
 
-const std::string&	VirtualHost::getDirCgi() const{
+const std::string&	VirtualHost::getDirCgi() const
+{
 	return(this->dirCgi);
 };
 
-const PairStrUint16_t&	VirtualHost::getHostPort() const{
+const PairStrUint16_t&	VirtualHost::getHostPort() const
+{
 	return(this->host_port);
 };
 
-const VecStr_t&	VirtualHost::getServerNames() const{
+const VecStr_t&	VirtualHost::getServerNames() const
+{
 	return(this->serverNames);
 };
 
-const MapStrStr_t&	VirtualHost::getCgi() const{
+const MapStrStr_t&	VirtualHost::getCgi() const
+{
 	return(this->cgi);
 };
 
-const MapStrLoc_t&	VirtualHost::getLocations() const{
+const MapStrLoc_t&	VirtualHost::getLocations() const
+{
 	return(this->locations);
 };
 
@@ -67,7 +76,7 @@ void	VirtualHost::setRoot(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("VirtualHost: root supplied but value is missing");
-	this->root = sLine.at(1);
+	this->root = _dirPrefix + sLine.at(1);
 	if (this->root.at(this->root.size() - 1) != '/')
 	{
 		logWARNING << ("VirtualHost: root: missing terminating \'/\', automatically added");
@@ -89,11 +98,14 @@ void	VirtualHost::setDirCgi(VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("VirtualHost: dir_cgi supplied but value is missing");
+	this->dirCgi =_dirPrefix + sLine.at(1);
 	if (sLine.at(1).at(sLine.at(1).size() - 1) != '/')
-		throw std::runtime_error("VirtualHost: dir_cgi: missing terminating \'/\' :" + sLine.at(1));
+	{
+		logWARNING << ("VirtualHost: dir_cgi: missing terminating \'/\' :" + sLine.at(1));
+		this->dirCgi += "/";
+	}
 	if (access(sLine.at(1).c_str(), F_OK | R_OK))
 		throw std::runtime_error("VirtualHost: dir_cgi \'" + sLine.at(1) + "\' not accessible");
-	this->dirCgi = sLine.at(1);
 };
 
 bool verifieSyntaxe(const std::string& s) 

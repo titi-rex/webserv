@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 14:16:01 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:01:29 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class WebServer
 	private	:
 		int					_efd;				// fd permettqnt d'acceder a l'instance epoll
 		size_t				_bodySizeLimit;		// limite generale de la taille maximum du body des clients pour tout le server, active si le virtual host ne precise pas (si == size_t max => pas de limite )
-		// std::string			_dirPrefix;			//prefix pour tout les directory
+		std::string			_dirPrefix;			//prefix pour tout les directory
 		std::string			_dirErrorPage;		// indique un repertoire specifique ou chercher les pqges d'erreur
 		MapStrStr_t			_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
 		VecVHost_t			_virtualHost;		// vector contenant tout les virtual hosts du server
@@ -64,7 +64,7 @@ class WebServer
 		MapStrStr_t			_envCGI;		// variables d'environnement a envoyer aux CGI
 		MapStrStr_t			_httpStatus;	//map http status <-> response line 
 		MapStrStr_t			_contentType;
-		MapFdClientPtr_t	_fdCgi;			//map liant fd lecture d'une cgi a son client
+		MapFdClientPtr_t	_fdCgi;			//map liant fd d'une cgi a son client
 
 		WebServer(void);
 		WebServer(const WebServer& src);
@@ -86,26 +86,30 @@ class WebServer
 		void				setErrorPage(const VecStr_t& sLine); 
 		void				setDirErrorPage(const VecStr_t& sLine);
 		void				setBodySizeLimit(const VecStr_t& sLine);
-		
+		void				setDirPrefix(const VecStr_t& sLine);
+
 		VecVHost_t			getVirtualHost(void) const;
+		const std::string&	getDirPrefix(void) const;
 		const MapStrStr_t&	getErrorPage(void) const;
 		const MapStrStr_t&	getHttpStatus(void) const;
 		const MapStrStr_t&	getContentType(void) const;
 		std::string			getDirErrorPage(void) const;
 		size_t				getBodySizeLimit(void) const;
 
-		Location			parseLocation(VecStr_t fileVec, VecStr_t sLine, uintptr_t *i);
 		int					parseConf(std::string &line);
-		void				parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end);
 		void 				findServ(VecStr_t fileVec, uintptr_t *i);
+		void				parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end);
+		Location			parseLocation(VecStr_t fileVec, VecStr_t sLine, uintptr_t *i);
+
 		void				addVirtualHost(const VirtualHost& vHost);
+
 		void				displayLocations(const VirtualHost& vHost);
 		void				displayCGI(const VirtualHost& vHost);
 		void				debugServ();
 
 		void				run(void);
-		void				addClient(int socketServerFd);
 
+		void				addClient(int socketServerFd);
 		void				modEpollList(int fd, int op, uint32_t events);
 		void				deleteClient(int client_fd);
 
@@ -127,11 +131,8 @@ class WebServer
 		void				execute_cgi(const std::string& script_path,Client& client);
 
 
-
-
 		void		Method(Client& cl);	
 		void		methodGet(Client& client, bool withBody);
-		void		methodHead(Client& client) ;
 		void		methodPost(Client& client);
 		void		methodDelete(Client& client);
 		void		getError(std::string status, Request& req);	// GET special pour error

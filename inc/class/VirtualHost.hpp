@@ -22,6 +22,7 @@
 class	VirtualHost
 {
 	private:
+		const std::string		_dirPrefix;
 		std::string				root;			//repertoire par defaut ou chercher les cibles des request
 		std::string				index;			//fichier par default a chercher si la requete est un repertoire
 		std::string				dirCgi;			//repertoire des cgi (default/data/cgi-bin)
@@ -31,14 +32,15 @@ class	VirtualHost
 		MapStrLoc_t				locations;		//list des locations enregistrer dans le virtual host
 	
 	public:
+		VirtualHost(void);
 		VirtualHost(const VirtualHost& src);
 		VirtualHost& operator=(const VirtualHost& src);
-		VirtualHost();
-		~VirtualHost();
+		~VirtualHost(void);
 
-		VirtualHost(size_t sizeMax);
+		VirtualHost(const std::string& dirPrefix);
 
 		const std::string&		getRoot() const;
+		// const std::string&		getDirPrefix() const;
 		const std::string&		getIndex() const;
 		const std::string&		getDirCgi() const;
 		const PairStrUint16_t&	getHostPort() const;

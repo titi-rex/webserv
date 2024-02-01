@@ -6,13 +6,13 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/31 19:21:24 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:23:56 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 
-WebServer::WebServer(void) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_page/") 
+WebServer::WebServer(void) : _efd(-1), _bodySizeLimit(1024), _dirPrefix("/"), _dirErrorPage("/data/default_page/") 
 {
 	_initHttpStatus();
 	_initContentTypeMap();
@@ -29,6 +29,7 @@ WebServer&	WebServer::operator=(const WebServer& src)
 		return (*this);
 	_efd = src._efd;
 	_bodySizeLimit = src._bodySizeLimit;
+	_dirPrefix = src._dirPrefix;
 	_dirErrorPage = src._dirErrorPage;
 	_virtualHost = src._virtualHost;
 	_errorPage = src._errorPage;
@@ -44,72 +45,7 @@ WebServer::~WebServer(void)
 	_closeAllFd(true);
 };
 
-
-void	WebServer::setVirtualHost(const VecVHost_t& vHost) { 
-	this->_virtualHost = vHost; 
-};
-
-void	WebServer::setErrorPage(const VecStr_t& sLine) 
-{
-	if (sLine.size() < 3)
-		throw std::runtime_error("WebServer: error_page supplied but value is missing");
-	if (access(sLine.at(2).c_str(), F_OK | R_OK))
-		throw std::runtime_error("Webserver: error_page \'" + sLine.at(2) + "\' not accessible");
-	this->_errorPage[sLine.at(1)] = sLine.at(2);
-};
-
-void	WebServer::setDirErrorPage(const VecStr_t& sLine) 
-{
-	if (sLine.size() < 2)
-		throw std::runtime_error("WebServer: dir_error_page supplied but value is missing");
-
-	this->_dirErrorPage = sLine.at(1); 
-	if (_dirErrorPage.at(_dirErrorPage.size() - 1) != '/')
-	{
-		logWARNING << ("WebServer: dir_error_page: missing terminating \'/\', automatically added");
-		this->_dirErrorPage += "/";
-	}
-	if (access(_dirErrorPage.c_str(), F_OK | R_OK))
-		throw std::runtime_error("Webserver: dir_error_page \'" + _dirErrorPage + "\' not accessible");
-};
-
-void	WebServer::setBodySizeLimit(const VecStr_t& sLine) 
-{
-	if (sLine.size() < 2)
-		throw std::runtime_error("WebServer: body_size_limit supplied but value is missing");
-	if (sLine.at(1).find_first_not_of("0123456789*") != std::string::npos)
-		throw std::runtime_error("WebServer: body_size_limit value incorrect");
-	if (sLine.at(1) == "*")
-		this->_bodySizeLimit = -1;
-	else
-		this->_bodySizeLimit = std::strtoul(sLine.at(1).c_str(), NULL, 10);	
-};
-
-VecVHost_t	WebServer::getVirtualHost(void) const { 
-	return (this->_virtualHost); 
-};
-
-const MapStrStr_t&	WebServer::getErrorPage(void) const { 
-	return (this->_errorPage); 
-};
-
-const MapStrStr_t&	WebServer::getHttpStatus(void) const { 
-	return (this->_httpStatus); 
-};
-
-const MapStrStr_t&	WebServer::getContentType(void) const { 
-	return (this->_contentType); 
-};
-
-std::string	WebServer::getDirErrorPage(void) const { 
-	return (this->_dirErrorPage); 
-};
-
-size_t	WebServer::getBodySizeLimit(void) const {
-	 return (this->_bodySizeLimit); 
-};
-
-WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErrorPage("/data/default_page/")
+WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirPrefix("/"), _dirErrorPage("/data/default_page/")
 {
 	VecStr_t 	fileVec;
 	uintptr_t	i = 0;
@@ -131,11 +67,102 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirErr
 		++i;
 	}
 	file.close();
-	// this->debugServ();
+	this->debugServ();
 	if (_virtualHost.empty())
 		throw std::runtime_error("WebServer: no server supplied");
 	_SocketServerList_init();
 	_epoll_init();
+};
+
+void	WebServer::setVirtualHost(const VecVHost_t& vHost) 
+{
+	this->_virtualHost = vHost; 
+};
+
+void	WebServer::setDirPrefix(const VecStr_t& sLine) 
+{
+	if (sLine.size() < 2)
+		throw std::runtime_error("WebServer: dir_prefix supplied but value is missing");
+	if (sLine.at(1).at(0) != '/')
+		throw std::runtime_error("Webserver: dir_prefix not an absolut path \'" + sLine.at(1) + "\'");
+	this->_dirPrefix = sLine.at(1);
+	if (this->_dirPrefix.at(this->_dirPrefix.size() - 1) != '/')
+	{
+		logWARNING << ("WebServer: dir_prefix: missing terminating \'/\', automatically added");
+		this->_dirPrefix += "/";
+	}
+	if (access(sLine.at(1).c_str(), F_OK | R_OK))
+		throw std::runtime_error("Webserver: dir_prefix \'" + sLine.at(1) + "\' not accessible");
+};
+
+void	WebServer::setErrorPage(const VecStr_t& sLine) 
+{
+	if (sLine.size() < 3)
+		throw std::runtime_error("WebServer: error_page supplied but value is missing");
+	if (access(sLine.at(2).c_str(), F_OK | R_OK))
+		throw std::runtime_error("Webserver: error_page \'" + sLine.at(2) + "\' not accessible");
+	this->_errorPage[sLine.at(1)] = sLine.at(2);
+};
+
+void	WebServer::setDirErrorPage(const VecStr_t& sLine) 
+{
+	if (sLine.size() < 2)
+		throw std::runtime_error("WebServer: dir_error_page supplied but value is missing");
+	this->_dirErrorPage = _dirPrefix + sLine.at(1); 
+	if (_dirErrorPage.at(_dirErrorPage.size() - 1) != '/')
+	{
+		logWARNING << ("WebServer: dir_error_page: missing terminating \'/\', automatically added");
+		this->_dirErrorPage += "/";
+	}
+	if (access(_dirErrorPage.c_str(), F_OK | R_OK))
+		throw std::runtime_error("Webserver: dir_error_page \'" + _dirErrorPage + "\' not accessible");
+};
+
+void	WebServer::setBodySizeLimit(const VecStr_t& sLine) 
+{
+	if (sLine.size() < 2)
+		throw std::runtime_error("WebServer: body_size_limit supplied but value is missing");
+	if (sLine.at(1).find_first_not_of("0123456789*") != std::string::npos)
+		throw std::runtime_error("WebServer: body_size_limit value incorrect");
+	if (sLine.at(1) == "*")
+		this->_bodySizeLimit = -1;
+	else
+		this->_bodySizeLimit = std::strtoul(sLine.at(1).c_str(), NULL, 10);	
+};
+
+VecVHost_t	WebServer::getVirtualHost(void) const 
+{
+	return (this->_virtualHost); 
+};
+
+const std::string&	WebServer::getDirPrefix(void) const 
+{
+	return (this->_dirPrefix); 
+};
+
+const MapStrStr_t&	WebServer::getErrorPage(void) const 
+{
+	return (this->_errorPage); 
+};
+
+const MapStrStr_t&	WebServer::getHttpStatus(void) const 
+{
+	return (this->_httpStatus); 
+};
+
+const MapStrStr_t&	WebServer::getContentType(void) const 
+{
+	return (this->_contentType); 
+};
+
+std::string	WebServer::getDirErrorPage(void) const 
+{
+	return (this->_dirErrorPage); 
+};
+
+size_t	WebServer::getBodySizeLimit(void) const 
+{
+	 return (this->_bodySizeLimit); 
 };
 
 void	WebServer::addVirtualHost(const VirtualHost& vHost)

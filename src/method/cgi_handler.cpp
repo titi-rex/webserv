@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 14:46:38 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:07:19 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
     {
         std::string keyValue = it->first + "=" + it->second;
         const char* keyValueChar = keyValue.c_str();
-        
+
         size_t len = 0;
         while (keyValueChar[len] != '\0')
             ++len;
