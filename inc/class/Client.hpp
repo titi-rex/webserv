@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 13:39:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 12:30:44 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include "VirtualHost.hpp"
 
 
-# define BUFFER_SIZE 2048
+# define BUFFER_SIZE 16000
 
 # define CLIENT_ENUM(TYPE) \
 	TYPE(CREATED) \

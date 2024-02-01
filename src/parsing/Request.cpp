@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 20:33:30 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 11:55:40 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,8 +259,8 @@ bool	Request::_parseHeaders(void)
 		end = -1;
 		std::string	key = _extractRange(start, end, ":");
 		std::string	value = _extractRange(start, end, "\n");
-		if (key.find_first_of(" ") != std::string::npos)
-			throw std::runtime_error("400: Forbidden space in header");
+		// if (key.find_first_of(" ") != std::string::npos)
+		// 	throw std::runtime_error("400: Forbidden space in header");
 		value = trim(value, " \r");
 		std::transform(key.begin(), key.end(), key.begin(), wrap_tolower);
 		std::transform(value.begin(), value.end(), value.begin(), wrap_tolower);
@@ -405,8 +405,8 @@ bool	Request::_parseCgiHeaders(void)
 		end = -1;
 		std::string	key = _extractRange(start, end, ":");
 		std::string	value = _extractRange(start, end, "\n");
-		if (key.find_first_of(" ") != std::string::npos)
-			throw std::runtime_error("400: Forbidden space in header");
+		// if (key.find_first_of(" ") != std::string::npos)
+		// 	throw std::runtime_error("400: Forbidden space in header");
 		value = trim(value, " \r");
 		std::transform(key.begin(), key.end(), key.begin(), wrap_tolower);
 		std::transform(value.begin(), value.end(), value.begin(), wrap_tolower);

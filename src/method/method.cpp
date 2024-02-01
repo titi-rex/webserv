@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/31 13:08:53 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 12:08:15 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	WebServer::Method(Client &cl)
 		execute_cgi(cl.host->getCgi().at(cl.getExt()), cl);
 		return ;
 	}
-
+	
 	// etape 3: on selectionne la method qui va bien et on la fait
 	switch (cl.getMid())
 	{
@@ -127,20 +127,19 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 void WebServer::methodPost(Client &client) {
 	std::string		body = getFile(client.getPathTranslated());
 
-	std::cout << "POST METHOD" << std::endl;
 	if (processPostRequest(client.getBody(), client))
 	{
-		std::cout << "PROCESS POST REQUEST TRUE" << std::endl;
 		client.setRStrStatus("201");
 		client.setRline("created");
 	}
 	else
 	{
-		std::cout << "PROCESS POST REQUEST FALSE" << std::endl;
 		client.setRStrStatus("200");
 		client.setRline("OK");		
-		client.setRbody(body);
+		// client.setRbody(body);
 	}
+
+	std::cout << "RBODY = " << client.getRbody() << std::endl;
 		
 	// std::string contentType = client.getSpecifiedHeader("content-type");
 

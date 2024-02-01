@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/30 20:43:59 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/31 15:10:13 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@
 extern sig_atomic_t	g_status;
 
 static void	checkAllowedMethod(VecStr_t methodAllowed, std::string methodAsked)
-{
+{	
 	// Always allow HEADs
-	if (methodAsked == "HEAD")
-		return;
+	// if (methodAsked == "HEAD")
+	// 	return;
 
 	VecStr_t::iterator	i;
 

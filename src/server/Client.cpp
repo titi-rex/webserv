@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 20:15:34 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 12:09:53 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ bool	Client::readCgi(void)
 	if (n_rec < BUFFER_SIZE || buf[n_rec] == '\0')
 		end = true;
 	buf[n_rec] = 0;
+	std::cout << "buffer = " << buf << std::endl;
 	if (addCgi(buf) || end)//throw ERROR or FATAL
 	{
 		clientStatus = CGIOK;
