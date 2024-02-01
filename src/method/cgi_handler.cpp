@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 12:29:29 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 13:57:09 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,10 @@ void WebServer::fillValueFromCGI(MapStrStr_t cgi, std::string key, std::string v
     MapStrStr_t::iterator it = cgi.find(value);
 
     if (it != cgi.end())
+	{
         _envCGI[key] = it->second;
+		// std::cout << "SCRIPT_NAME = " << it->second << std::endl;
+	}
 }
 
 std::string uint16tostr(uint16_t value) {
@@ -75,13 +78,16 @@ void    WebServer::fillEnvCGI(const Client& client)
         fillElement("REQUEST_METHOD", "GET");
     else
         fillElement("REQUEST_METHOD", "POST");
-    // fillElement("PATH_INFO", client.getPathInfo());
+    // fillElement("PATH_INFO", client.getPathTranslated());
     fillElement("PATH_INFO", "/home/louisa/Documents/webserv/data/example_page/hello.php");
+    fillElement("SCRIPT_FILENAME", "/home/louisa/Documents/webserv/data/example_page/hello.php");
     fillElement("PATH_TRANSLATED", client.getPathTranslated());
     fillElement("QUERY_STRING", client.getQuery());
     fillElement("REMOTE_HOST", "");
+    fillElement("REDIRECT_STATUS", "200");
     fillElement("REMOTE_ADDR", uint32tostr(client.getSin().sin_addr.s_addr));
     fillElement("AUTH_TYPE", "null");
+    // fillElement("SCRIPT_NAME", "/home/louisa/Documents/webserv/data/cgi-bin/php");
     fillValueFromCGI(client.host->getCgi(), "SCRIPT_NAME", client.getExt());
     fillValueFromHeader(client.getHeaders(), "content-type");
     fillValueFromHeader(client.getHeaders(), "content-length");
@@ -142,9 +148,10 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 			_closeAllFd(false);
 
 			// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
-			// char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathInfo().c_str()), NULL};
+			// char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathTranslated().c_str()), NULL};
 			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>("/home/louisa/Documents/webserv/data/example_page/hello.php"), NULL};
 			std::cerr << "pathcript:" << argc[0] << std::endl;
+			std::cerr << "arg1:" << argc[1] << std::endl;
 			execve(argc[0], argc, envp);
 		}
 		perror("error : execve");
