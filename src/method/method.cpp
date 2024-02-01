@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 14:12:40 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:29:46 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +124,8 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 	return (false);
 }
 
-void WebServer::methodPost(Client &client) {
-	std::string		body = getFile(client.getPathTranslated());
-
+void WebServer::methodPost(Client &client) 
+{
 	if (processPostRequest(client.getBody(), client))
 	{
 		client.setRStrStatus("201");
@@ -134,16 +133,12 @@ void WebServer::methodPost(Client &client) {
 	}
 	else
 	{
-		// std::cout
 		client.setRStrStatus("200");
-		client.setRline("OK");		
-		// client.setRbody(body);
+		client.setRline("OK");
 	}
-		
-	// std::string contentType = client.getSpecifiedHeader("content-type");
-
+	
 	std::stringstream contentLengthStream;
-	contentLengthStream << body.size();
+	contentLengthStream << client.getRbody().size();
 	client.setRheaders("server", client.host->getServerNames().at(0));
 	client.setRheaders("content-length", contentLengthStream.str());
 
@@ -154,8 +149,6 @@ void WebServer::methodPost(Client &client) {
 bool WebServer::processPostRequest(const std::string& requestBody, Client& client) 
 {
 	std::string boundary = extractBoundary(requestBody);
-	// std::cout << "CONTENT = " << std::endl;
-	// std::cout << requestBody << std::endl;
 	if (boundary.empty()) 
 		return (false);
 	VecStr_t parts = splitByBoundary(requestBody, boundary);
