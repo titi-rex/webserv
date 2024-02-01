@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 14:29:46 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:46:04 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,9 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 {
 	std::string filePath = uploadDir + fileName;
 	std::ofstream of(filePath.c_str(), std::ios::out | std::ios::binary);
-	if (!of) {
-		std::cerr << "Erreur : Impossible de créer le fichier " << filePath << std::endl;
+	if (!of) 
+	{
+		throw std::runtime_error("500");
 		return (false);
 	}
 	
@@ -116,7 +117,7 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 	
 	if (!of) 
 	{
-		std::cerr << "Erreur : Échec lors de l'écriture dans le fichier " << filePath << std::endl;
+		throw std::runtime_error("500");
 		return (false);
 	}
 	else
