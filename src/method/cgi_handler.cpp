@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 14:11:03 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:32:29 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,6 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
     int envpSize = map.size() + 1; 
     
     envp = new char*[envpSize];
-    // std::cout << std::endl;
-    // std::cout << "*------- CGI ENVIROMMENT -------*" << std::endl;
-    // std::cout << std::endl;
     for (MapStrStr_t::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         std::string keyValue = it->first + "=" + it->second;
@@ -117,7 +114,6 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
         while (keyValueChar[len] != '\0')
             ++len;
         envp[i] = new char[len + 1];
-        // std::cout << "env[i] = " << envp[i] << std::endl;
         for (size_t j = 0; j <= len; ++j)
             envp[i][j] = keyValueChar[j];
         ++i;
@@ -129,8 +125,6 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
 void WebServer::execute_cgi(const std::string& script_path, Client& client) 
 {
 	char**	envp;
-
-	std::clog <<  "EXEC CGI with path :"<< script_path << ":" << std::endl;
 
 	convertToEnvp(_envCGI, envp);
 	pipe(client.getFd_cgi());
@@ -149,8 +143,6 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 			// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
 			// char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathTranslated().c_str()), NULL};
 			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>("/home/louisa/Documents/webserv/data/example_page/hello.php"), NULL};
-			std::cerr << "pathcript:" << argc[0] << std::endl;
-			std::cerr << "arg1:" << argc[1] << std::endl;
 			execve(argc[0], argc, envp);
 		}
 		perror("error : execve");
