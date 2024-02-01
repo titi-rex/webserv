@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/29 13:39:31 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/01/31 20:11:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,15 +135,15 @@ void	WebServer::process_rq_error(Client &cl)
 	}
 	catch(const std::exception& e)
 	{
+		logERROR << e.what();
 		logERROR << "ERROR FATAL, ABANDON CLIENT";
-		std::clog << e.what() << std::endl;
 		try
 		{
 			modEpollList(cl.getFd(), EPOLL_CTL_DEL, 0);	// throw fatal
 			close(_ClientList[cl.getFd()].getFd());
-			_ClientList.erase(cl.getFd());
 			_readyToProceedList[cl.getFd()] = NULL;
 			logINFO << "deleted: " << cl;
+			_ClientList.erase(cl.getFd());
 		}
 		catch(const std::exception& ef)
 		{
