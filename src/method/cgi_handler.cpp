@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 14:31:29 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 14:46:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,7 @@ void WebServer::fillValueFromCGI(MapStrStr_t cgi, std::string key, std::string v
     MapStrStr_t::iterator it = cgi.find(value);
 
     if (it != cgi.end())
-	{
         _envCGI[key] = it->second;
-		// std::cout << "SCRIPT_NAME = " << it->second << std::endl;
-	}
 }
 
 std::string uint16tostr(uint16_t value) {
@@ -80,6 +77,8 @@ void    WebServer::fillEnvCGI(const Client& client)
         fillElement("REQUEST_METHOD", "POST");
     fillElement("PATH_INFO", client.getPathTranslated());
     fillElement("SCRIPT_FILENAME", client.getPathTranslated());
+	//    fillElement("PATH_INFO", "/home/louisa/Documents/webserv/data/example_page/hello.php");
+    // fillElement("SCRIPT_FILENAME", "/home/louisa/Documents/webserv/data/example_page/hello.php");
     fillElement("PATH_TRANSLATED", client.getPathTranslated());
     fillElement("QUERY_STRING", client.getQuery());
     fillElement("REMOTE_HOST", "");
@@ -89,13 +88,6 @@ void    WebServer::fillEnvCGI(const Client& client)
     fillValueFromCGI(client.host->getCgi(), "SCRIPT_NAME", client.host->getCgi().at(client.getExt()));
     fillValueFromHeader(client.getHeaders(), "content-type");
     fillValueFromHeader(client.getHeaders(), "content-length");
-
-    // client
-    // HTTP_ACCEPT
-    // HTTP_ACCEPT_LANGUAGE
-    // HTTP_USER_AGENT
-    // HTTP_COOKIE
-    // HTTP_REFERER
 }
 
 void convertToEnvp(const MapStrStr_t& map, char**& envp)
@@ -104,9 +96,6 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
     int envpSize = map.size() + 1; 
     
     envp = new char*[envpSize];
-    // std::cout << std::endl;
-    // std::cout << "*------- CGI ENVIROMMENT -------*" << std::endl;
-    // std::cout << std::endl;
     for (MapStrStr_t::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         std::string keyValue = it->first + "=" + it->second;
@@ -116,7 +105,6 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
         while (keyValueChar[len] != '\0')
             ++len;
         envp[i] = new char[len + 1];
-        // std::cout << "env[i] = " << envp[i] << std::endl;
         for (size_t j = 0; j <= len; ++j)
             envp[i][j] = keyValueChar[j];
         ++i;
@@ -128,8 +116,6 @@ void convertToEnvp(const MapStrStr_t& map, char**& envp)
 void WebServer::execute_cgi(const std::string& script_path, Client& client) 
 {
 	char**	envp;
-
-	std::clog <<  "EXEC CGI with path :"<< script_path << ":" << std::endl;
 
 	convertToEnvp(_envCGI, envp);
 	pipe(client.getFd_cgi());
@@ -145,10 +131,8 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 			dup2(client.getFd_cgi()[1], STDOUT_FILENO);
 			_closeAllFd(false);
 
-			// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
 			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathTranslated().c_str()), NULL};
-			std::cerr << "pathcript:" << argc[0] << std::endl;
-			std::cerr << "arg1:" << argc[1] << std::endl;
+			// char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>("/home/louisa/Documents/webserv/data/example_page/hello.php"), NULL};
 			execve(argc[0], argc, envp);
 		}
 		perror("error : execve");
