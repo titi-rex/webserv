@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 13:57:09 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:11:03 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,8 @@ void    WebServer::fillEnvCGI(const Client& client)
     fillElement("REMOTE_HOST", "");
     fillElement("REDIRECT_STATUS", "200");
     fillElement("REMOTE_ADDR", uint32tostr(client.getSin().sin_addr.s_addr));
-    fillElement("AUTH_TYPE", "null");
-    // fillElement("SCRIPT_NAME", "/home/louisa/Documents/webserv/data/cgi-bin/php");
-    fillValueFromCGI(client.host->getCgi(), "SCRIPT_NAME", client.getExt());
+    fillElement("AUTH_TYPE", "null"); 
+    fillValueFromCGI(client.host->getCgi(), "SCRIPT_NAME", client.host->getCgi().at(client.getExt()));
     fillValueFromHeader(client.getHeaders(), "content-type");
     fillValueFromHeader(client.getHeaders(), "content-length");
 

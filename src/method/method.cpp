@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 13:59:59 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:12:40 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,13 +134,11 @@ void WebServer::methodPost(Client &client) {
 	}
 	else
 	{
-		std::cout
+		// std::cout
 		client.setRStrStatus("200");
 		client.setRline("OK");		
 		// client.setRbody(body);
 	}
-
-	std::cout << "RBODY = " << client.getRbody() << std::endl;
 		
 	// std::string contentType = client.getSpecifiedHeader("content-type");
 
