@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/31 21:08:48 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 10:24:20 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static std::string	uriPage(std::string fileName, std::string directory, const st
 	// Remove the root's path from the directory, keeping the '/' in front of the uriPage
 	if (uriPage.compare(0, root.length(), root) == 0)
 		uriPage = uriPage.substr(root.length() - 1, uriPage.length() - root.length() + 1);
-	// logERROR << "uri for: " << fileName << uriPage;
+	logERROR << "uri for: " << fileName << uriPage;
 	return (uriPage);
 }
 
@@ -63,7 +63,7 @@ static std::string	getExtensionImage(std::string fileName)
 
 
 
-static std::string	makeDirList(std::string directory, const std::string& root)
+static std::string	makeDirList(const std::string& directory, const std::string& hostRoot ,const std::string& root)
 {
 	struct dirent*		ptr_dir = NULL;
 	DIR					*dir = opendir(directory.c_str());
@@ -87,7 +87,6 @@ static std::string	makeDirList(std::string directory, const std::string& root)
 	// Add the name of every file in the html page
 	while ((ptr_dir = readdir(dir)) != NULL)
 	{
-		// Folder  .. doesn't have an uri
 		std::string	fileName = ptr_dir->d_name;
 		std::string	extensionImage = getExtensionImage(fileName);
 		DIR 		*tmp = opendir((directory + fileName).c_str());
@@ -96,20 +95,20 @@ static std::string	makeDirList(std::string directory, const std::string& root)
 			continue ;
 		else if (fileName == "..")
 		{
-			parentDir += "<dt><a href=\"" + uriPage("", goBack(directory), root) + "\">";
+			parentDir += "<dt><a href=\"" + uriPage("", goBack(directory), hostRoot) + "\">";
 			parentDir += "<img src=\"/img/parent_directory.png\" alt=\"parent directory\" width=\"20\" height=\"20\"> ";
 			parentDir += "Parent Directory</a></dt>\n";
 		}
 		else if (tmp != NULL)
 		{
-			ss << "<dt><a href=\"" << uriPage(fileName, directory, root) << "/\">";
+			ss << "<dt><a href=\"" << uriPage(fileName, directory, hostRoot) << "/\">";
 			ss << "<img src=\"/img/folder.jpg\" alt=\"folder\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
 			closedir(tmp);
 		}
 		else
 		{
-			ss << "<dt><a href=\"" << uriPage(fileName, directory, root) << "\">";
+			ss << "<dt><a href=\"" << uriPage(fileName, directory, hostRoot) << "\">";
 			ss << "<img src=\"" << extensionImage << "\" alt=\"file\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
 		}
@@ -122,7 +121,7 @@ static std::string	makeDirList(std::string directory, const std::string& root)
 
 void	dirList(Client& cl, const std::string& root)
 {
-	std::string	tmp = makeDirList(cl.getPathTranslated(), root);
+	std::string	tmp = makeDirList(cl.getPathTranslated(), cl.host->getRoot(), root);
 	cl.setRbody(tmp);
 	cl.setRStrStatus("200");
 	cl.makeResponse();
