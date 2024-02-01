@@ -6,7 +6,7 @@
 /*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 14:32:29 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:41:14 by louisa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,7 @@ void WebServer::fillValueFromCGI(MapStrStr_t cgi, std::string key, std::string v
     MapStrStr_t::iterator it = cgi.find(value);
 
     if (it != cgi.end())
-	{
         _envCGI[key] = it->second;
-		// std::cout << "SCRIPT_NAME = " << it->second << std::endl;
-	}
 }
 
 std::string uint16tostr(uint16_t value) {
@@ -90,13 +87,6 @@ void    WebServer::fillEnvCGI(const Client& client)
     fillValueFromCGI(client.host->getCgi(), "SCRIPT_NAME", client.host->getCgi().at(client.getExt()));
     fillValueFromHeader(client.getHeaders(), "content-type");
     fillValueFromHeader(client.getHeaders(), "content-length");
-
-    // client
-    // HTTP_ACCEPT
-    // HTTP_ACCEPT_LANGUAGE
-    // HTTP_USER_AGENT
-    // HTTP_COOKIE
-    // HTTP_REFERER
 }
 
 void convertToEnvp(const MapStrStr_t& map, char**& envp)
@@ -140,7 +130,6 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 			dup2(client.getFd_cgi()[1], STDOUT_FILENO);
 			_closeAllFd(false);
 
-			// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
 			// char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathTranslated().c_str()), NULL};
 			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>("/home/louisa/Documents/webserv/data/example_page/hello.php"), NULL};
 			execve(argc[0], argc, envp);
