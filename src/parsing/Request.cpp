@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 14:11:32 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:39:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -449,7 +449,7 @@ bool	Request::addCgi(const std::string& buff)
 		}
 		case CGIEOF:
 		{
-			_rbody += buff;
+			_rbody += _raw;
 			break;
 		}
 		case RL:

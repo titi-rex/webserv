@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi_handler.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 14:11:03 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:31:29 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,8 @@ void    WebServer::fillEnvCGI(const Client& client)
         fillElement("REQUEST_METHOD", "GET");
     else
         fillElement("REQUEST_METHOD", "POST");
-    // fillElement("PATH_INFO", client.getPathTranslated());
-    fillElement("PATH_INFO", "/home/louisa/Documents/webserv/data/example_page/hello.php");
-    fillElement("SCRIPT_FILENAME", "/home/louisa/Documents/webserv/data/example_page/hello.php");
+    fillElement("PATH_INFO", client.getPathTranslated());
+    fillElement("SCRIPT_FILENAME", client.getPathTranslated());
     fillElement("PATH_TRANSLATED", client.getPathTranslated());
     fillElement("QUERY_STRING", client.getQuery());
     fillElement("REMOTE_HOST", "");
@@ -147,8 +146,7 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 			_closeAllFd(false);
 
 			// on doit executer la cgi avec la target en parametre askip?? (cf sujet)
-			// char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathTranslated().c_str()), NULL};
-			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>("/home/louisa/Documents/webserv/data/example_page/hello.php"), NULL};
+			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathTranslated().c_str()), NULL};
 			std::cerr << "pathcript:" << argc[0] << std::endl;
 			std::cerr << "arg1:" << argc[1] << std::endl;
 			execve(argc[0], argc, envp);

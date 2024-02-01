@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/01 13:14:17 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/01 14:17:26 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,7 @@ bool	translatePath(Client& cl)
 		cl.upDirPtr = &locPtr->getUploadDir();
 	}
 	cl.setPathtranslated(pagePath);
+	logERROR << pagePath;
 	findExt(cl, pagePath);
 	return (false);
 }

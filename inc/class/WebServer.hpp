@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 20:30:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/01 14:16:01 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ class WebServer
 	private	:
 		int					_efd;				// fd permettqnt d'acceder a l'instance epoll
 		size_t				_bodySizeLimit;		// limite generale de la taille maximum du body des clients pour tout le server, active si le virtual host ne precise pas (si == size_t max => pas de limite )
+		// std::string			_dirPrefix;			//prefix pour tout les directory
 		std::string			_dirErrorPage;		// indique un repertoire specifique ou chercher les pqges d'erreur
 		MapStrStr_t			_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
 		VecVHost_t			_virtualHost;		// vector contenant tout les virtual hosts du server
