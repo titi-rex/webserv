@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 11:05:13 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 12:59:04 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,6 @@ void	WebServer::methodGet(Client& cl, bool withBody)
 	cl.makeResponse();
 }
 
-
-bool doesFileExist(const std::string& pagePath) 
-{
-	struct stat buffer;
-	return (stat(pagePath.c_str(), &buffer) == 0);
-}
 
 void WebServer::methodDelete(Client &client) {
 	std::string body = getFile(client.getPathTranslated());

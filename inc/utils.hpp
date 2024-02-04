@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 12:10:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 13:08:41 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,10 @@
 # include "Client.hpp"
 # include "log.hpp"
 
-
-
 void			sig_init(void (*handler) (int sig));
 void			sig_handler(int sig);
 
 std::string		getFile(const std::string& path);
-bool			check_access(std::string& path);
 
 void			dirList(Client& cl, const std::string& root);
 bool			translatePath(Client& cl);
@@ -51,6 +48,5 @@ std::string&	rtrim(std::string& str, const char* set);
 std::string&	trim(std::string& str, const char* set);
 
 void			getDate( char * date );
-int				lengthSize( int contentLength );
 
 #endif

@@ -11,16 +11,6 @@ no allow delete if no location
 clean cgi + new
 default page
 
-changer valeur default location ! bloque dirList
-
-
-	std::fstream	logfile("rqbuild.log", std::ios_base::binary | std::ios_base::app);
-	
-	logfile.write(raw.c_str(), raw.size());
-	logfile.close();
-
-
-
 
 
 
@@ -28,8 +18,6 @@ to not do :
 
 better fonction log
 
-check cgi env plus clean
-ccgi = chekc retour child status 
 
 
 

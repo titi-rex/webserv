@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 11:18:48 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 13:25:44 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ class WebServer
 		void				modEpollList(int fd, int op, uint32_t events);
 		void				deleteClient(int client_fd);
 
-		void				handle_epoll_error(int event_id, uint32_t event_mask);
+		void				handle_epollerr(int event_id, uint32_t event_mask);
 		void				handle_epollin(int event_id);
 		void				handle_epollout(int event_id);
 		void				error_epoll(std::string& status, int event_id);

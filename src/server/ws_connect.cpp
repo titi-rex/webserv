@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 12:03:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 13:31:37 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 extern sig_atomic_t	g_status;
 
-void	WebServer::handle_epoll_error(int event_id, uint32_t event_mask)
+void	WebServer::handle_epollerr(int event_id, uint32_t event_mask)
 {
 	logWARNING << "fd: " << event_id;
 	if (event_mask & EPOLLERR)
-		logWARNING << "error happen ";
+		logWARNING << "unexpected error";
 	else
 		logWARNING << "unexpected close of fd";
-
+	logWARNING << strerror(errno);
 	throw std::runtime_error("615: epollerr or hang up");
 }
 
@@ -173,7 +173,7 @@ void	WebServer::run(void)
 			try 
 			{
 				if (revents[i].events & EPOLLERR || revents[i].events & EPOLLHUP)
-					handle_epoll_error(revents[i].data.fd, revents[i].events);
+					handle_epollerr(revents[i].data.fd, revents[i].events);
 				else if (revents[i].events & EPOLLIN)
 					handle_epollin(revents[i].data.fd);
 				else if (revents[i].events & EPOLLOUT)
@@ -181,7 +181,7 @@ void	WebServer::run(void)
 			}
 			catch (std::exception & e) 
 			{	
-				logWARNING << "epoll catch" << e.what();
+				logDEBUG << "epoll catch" << e.what();
 				std::string	status(e.what());
 				status.erase(3, status.size());
 				error_epoll(status, revents[i].data.fd);
@@ -201,7 +201,7 @@ void	WebServer::run(void)
 			}
 			catch(const std::exception& e)
 			{
-				logWARNING << "process catch" << e.what();
+				logDEBUG << "process catch" << e.what();
 				std::string	status(e.what());
 				status.erase(3, status.size());
 				it->second->setRStrStatus(status, &_httpStatus);

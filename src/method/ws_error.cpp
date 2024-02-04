@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/31 19:34:17 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 13:07:40 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	WebServer::getError(std::string status, Request& req)
 		req.makeResponse();
 	else
 	{
-		if (_errorPage.count(status) && check_access(_errorPage[status]))
+		if (_errorPage.count(status) && access(_errorPage[status].c_str(), F_OK | R_OK) == 0)
 			pageDir = _errorPage[status];
 		else
 			pageDir = _dirErrorPage + status + ".html";	

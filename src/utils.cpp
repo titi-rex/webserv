@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 12:10:14 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 13:23:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,27 +21,14 @@
  */
 std::string	getFile(const std::string& path)
 {
-	std::ifstream	f(path.c_str());	//can throw ?
+	std::ifstream	f(path.c_str());
 	std::string		ret;
 
 	if (f.fail())
 		throw std::runtime_error("699: open file error: " + path);
-	std::getline(f, ret, '\0');	//ca throw ?
+	std::getline(f, ret, '\0');
 	f.close();
 	return (ret);
-}
-
-/**
- * @brief wrapper for access
- */
-bool	check_access(std::string& path)
-{
-	if (access(path.c_str(), F_OK | R_OK))
-	{
-		std::clog << strerror(errno) << std::endl;
-		return (false);
-	}
-	return (true);	
 }
 
 void	wrap_close(int fd)
@@ -87,18 +74,4 @@ void getDate( char * date )
 	time( &rawtime );
 	info = localtime( &rawtime );
 	strftime(date, 30,"%a, %d %b %Y %H:%M:%S", info);
-}
-
-int	lengthSize( int contentLength )
-{
-	int	i = 0;
-	
-	if (contentLength == 0)
-		return (1);
-	while (contentLength != 0)
-	{
-		i++;
-		contentLength /= 10;
-	}
-	return (i);
 }
