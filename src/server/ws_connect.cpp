@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/31 20:11:37 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 12:03:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,7 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 void	WebServer::process_rq(Client &cl)
 {
 	logDEBUG << "request proceed";
-	cl.host = _selectServer(_SocketServersList[cl.getServerEndPoint()], cl);
-
+	_selectServer(_SocketServersList[cl.getServerEndPoint()], cl);
 	Method(cl);
 	if (cl.clientStatus == PROCEEDED)
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);

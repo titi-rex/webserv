@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 16:23:56 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 12:07:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirPre
 		++i;
 	}
 	file.close();
-	this->debugServ();
 	if (_virtualHost.empty())
 		throw std::runtime_error("WebServer: no server supplied");
 	_SocketServerList_init();
@@ -278,11 +277,7 @@ void		WebServer::_initContentTypeMap( void )
 		{
 			extention = line.substr(0, found);
 			type = line.substr(found + 1, line.length() - found - 1);
-
 			_contentType[extention] = type;
-
-			// std::clog << "extention: *" << extention << "*";
-			// std::clog << "\n_contentType[extention]: *" << _contentType[extention] << "*\n" << std::endl;
 		}
 	}
 	logDEBUG << "_initContentTypeMap finished";

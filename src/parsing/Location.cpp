@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 16:25:42 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 11:57:47 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,10 @@
 
 Location::Location(void) : isPath(true), autoIndex(false), upload(false), index("index.html")
 {
+	allowMethod.push_back("HEAD");
 	allowMethod.push_back("GET");
+	allowMethod.push_back("POST");
+	allowMethod.push_back("DELETE");
 }
 
 Location::Location(const Location& src) : _dirPrefix(src._dirPrefix)
@@ -26,7 +29,10 @@ Location::~Location(void) {}
 
 Location::Location(const std::string& dirPrefix) : isPath(true), autoIndex(false), upload(false), _dirPrefix(dirPrefix), index("index.html")
 {
+	allowMethod.push_back("HEAD");
 	allowMethod.push_back("GET");
+	allowMethod.push_back("POST");
+	allowMethod.push_back("DELETE");
 }
 
 Location&	Location::operator=(const Location& src) 
@@ -160,8 +166,11 @@ void	Location::setAllowMethod(const VecStr_t& sLine)
 {
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: allow_method supplied but value is missing");
+	this->allowMethod.clear();
 	for (size_t j = 1; j < sLine.size(); ++j)
 	{
+		if (sLine[j] != "HEAD" and sLine[j] != "GET" and sLine[j] != "POST" and sLine[j] != "DELETE")
+			throw std::runtime_error("Location: unsupported method allowed: " + sLine[j]);
 		if (std::find(this->allowMethod.begin(), this->allowMethod.end(), sLine[j]) == this->allowMethod.end())
 			this->allowMethod.push_back(sLine[j]);
 	}

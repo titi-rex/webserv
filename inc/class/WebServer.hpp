@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 16:01:29 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 11:18:48 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ class WebServer
 		void		_epoll_init(void);
 
 		bool		_is_server_named(vHostPtr v_host, const std::string& name);
-		vHostPtr	_selectServer(SocketServer& sk, Request& rq);
+		void		_selectServer(SocketServer& sk, Client& cl);
 		void		_initContentTypeMap(void );
 
 

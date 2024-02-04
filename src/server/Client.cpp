@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 14:12:12 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/04 12:26:48 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 #include <fstream>
 
-Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), clientStatus(CREATED), keepConnection(true)
+Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), host(NULL), upDirPtr(NULL), clientStatus(CREATED), keepConnection(true)
 {
 	_fd_cgi[0] = -1;
 	_fd_cgi[1] = -1;
@@ -21,7 +21,7 @@ Client::Client(void) : _serverEndPoint(-1), _sizeLimit(1024), clientStatus(CREAT
 	setRheaders("connection", "keep-alive");
 };
 
-Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), clientStatus(CREATED), keepConnection(true)
+Client::Client(size_t bodyLimit) : _serverEndPoint(-1), _sizeLimit(bodyLimit), host(NULL), upDirPtr(NULL), clientStatus(CREATED), keepConnection(true)
 {
 	_fd_cgi[0] = -1;
 	_fd_cgi[1] = -1;

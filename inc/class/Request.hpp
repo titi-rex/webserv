@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/30 13:09:46 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 12:31:10 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,9 @@ class Request
 		protected:
 		bool				_isChunk;
 		size_t				_bodySizeExpected;
-
-	public	:
 		std::string			response;
 
+	public	:
 		Request(void);
 		Request(const Request& src);
 		Request&	operator=(const Request& src);

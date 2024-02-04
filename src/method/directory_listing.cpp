@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/01 10:24:20 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/04 12:42:17 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ static std::string	uriPage(std::string fileName, std::string directory, const st
 	// Remove the root's path from the directory, keeping the '/' in front of the uriPage
 	if (uriPage.compare(0, root.length(), root) == 0)
 		uriPage = uriPage.substr(root.length() - 1, uriPage.length() - root.length() + 1);
-	logERROR << "uri for: " << fileName << uriPage;
 	return (uriPage);
 }
 
@@ -79,11 +78,6 @@ static std::string	makeDirList(const std::string& directory, const std::string& 
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << cleanDirectory << "</title>\n</head>\n";
 	ss << "<body>\n<h1>Index of " << cleanDirectory << "</h1>\n<dl>\n";
 
-	// logERROR << "root: " << root;
-	// logERROR << "directory: " << directory;
-	// logERROR << "gobackdirectory: " << goBack(directory);
-	// logERROR << "clean directory: " << cleanDirectory;
-
 	// Add the name of every file in the html page
 	while ((ptr_dir = readdir(dir)) != NULL)
 	{
@@ -91,9 +85,7 @@ static std::string	makeDirList(const std::string& directory, const std::string& 
 		std::string	extensionImage = getExtensionImage(fileName);
 		DIR 		*tmp = opendir((directory + fileName).c_str());
 
-		if (fileName == ".")
-			continue ;
-		else if (fileName == "..")
+		if (fileName == "..")
 		{
 			parentDir += "<dt><a href=\"" + uriPage("", goBack(directory), hostRoot) + "\">";
 			parentDir += "<img src=\"/img/parent_directory.png\" alt=\"parent directory\" width=\"20\" height=\"20\"> ";
@@ -104,14 +96,15 @@ static std::string	makeDirList(const std::string& directory, const std::string& 
 			ss << "<dt><a href=\"" << uriPage(fileName, directory, hostRoot) << "/\">";
 			ss << "<img src=\"/img/folder.jpg\" alt=\"folder\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
-			closedir(tmp);
 		}
-		else
+		else if (fileName != ".")
 		{
 			ss << "<dt><a href=\"" << uriPage(fileName, directory, hostRoot) << "\">";
 			ss << "<img src=\"" << extensionImage << "\" alt=\"file\" width=\"20\" height=\"20\"> ";
 			ss << fileName << "</a></dt>\n";
 		}
+		if (tmp)
+			closedir(tmp);
 	}
 	ss << parentDir;
 	ss << "</dl>\n</body>\n</html>\r\n\r\n";

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: louisa <louisa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 14:46:04 by louisa           ###   ########.fr       */
+/*   Updated: 2024/02/04 11:05:13 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	WebServer::Method(Client &cl)
 		execute_cgi(cl.host->getCgi().at(cl.getExt()), cl);
 		return ;
 	}
-	
+
 	// etape 3: on selectionne la method qui va bien et on la fait
 	switch (cl.getMid())
 	{

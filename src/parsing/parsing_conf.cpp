@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/02/01 16:28:21 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/04 10:51:15 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int WebServer::parseConf(std::string &line)
 	else if (line.find("server") != std::string::npos)
 		return (1);
 	else
-		throw std::runtime_error("Unrecognised line in configuration file");
+		throw std::runtime_error("Unrecognised line in configuration file: " + line);
 	return (0);
 }
 
