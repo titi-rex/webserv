@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 13:31:37 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/05 15:49:04 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void	WebServer::handle_epollout(int event_id)
 	logDEBUG << cl->getStatusStr();
 	if (cl->clientStatus == PROCEEDED)
 	{
+		logWARNING << "request" << (Request) *cl;
 		cl->sendRequest();	//throw FATAL
 		if (cl->keepConnection)	//keep client
 		{
@@ -118,6 +119,7 @@ void	WebServer::process_rq(Client &cl)
 {
 	logDEBUG << "request proceed";
 	_selectServer(_SocketServersList[cl.getServerEndPoint()], cl);
+	logWARNING << "request" << (Request)cl;
 	Method(cl);
 	if (cl.clientStatus == PROCEEDED)
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
@@ -165,6 +167,8 @@ void	WebServer::run(void)
 	{
 		logINFO << "Waiting for event..";
 		int n_event = epoll_wait(_efd, revents, MAX_EVENTS, TIMEOUT);
+		if (g_status == 0)
+			break ;
 		if (n_event == -1)
 			throw std::runtime_error("614: epoll_wait failed");
 	// process event
