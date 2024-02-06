@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/01/25 13:09:56 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 13:56:40 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,9 @@ void	WebServer::_SocketServerList_init(void)
 {
 	for (size_t i = 0; i < _virtualHost.size(); ++i)
 	{
-	
 		uint32_t	haddr = Socket::hstrtoint(_virtualHost[i].getHostPort().first);
 		uint16_t	hport = _virtualHost[i].getHostPort().second;
-		
+
 		if (sk_used(_SocketServersList, &_virtualHost[i], htonl(haddr), htons(hport)))
 			continue ;
 
