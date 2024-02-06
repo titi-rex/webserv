@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 13:13:19 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:04:17 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	WebServer::handle_epollin(int event_id)
 	logDEBUG << "epollin ";
 
 	if (_SocketServersList.count(event_id))
-		addClient(event_id);	//throw FATAL 
+		addClient(event_id);
 	else if (_fdCgi.count(event_id))
 	{
 		logDEBUG << "reading cgi.." << event_id;
@@ -47,7 +47,7 @@ void	WebServer::handle_epollin(int event_id)
 	else
 	{
 		Client*	cl = &_ClientList[event_id];
-		if(cl->readRequest())	//throw ERROR or FATAL
+		if(cl->readRequest())
 		{
 			logDEBUG << "end read rq";
 			if (cl->getPstatus() == RL)
@@ -74,16 +74,16 @@ void	WebServer::handle_epollout(int event_id)
 	if (cl->clientStatus == PROCEEDED)
 	{
 		logWARNING << "request" << (Request) *cl;
-		cl->sendRequest();	//throw FATAL
+		cl->sendRequest();
 		if (cl->keepConnection)	//keep client
 		{
 			logINFO << "keep:" << *cl;
 			cl->reset();
-			modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLIN);	//Throw FATAL
+			modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLIN);
 			_readyToProceedList.erase(cl->getFd());
 		}
 		else
-			deleteClient(cl->getFd());	//throw fatal
+			deleteClient(cl->getFd());
 	}
 }
 
@@ -130,7 +130,7 @@ void	WebServer::process_rq_error(Client &cl)
 	logDEBUG << "error proceed";
 	try
 	{
-		getError(cl.getRStrStatus(), cl);	//throw fatal 
+		getError(cl.getRStrStatus(), cl);
 		cl.clientStatus = PROCEEDED;
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
 	}
@@ -140,7 +140,7 @@ void	WebServer::process_rq_error(Client &cl)
 		logERROR << "ERROR FATAL, ABANDON CLIENT";
 		try
 		{
-			modEpollList(cl.getFd(), EPOLL_CTL_DEL, 0);	// throw fatal
+			modEpollList(cl.getFd(), EPOLL_CTL_DEL, 0);
 			close(_ClientList[cl.getFd()].getFd());
 			_readyToProceedList[cl.getFd()] = NULL;
 			logINFO << "deleted: " << cl;

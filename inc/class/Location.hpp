@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 20:27:47 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/01 15:45:01 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 13:59:46 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class	Location
 		bool				autoIndex;		//directory listing, indique si le vhost doit repondre avec un index si la requet est un repertoire, si non renvoyer une erreur true par default
 		bool				upload;			//indiaue si la location autoriseles upload
 		const std::string	_dirPrefix;
-		std::string			_key;		//valeur depuis laquelle la location est utilise (key)
+		std::string			_key;			//valeur depuis laquelle la location est utilise (key)
 		std::string			root;			//repertoire ou chercher la cible de la requete, si empty utiliser celle du virtual host
 		std::string			index;			//fichier par default a chercher si la requet est un repertoire, si empty utiliser celle du virtual host
 		std::string			uploadDir;		//repertoire ou les upload doivent etre fait

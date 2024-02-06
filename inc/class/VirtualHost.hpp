@@ -40,7 +40,6 @@ class	VirtualHost
 		VirtualHost(const std::string& dirPrefix);
 
 		const std::string&		getRoot() const;
-		// const std::string&		getDirPrefix() const;
 		const std::string&		getIndex() const;
 		const std::string&		getDirCgi() const;
 		const PairStrUint16_t&	getHostPort() const;

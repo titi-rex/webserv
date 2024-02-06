@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 11:25:02 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 15:07:19 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:02:14 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,6 @@ void    WebServer::fillEnvCGI(const Client& client)
         fillElement("REQUEST_METHOD", "POST");
     fillElement("PATH_INFO", client.getPathTranslated());
     fillElement("SCRIPT_FILENAME", client.getPathTranslated());
-	//    fillElement("PATH_INFO", "/home/louisa/Documents/webserv/data/example_page/hello.php");
-    // fillElement("SCRIPT_FILENAME", "/home/louisa/Documents/webserv/data/example_page/hello.php");
     fillElement("PATH_TRANSLATED", client.getPathTranslated());
     fillElement("QUERY_STRING", client.getQuery());
     fillElement("REMOTE_HOST", "");
@@ -121,7 +119,7 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 	pipe(client.getFd_cgi());
 	client.setPstatus(CGIHD);
 	modEpollList(client.getFd_cgi()[0], EPOLL_CTL_ADD, EPOLLIN);
-	_fdCgi[client.getFd_cgi()[0]] = &client;	//add fd cgi a un map reliant le fd au client 
+	_fdCgi[client.getFd_cgi()[0]] = &client;
 
 	pid_t pid = fork();
 	if (pid == 0) 
@@ -132,7 +130,6 @@ void WebServer::execute_cgi(const std::string& script_path, Client& client)
 			_closeAllFd(false);
 
 			char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>(client.getPathTranslated().c_str()), NULL};
-			// char* const argc[] = {const_cast<char*>(script_path.c_str()), const_cast<char*>("/home/louisa/Documents/webserv/data/example_page/hello.php"), NULL};
 			execve(argc[0], argc, envp);
 		}
 		perror("error : execve");

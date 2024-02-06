@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:37:11 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 13:07:40 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:02:41 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	WebServer::getError(std::string status, Request& req)
 			pageDir = _errorPage[status];
 		else
 			pageDir = _dirErrorPage + status + ".html";	
-		req.setRbody(getFile(pageDir));	//throw open file (fatal)
+		req.setRbody(getFile(pageDir));
 		req.makeResponse();
 	}
 }

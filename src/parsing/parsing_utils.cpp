@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 14:09:34 by louisa            #+#    #+#             */
-/*   Updated: 2024/01/17 11:25:07 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:02:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ void formatLine(std::string &line)
 			formattedLine.erase(end + 1);
 		line = formattedLine;
 	}
-	// if (line.empty() || line[line.length() - 1] != ';')
-	// 	throw std::runtime_error("Error : Wrong synthax in configuration file");
 	if (!line.empty() && line[line.length() - 1] == ';')
         line.erase(line.length() - 1);
 }

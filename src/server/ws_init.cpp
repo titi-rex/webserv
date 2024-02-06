@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 13:56:40 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:04:36 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,10 +110,10 @@ void	WebServer::addClient(int socketServerFd)
 {
 	Client	cl(_bodySizeLimit);
 
-	cl.accept(socketServerFd);//can throw (FATAL)
+	cl.accept(socketServerFd);
 	try
 	{
-		modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);//can thow FATAL
+		modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);
 		_ClientList[cl.getFd()] = cl;
 		logINFO << "added: " << cl;
 	}
@@ -132,7 +132,7 @@ void	WebServer::deleteClient(int client_fd)
 {
 	Client	cl = _ClientList[client_fd];
 
-	modEpollList(client_fd, EPOLL_CTL_DEL, 0);	//del from epoll // throw FATAL
+	modEpollList(client_fd, EPOLL_CTL_DEL, 0);	//del from epoll
 	close(_ClientList[client_fd].getFd());	// close socket fd
 	_ClientList.erase(client_fd);			// delete client from list
 	_readyToProceedList.erase(client_fd);	//delete from ready list

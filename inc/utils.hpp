@@ -6,17 +6,9 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 13:08:41 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 13:59:22 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
-/*
-*	Webserv, a c++98 web server by 42 student
-*	Copyright (C) 2023  tititeam 
-*	https://www.gnu.org/licenses/gpl-3.0.html
-*/
-
 
 #ifndef _UTILS_H__
 # define _UTILS_H__

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 13:25:44 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:00:19 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ class WebServer
 		void		methodGet(Client& client, bool withBody);
 		void		methodPost(Client& client);
 		void		methodDelete(Client& client);
-		void		getError(std::string status, Request& req);	// GET special pour error
+		void		getError(std::string status, Request& req);
 		void		imageGet(Client & cl );
 
 		bool 		createFile(const std::string& fileName, const std::string& content, const std::string uploadDir);

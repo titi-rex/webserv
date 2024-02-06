@@ -39,7 +39,7 @@ Socket::~Socket(void) {};
 // custom const
 Socket::Socket(int family, uint32_t haddr, uint16_t hport, int flags, int protocol)
 {
-	const int	l = 1; //not short ?
+	const int	l = 1;
 	
 	std::memset(&_sin, 0, sizeof(_sin));
 	_flags = flags;

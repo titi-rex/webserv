@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 12:26:48 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:03:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ bool	Client::readRequest(void)
 	else if (n_rec != 0)
 	{
 		std::string	tmp(buf, n_rec);
-		end = build(tmp);// throw ERROR or FATAL
+		end = build(tmp);
 		if (_isChunk == true && getBody().size() > _sizeLimit)
 			throw std::runtime_error("413: Request Actual Body Too Large");
 		else if (_isChunk == false && getBodySizeExpected() > _sizeLimit)
@@ -124,7 +124,7 @@ bool	Client::readCgi(void)
 	if (n_rec < BUFFER_SIZE || buf[n_rec] == '\0')
 		end = true;
 	buf[n_rec] = 0;
-	if (addCgi(buf) || end)//throw ERROR or FATAL
+	if (addCgi(buf) || end)
 	{
 		clientStatus = CGIOK;
 		return (true);
