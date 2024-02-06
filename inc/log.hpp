@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 15:12:45 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/05 15:27:09 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 15:03:14 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef enum {
 #define FERASE "\001\033[2K\002"
 #define END "\001\033[0m\002"
 
-#define LOGLEVEL 0
+#define LOGLEVEL 1
 
 template <typename T>
 e_logLevel	operator<<(e_logLevel lvl, T log)

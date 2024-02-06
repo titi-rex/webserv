@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:34:14 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 14:00:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:06:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 
 sig_atomic_t	g_status = 1;
 
-
 int	main(int ac, char **av)
 {
-	std::string	configFile("/conf/default.conf");
-	
+	std::string	configFile("conf/default.conf");
+
 	if (ac > 2)
 	{
 		logERROR << "Error: one configuration file required" << "Usage: ./webserv [configuration file]";
@@ -41,4 +40,3 @@ int	main(int ac, char **av)
 	}
 	return (0);
 }
-

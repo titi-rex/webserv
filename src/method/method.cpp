@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 12:59:04 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:58:12 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,21 +78,15 @@ void	WebServer::methodGet(Client& cl, bool withBody)
 }
 
 
-void WebServer::methodDelete(Client &client) {
-	std::string body = getFile(client.getPathTranslated());
-
+void WebServer::methodDelete(Client &client) 
+{
 	if (std::remove(client.getPathTranslated().c_str()) != 0)
 		throw std::runtime_error("500: Remove return error");
 
 	client.setRStrStatus("200");
 	client.setRline("OK");
 	client.setRheaders("server", client.host->getServerNames().at(0));
-
-	std::stringstream contentLengthStream;
-	contentLengthStream << body.size();
-	client.setRheaders("content-length", contentLengthStream.str());
-
-	client.setRbody(body);
+	
 	client.makeResponse();
 }
 

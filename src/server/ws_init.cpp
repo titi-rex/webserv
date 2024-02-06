@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 14:04:36 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:32:24 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,9 @@ void	WebServer::addClient(int socketServerFd)
 {
 	Client	cl(_bodySizeLimit);
 
-	cl.accept(socketServerFd);
 	try
 	{
+		cl.accept(socketServerFd);
 		modEpollList(cl.getFd(), EPOLL_CTL_ADD, EPOLLIN);
 		_ClientList[cl.getFd()] = cl;
 		logINFO << "added: " << cl;

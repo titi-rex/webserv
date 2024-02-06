@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 14:04:17 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 15:02:19 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	WebServer::handle_epollin(int event_id)
 		logDEBUG << "reading cgi.." << event_id;
 
 		Client*	cl = _fdCgi[event_id];
-		if (cl->readCgi())	//read cgi output, if end, deregister cgi from epoll
+		if (cl->readCgi())
 		{
 			logDEBUG << "all cgi has been read";
 			modEpollList(event_id,	EPOLL_CTL_DEL, 0);
@@ -57,7 +57,7 @@ void	WebServer::handle_epollin(int event_id)
 				return ;
 			}
 			cl->setKeepAlive();
-			_readyToProceedList[cl->getFd()] = cl;	//add to ready list
+			_readyToProceedList[cl->getFd()] = cl;
 		}
 		else
 			logDEBUG << "read rq continue";
@@ -73,9 +73,8 @@ void	WebServer::handle_epollout(int event_id)
 	logDEBUG << cl->getStatusStr();
 	if (cl->clientStatus == PROCEEDED)
 	{
-		logWARNING << "request" << (Request) *cl;
 		cl->sendRequest();
-		if (cl->keepConnection)	//keep client
+		if (cl->keepConnection)
 		{
 			logINFO << "keep:" << *cl;
 			cl->reset();
@@ -157,7 +156,6 @@ void	WebServer::process_rq_error(Client &cl)
 /**
  * @brief main function
  * 	wait for epoll event, get request and proceed it
- * 	throw: should not throw or only to quit properly programme
  */
 void	WebServer::run(void)
 {
