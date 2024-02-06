@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 15:02:19 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 15:16:24 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,6 @@ void	WebServer::process_rq(Client &cl)
 {
 	logDEBUG << "request proceed";
 	_selectServer(_SocketServersList[cl.getServerEndPoint()], cl);
-	logWARNING << "request" << (Request)cl;
 	Method(cl);
 	if (cl.clientStatus == PROCEEDED)
 		modEpollList(cl.getFd(), EPOLL_CTL_MOD, EPOLLOUT);
