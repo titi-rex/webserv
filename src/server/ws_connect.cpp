@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/05 15:49:04 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 13:13:19 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ void	WebServer::run(void)
 			}
 			catch (std::exception & e) 
 			{	
-				logDEBUG << "epoll catch" << e.what();
+				logWARNING << "epoll catch" << e.what();
 				std::string	status(e.what());
 				status.erase(3, status.size());
 				error_epoll(status, revents[i].data.fd);

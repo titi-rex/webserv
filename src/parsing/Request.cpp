@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 12:30:55 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/06 13:11:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,10 +178,12 @@ bool	Request::_parseRequestLine(void)
 	size_t		end = -1;
 	size_t 		i;
 	
-	if (_raw.size() > RL_MAX_LENGTH)
-		throw std::runtime_error("414: URI too long");
 	if (_raw.find("\r\n") == std::string::npos)
+	{
+		if (_raw.size() > RL_MAX_LENGTH)
+			throw std::runtime_error("414: URI too long");
 		return (true);
+	}
 	if (_raw.size() < RL_MIN_LENGTH)
 		throw std::runtime_error("400: RL too short");
 	tmp = _extractRange(start, end, " ");
@@ -497,13 +499,13 @@ std::ostream& operator<<(std::ostream& os, const Request& req)
 	os << "extentsion:" << req.getExt() << std::endl;
 	os << "Headers: " ;
 	os << req.getHeaders();
-	os << "Body: " ;
-	os << "{" << req.getBody() << "}" << std::endl;
+	// os << "Body: " ;
+	// os << "{" << req.getBody() << "}" << std::endl;
 	os << "===RESPONSE SIDE===" << std::endl;
 	os << "_rStrStatus: " << req.getRStrStatus() << std::endl;
 	os << "_rline: " << req.getRline() << std::endl;
 	os << "_rheaders: " << req.getRheaders() << std::endl;
-	os << "_rbody: " << "{" << req.getRbody() << "}" << std::endl;
+	// os << "_rbody: " << "{" << req.getRbody() << "}" << std::endl;
 	// os << "response: " << req.response << std::endl;
 	
 	return (os);
