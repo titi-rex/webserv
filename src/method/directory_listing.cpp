@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/08 16:02:20 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/08 16:04:27 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ static std::string	makeDirList(const std::string& directory, const std::string& 
 			parentDir += "<dt>";
 			if (link)
 				parentDir += "<a href=\"" + uriPage("", goBack(directory), hostRoot) + "\">";
-			
 			parentDir += "<img src=\"/img/parent_directory.png\" alt=\"parent directory\" width=\"20\" height=\"20\"> ";
 			parentDir += "Parent Directory";
 			if (link)
