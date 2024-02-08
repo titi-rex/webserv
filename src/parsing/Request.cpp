@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 13:11:38 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 15:29:57 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,6 +402,19 @@ bool	Request::_parseCgiHeaders(void)
 				_bodySizeExpected = std::strtoul(_rheaders["content-length"].c_str(), NULL, 10);
 				if (_bodySizeExpected == ULONG_MAX)
 					throw std::runtime_error("413: cgi: size expected too large or overflow");
+			}
+			if (_rheaders.count("location"))
+			{
+				std::cout << std::endl << _rheaders["location"] << std::endl;
+				setRStrStatus("302");
+				throw std::runtime_error("302");
+			}
+			if (_rheaders.count("status"))
+			{
+				std::string	tmp = _rheaders["status"].substr(0,3);
+				std::cout << std::endl << "tmp: " << tmp << std::endl;
+				setRStrStatus(tmp);
+				throw std::runtime_error(getRStrStatus() + ": cgi status");
 			}
 			return (false);
 		}

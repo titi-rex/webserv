@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 15:16:24 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 15:39:04 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,17 +90,25 @@ void	WebServer::error_epoll(std::string& status, int event_id)
 {
 	if (_fdCgi.count(event_id))
 	{
-		logERROR << "PIPE ERROR FATAL, ABANDON PIPE";
 		Client*	cl =  _fdCgi[event_id];
+
 		close(event_id);
 		cl->clientStatus = ERROR;
-		cl->setRStrStatus("500");
+		cl->setRStrStatus(status, &_httpStatus);
+		if (_httpStatus.count(status))
+		{
+			logDEBUG << "cgi output error";
+			modEpollList(cl->getFd(), EPOLL_CTL_MOD, EPOLLOUT);
+			_readyToProceedList[cl->getFd()] = cl;
+		}
+		else
+			logERROR << "PIPE ERROR FATAL, ABANDON PIPE";
 	}
 	else if (_SocketServersList.count(event_id))
 	{
 		logERROR << "couldn't accept new client";
 	}
-	else if (_httpStatus.count(status)) 	
+	else if (_httpStatus.count(status))
 	{
 		_ClientList[event_id].clientStatus = ERROR;
 		_ClientList[event_id].setRStrStatus(status);

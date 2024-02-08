@@ -1,7 +1,7 @@
 #!/usr/bin/php-cgi
 <?php
 // En-tête HTTP indiquant que la réponse est en HTML
-header("Content-Type: text/html");
+header("status: 418");
 
 // Contenu de la page
 echo "<!DOCTYPE html>";

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 15:03:31 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:07:02 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ typedef unsigned int long	uintptr_t;
 # define MAX_EVENTS 50
 # define TIMEOUT -1
 # define BACKLOG 50
+# define WBS_VER "version 2.0"
+# define CRLF "\r\n"
 
 class Request;
 
@@ -73,7 +75,6 @@ class WebServer
 		bool		_is_server_named(vHostPtr v_host, const std::string& name);
 		void		_selectServer(SocketServer& sk, Client& cl);
 		void		_initContentTypeMap(void );
-
 
 	public	:
 		WebServer(std::string path);

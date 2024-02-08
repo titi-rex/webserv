@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 14:58:12 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:07:32 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,34 @@ void	WebServer::Method(Client &cl)
 			throw std::runtime_error("501: Method not Implemented");
 	};
 	cl.clientStatus = PROCEEDED;
+}
+
+void	WebServer::getError(std::string status, Request& req)
+{
+	std::string	pageDir;
+
+	req.setRline(_httpStatus[req.getRStrStatus()]);
+	// Use for redirection
+	if (status.at(0) == '3')
+		req.makeResponse();
+	else
+	{
+		if (_errorPage.count(status) && access(_errorPage[status].c_str(), F_OK | R_OK) == 0)
+		{
+			pageDir = _errorPage[status];
+			req.setRbody(getFile(pageDir));
+		}
+		else
+		{
+			std::string	body = "<html>"CRLF"<head><title>";
+			body += req.getRStrStatus() + " " + _httpStatus[req.getRStrStatus()];
+			body += "</title></head>"CRLF"<body>"CRLF"<center><h1>";
+			body += req.getRStrStatus() + " " + _httpStatus[req.getRStrStatus()];
+			body += "</h1></center>"CRLF"<hr><center>"WBS_VER"</center>"CRLF"</body>"CRLF"</html>"CRLF;
+			req.setRbody(body);
+		}
+		req.makeResponse();
+	}
 }
 
 void	WebServer::methodGet(Client& cl, bool withBody)
