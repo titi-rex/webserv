@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:41:24 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 13:23:06 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:25:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,3 +75,4 @@ void getDate( char * date )
 	info = localtime( &rawtime );
 	strftime(date, 30,"%a, %d %b %Y %H:%M:%S", info);
 }
+

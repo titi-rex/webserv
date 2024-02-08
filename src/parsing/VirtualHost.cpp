@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/08 21:10:14 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:39:39 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,16 +74,7 @@ const MapStrLoc_t&	VirtualHost::getLocations() const
 
 void	VirtualHost::setRoot(VecStr_t& sLine)
 {
-	if (sLine.size() < 2)
-		throw std::runtime_error("VirtualHost: root supplied but value is missing");
-	this->root = _dirPrefix + sLine.at(1);
-	if (this->root.at(this->root.size() - 1) != '/')
-	{
-		logWARNING << ("VirtualHost: root: missing terminating \'/\', automatically added");
-		this->root += "/";
-	}
-	if (access(this->root.c_str(), F_OK | R_OK))
-		throw std::runtime_error("VirtualHost: root \'" + this->root + "\' not accessible");
+	setDir(this->root, sLine, "VirtualHost", _dirPrefix);
 };
 
 void	VirtualHost::setIndex(VecStr_t& sLine)
@@ -96,16 +87,7 @@ void	VirtualHost::setIndex(VecStr_t& sLine)
 
 void	VirtualHost::setDirCgi(VecStr_t& sLine)
 {
-	if (sLine.size() < 2)
-		throw std::runtime_error("VirtualHost: dir_cgi supplied but value is missing");
-	this->dirCgi =_dirPrefix + sLine.at(1);
-	if (sLine.at(1).at(sLine.at(1).size() - 1) != '/')
-	{
-		logWARNING << ("VirtualHost: dir_cgi: missing terminating \'/\' :" + sLine.at(1));
-		this->dirCgi += "/";
-	}
-	if (access(sLine.at(1).c_str(), F_OK | R_OK))
-		throw std::runtime_error("VirtualHost: dir_cgi \'" + sLine.at(1) + "\' not accessible");
+	setDir(this->dirCgi, sLine, "VirtualHost", _dirPrefix);
 };
 
 bool verifieSyntaxe(const std::string& s) 

@@ -18,6 +18,7 @@
 # include "Location.hpp"
 # include "container.hpp"
 
+void	setDir(std::string& target, const VecStr_t& sLine, const std::string& partName, const std::string& prefix);
 
 class	VirtualHost
 {
@@ -64,5 +65,6 @@ typedef std::deque<vHostPtr>		DeqVHostPtr_t;
 
 std::ostream&	operator<<(std::ostream &os, const vHostPtr v_host);
 std::ostream&	operator<<(std::ostream &os, const VirtualHost& v_host);
+
 
 #endif

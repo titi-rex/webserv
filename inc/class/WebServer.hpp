@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 20:52:43 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:35:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ class WebServer
 		bool		_is_server_named(vHostPtr v_host, const std::string& name);
 		void		_selectServer(SocketServer& sk, Client& cl);
 		void		_initContentTypeMap(void );
+		void		_closeAllFd(bool log);
+		void		_initHttpStatus(void);
 
 	public	:
 		WebServer(std::string path);
@@ -91,6 +93,7 @@ class WebServer
 		const MapStrStr_t&	getContentType(void) const;
 		size_t				getBodySizeLimit(void) const;
 
+		// parsing
 		int					parseConf(std::string &line);
 		void 				findServ(VecStr_t fileVec, uintptr_t *i);
 		void				parseServ(VecStr_t fileVec, uintptr_t start, uintptr_t end);
@@ -102,6 +105,7 @@ class WebServer
 		void				displayCGI(const VirtualHost& vHost);
 		void				debugServ();
 
+		// server
 		void				run(void);
 
 		void				addClient(int socketServerFd);
@@ -116,8 +120,7 @@ class WebServer
 		void				process_rq(Client &cl);
 		void				process_rq_error(Client &cl);
 
-		void				_closeAllFd(bool log);
-		void				_initHttpStatus(void);
+
 		// CGI
 		void				fillElement(std::string key , std::string val);
 		void				fillValueFromHeader(MapStrStr_t header, std::string key);
@@ -125,24 +128,25 @@ class WebServer
 		void				fillEnvCGI(const Client& client);
 		void				execute_cgi(const std::string& script_path,Client& client);
 
+		// Method
+		void				Method(Client& cl);	
+		void				methodGet(Client& client, bool withBody);
+		void				methodPost(Client& client);
+		void				methodDelete(Client& client);
+		void				getError(std::string status, Request& req);
+		void				imageGet(Client & cl );
 
-		void		Method(Client& cl);	
-		void		methodGet(Client& client, bool withBody);
-		void		methodPost(Client& client);
-		void		methodDelete(Client& client);
-		void		getError(std::string status, Request& req);
-		void		imageGet(Client & cl );
-
-		bool 		createFile(const std::string& fileName, const std::string& content, const std::string uploadDir);
-		bool		extractFileData(const std::string& part, std::string& filename, std::string& content);
-		bool		processPostRequest(const std::string& requestBody, Client& client);
-		VecStr_t	splitByBoundary(const std::string& requestBody, const std::string& boundary);
-		std::string	extractBoundary(const std::string& requestBody);
+		bool 				createFile(const std::string& fileName, const std::string& content, const std::string uploadDir);
+		bool				extractFileData(const std::string& part, std::string& filename, std::string& content);
+		bool				processPostRequest(const std::string& requestBody, Client& client);
+		VecStr_t			splitByBoundary(const std::string& requestBody, const std::string& boundary);
+		std::string			extractBoundary(const std::string& requestBody);
 
 
 };
 
 void		formatLine(std::string &line);
 VecStr_t	splitLine(const std::string& line);
+void		setDir(std::string& target, const VecStr_t& sLine, const std::string& partName, const std::string& prefix);
 
 #endif

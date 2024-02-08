@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 20:27:47 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 13:59:46 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:33:51 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "container.hpp"
 # include "log.hpp"
 
+void	setDir(std::string& target, const VecStr_t& sLine, const std::string& partName, const std::string& prefix);
 
 class	Location
 {

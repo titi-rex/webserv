@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 21:08:36 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:35:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirPre
 	VecStr_t 	fileVec;
 	uintptr_t	i = 0;
 
+
 	_initHttpStatus();
 	_initContentTypeMap();
 	std::ifstream file(path.c_str());
@@ -75,23 +76,14 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirPre
 
 void	WebServer::setVirtualHost(const VecVHost_t& vHost) 
 {
-	this->_virtualHost = vHost; 
+	this->_virtualHost = vHost;
 };
 
 void	WebServer::setDirPrefix(const VecStr_t& sLine) 
 {
-	if (sLine.size() < 2)
-		throw std::runtime_error("WebServer: dir_prefix supplied but value is missing");
-	if (sLine.at(1).at(0) != '/')
+	setDir(this->_dirPrefix, sLine, "Webserver", "");
+	if (this->_dirPrefix.at(0) != '/')
 		throw std::runtime_error("Webserver: dir_prefix not an absolut path \'" + sLine.at(1) + "\'");
-	this->_dirPrefix = sLine.at(1);
-	if (this->_dirPrefix.at(this->_dirPrefix.size() - 1) != '/')
-	{
-		logWARNING << ("WebServer: dir_prefix: missing terminating \'/\', automatically added");
-		this->_dirPrefix += "/";
-	}
-	if (access(sLine.at(1).c_str(), F_OK | R_OK))
-		throw std::runtime_error("Webserver: dir_prefix \'" + sLine.at(1) + "\' not accessible");
 };
 
 void	WebServer::setErrorPage(const VecStr_t& sLine) 
