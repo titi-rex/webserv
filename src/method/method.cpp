@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 16:07:32 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 20:39:03 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,11 @@ void	WebServer::getError(std::string status, Request& req)
 		}
 		else
 		{
-			std::string	body = "<html>"CRLF"<head><title>";
+			std::string	body = "<html>" CRLF "<head><title>";
 			body += req.getRStrStatus() + " " + _httpStatus[req.getRStrStatus()];
-			body += "</title></head>"CRLF"<body>"CRLF"<center><h1>";
+			body += "</title></head>" CRLF "<body>" CRLF "<center><h1>";
 			body += req.getRStrStatus() + " " + _httpStatus[req.getRStrStatus()];
-			body += "</h1></center>"CRLF"<hr><center>"WBS_VER"</center>"CRLF"</body>"CRLF"</html>"CRLF;
+			body += "</h1></center>" CRLF "<hr><center>" WBS_VER "</center>" CRLF "</body>" CRLF "</html>" CRLF;
 			req.setRbody(body);
 		}
 		req.makeResponse();

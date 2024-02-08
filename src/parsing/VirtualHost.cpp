@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/01 16:11:11 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 21:10:14 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	VirtualHost::setRoot(VecStr_t& sLine)
 		this->root += "/";
 	}
 	if (access(this->root.c_str(), F_OK | R_OK))
-		throw std::runtime_error("VirtualHost: dir_cgi \'" + this->root + "\' not accessible");
+		throw std::runtime_error("VirtualHost: root \'" + this->root + "\' not accessible");
 };
 
 void	VirtualHost::setIndex(VecStr_t& sLine)

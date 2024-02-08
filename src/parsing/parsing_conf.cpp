@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 21:13:46 by louisa            #+#    #+#             */
-/*   Updated: 2024/02/04 10:51:15 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 20:52:59 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ int WebServer::parseConf(std::string &line)
 		return (0);
 	else if (splitedLine.at(0) == "body_size_limit")
 		setBodySizeLimit(splitedLine);
-	else if (splitedLine.at(0) == "dir_error_page")
-		setDirErrorPage(splitedLine);
 	else if (splitedLine.at(0) == "error_page")
 		setErrorPage(splitedLine);
 	else if (splitedLine.at(0) == "dir_prefix")
@@ -186,7 +184,6 @@ void	WebServer::debugServ()
 	std::clog << "*------------- DEBUG --------------*" << std::endl;
 	std::clog << "size body max = " << getBodySizeLimit() << std::endl;
 	std::clog << "directory prefix = " << (getDirPrefix().empty() ? "empty" : getDirPrefix()) << std::endl;
-	std::clog << "error page directory = " << getDirErrorPage() << std::endl;
 	std::clog << "error page value = ";
 	if (_errorPage.empty() == false)
 		std::clog << getErrorPage();

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 16:07:02 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 20:52:43 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ class WebServer
 		int					_efd;				// fd permettqnt d'acceder a l'instance epoll
 		size_t				_bodySizeLimit;		// limite generale de la taille maximum du body des clients pour tout le server, active si le virtual host ne precise pas (si == size_t max => pas de limite )
 		std::string			_dirPrefix;			//prefix pour tout les directory
-		std::string			_dirErrorPage;		// indique un repertoire specifique ou chercher les pqges d'erreur
 		MapStrStr_t			_errorPage;			// indique ou chercher une page d'erreur specifique (est regarde en premier )
 		VecVHost_t			_virtualHost;		// vector contenant tout les virtual hosts du server
 		MapFdSockServ_t		_SocketServersList;	// map des SocketServers utilise par le server (key: fd, value: SocketServer)
@@ -82,7 +81,6 @@ class WebServer
 
 		void				setVirtualHost(const VecVHost_t& vHost);
 		void				setErrorPage(const VecStr_t& sLine); 
-		void				setDirErrorPage(const VecStr_t& sLine);
 		void				setBodySizeLimit(const VecStr_t& sLine);
 		void				setDirPrefix(const VecStr_t& sLine);
 
@@ -91,7 +89,6 @@ class WebServer
 		const MapStrStr_t&	getErrorPage(void) const;
 		const MapStrStr_t&	getHttpStatus(void) const;
 		const MapStrStr_t&	getContentType(void) const;
-		std::string			getDirErrorPage(void) const;
 		size_t				getBodySizeLimit(void) const;
 
 		int					parseConf(std::string &line);
