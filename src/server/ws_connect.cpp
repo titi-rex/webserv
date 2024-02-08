@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 23:11:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 15:39:04 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 21:40:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,8 @@ void	WebServer::run(void)
 			}
 			catch(const std::exception& e)
 			{
-				logDEBUG << "process catch" << e.what();
+				logWARNING << "process catch" << e.what();
+				logDEBUG << "errno" << errno << strerror(errno);
 				std::string	status(e.what());
 				status.erase(3, status.size());
 				it->second->setRStrStatus(status, &_httpStatus);

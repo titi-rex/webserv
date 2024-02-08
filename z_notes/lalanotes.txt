@@ -1,11 +1,10 @@
 
+cgi return
+method alloweg virer get |+ header ALLow
+clean parsing dir
+factorise make response
 
-PARSING: ERROR:
-
-cgi cpp
-html index 
-clean repo 
-
+footer web ser
 
 to not do :
 

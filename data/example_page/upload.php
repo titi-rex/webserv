@@ -1,6 +1,10 @@
 <?php
 
-echo "Entrée fichier php";
+echo "<!DOCTYPE html>";
+echo "<html>";
+echo "<head>";
+echo "<h1>Entrée fichier php</h1>";
+echo "<p>";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
     $targetDirectory = "uploads/";
@@ -12,4 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
         echo "Une erreur s'est produite lors du téléchargement du fichier.";
     }
 }
+
+echo "</p>";
+echo "</body>";
+echo "</html>";
+
 ?>

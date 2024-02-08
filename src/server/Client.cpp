@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 15:11:31 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 21:54:38 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,6 @@ bool	Client::readCgi(void)
 		throw std::runtime_error("699: read cgi");
 	else if (n_rec == 0)
 		throw std::runtime_error("500: cgi send empty data");
-	std::clog << buf << std::endl;
 	if (n_rec < BUFFER_SIZE || buf[n_rec] == '\0')
 		end = true;
 	buf[n_rec] = 0;

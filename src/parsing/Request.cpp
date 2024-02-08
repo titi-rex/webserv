@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:43:41 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 15:29:57 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 21:54:06 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,7 +328,6 @@ bool	Request::_parseBodyByChunk(std::string& body)
 			return (false);
 		if (_raw.at(check - 1) == '\r')
 			--check;
-		std::cout << "check " << check << std::endl;
 		if (check != _lenChunk)
 			throw std::runtime_error("400: Malicious chunked data");
 		body += _raw.substr(0, _lenChunk);
@@ -405,15 +404,14 @@ bool	Request::_parseCgiHeaders(void)
 			}
 			if (_rheaders.count("location"))
 			{
-				std::cout << std::endl << _rheaders["location"] << std::endl;
 				setRStrStatus("302");
 				throw std::runtime_error("302");
 			}
 			if (_rheaders.count("status"))
 			{
 				std::string	tmp = _rheaders["status"].substr(0,3);
-				std::cout << std::endl << "tmp: " << tmp << std::endl;
 				setRStrStatus(tmp);
+				_rheaders.erase("status");
 				throw std::runtime_error(getRStrStatus() + ": cgi status");
 			}
 			return (false);

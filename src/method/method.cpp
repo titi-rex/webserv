@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 20:39:03 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 21:46:23 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,20 +122,14 @@ bool WebServer::createFile(const std::string& fileName, const std::string& conte
 {
 	std::string filePath = uploadDir + fileName;
 	std::ofstream of(filePath.c_str(), std::ios::out | std::ios::binary);
-	if (!of) 
-	{
-		throw std::runtime_error("500");
-		return (false);
-	}
+	if (!of)
+		throw std::runtime_error("500: can't create file: " + filePath);
 	
 	of.write(content.c_str(), content.size());
 	of.close();
 	
 	if (!of) 
-	{
-		throw std::runtime_error("500");
-		return (false);
-	}
+		throw std::runtime_error("500: error closing file: " + filePath);
 	else
 		return (true);
 	return (false);
@@ -158,7 +152,6 @@ void WebServer::methodPost(Client &client)
 	contentLengthStream << client.getRbody().size();
 	client.setRheaders("server", client.host->getServerNames().at(0));
 	client.setRheaders("content-length", contentLengthStream.str());
-
 	client.makeResponse();
 }
 
@@ -173,6 +166,8 @@ bool WebServer::processPostRequest(const std::string& requestBody, Client& clien
 		std::string filename, content;
 		if (extractFileData(parts[i], filename, content)) 
 		{
+			if (filename.empty() == true)
+				filename = "empty";
 			createFile(filename, content, *client.upDirPtr);
 			return (true);
 		}
