@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   image.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 16:10:00 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/01/30 14:53:13 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/08 23:10:52 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,6 @@ void	WebServer::imageGet( Client & cl )
 	requestedImage.read(&image[0], imageSize);
 	requestedImage.close();
 
-	// Convert the size to string
-	std::string 		sImageSize;
-	std::stringstream	tmp;
-	tmp << image.size();
-	sImageSize = tmp.str();
-
-	cl.setRheaders("content-length", sImageSize);
-	cl.setRheaders("connection", "close");
 	cl.setRbody(image);
 	cl.findSetType(cl, imagePath, getContentType());
 }

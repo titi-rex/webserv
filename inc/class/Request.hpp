@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 15:41:38 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 12:31:10 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:48:54 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,8 +155,8 @@ class Request
 		bool				build(const std::string& raw = "");
 		bool				addCgi(const std::string& buff);
 		void				findSetType(Request & req, const std::string& path, MapStrStr_t	mapContentType);
-		void				makeResponse(void);
 		void				clear(void);
+		void				makeResponse(void);
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& req);

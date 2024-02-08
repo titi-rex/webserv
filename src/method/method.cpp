@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 22:58:30 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 21:46:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 23:11:07 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,17 +89,13 @@ void	WebServer::methodGet(Client& cl, bool withBody)
 		imageGet(cl);
 	else if (cl.clientStatus != CGIOK)
 	{
-		std::string		body = getFile(cl.getPathTranslated());
-		cl.setRbody(body);
+		std::string	body = getFile(cl.getPathTranslated());
 
-		std::stringstream	sstr;
-		sstr << body.size();
-		cl.setRheaders("content-length", sstr.str());
+		cl.setRbody(body);
 		cl.findSetType(cl, cl.getPathTranslated(), getContentType());
 	}
 	cl.setRStrStatus ("200");
 	cl.setRline ("OK");
-	cl.setRheaders("server", cl.host->getServerNames().at(0));
 	if(!withBody)
 		cl.setRbody("");
 	cl.makeResponse();
@@ -113,8 +109,6 @@ void WebServer::methodDelete(Client &client)
 
 	client.setRStrStatus("200");
 	client.setRline("OK");
-	client.setRheaders("server", client.host->getServerNames().at(0));
-	
 	client.makeResponse();
 }
 
@@ -147,11 +141,7 @@ void WebServer::methodPost(Client &client)
 		client.setRStrStatus("200");
 		client.setRline("OK");
 	}
-	
-	std::stringstream contentLengthStream;
-	contentLengthStream << client.getRbody().size();
-	client.setRheaders("server", client.host->getServerNames().at(0));
-	client.setRheaders("content-length", contentLengthStream.str());
+
 	client.makeResponse();
 }
 

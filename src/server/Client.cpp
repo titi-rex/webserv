@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:16:09 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 21:54:38 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 23:05:16 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,14 @@ void	Client::reset(void)
 	clientStatus = ACCEPTED;
 }
 
+void	Client::makeResponse(void)
+{
+	if (getRheaders().count("server") == 0)
+	{
+		setRheaders("server", host->getServerNames().at(0));
+	}
+	this->Request::makeResponse();
+}
 
 /**
  * @brief format client/fd/host

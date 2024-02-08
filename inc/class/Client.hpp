@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 16:15:46 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/04 12:27:07 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:45:40 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Client : public Socket, public Request
 		bool	readCgi(void);
 		void	sendRequest(void);
 		void	reset(void);
-		
+		void	makeResponse(void);
 		
 		const std::string	getStatusStr(void) const;
 		int		getServerEndPoint(void) const;
