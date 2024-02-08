@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory_listing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/04 12:42:17 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:04:27 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,13 @@ static std::string	makeDirList(const std::string& directory, const std::string& 
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << cleanDirectory << "</title>\n</head>\n";
 	ss << "<body>\n<h1>Index of " << cleanDirectory << "</h1>\n<dl>\n";
 
+	// Dirlisting with or without link
+	bool	link;
+	if (root.size() > hostRoot.size())
+		link = true;
+	else
+		link = false;
+
 	// Add the name of every file in the html page
 	while ((ptr_dir = readdir(dir)) != NULL)
 	{
@@ -87,21 +94,36 @@ static std::string	makeDirList(const std::string& directory, const std::string& 
 
 		if (fileName == "..")
 		{
-			parentDir += "<dt><a href=\"" + uriPage("", goBack(directory), hostRoot) + "\">";
+			parentDir += "<dt>";
+			if (link)
+				parentDir += "<a href=\"" + uriPage("", goBack(directory), hostRoot) + "\">";
 			parentDir += "<img src=\"/img/parent_directory.png\" alt=\"parent directory\" width=\"20\" height=\"20\"> ";
-			parentDir += "Parent Directory</a></dt>\n";
+			parentDir += "Parent Directory";
+			if (link)
+				parentDir += "</a>";
+			parentDir += "</dt>\n";
 		}
 		else if (tmp != NULL)
 		{
-			ss << "<dt><a href=\"" << uriPage(fileName, directory, hostRoot) << "/\">";
+			ss << "<dt>";
+			if (link)
+				ss << "<a href=\"" << uriPage(fileName, directory, hostRoot) << "/\">";
 			ss << "<img src=\"/img/folder.jpg\" alt=\"folder\" width=\"20\" height=\"20\"> ";
-			ss << fileName << "</a></dt>\n";
+			ss << fileName;
+			if (link)
+				ss << "</a>";
+			ss << "</dt>\n";
 		}
 		else if (fileName != ".")
 		{
-			ss << "<dt><a href=\"" << uriPage(fileName, directory, hostRoot) << "\">";
+			ss << "<dt>";
+			if (link)
+				ss << "<a href=\"" << uriPage(fileName, directory, hostRoot) << "\">";
 			ss << "<img src=\"" << extensionImage << "\" alt=\"file\" width=\"20\" height=\"20\"> ";
-			ss << fileName << "</a></dt>\n";
+			ss << fileName;
+			if (link)
+				ss << "</a>";
+			ss << "</dt>\n";
 		}
 		if (tmp)
 			closedir(tmp);
