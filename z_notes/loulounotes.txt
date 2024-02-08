@@ -174,3 +174,5 @@ Setup the configuration file as follow:
 - /directory/ must answer to GET request and the root of it would be the 
 repository YoupiBanane and if no file are requested, it should search 
 for youpi.bad_extension files
+
+
