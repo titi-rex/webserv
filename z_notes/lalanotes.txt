@@ -1,8 +1,8 @@
 
-cgi return
-method alloweg virer get |+ header ALLow
-clean parsing dir
-factorise make response
+[*]	cgi return
+[*]	method alloweg virer get |+ header ALLow
+[]	clean parsing dir
+[]	factorise make response
 
 footer web ser
 

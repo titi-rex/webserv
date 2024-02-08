@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/08 11:34:47 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:02:49 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,6 @@ void	Location::setAllowMethod(const VecStr_t& sLine)
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: allow_method supplied but value is missing");
 	this->allowMethod.clear();
-	this->allowMethod.push_back("GET");
 	for (size_t j = 1; j < sLine.size(); ++j)
 	{
 		if (sLine[j] != "HEAD" and sLine[j] != "GET" and sLine[j] != "POST" and sLine[j] != "DELETE")

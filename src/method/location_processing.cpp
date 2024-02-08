@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/05 11:00:28 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/08 22:08:35 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,21 @@
 
 extern sig_atomic_t	g_status;
 
-static void	checkAllowedMethod(VecStr_t methodAllowed, std::string methodAsked)
+static void	checkAllowedMethod(const VecStr_t& methodAllowed, const std::string methodAsked, Client& cl)
 {
-	VecStr_t::iterator	i;
+	VecStr_t::const_iterator	i;
+	std::string					allowed;
 
 	for (i = methodAllowed.begin(); i != methodAllowed.end(); ++i)
 	{
 		if (*i == methodAsked)
 			return;
+		allowed += *i;
+		if (i + 1 != methodAllowed.end())
+			allowed += ", ";
 	}
-	throw std::runtime_error("405 Method Not Allowed");
+	cl.setRheaders("allow", allowed);
+	throw std::runtime_error("405: Method Not Allowed");
 }
 
 static bool checkPageFile(const Location* loc, std::string & pagePath, std::string indexPage)
@@ -149,7 +154,7 @@ bool	translatePath(Client& cl)
 	{
 		if (locPtr->getRedirection().first.empty() == false)
 			throw_redirection(cl, locPtr->getRedirection());
-		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName());		// Delete prefix
+		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName(), cl);		// Delete prefix
 		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
 
 		//add location root or cl.host root if no root;
