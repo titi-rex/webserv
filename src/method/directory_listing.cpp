@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/08 16:04:27 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/09 18:07:38 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static std::string	goBack(std::string folder)
 
 static std::string	getExtensionImage(std::string fileName)
 {
-	std::string	extension[5] = {"html", "php", "py", "jpg", "png"};
+	std::string	extension[6] = {"html", "php", "py", "jpg", "jpeg", "png"};
 	std::string	fileExtension;
 	std::size_t	found = fileName.rfind('.');
 	
@@ -49,7 +49,7 @@ static std::string	getExtensionImage(std::string fileName)
 	else
 		return ( "/img/unknow.png" );
 
-	for ( int i = 0; i < 5; ++i )
+	for ( int i = 0; i < 6; ++i )
 	{
 		if (fileExtension == extension[i])
 		{
