@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/08 23:00:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:08:56 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,8 @@ bool	translatePath(Client& cl)
 	if (locPtr == NULL)
 	{
 		pagePath.erase(0, 1);
-		pagePath = cl.host->getRoot() + pagePath;
+		if (!isPrefix(pagePath, cl.host->getRoot()))
+			pagePath = cl.host->getRoot() + pagePath;
 		checkPageFile(NULL, pagePath, cl.host->getIndex());
 		if (cl.getMid() == DELETE || cl.getMid() == POST)
 			throw std::runtime_error("403: at server root: " + cl.getMethodName());
