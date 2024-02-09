@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/09 18:08:56 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/09 18:29:13 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,23 @@ static void	checkAllowedMethod(const VecStr_t& methodAllowed, const std::string 
 	throw std::runtime_error("405: Method Not Allowed");
 }
 
+static bool	hasExt( std::string pagePath)
+{
+	size_t	foundPoint = pagePath.rfind('.');
+	if (foundPoint == std::string::npos || foundPoint == 0)
+		return (false);
+
+	size_t	foundSlash = pagePath.rfind('/');
+	if (foundSlash == std::string::npos)
+		foundSlash = 0;
+
+	if (foundPoint > foundSlash
+		&& foundPoint != foundSlash + 1
+		&& foundPoint != pagePath.size() - 1)
+		return (true);
+	return (false);
+}
+
 static bool checkPageFile(const Location* loc, std::string & pagePath, std::string indexPage)
 {
 	if (pagePath.at(pagePath.size() - 1) == '/')
@@ -57,7 +74,7 @@ static bool checkPageFile(const Location* loc, std::string & pagePath, std::stri
 	const char *file = pagePath.c_str();
 
 	// Check if the page asked exist
-	if (access(file, F_OK) != 0)
+	if (access(file, F_OK) != 0 && !hasExt(pagePath))
 	{
 		// Check if the page asked + .html exist
 		pagePath += ".html";
