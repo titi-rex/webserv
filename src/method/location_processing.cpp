@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/11 18:11:10 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/11 18:49:29 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,20 @@ static void	findExt(Client& cl, const std::string& pagePath)
 		cl.setNeedCgi(true);
 }
 
+static bool	multipleSlash( std::string pagePath)
+{
+	size_t	firstSlash = pagePath.find('/');
+
+	if (firstSlash != pagePath.npos)
+	{
+		size_t	slash = pagePath.find('/', firstSlash + 1);
+
+		if (slash != pagePath.npos)
+			return (true);
+	}
+	
+	return (false);
+}
 
 // find dans location, celui le plus resamblant a l'uri
 bool	translatePath(Client& cl)
@@ -173,17 +187,21 @@ bool	translatePath(Client& cl)
 		if (locPtr->getRedirection().first.empty() == false)
 			throw_redirection(cl, locPtr->getRedirection());
 		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName(), cl);
-		
-		// Delete prefix
-		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
 
-		//add location root or cl.host root if no root;
-		if (pagePath.empty() == false and pagePath.at(0) == '/')
-			pagePath.erase(0, 1);
-		if (locPtr->getRoot().empty() == false)
-			pagePath = locPtr->getRoot() + pagePath;
+		// Delete prefix
+		if (multipleSlash(pagePath))
+		{
+			pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
+			//add location root or cl.host root if no root;
+			if (pagePath.empty() == false and pagePath.at(0) == '/')
+				pagePath.erase(0, 1);
+			if (locPtr->getRoot().empty() == false)
+				pagePath = locPtr->getRoot() + pagePath;
+			else
+				pagePath = cl.host->getRoot() + pagePath;
+		}
 		else
-			pagePath = cl.host->getRoot() + pagePath;
+			pagePath = locPtr->getRoot().substr(0, locPtr->getRoot().size() - 1);
 
 		//check if file ok or dirlist
 		if (checkPageFile(locPtr, pagePath, locPtr->getIndex()))
