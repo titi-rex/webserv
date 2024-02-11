@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/09 18:29:13 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/11 18:11:10 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,9 @@ bool	translatePath(Client& cl)
 	{
 		if (locPtr->getRedirection().first.empty() == false)
 			throw_redirection(cl, locPtr->getRedirection());
-		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName(), cl);		// Delete prefix
+		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName(), cl);
+		
+		// Delete prefix
 		pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
 
 		//add location root or cl.host root if no root;
