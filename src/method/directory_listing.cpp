@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/09 18:07:38 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/12 17:27:37 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,21 @@ static std::string	getExtensionImage(std::string fileName)
 	return ( "/img/unknow.png" );
 }
 
-
-
-static std::string	makeDirList(const std::string& directory, const std::string& hostRoot ,const std::string& root)
+static const std::string	cleanDirectory( const std::string& root, const std::string& directory )
 {
+	// const Location*		locPtr = findLocation(pagePath, cl.host);
+
+	const size_t		i = root.rfind("/", root.size() - 2);
+	std::string	cleanDirectory = directory.substr(i, directory.size());
+
+	return (cleanDirectory);
+}
+
+static std::string	makeDirList(Client& cl ,const std::string& root)
+{
+	const std::string	directory = cl.getPathTranslated();
+	const std::string	hostRoot = cl.host->getRoot();
+	
 	struct dirent*		ptr_dir = NULL;
 	DIR					*dir = opendir(directory.c_str());
 	if (!dir)
@@ -72,11 +83,10 @@ static std::string	makeDirList(const std::string& directory, const std::string& 
 	std::stringstream	ss;
 	std::string			parentDir;
 	
-	const size_t		i = root.rfind("/", root.size() - 2);
-	const std::string	cleanDirectory = directory.substr(i, directory.size());
+	const std::string	displayedDirectory = cleanDirectory(root, directory);
 
-	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << cleanDirectory << "</title>\n</head>\n";
-	ss << "<body>\n<h1>Index of " << cleanDirectory << "</h1>\n<dl>\n";
+	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << displayedDirectory << "</title>\n</head>\n";
+	ss << "<body>\n<h1>Index of " << displayedDirectory << "</h1>\n<dl>\n";
 
 	// Dirlisting with or without link
 	bool	link;
@@ -136,7 +146,7 @@ static std::string	makeDirList(const std::string& directory, const std::string& 
 
 void	dirList(Client& cl, const std::string& root)
 {
-	std::string	tmp = makeDirList(cl.getPathTranslated(), cl.host->getRoot(), root);
+	std::string	tmp = makeDirList(cl, root);
 	cl.setRbody(tmp);
 	cl.setRStrStatus("200");
 	cl.makeResponse();
