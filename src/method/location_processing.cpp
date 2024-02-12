@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/12 16:51:24 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/12 16:57:45 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,8 @@ static bool checkPageFile(const Location* loc, std::string & pagePath, std::stri
 	const char *file = pagePath.c_str();
 
 	// Check if the page asked exist
-logERROR << "befacces1: " << pagePath;
 	if (access(file, F_OK) != 0 && !hasExt(pagePath))
 	{
-logERROR << "befacces2: " << pagePath;
 		
 		// Check if the page asked + .html exist
 		pagePath += ".html";
@@ -85,7 +83,6 @@ logERROR << "befacces2: " << pagePath;
 		if (access(file, F_OK) != 0)
 			throw std::runtime_error("404: file doesn't exist: " + pagePath);
 	}
-logERROR << "befacces3: " << pagePath;
 
 	// Check if the page asked is readable
 	if (access(file, R_OK) != 0)
@@ -193,13 +190,10 @@ bool	translatePath(Client& cl)
 			throw_redirection(cl, locPtr->getRedirection());
 		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName(), cl);
 
-	logERROR << "original: " << pagePath;
 		// Delete prefix
 		if (multipleSlash(pagePath))
 		{
 			pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
-			
-		logERROR << "afetr sub: " << pagePath;
 			
 			//add location root or cl.host root if no root;
 			std::string	root;
@@ -209,13 +203,10 @@ bool	translatePath(Client& cl)
 				root = cl.host->getRoot();
 			root.erase(root.end() - 1);
 			pagePath = root + pagePath;
-		logERROR << "afetr add: " << pagePath;
 				
 		}
 		else
 			pagePath = locPtr->getRoot().substr(0, locPtr->getRoot().size() - 1) + pagePath;
-
-		logERROR << "last: " << pagePath;
 
 		//check if file ok or dirlist
 		if (checkPageFile(locPtr, pagePath, locPtr->getIndex()))
