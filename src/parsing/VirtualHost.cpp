@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/08 22:39:39 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/12 19:48:02 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ void	VirtualHost::setIndex(VecStr_t& sLine)
 	if (sLine.size() < 2)
 		throw std::runtime_error("VirtualHost: index supplied but value is missing");
 	this->index = sLine.at(1);
+	if (index.at(index.size() - 1) == '/' or index.at(0) == '.' )
+		throw std::runtime_error("VirtualHost: index can't be a directory: " + index);
 };
 
 

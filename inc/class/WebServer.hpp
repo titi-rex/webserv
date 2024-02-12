@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 22:35:35 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/12 19:57:30 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ typedef unsigned int long	uintptr_t;
 # define MAX_EVENTS 50
 # define TIMEOUT -1
 # define BACKLOG 50
-# define WBS_VER "version 2.0"
+# define WBS_VER "WebServ - version 3.2"
 # define CRLF "\r\n"
 
 class Request;
