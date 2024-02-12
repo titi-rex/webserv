@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 13:26:56 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/12 17:27:37 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/12 19:50:50 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,36 @@ static std::string	getExtensionImage(std::string fileName)
 	return ( "/img/unknow.png" );
 }
 
-static const std::string	cleanDirectory( const std::string& root, const std::string& directory )
+static const std::string	cleanDirectory( Client& cl )
 {
-	// const Location*		locPtr = findLocation(pagePath, cl.host);
+	// Delete the server root from the translated path
+	const size_t		i = cl.host->getRoot().rfind("/", cl.host->getRoot().size() - 2);
+	const std::string	directory = cl.getPathTranslated();
+	std::string			cleanDirectory = directory.substr(i, directory.size());
 
-	const size_t		i = root.rfind("/", root.size() - 2);
-	std::string	cleanDirectory = directory.substr(i, directory.size());
+	std::string			tmp = cleanDirectory;
+	const std::string	hostRoot = cl.host->getRoot();
+	size_t				pathToShow;
+	const Location*		locPtr = findLocation(tmp, cl.host);
+
+	// Go back to each parent directory until the last on who dirlisting is allowed
+	do
+	{
+		if (tmp.size() > 1)
+			pathToShow = cleanDirectory.size() - tmp.size();
+		else
+		{
+			pathToShow = cleanDirectory.size();
+			break ;
+		}
+		tmp = tmp.erase(tmp.rfind("/", tmp.size() - 2) + 1);
+
+		
+		locPtr = findLocation(tmp, cl.host);
+	} while (locPtr->getAutoIndex() == true);
+
+	// Retrieve the clean directory
+	cleanDirectory = cleanDirectory.substr(cleanDirectory.size() - pathToShow, pathToShow);
 
 	return (cleanDirectory);
 }
@@ -81,9 +105,7 @@ static std::string	makeDirList(Client& cl ,const std::string& root)
 		throw std::runtime_error("699: fail to open dir: " + directory);
 
 	std::stringstream	ss;
-	std::string			parentDir;
-	
-	const std::string	displayedDirectory = cleanDirectory(root, directory);
+	const std::string	displayedDirectory = cleanDirectory(cl);
 
 	ss << "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of " << displayedDirectory << "</title>\n</head>\n";
 	ss << "<body>\n<h1>Index of " << displayedDirectory << "</h1>\n<dl>\n";
@@ -102,43 +124,28 @@ static std::string	makeDirList(Client& cl ,const std::string& root)
 		std::string	extensionImage = getExtensionImage(fileName);
 		DIR 		*tmp = opendir((directory + fileName).c_str());
 
-		if (fileName == "..")
+		ss << "<dt>";
+		if (link)
 		{
-			parentDir += "<dt>";
-			if (link)
-				parentDir += "<a href=\"" + uriPage("", goBack(directory), hostRoot) + "\">";
-			parentDir += "<img src=\"/img/parent_directory.png\" alt=\"parent directory\" width=\"20\" height=\"20\"> ";
-			parentDir += "Parent Directory";
-			if (link)
-				parentDir += "</a>";
-			parentDir += "</dt>\n";
-		}
-		else if (tmp != NULL)
-		{
-			ss << "<dt>";
-			if (link)
-				ss << "<a href=\"" << uriPage(fileName, directory, hostRoot) << "/\">";
-			ss << "<img src=\"/img/folder.jpg\" alt=\"folder\" width=\"20\" height=\"20\"> ";
-			ss << fileName;
-			if (link)
-				ss << "</a>";
-			ss << "</dt>\n";
-		}
-		else if (fileName != ".")
-		{
-			ss << "<dt>";
-			if (link)
-				ss << "<a href=\"" << uriPage(fileName, directory, hostRoot) << "\">";
-			ss << "<img src=\"" << extensionImage << "\" alt=\"file\" width=\"20\" height=\"20\"> ";
-			ss << fileName;
-			if (link)
-				ss << "</a>";
-			ss << "</dt>\n";
-		}
+			ss << "<a href=\"";
+			if (fileName == "..")
+				ss << uriPage("", goBack(directory), hostRoot) + "\">" << "<img src=\"/img/parent_directory.png\" alt=\"parent directory\" width=\"20\" height=\"20\"> " << "Parent Directory";
+			else
+			{
+				ss << uriPage(fileName, directory, hostRoot);
+				if (tmp != NULL)
+					ss << "/\"><img src=\"/img/folder.jpg\" alt=\"folder\"";
+				else
+					ss << "\"><img src=\"" << extensionImage << "\" alt=\"file\"";
+				ss << " width=\"20\" height=\"20\"> " << fileName;
+			}
+			ss << "</a>";
+		}	
+		ss << "</dt>\n";
+
 		if (tmp)
 			closedir(tmp);
 	}
-	ss << parentDir;
 	ss << "</dl>\n</body>\n</html>\r\n\r\n";
 	closedir(dir);
 	return (ss.str());

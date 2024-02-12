@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 20:31:17 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/08 22:33:30 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/12 18:18:56 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,6 @@ std::string&	rtrim(std::string& str, const char* set);
 std::string&	trim(std::string& str, const char* set);
 
 void			getDate( char * date );
+const Location*	findLocation(const std::string& target, vHostPtr v_host);
 
 #endif
