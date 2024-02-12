@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/12 13:18:45 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/12 16:51:24 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,12 +202,13 @@ bool	translatePath(Client& cl)
 		logERROR << "afetr sub: " << pagePath;
 			
 			//add location root or cl.host root if no root;
-			if (pagePath.empty() == false and pagePath.at(0) == '/')
-				pagePath.erase(0, 1);
+			std::string	root;
 			if (locPtr->getRoot().empty() == false)
-				pagePath = locPtr->getRoot() + pagePath;
+				root = locPtr->getRoot();
 			else
-				pagePath = cl.host->getRoot() + pagePath;
+				root = cl.host->getRoot();
+			root.erase(root.end() - 1);
+			pagePath = root + pagePath;
 		logERROR << "afetr add: " << pagePath;
 				
 		}
