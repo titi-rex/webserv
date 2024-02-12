@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/12 16:57:45 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/12 19:34:24 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,6 @@ static void	checkAllowedMethod(const VecStr_t& methodAllowed, const std::string 
 	throw std::runtime_error("405: Method Not Allowed");
 }
 
-static bool	hasExt( std::string pagePath)
-{
-	size_t	foundPoint = pagePath.rfind('.');
-	if (foundPoint == std::string::npos || foundPoint == 0)
-		return (false);
-
-	size_t	foundSlash = pagePath.rfind('/');
-	if (foundSlash == std::string::npos)
-		foundSlash = 0;
-
-	if (foundPoint > foundSlash
-		&& foundPoint != foundSlash + 1
-		&& foundPoint != pagePath.size() - 1)
-		return (true);
-	return (false);
-}
-
 static bool checkPageFile(const Location* loc, std::string & pagePath, std::string indexPage)
 {
 	if (pagePath.at(pagePath.size() - 1) == '/')
@@ -71,30 +54,13 @@ static bool checkPageFile(const Location* loc, std::string & pagePath, std::stri
 		pagePath += indexPage;
 	}
 
-	const char *file = pagePath.c_str();
-
 	// Check if the page asked exist
-	if (access(file, F_OK) != 0 && !hasExt(pagePath))
-	{
-		
-		// Check if the page asked + .html exist
-		pagePath += ".html";
-		file = pagePath.c_str();
-		if (access(file, F_OK) != 0)
-			throw std::runtime_error("404: file doesn't exist: " + pagePath);
-	}
+	if (access(pagePath.c_str(), F_OK))
+		throw std::runtime_error("404: file doesn't exist: " + pagePath);
 
 	// Check if the page asked is readable
-	if (access(file, R_OK) != 0)
-		throw std::runtime_error("403: can't acces: " + pagePath);
-
-	// Check if the file is a folder
-	DIR	*temp = opendir(file);
-	if (temp != NULL)
-	{
-		closedir(temp);
-		throw std::runtime_error("404: file is a folder: " + pagePath);
-	}
+	if (access(pagePath.c_str(), R_OK))
+		throw std::runtime_error("403: can't access: " + pagePath);
 	return (false);
 }
 

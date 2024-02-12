@@ -27,12 +27,12 @@ response header: connection: close
 * 409 conflict
 request conflict with current state of target, motly in PUT method (uploading a file older than existing version)
 * 410 gone
-acces to the target is no longer available
+access to the target is no longer available
 * 411 length required
 refuse to accept request without 'content-length' header
 (! content-lengh is omitted with chunked data see transfer-encoding)
 412 precondition failed
-acces to target denied cause of condition defined in header (ex: if-unmodified-since)
+access to target denied cause of condition defined in header (ex: if-unmodified-since)
 * 413 content too large
 request entity is larger than limits defined by server
 response header: retry-after, size limit ?
@@ -105,5 +105,5 @@ server encounter an infinite loop
 510 Not Extended
 client send a request with an extension declaration but extensinis not supported by server for the request
 511 Network Authentication Required
-client need to Authenticate to gain network acces
+client need to Authenticate to gain network access
 
