@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/11 18:49:29 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/12 13:18:45 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,19 @@ static bool checkPageFile(const Location* loc, std::string & pagePath, std::stri
 	const char *file = pagePath.c_str();
 
 	// Check if the page asked exist
+logERROR << "befacces1: " << pagePath;
 	if (access(file, F_OK) != 0 && !hasExt(pagePath))
 	{
+logERROR << "befacces2: " << pagePath;
+		
 		// Check if the page asked + .html exist
 		pagePath += ".html";
 		file = pagePath.c_str();
 		if (access(file, F_OK) != 0)
 			throw std::runtime_error("404: file doesn't exist: " + pagePath);
 	}
+logERROR << "befacces3: " << pagePath;
+
 	// Check if the page asked is readable
 	if (access(file, R_OK) != 0)
 		throw std::runtime_error("403: can't acces: " + pagePath);
@@ -188,10 +193,14 @@ bool	translatePath(Client& cl)
 			throw_redirection(cl, locPtr->getRedirection());
 		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName(), cl);
 
+	logERROR << "original: " << pagePath;
 		// Delete prefix
 		if (multipleSlash(pagePath))
 		{
 			pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
+			
+		logERROR << "afetr sub: " << pagePath;
+			
 			//add location root or cl.host root if no root;
 			if (pagePath.empty() == false and pagePath.at(0) == '/')
 				pagePath.erase(0, 1);
@@ -199,9 +208,13 @@ bool	translatePath(Client& cl)
 				pagePath = locPtr->getRoot() + pagePath;
 			else
 				pagePath = cl.host->getRoot() + pagePath;
+		logERROR << "afetr add: " << pagePath;
+				
 		}
 		else
-			pagePath = locPtr->getRoot().substr(0, locPtr->getRoot().size() - 1);
+			pagePath = locPtr->getRoot().substr(0, locPtr->getRoot().size() - 1) + pagePath;
+
+		logERROR << "last: " << pagePath;
 
 		//check if file ok or dirlist
 		if (checkPageFile(locPtr, pagePath, locPtr->getIndex()))
