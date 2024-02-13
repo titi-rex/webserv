@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/13 13:10:38 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/13 13:31:38 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ bool	translatePath(Client& cl)
 				root = locPtr->getRoot();
 			else
 				root = cl.host->getRoot();
-			root.erase(root.end() - 1);
+			// root.erase(root.end() - 1);
 			pagePath = root + pagePath;
 				
 		}
