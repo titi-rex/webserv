@@ -175,4 +175,3 @@ Setup the configuration file as follow:
 repository YoupiBanane and if no file are requested, it should search 
 for youpi.bad_extension files
 
-

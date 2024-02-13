@@ -3,16 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualHost.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/12 19:48:02 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/13 13:48:49 by lboudjem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "VirtualHost.hpp"
 
-VirtualHost::VirtualHost(void) : root(_dirPrefix + "/data"), index("index.html"), dirCgi(_dirPrefix + "/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
+VirtualHost::VirtualHost(void) : root(_dirPrefix + "/data"), index("index.html"), dirCgi(_dirPrefix + "/data/cgi-bin/"), host_port("0.0.0.0", 80) 
+{
+	serverNames.push_back("default");
+}
 
 VirtualHost::VirtualHost(const VirtualHost& src) : _dirPrefix(src._dirPrefix)
 {
@@ -35,7 +38,9 @@ VirtualHost&	VirtualHost::operator=(const VirtualHost& src)
 
 VirtualHost::~VirtualHost(void) {}
 
-VirtualHost::VirtualHost(const std::string& dirPrefix) : _dirPrefix(dirPrefix), root(_dirPrefix + "/data"), index("index.html"), dirCgi(_dirPrefix + "/data/cgi-bin/"), host_port("0.0.0.0", 80) {}
+VirtualHost::VirtualHost(const std::string& dirPrefix) : _dirPrefix(dirPrefix), root(_dirPrefix + "/data"), index("index.html"), dirCgi(_dirPrefix + "/data/cgi-bin/"), host_port("0.0.0.0", 80) {
+	serverNames.push_back("default");
+}
 
 const std::string&	VirtualHost::getRoot() const
 {
