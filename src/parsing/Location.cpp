@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 13:41:14 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/08 22:37:23 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/12 19:48:55 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,8 @@ void	Location::setIndex(const VecStr_t& sLine)
 	if (sLine.size() < 2)
 		throw std::runtime_error("Location: index supplied but value is missing");
 	this->index = sLine.at(1);
+	if (index.at(index.size() - 1) == '/' or index.at(0) == '.' )
+		throw std::runtime_error("VirtualHost: index can't be a directory: " + index);
 };
 
 void	Location::setUploadDir(const VecStr_t& sLine)

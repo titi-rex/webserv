@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/12 19:34:24 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/12 19:56:09 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,15 @@ static bool checkPageFile(const Location* loc, std::string & pagePath, std::stri
 	// Check if the page asked is readable
 	if (access(pagePath.c_str(), R_OK))
 		throw std::runtime_error("403: can't access: " + pagePath);
+
+	// Check if the file is a folder
+	DIR	*temp = opendir(pagePath.c_str());
+	if (temp != NULL)
+	{
+		closedir(temp);
+		throw std::runtime_error("400: file is a folder: " + pagePath);
+	}
+
 	return (false);
 }
 
