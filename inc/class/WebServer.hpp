@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 21:11:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/12 19:57:30 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/13 12:55:08 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ class WebServer
 		void				debugServ();
 
 		// server
+		void				initSocket(void);
 		void				run(void);
 
 		void				addClient(int socketServerFd);

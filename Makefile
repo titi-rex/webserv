@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/02/13 12:41:06 by jmoutous         ###   ########lyon.fr    #
+#    Updated: 2024/02/13 13:01:33 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 

@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 21:59:05 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/12 13:07:38 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/13 12:59:20 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirPre
 	VecStr_t 	fileVec;
 	uintptr_t	i = 0;
 
-
 	_initHttpStatus();
 	_initContentTypeMap();
 	std::ifstream file(path.c_str());
@@ -69,9 +68,13 @@ WebServer::WebServer(std::string path) : _efd(-1), _bodySizeLimit(1024), _dirPre
 	file.close();
 	if (_virtualHost.empty())
 		throw std::runtime_error("WebServer: no server supplied");
+};
+
+void	WebServer::initSocket(void)
+{
 	_SocketServerList_init();
 	_epoll_init();
-};
+}
 
 void	WebServer::setVirtualHost(const VecVHost_t& vHost) 
 {
@@ -157,7 +160,7 @@ void	WebServer::_closeAllFd(bool log)
 		if (log)
 			logINFO << "closed: " << it->second;
 	}
-	close(_efd);
+	wrap_close(_efd);
 }
 
 void	WebServer::_initHttpStatus(void)
