@@ -6,7 +6,7 @@
 /*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/13 12:58:36 by jmoutous         ###   ########lyon.fr   */
+/*   Updated: 2024/02/13 13:10:38 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ bool	translatePath(Client& cl)
 		checkAllowedMethod(locPtr->getAllowMethod(), cl.getMethodName(), cl);
 
 		// Delete prefix
-		if (multipleSlash(pagePath) || pagePath == locPtr->getUriOrExt())
+		if (pagePath != "/" && (multipleSlash(pagePath) || pagePath == locPtr->getUriOrExt()))
 		{
 			pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
 			
