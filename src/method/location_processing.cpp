@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location_processing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 11:12:02 by jmoutous          #+#    #+#             */
-/*   Updated: 2024/02/13 13:55:31 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/13 14:24:45 by jmoutous         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ bool	translatePath(Client& cl)
 		if (pagePath != "/" && (multipleSlash(pagePath) || pagePath == locPtr->getUriOrExt()))
 		{
 			pagePath = pagePath.substr(locPtr->getUriOrExt().length(), pagePath.length() - locPtr->getUriOrExt().length());
-			if (pagePath.at(0) == '/')
+			if (pagePath.empty() == false && pagePath.at(0) == '/')
 				pagePath.erase(0,1);
 
 			//add location root or cl.host root if no root;
