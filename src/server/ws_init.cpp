@@ -6,7 +6,7 @@
 /*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 22:41:44 by tlegrand          #+#    #+#             */
-/*   Updated: 2024/02/06 14:32:24 by tlegrand         ###   ########.fr       */
+/*   Updated: 2024/02/13 12:58:42 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	WebServer::modEpollList(int fd, int op, uint32_t events)
 {
 	struct epoll_event	e;
 
+	std::memset(&e, 0, sizeof(e));
 	e.events = events;
 	e.data.fd = fd;
 	if (fd < 0)
