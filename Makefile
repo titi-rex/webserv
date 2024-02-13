@@ -6,7 +6,7 @@
 #    By: jmoutous <jmoutous@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/02/08 16:14:48 by jmoutous         ###   ########lyon.fr    #
+#    Updated: 2024/02/13 12:41:06 by jmoutous         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@
 #	==============================	NAMES	==============================	#
 NAME		=	webserv
 DIR			=	${DIR_SRCS_PARSE} ${DIR_SRCS_SERVER} ${DIR_SRCS_METHOD} 
-DEFAULT_CONFIG_PATH	=	conf/default.conf
+DEFAULT_CONFIG_PATH	=	conf/juju.conf
 
 
 #	==============================	SOURCES	==============================	#
