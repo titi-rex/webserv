@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualHost.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lboudjem <lboudjem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 14:03:40 by lboudjem          #+#    #+#             */
-/*   Updated: 2024/02/13 13:48:49 by lboudjem         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:09:53 by tlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,7 @@ void	VirtualHost::setHostPort(VecStr_t& sLine)
 
 void	VirtualHost::setServerNames(VecStr_t& sLine)
 {
+	this->serverNames.clear();
 	if (sLine.size() < 2)
 		throw std::runtime_error("Server: sever_name supplied but value is missing");
 	for (size_t j = 1; j < sLine.size(); ++j)
