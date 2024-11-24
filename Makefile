@@ -6,7 +6,7 @@
 #    By: tlegrand <tlegrand@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/02 19:06:48 by tlegrand          #+#    #+#              #
-#    Updated: 2024/02/13 13:01:33 by tlegrand         ###   ########.fr        #
+#    Updated: 2024/11/24 16:09:50 by tlegrand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ SRCS			=	${addprefix ${DIR_SRCS}, ${LST_SRCS}}
 
 
 #	==============================	OBJECTS	==============================	#
-DIR_OBJS	=	.objs/
+DIR_OBJS	=	.obj/
 
 ifeq ($(DEBUG), fsanitize)
 	LST_OBJS	=	${LST_SRCS:.cpp=.debug.o}
@@ -86,7 +86,7 @@ DEBUG		=	no
 
 
 #	==============================	FLAGS	==============================	#
-CXXFLAGS	=	-Wswitch-enum -Wall -Wextra  #-Werror
+CXXFLAGS	=	-Wswitch-enum -Wall -Wextra -Werror
 DEPFLAGS	=	-MMD -MP
 FSFLAGS		=	-g3 -fsanitize=leak,address,pointer-subtract,pointer-compare,undefined 
 VALFLAGS 	=	--leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes \
