@@ -3,6 +3,8 @@
 
 # Webserv
 
+![score](https://img.shields.io/badge/Score-110%2F100-ff69b4?style=for-the-badge&logo=42&logoColor=white)
+
 A simple web server from scratch, based on [`nginx`](https://nginx.org/en/). You can setup multiple virtual server, root requested inside filesystem, use `CGI` and server a static website.
 All configuration is done via a configuration file. 
 
